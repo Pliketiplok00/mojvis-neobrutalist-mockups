@@ -6,7 +6,10 @@ import { ContentHeader } from "@/components/content/ContentHeader";
 import { TextBlock } from "@/components/content/TextBlock";
 import { HighlightBlock } from "@/components/content/HighlightBlock";
 import { CardListBlock } from "@/components/content/CardListBlock";
+import { MediaBlock } from "@/components/content/MediaBlock";
 import { Fish } from "lucide-react";
+import faunaDolphinsImg from "@/assets/fauna-dolphins.jpg";
+import faunaLizardImg from "@/assets/fauna-lizard.jpg";
 
 // Mock CMS data
 const pageData = {
@@ -14,6 +17,10 @@ const pageData = {
     title: "Fauna of Vis",
     subtitle: "Wildlife on land and in the Adriatic",
   },
+  mediaImages: [
+    { src: faunaDolphinsImg, alt: "Dolphins swimming in the Adriatic Sea near Vis" },
+    { src: faunaLizardImg, alt: "Mediterranean lizard on ancient stone wall" },
+  ],
   intro: {
     title: "Island Wildlife",
     body: [
@@ -77,6 +84,11 @@ export default function FaunaPage() {
           title={pageData.header.title}
           subtitle={pageData.header.subtitle}
           icon={<Fish className="h-6 w-6" strokeWidth={2.5} />}
+        />
+
+        <MediaBlock
+          images={pageData.mediaImages}
+          caption="Wildlife thrives in the Adriatic waters and rocky island terrain"
         />
 
         <TextBlock

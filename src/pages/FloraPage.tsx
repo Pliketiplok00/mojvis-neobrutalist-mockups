@@ -6,7 +6,10 @@ import { ContentHeader } from "@/components/content/ContentHeader";
 import { TextBlock } from "@/components/content/TextBlock";
 import { HighlightBlock } from "@/components/content/HighlightBlock";
 import { CardListBlock } from "@/components/content/CardListBlock";
+import { MediaBlock } from "@/components/content/MediaBlock";
 import { Leaf } from "lucide-react";
+import floraHerbsImg from "@/assets/flora-herbs.jpg";
+import floraOlivesImg from "@/assets/flora-olives.jpg";
 
 // Mock CMS data
 const pageData = {
@@ -14,6 +17,10 @@ const pageData = {
     title: "Flora of Vis",
     subtitle: "Discover the island's botanical treasures",
   },
+  mediaImages: [
+    { src: floraHerbsImg, alt: "Mediterranean herbs on Vis hillside with Adriatic view" },
+    { src: floraOlivesImg, alt: "Ancient olive grove on the island of Vis" },
+  ],
   intro: {
     title: "Mediterranean Biodiversity",
     body: [
@@ -72,6 +79,11 @@ export default function FloraPage() {
           title={pageData.header.title}
           subtitle={pageData.header.subtitle}
           icon={<Leaf className="h-6 w-6" strokeWidth={2.5} />}
+        />
+
+        <MediaBlock
+          images={pageData.mediaImages}
+          caption="Mediterranean flora thrives across the island's diverse landscapes"
         />
 
         <TextBlock
