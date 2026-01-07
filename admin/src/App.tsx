@@ -3,12 +3,14 @@
  *
  * Root component with routing.
  *
- * Phase 0: Basic routing skeleton.
+ * Phase 1: Added Inbox CRUD routes.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { InboxListPage } from './pages/inbox/InboxListPage';
+import { InboxEditPage } from './pages/inbox/InboxEditPage';
 
 function App() {
   return (
@@ -19,7 +21,9 @@ function App() {
 
         {/* Protected routes (TODO: Add auth guard) */}
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/messages" element={<PlaceholderPage title="Poruke" />} />
+        <Route path="/messages" element={<InboxListPage />} />
+        <Route path="/messages/new" element={<InboxEditPage />} />
+        <Route path="/messages/:id" element={<InboxEditPage />} />
         <Route path="/events" element={<PlaceholderPage title="Događaji" />} />
         <Route path="/pages" element={<PlaceholderPage title="Statične stranice" />} />
         <Route path="/transport" element={<PlaceholderPage title="Promet" />} />

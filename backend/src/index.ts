@@ -12,6 +12,7 @@ import { env } from './config/env.js';
 import { initDatabase, closeDatabase } from './lib/database.js';
 import { healthRoutes } from './routes/health.js';
 import { inboxRoutes } from './routes/inbox.js';
+import { adminInboxRoutes } from './routes/admin-inbox.js';
 
 // Create Fastify instance with logging
 const fastify: FastifyInstance = Fastify({
@@ -44,6 +45,9 @@ async function registerPlugins(): Promise<void> {
 
   // Inbox routes (Phase 1)
   await fastify.register(inboxRoutes);
+
+  // Admin routes (Phase 1)
+  await fastify.register(adminInboxRoutes);
 }
 
 /**
@@ -92,9 +96,10 @@ async function start(): Promise<void> {
 
     console.info('='.repeat(50));
     console.info(`[Server] MOJ VIS API running at http://${env.HOST}:${env.PORT}`);
-    console.info(`[Server] Health check: http://${env.HOST}:${env.PORT}/health`);
-    console.info(`[Server] Inbox API: http://${env.HOST}:${env.PORT}/inbox`);
-    console.info(`[Server] Banners API: http://${env.HOST}:${env.PORT}/banners/active`);
+    console.info(`[Server] Health: http://${env.HOST}:${env.PORT}/health`);
+    console.info(`[Server] Inbox: http://${env.HOST}:${env.PORT}/inbox`);
+    console.info(`[Server] Banners: http://${env.HOST}:${env.PORT}/banners/active`);
+    console.info(`[Server] Admin: http://${env.HOST}:${env.PORT}/admin/inbox`);
     console.info('='.repeat(50));
   } catch (error) {
     console.error('[Server] Failed to start:', error);

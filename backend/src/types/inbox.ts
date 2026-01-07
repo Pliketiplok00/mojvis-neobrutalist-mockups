@@ -90,6 +90,35 @@ export interface InboxListResponse {
 }
 
 /**
+ * Admin inbox message response (includes HR/EN fields)
+ */
+export interface AdminInboxMessageResponse {
+  id: string;
+  title_hr: string;
+  title_en: string | null;
+  body_hr: string;
+  body_en: string | null;
+  tags: InboxTag[];
+  active_from: string | null;
+  active_to: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  is_urgent: boolean;
+}
+
+/**
+ * Admin paginated inbox list response
+ */
+export interface AdminInboxListResponse {
+  messages: AdminInboxMessageResponse[];
+  total: number;
+  page: number;
+  page_size: number;
+  has_more: boolean;
+}
+
+/**
  * Banner response (active inbox messages eligible for banner display)
  */
 export interface BannerResponse {
