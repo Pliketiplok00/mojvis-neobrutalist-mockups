@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { MainMenu } from "@/components/layout/MainMenu";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, MapPin, Send, X, Image } from "lucide-react";
+import { Camera, MapPin, Send, Image } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function ClickFixReportPage() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const issueType = searchParams.get("type") || "pothole";
 
@@ -23,15 +26,8 @@ export default function ClickFixReportPage() {
 
   return (
     <MobileFrame>
-      <AppHeader 
-        title="NOVA PRIJAVA" 
-        showBack 
-        rightAction={
-          <button onClick={() => navigate("/click-fix")} className="p-2">
-            <X size={24} strokeWidth={3} />
-          </button>
-        }
-      />
+      <AppHeader title="NOVA PRIJAVA" showBack onMenuClick={() => setMenuOpen(true)} />
+      <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">
         {/* Issue Type Banner */}

@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { MainMenu } from "@/components/layout/MainMenu";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, MapPin, AlertTriangle, Trash2, Lightbulb, Car, TreeDeciduous, Droplets, Plus } from "lucide-react";
@@ -16,10 +18,12 @@ const issueCategories = [
 
 export default function ClickFixPage() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <MobileFrame>
-      <AppHeader title="KLIKNI & POPRAVI" />
+      <AppHeader title="KLIKNI & POPRAVI" onMenuClick={() => setMenuOpen(true)} />
+      <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">
         {/* Camera Capture Area */}

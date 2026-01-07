@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { AppHeader } from "@/components/layout/AppHeader";
+import { MainMenu } from "@/components/layout/MainMenu";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbsUp, ThumbsDown, Star, Send, MessageSquare, TrendingUp, Users } from "lucide-react";
-import { useState } from "react";
 
 const ratingOptions = [
   { value: 1, label: "LOŠE" },
@@ -22,12 +23,14 @@ const feedbackCategories = [
 ];
 
 export default function FeedbackPage() {
+  const [menuOpen, setMenuOpen] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   return (
     <MobileFrame>
-      <AppHeader title="POVRATNE INFO" />
+      <AppHeader title="POVRATNE INFO" onMenuClick={() => setMenuOpen(true)} />
+      <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">
         {/* Header Stats */}
