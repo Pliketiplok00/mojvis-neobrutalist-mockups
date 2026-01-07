@@ -10,24 +10,34 @@
  * - Can be changed later in Settings
  *
  * Phase 0: UI skeleton only, no logic.
+ * Phase 5.1: Added onboarding completion for locals.
  */
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'MunicipalitySelection'>;
+  route: RouteProp<OnboardingStackParamList, 'MunicipalitySelection'>;
 };
 
-export function MunicipalitySelectionScreen({ navigation }: Props): React.JSX.Element {
-  const handleMunicipalitySelect = (municipality: 'vis' | 'komiza'): void => {
-    // TODO: Store municipality preference
-    // TODO: Complete onboarding
+export function MunicipalitySelectionScreen({ navigation, route }: Props): React.JSX.Element {
+  const { completeOnboarding } = useOnboarding();
+  const { language } = route.params;
+
+  const handleMunicipalitySelect = async (municipality: 'vis' | 'komiza'): Promise<void> => {
     console.info(`Selected municipality: ${municipality}`);
-    // TODO: Navigate to Home
-    console.info('Should navigate to Home - onboarding complete');
+    // Complete onboarding with municipality
+    await completeOnboarding({
+      language,
+      userMode: 'local',
+      municipality,
+    });
+    // AppNavigator will automatically switch to Main stack
   };
 
   const handleBack = (): void => {
@@ -47,7 +57,7 @@ export function MunicipalitySelectionScreen({ navigation }: Props): React.JSX.El
         <View style={styles.optionsContainer}>
           <TouchableOpacity
             style={styles.municipalityCard}
-            onPress={() => handleMunicipalitySelect('vis')}
+            onPress={() => void handleMunicipalitySelect('vis')}
             accessibilityLabel="Vis"
           >
             <Text style={styles.municipalityName}>Vis</Text>
@@ -58,8 +68,8 @@ export function MunicipalitySelectionScreen({ navigation }: Props): React.JSX.El
 
           <TouchableOpacity
             style={styles.municipalityCard}
-            onPress={() => handleMunicipalitySelect('komiza')}
-            accessibilityLabel="Komiža"
+            onPress={() => void handleMunicipalitySelect('komiza')}
+            accessibilityLabel="Komiza"
           >
             <Text style={styles.municipalityName}>Komiža</Text>
             <Text style={styles.municipalityDescription}>

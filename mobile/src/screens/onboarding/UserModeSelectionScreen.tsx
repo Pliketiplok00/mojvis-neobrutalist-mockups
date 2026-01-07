@@ -11,27 +11,38 @@
  * - Visitors go directly to Home
  *
  * Phase 0: UI skeleton only, no logic.
+ * Phase 5.1: Added onboarding completion for visitors.
  */
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
+import { useOnboarding } from '../../contexts/OnboardingContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'UserModeSelection'>;
+  route: RouteProp<OnboardingStackParamList, 'UserModeSelection'>;
 };
 
-export function UserModeSelectionScreen({ navigation }: Props): React.JSX.Element {
-  const handleModeSelect = (mode: 'visitor' | 'local'): void => {
-    // TODO: Store user mode preference
+export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX.Element {
+  const { completeOnboarding } = useOnboarding();
+  const { language } = route.params;
+
+  const handleModeSelect = async (mode: 'visitor' | 'local'): Promise<void> => {
     console.info(`Selected mode: ${mode}`);
 
     if (mode === 'visitor') {
-      // TODO: Navigate to Home (complete onboarding)
-      console.info('Visitor selected - should navigate to Home');
+      // Complete onboarding - visitor has no municipality
+      await completeOnboarding({
+        language,
+        userMode: 'visitor',
+        municipality: null,
+      });
+      // AppNavigator will automatically switch to Main stack
     } else {
-      navigation.navigate('MunicipalitySelection');
+      navigation.navigate('MunicipalitySelection', { language });
     }
   };
 
@@ -44,13 +55,13 @@ export function UserModeSelectionScreen({ navigation }: Props): React.JSX.Elemen
         <View style={styles.optionsContainer}>
           <TouchableOpacity
             style={styles.optionCard}
-            onPress={() => handleModeSelect('visitor')}
+            onPress={() => void handleModeSelect('visitor')}
             accessibilityLabel="Visitor"
           >
             <Text style={styles.optionIcon}>🧳</Text>
             <Text style={styles.optionTitle}>Posjetitelj / Visitor</Text>
             <Text style={styles.optionDescription}>
-              Turistička posjeta otoku
+              Turisticka posjeta otoku
             </Text>
             <Text style={styles.optionDescriptionEn}>
               Visiting the island as a tourist
@@ -59,7 +70,7 @@ export function UserModeSelectionScreen({ navigation }: Props): React.JSX.Elemen
 
           <TouchableOpacity
             style={styles.optionCard}
-            onPress={() => handleModeSelect('local')}
+            onPress={() => void handleModeSelect('local')}
             accessibilityLabel="Local resident"
           >
             <Text style={styles.optionIcon}>🏠</Text>

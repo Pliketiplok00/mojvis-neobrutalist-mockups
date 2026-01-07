@@ -2,6 +2,35 @@
 
 This checklist must be completed by a human tester before Phase 5 is formally closed.
 
+## Prerequisites
+
+**IMPORTANT:** Before testing Phase 5 features, ensure the following:
+
+### Onboarding Must Complete Successfully
+
+The app must be able to navigate through the onboarding flow and reach the Home screen.
+
+**Verification steps:**
+1. Run `npx expo start --ios` in the `mobile` directory
+2. Select a language (Hrvatski or English)
+3. Select user mode (Visitor or Local)
+4. If Local, select a municipality (Vis or Komiza)
+5. Verify Home screen appears
+
+**Persistence check:**
+- After completing onboarding, close and reopen the app
+- Verify Home screen appears directly (no onboarding loop)
+
+**Smoke check (automated):**
+```bash
+cd mobile
+npx tsx scripts/smoke-check-onboarding.ts
+```
+
+If onboarding does not complete successfully, Phase 5 testing is blocked.
+
+---
+
 ## Mobile (iOS Simulator)
 
 ### Feedback Submission (HR)

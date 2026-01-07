@@ -9,6 +9,7 @@
  * - Language can be changed later in Settings
  *
  * Phase 0: UI skeleton only, no logic.
+ * Phase 5.1: Added navigation with language param.
  */
 
 import React from 'react';
@@ -22,10 +23,9 @@ type Props = {
 
 export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Element {
   const handleLanguageSelect = (language: 'hr' | 'en'): void => {
-    // TODO: Store language preference locally
-    // TODO: Apply language to app
+    // TODO: Apply language to app UI
     console.info(`Selected language: ${language}`);
-    navigation.navigate('UserModeSelection');
+    navigation.navigate('UserModeSelection', { language });
   };
 
   return (

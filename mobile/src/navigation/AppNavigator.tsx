@@ -13,11 +13,14 @@
  * Phase 3: Added Static Pages screen.
  * Phase 4: Added Transport screens (hub, road, sea, line detail).
  * Phase 5: Added Feedback screens.
+ * Phase 5.1: Fixed onboarding navigation with persistence.
  */
 
 import React from 'react';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useOnboarding } from '../contexts/OnboardingContext';
 
 // Types
 import type { RootStackParamList, OnboardingStackParamList, MainStackParamList } from './types';
@@ -109,13 +112,21 @@ function MainNavigator(): React.JSX.Element {
  * Decides whether to show onboarding or main app.
  */
 export function AppNavigator(): React.JSX.Element {
-  // TODO: Check if onboarding is complete (stored locally)
-  const hasCompletedOnboarding = false; // Phase 0: Always show onboarding
+  const { isComplete, isLoading } = useOnboarding();
+
+  // Show loading screen while checking onboarding status
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#000000" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
-        {hasCompletedOnboarding ? (
+        {isComplete ? (
           <RootStack.Screen name="Main" component={MainNavigator} />
         ) : (
           <RootStack.Screen name="Onboarding" component={OnboardingNavigator} />
@@ -124,5 +135,14 @@ export function AppNavigator(): React.JSX.Element {
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+});
 
 export default AppNavigator;

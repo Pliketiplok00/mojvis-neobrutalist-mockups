@@ -327,6 +327,22 @@ npm test
 
 **Status:** Pending - requires human verification (simulator + browser)
 
+### Onboarding Regression (RESOLVED)
+
+Manual verification was initially blocked by an onboarding navigation regression:
+- **Root cause:** Onboarding screens had TODO placeholders for navigation to Home
+- **Fix applied:** Implemented OnboardingContext with AsyncStorage persistence
+- **Files added/modified:**
+  - `mobile/src/contexts/OnboardingContext.tsx` (NEW)
+  - `mobile/src/screens/onboarding/*.tsx` (MODIFIED)
+  - `mobile/src/navigation/AppNavigator.tsx` (MODIFIED)
+  - `mobile/App.tsx` (MODIFIED)
+  - `mobile/scripts/smoke-check-onboarding.ts` (NEW)
+
+**Verification:** Run `npx tsx scripts/smoke-check-onboarding.ts` in mobile directory.
+
+### Checklist
+
 See [PHASE_5_MANUAL_VERIFICATION.md](./PHASE_5_MANUAL_VERIFICATION.md) for the complete checklist.
 
 ### Required Checks:

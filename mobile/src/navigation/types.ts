@@ -6,7 +6,13 @@
  * Phase 2: Added Events screens.
  * Phase 4: Added Transport screens (hub, road, sea, line detail).
  * Phase 5: Added Feedback screens.
+ * Phase 5.1: Updated onboarding params for persistence.
  */
+
+// Onboarding data types
+export type OnboardingLanguage = 'hr' | 'en';
+export type OnboardingUserMode = 'visitor' | 'local';
+export type OnboardingMunicipality = 'vis' | 'komiza';
 
 /**
  * Onboarding Stack
@@ -14,8 +20,8 @@
  */
 export type OnboardingStackParamList = {
   LanguageSelection: undefined;
-  UserModeSelection: undefined;
-  MunicipalitySelection: undefined;
+  UserModeSelection: { language: OnboardingLanguage };
+  MunicipalitySelection: { language: OnboardingLanguage };
 };
 
 /**
