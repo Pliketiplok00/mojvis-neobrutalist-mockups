@@ -11,6 +11,8 @@ import {
   isWithinActiveWindow,
   filterEligibleMessages,
   filterBannerEligibleMessages,
+  isBannerForScreen,
+  filterBannersByScreen,
 } from '../lib/eligibility.js';
 import type { InboxMessage, UserContext } from '../types/inbox.js';
 
@@ -257,5 +259,106 @@ describe('filterBannerEligibleMessages', () => {
     const result = filterBannerEligibleMessages(messages, visitor, now);
 
     expect(result.map((m) => m.id)).toEqual(['1']);
+  });
+});
+
+describe('isBannerForScreen', () => {
+  it('should show hitno on home screen', () => {
+    const message = createMessage({ tags: ['hitno'] });
+    expect(isBannerForScreen(message, 'home')).toBe(true);
+  });
+
+  it('should show opcenito on home screen', () => {
+    const message = createMessage({ tags: ['opcenito'] });
+    expect(isBannerForScreen(message, 'home')).toBe(true);
+  });
+
+  it('should show vis tag on home screen', () => {
+    const message = createMessage({ tags: ['vis'] });
+    expect(isBannerForScreen(message, 'home')).toBe(true);
+  });
+
+  it('should NOT show kultura on home screen', () => {
+    const message = createMessage({ tags: ['kultura'] });
+    expect(isBannerForScreen(message, 'home')).toBe(false);
+  });
+
+  it('should show cestovni_promet on road transport', () => {
+    const message = createMessage({ tags: ['cestovni_promet'] });
+    expect(isBannerForScreen(message, 'transport_road')).toBe(true);
+  });
+
+  it('should show hitno on road transport', () => {
+    const message = createMessage({ tags: ['hitno'] });
+    expect(isBannerForScreen(message, 'transport_road')).toBe(true);
+  });
+
+  it('should NOT show opcenito on road transport', () => {
+    const message = createMessage({ tags: ['opcenito'] });
+    expect(isBannerForScreen(message, 'transport_road')).toBe(false);
+  });
+
+  it('should NOT show pomorski_promet on road transport', () => {
+    const message = createMessage({ tags: ['pomorski_promet'] });
+    expect(isBannerForScreen(message, 'transport_road')).toBe(false);
+  });
+
+  it('should show pomorski_promet on sea transport', () => {
+    const message = createMessage({ tags: ['pomorski_promet'] });
+    expect(isBannerForScreen(message, 'transport_sea')).toBe(true);
+  });
+
+  it('should show hitno on sea transport', () => {
+    const message = createMessage({ tags: ['hitno'] });
+    expect(isBannerForScreen(message, 'transport_sea')).toBe(true);
+  });
+
+  it('should NOT show opcenito on sea transport', () => {
+    const message = createMessage({ tags: ['opcenito'] });
+    expect(isBannerForScreen(message, 'transport_sea')).toBe(false);
+  });
+
+  it('should NOT show cestovni_promet on sea transport', () => {
+    const message = createMessage({ tags: ['cestovni_promet'] });
+    expect(isBannerForScreen(message, 'transport_sea')).toBe(false);
+  });
+});
+
+describe('filterBannersByScreen', () => {
+  it('should filter banners for home screen correctly', () => {
+    const messages = [
+      createMessage({ id: '1', tags: ['hitno'] }),
+      createMessage({ id: '2', tags: ['opcenito'] }),
+      createMessage({ id: '3', tags: ['kultura'] }),
+      createMessage({ id: '4', tags: ['cestovni_promet'] }),
+      createMessage({ id: '5', tags: ['vis'] }),
+    ];
+
+    const result = filterBannersByScreen(messages, 'home');
+    expect(result.map((m) => m.id)).toEqual(['1', '2', '5']);
+  });
+
+  it('should filter banners for road transport correctly', () => {
+    const messages = [
+      createMessage({ id: '1', tags: ['hitno'] }),
+      createMessage({ id: '2', tags: ['opcenito'] }),
+      createMessage({ id: '3', tags: ['cestovni_promet'] }),
+      createMessage({ id: '4', tags: ['pomorski_promet'] }),
+    ];
+
+    const result = filterBannersByScreen(messages, 'transport_road');
+    expect(result.map((m) => m.id)).toEqual(['1', '3']);
+  });
+
+  it('should filter banners for sea transport correctly', () => {
+    const messages = [
+      createMessage({ id: '1', tags: ['hitno'] }),
+      createMessage({ id: '2', tags: ['opcenito'] }),
+      createMessage({ id: '3', tags: ['cestovni_promet'] }),
+      createMessage({ id: '4', tags: ['pomorski_promet'] }),
+    ];
+
+    const result = filterBannersByScreen(messages, 'transport_sea');
+    expect(result.map((m) => m.id)).toEqual(['1', '4']);
   });
 });

@@ -23,6 +23,8 @@ import {
 import {
   filterEligibleMessages,
   filterBannerEligibleMessages,
+  filterBannersByScreen,
+  type ScreenContext,
 } from '../lib/eligibility.js';
 import type {
   UserContext,
@@ -68,17 +70,21 @@ function getLanguage(request: FastifyRequest): 'hr' | 'en' {
 
 /**
  * Transform InboxMessage to API response format
+ *
+ * IMPORTANT: NO implicit language fallback is allowed per spec.
+ * HR and EN are separate fields. If EN is requested but not available,
+ * the field will be empty string, NOT the HR content.
  */
 function toMessageResponse(
   message: InboxMessage,
   language: 'hr' | 'en'
 ): InboxMessageResponse {
-  // Use HR as fallback if EN is not available
-  const title = language === 'en' && message.title_en
-    ? message.title_en
+  // NO fallback - return exactly what was requested
+  const title = language === 'en'
+    ? (message.title_en ?? '')
     : message.title_hr;
-  const body = language === 'en' && message.body_en
-    ? message.body_en
+  const body = language === 'en'
+    ? (message.body_en ?? '')
     : message.body_hr;
 
   return {
@@ -196,31 +202,44 @@ export async function inboxRoutes(
    * Only messages within their active window are returned.
    *
    * Query params:
-   * - context: 'home' | 'transport_road' | 'transport_sea' (optional filter)
+   * - screen: 'home' | 'transport_road' | 'transport_sea' (required for filtering)
+   *
+   * Banner placement rules (per spec):
+   * - Home: hitno, opcenito, vis/komiza (for matching locals)
+   * - Road Transport: cestovni_promet OR hitno ONLY
+   * - Sea Transport: pomorski_promet OR hitno ONLY
    */
   fastify.get<{
-    Querystring: { context?: string };
+    Querystring: { screen?: string };
     Reply: BannerResponse;
   }>('/banners/active', async (request, reply) => {
     const userContext = getUserContext(request);
     const language = getLanguage(request);
-    const screenContext = request.query.context;
+    const screenParam = request.query.screen;
 
-    console.info(`[Banners] GET /banners/active user=${userContext.deviceId} context=${screenContext}`);
+    // Validate screen context
+    const validScreens: ScreenContext[] = ['home', 'transport_road', 'transport_sea'];
+    const screenContext: ScreenContext | undefined = validScreens.includes(screenParam as ScreenContext)
+      ? (screenParam as ScreenContext)
+      : undefined;
+
+    console.info(`[Banners] GET /banners/active user=${userContext.deviceId} screen=${screenContext ?? 'all'}`);
 
     try {
       const potentialBanners = await getPotentialBannerMessages();
       const now = new Date();
 
-      // Filter by eligibility and active window
-      const activeBanners = filterBannerEligibleMessages(
+      // Filter by user eligibility and active window
+      let activeBanners = filterBannerEligibleMessages(
         potentialBanners,
         userContext,
         now
       );
 
-      // Optionally filter by screen context
-      // TODO: Implement screen context filtering if needed
+      // Apply screen context filtering if specified
+      if (screenContext) {
+        activeBanners = filterBannersByScreen(activeBanners, screenContext);
+      }
 
       const response: BannerResponse = {
         banners: activeBanners.map((m) => toMessageResponse(m, language)),
