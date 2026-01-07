@@ -11,10 +11,10 @@ const menuItems = [
   { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent" },
   { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary" },
   { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary" },
-  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-secondary" },
+  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender" },
   { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-destructive" },
   { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-accent" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-secondary" },
   { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-accent" },
   { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted" },
 ];
