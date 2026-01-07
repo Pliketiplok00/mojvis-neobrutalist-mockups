@@ -49,6 +49,11 @@ export interface UserContext {
 
 /**
  * Inbox message as stored in database
+ *
+ * Soft delete policy:
+ * - Hard delete is NOT allowed
+ * - deleted_at timestamp indicates soft-deleted state
+ * - Public endpoints MUST exclude messages where deleted_at IS NOT NULL
  */
 export interface InboxMessage {
   id: string;
@@ -62,6 +67,7 @@ export interface InboxMessage {
   created_at: Date;
   updated_at: Date;
   created_by: string | null; // admin user ID
+  deleted_at: Date | null; // soft delete timestamp (NULL = active)
 }
 
 /**
@@ -90,7 +96,7 @@ export interface InboxListResponse {
 }
 
 /**
- * Admin inbox message response (includes HR/EN fields)
+ * Admin inbox message response (includes HR/EN fields and soft delete status)
  */
 export interface AdminInboxMessageResponse {
   id: string;
@@ -104,6 +110,7 @@ export interface AdminInboxMessageResponse {
   created_at: string;
   updated_at: string;
   created_by: string | null;
+  deleted_at: string | null; // soft delete timestamp (NULL = active)
   is_urgent: boolean;
 }
 

@@ -20,11 +20,14 @@ interface InboxMessageRow {
   created_at: Date;
   updated_at: Date;
   created_by: string | null;
+  deleted_at: Date | null;
 }
 
 /**
- * Get paginated list of inbox messages
+ * Get paginated list of inbox messages (excludes soft-deleted)
  * Ordered by created_at descending (newest first)
+ *
+ * NOTE: This is for PUBLIC endpoints. Soft-deleted messages are excluded.
  */
 export async function getInboxMessages(
   page: number = 1,
@@ -32,17 +35,18 @@ export async function getInboxMessages(
 ): Promise<{ messages: InboxMessage[]; total: number }> {
   const offset = (page - 1) * pageSize;
 
-  // Get total count
+  // Get total count (excluding soft-deleted)
   const countResult = await query<{ count: string }>(
-    'SELECT COUNT(*) as count FROM inbox_messages'
+    'SELECT COUNT(*) as count FROM inbox_messages WHERE deleted_at IS NULL'
   );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-  // Get paginated messages
+  // Get paginated messages (excluding soft-deleted)
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by
+            active_from, active_to, created_at, updated_at, created_by, deleted_at
      FROM inbox_messages
+     WHERE deleted_at IS NULL
      ORDER BY created_at DESC
      LIMIT $1 OFFSET $2`,
     [pageSize, offset]
@@ -55,14 +59,39 @@ export async function getInboxMessages(
 }
 
 /**
- * Get a single inbox message by ID
+ * Get a single inbox message by ID (excludes soft-deleted)
+ *
+ * NOTE: This is for PUBLIC endpoints. Soft-deleted messages return null (404).
  */
 export async function getInboxMessageById(
   id: string
 ): Promise<InboxMessage | null> {
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by
+            active_from, active_to, created_at, updated_at, created_by, deleted_at
+     FROM inbox_messages
+     WHERE id = $1 AND deleted_at IS NULL`,
+    [id]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return rowToInboxMessage(result.rows[0]);
+}
+
+/**
+ * Get a single inbox message by ID (admin view, includes soft-deleted)
+ *
+ * NOTE: This is for ADMIN endpoints only.
+ */
+export async function getInboxMessageByIdAdmin(
+  id: string
+): Promise<InboxMessage | null> {
+  const result = await query<InboxMessageRow>(
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+            active_from, active_to, created_at, updated_at, created_by, deleted_at
      FROM inbox_messages
      WHERE id = $1`,
     [id]
@@ -76,15 +105,18 @@ export async function getInboxMessageById(
 }
 
 /**
- * Get all messages that could potentially be banners
+ * Get all messages that could potentially be banners (excludes soft-deleted)
  * (have an active window defined)
+ *
+ * NOTE: This is for PUBLIC endpoints. Soft-deleted messages are excluded.
  */
 export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by
+            active_from, active_to, created_at, updated_at, created_by, deleted_at
      FROM inbox_messages
-     WHERE active_from IS NOT NULL OR active_to IS NOT NULL
+     WHERE (active_from IS NOT NULL OR active_to IS NOT NULL)
+       AND deleted_at IS NULL
      ORDER BY created_at DESC`
   );
 
@@ -95,14 +127,14 @@ export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
  * Create a new inbox message
  */
 export async function createInboxMessage(
-  message: Omit<InboxMessage, 'id' | 'created_at' | 'updated_at'>
+  message: Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at'>
 ): Promise<InboxMessage> {
   const result = await query<InboxMessageRow>(
     `INSERT INTO inbox_messages
        (title_hr, title_en, body_hr, body_en, tags, active_from, active_to, created_by)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING id, title_hr, title_en, body_hr, body_en, tags,
-               active_from, active_to, created_at, updated_at, created_by`,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
     [
       message.title_hr,
       message.title_en,
@@ -119,11 +151,13 @@ export async function createInboxMessage(
 }
 
 /**
- * Update an existing inbox message
+ * Update an existing inbox message (excludes soft-deleted)
+ *
+ * NOTE: Soft-deleted messages cannot be updated via this function.
  */
 export async function updateInboxMessage(
   id: string,
-  updates: Partial<Omit<InboxMessage, 'id' | 'created_at' | 'updated_at'>>
+  updates: Partial<Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at'>>
 ): Promise<InboxMessage | null> {
   // Build dynamic update query
   const fields: string[] = [];
@@ -167,9 +201,9 @@ export async function updateInboxMessage(
   const result = await query<InboxMessageRow>(
     `UPDATE inbox_messages
      SET ${fields.join(', ')}
-     WHERE id = $${paramIndex}
+     WHERE id = $${paramIndex} AND deleted_at IS NULL
      RETURNING id, title_hr, title_en, body_hr, body_en, tags,
-               active_from, active_to, created_at, updated_at, created_by`,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
     values
   );
 
@@ -181,14 +215,77 @@ export async function updateInboxMessage(
 }
 
 /**
- * Delete an inbox message
+ * Soft delete an inbox message
+ *
+ * NOTE: Hard delete is NOT allowed. This sets deleted_at = now().
+ * Returns the soft-deleted message for logging purposes.
  */
-export async function deleteInboxMessage(id: string): Promise<boolean> {
-  const result = await query(
-    'DELETE FROM inbox_messages WHERE id = $1',
+export async function softDeleteInboxMessage(id: string): Promise<InboxMessage | null> {
+  const result = await query<InboxMessageRow>(
+    `UPDATE inbox_messages
+     SET deleted_at = NOW()
+     WHERE id = $1 AND deleted_at IS NULL
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
     [id]
   );
-  return (result.rowCount ?? 0) > 0;
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return rowToInboxMessage(result.rows[0]);
+}
+
+/**
+ * Get paginated list of ALL inbox messages (admin view, includes soft-deleted)
+ */
+export async function getInboxMessagesAdmin(
+  page: number = 1,
+  pageSize: number = 20
+): Promise<{ messages: InboxMessage[]; total: number }> {
+  const offset = (page - 1) * pageSize;
+
+  // Get total count (including soft-deleted)
+  const countResult = await query<{ count: string }>(
+    'SELECT COUNT(*) as count FROM inbox_messages'
+  );
+  const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
+
+  // Get paginated messages (including soft-deleted)
+  const result = await query<InboxMessageRow>(
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+            active_from, active_to, created_at, updated_at, created_by, deleted_at
+     FROM inbox_messages
+     ORDER BY created_at DESC
+     LIMIT $1 OFFSET $2`,
+    [pageSize, offset]
+  );
+
+  return {
+    messages: result.rows.map(rowToInboxMessage),
+    total,
+  };
+}
+
+/**
+ * Restore a soft-deleted inbox message
+ */
+export async function restoreInboxMessage(id: string): Promise<InboxMessage | null> {
+  const result = await query<InboxMessageRow>(
+    `UPDATE inbox_messages
+     SET deleted_at = NULL
+     WHERE id = $1 AND deleted_at IS NOT NULL
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
+    [id]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return rowToInboxMessage(result.rows[0]);
 }
 
 /**
@@ -207,5 +304,6 @@ function rowToInboxMessage(row: InboxMessageRow): InboxMessage {
     created_at: row.created_at,
     updated_at: row.updated_at,
     created_by: row.created_by,
+    deleted_at: row.deleted_at,
   };
 }

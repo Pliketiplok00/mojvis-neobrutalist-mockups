@@ -4,23 +4,27 @@
  * CRUD endpoints for inbox messages (admin panel).
  *
  * Endpoints:
- * - GET /admin/inbox - list all messages (admin view)
- * - GET /admin/inbox/:id - single message
+ * - GET /admin/inbox - list all messages (admin view, includes soft-deleted)
+ * - GET /admin/inbox/:id - single message (includes soft-deleted)
  * - POST /admin/inbox - create message
- * - PATCH /admin/inbox/:id - update message
- * - DELETE /admin/inbox/:id - delete message
+ * - PATCH /admin/inbox/:id - update message (excludes soft-deleted)
+ * - DELETE /admin/inbox/:id - SOFT delete message (sets deleted_at)
+ * - POST /admin/inbox/:id/restore - restore soft-deleted message
  *
  * Note: Per spec, messages are LIVE ON SAVE (no draft workflow).
- * TODO: Add authentication and authorization middleware.
+ * IMPORTANT: Hard delete is NOT allowed. All deletes are soft deletes.
+ *
+ * TODO: Add anonymous device identification middleware.
  */
 
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
 import {
-  getInboxMessages,
-  getInboxMessageById,
+  getInboxMessagesAdmin,
+  getInboxMessageByIdAdmin,
   createInboxMessage,
   updateInboxMessage,
-  deleteInboxMessage,
+  softDeleteInboxMessage,
+  restoreInboxMessage,
 } from '../repositories/inbox.js';
 import type {
   InboxMessage,
@@ -64,6 +68,7 @@ function toAdminResponse(message: InboxMessage): {
   created_at: string;
   updated_at: string;
   created_by: string | null;
+  deleted_at: string | null;
   is_urgent: boolean;
 } {
   return {
@@ -78,6 +83,7 @@ function toAdminResponse(message: InboxMessage): {
     created_at: message.created_at.toISOString(),
     updated_at: message.updated_at.toISOString(),
     created_by: message.created_by,
+    deleted_at: message.deleted_at?.toISOString() ?? null,
     is_urgent: isUrgent(message.tags),
   };
 }
@@ -87,13 +93,12 @@ export async function adminInboxRoutes(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions
 ): Promise<void> {
-  // TODO: Add authentication middleware here
-  // fastify.addHook('onRequest', requireAuth);
+  // TODO: Add anonymous device identification middleware here
 
   /**
    * GET /admin/inbox
    *
-   * List all inbox messages (admin view, no eligibility filtering).
+   * List all inbox messages (admin view, includes soft-deleted).
    */
   fastify.get<{
     Querystring: { page?: string; page_size?: string };
@@ -104,7 +109,7 @@ export async function adminInboxRoutes(
     console.info(`[Admin] GET /admin/inbox page=${page} pageSize=${pageSize}`);
 
     try {
-      const { messages, total } = await getInboxMessages(page, pageSize);
+      const { messages, total } = await getInboxMessagesAdmin(page, pageSize);
 
       const response: AdminInboxListResponse = {
         messages: messages.map(toAdminResponse),
@@ -124,7 +129,7 @@ export async function adminInboxRoutes(
   /**
    * GET /admin/inbox/:id
    *
-   * Get single message by ID (admin view).
+   * Get single message by ID (admin view, includes soft-deleted).
    */
   fastify.get<{
     Params: { id: string };
@@ -134,7 +139,7 @@ export async function adminInboxRoutes(
     console.info(`[Admin] GET /admin/inbox/${id}`);
 
     try {
-      const message = await getInboxMessageById(id);
+      const message = await getInboxMessageByIdAdmin(id);
 
       if (!message) {
         return reply.status(404).send({ error: 'Message not found' });
@@ -284,25 +289,70 @@ export async function adminInboxRoutes(
   /**
    * DELETE /admin/inbox/:id
    *
-   * Delete inbox message.
+   * SOFT delete inbox message (sets deleted_at = now()).
+   * Hard delete is NOT allowed per spec.
    */
   fastify.delete<{
     Params: { id: string };
   }>('/admin/inbox/:id', async (request, reply) => {
     const { id } = request.params;
+    const requestId = request.id;
 
     console.info(`[Admin] DELETE /admin/inbox/${id}`);
 
     try {
-      const deleted = await deleteInboxMessage(id);
+      const deletedMessage = await softDeleteInboxMessage(id);
 
-      if (!deleted) {
-        return reply.status(404).send({ error: 'Message not found' });
+      if (!deletedMessage) {
+        return reply.status(404).send({ error: 'Message not found or already deleted' });
       }
+
+      // Log soft delete action at info level (per spec)
+      console.info(JSON.stringify({
+        action: 'admin_inbox_soft_delete',
+        message_id: id,
+        timestamp: new Date().toISOString(),
+        request_id: requestId,
+      }));
 
       return reply.status(204).send();
     } catch (error) {
-      console.error(`[Admin] Error deleting message ${id}:`, error);
+      console.error(`[Admin] Error soft-deleting message ${id}:`, error);
+      return reply.status(500).send({ error: 'Internal server error' });
+    }
+  });
+
+  /**
+   * POST /admin/inbox/:id/restore
+   *
+   * Restore a soft-deleted inbox message (sets deleted_at = NULL).
+   */
+  fastify.post<{
+    Params: { id: string };
+  }>('/admin/inbox/:id/restore', async (request, reply) => {
+    const { id } = request.params;
+    const requestId = request.id;
+
+    console.info(`[Admin] POST /admin/inbox/${id}/restore`);
+
+    try {
+      const restoredMessage = await restoreInboxMessage(id);
+
+      if (!restoredMessage) {
+        return reply.status(404).send({ error: 'Message not found or not deleted' });
+      }
+
+      // Log restore action at info level
+      console.info(JSON.stringify({
+        action: 'admin_inbox_restore',
+        message_id: id,
+        timestamp: new Date().toISOString(),
+        request_id: requestId,
+      }));
+
+      return reply.status(200).send(toAdminResponse(restoredMessage));
+    } catch (error) {
+      console.error(`[Admin] Error restoring message ${id}:`, error);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });

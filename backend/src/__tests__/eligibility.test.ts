@@ -30,6 +30,7 @@ function createMessage(
     created_at: new Date(),
     updated_at: new Date(),
     created_by: null,
+    deleted_at: null,
     ...overrides,
   };
 }

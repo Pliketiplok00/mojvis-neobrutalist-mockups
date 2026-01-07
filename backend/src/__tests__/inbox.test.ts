@@ -56,6 +56,7 @@ describe('Inbox Routes', () => {
             created_at: new Date('2024-01-15T10:00:00Z'),
             updated_at: new Date('2024-01-15T10:00:00Z'),
             created_by: null,
+            deleted_at: null,
           },
         ],
         total: 1,
@@ -94,6 +95,7 @@ describe('Inbox Routes', () => {
             created_at: new Date(),
             updated_at: new Date(),
             created_by: null,
+            deleted_at: null,
           },
           {
             id: 'municipal',
@@ -107,6 +109,7 @@ describe('Inbox Routes', () => {
             created_at: new Date(),
             updated_at: new Date(),
             created_by: null,
+            deleted_at: null,
           },
         ],
         total: 2,
@@ -145,6 +148,7 @@ describe('Inbox Routes', () => {
             created_at: new Date(),
             updated_at: new Date(),
             created_by: null,
+            deleted_at: null,
           },
         ],
         total: 1,
@@ -184,6 +188,7 @@ describe('Inbox Routes', () => {
             created_at: new Date(),
             updated_at: new Date(),
             created_by: null,
+            deleted_at: null,
           },
         ],
         total: 1,
@@ -219,6 +224,7 @@ describe('Inbox Routes', () => {
             created_at: new Date(),
             updated_at: new Date(),
             created_by: null,
+            deleted_at: null,
           },
         ],
         total: 1,
@@ -255,6 +261,7 @@ describe('Inbox Routes', () => {
         created_at: new Date(),
         updated_at: new Date(),
         created_by: null,
+        deleted_at: null,
       });
 
       const response = await fastify.inject({
@@ -300,6 +307,7 @@ describe('Inbox Routes', () => {
         created_at: new Date(),
         updated_at: new Date(),
         created_by: null,
+        deleted_at: null,
       });
 
       const response = await fastify.inject({
@@ -334,6 +342,7 @@ describe('Inbox Routes', () => {
           created_at: new Date(),
           updated_at: new Date(),
           created_by: null,
+          deleted_at: null,
         },
       ]);
 
