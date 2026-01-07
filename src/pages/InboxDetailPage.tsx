@@ -5,7 +5,7 @@ import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, AlertCircle, MapPin, Clock, MessageSquare } from "lucide-react";
+import { ChevronLeft, AlertCircle, MapPin, Clock, MessageSquare, Calendar } from "lucide-react";
 
 // Mock message detail
 const mockMessage = {
@@ -25,6 +25,8 @@ For urgent matters, please contact the municipal office.`,
   location: "Vis Town Center",
   adminReply: null,
   status: null,
+  activeFrom: "07/01/2026",
+  activeTo: "15/01/2026",
 };
 
 const mockSentMessage = {
@@ -110,6 +112,25 @@ export default function InboxDetailPage() {
           <p className="whitespace-pre-line font-body text-base leading-relaxed">
             {message.content}
           </p>
+
+          {/* Notice Active Period */}
+          {!isSent && "activeFrom" in message && message.activeFrom && (
+            <div className="mt-5 border-4 border-foreground bg-muted p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  Notice Active Period
+                </span>
+              </div>
+              <div className="flex items-center gap-3 font-body text-sm">
+                <span className="font-bold">From:</span>
+                <span>{message.activeFrom}</span>
+                <span className="text-muted-foreground">—</span>
+                <span className="font-bold">To:</span>
+                <span>{message.activeTo}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Photos if present (for sent messages) */}
