@@ -8,15 +8,15 @@ interface MainMenuProps {
 }
 
 const menuItems = [
-  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent", shadowColor: "hsl(var(--accent))" },
-  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
-  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary", shadowColor: "hsl(var(--secondary))" },
-  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender", shadowColor: "hsl(var(--lavender))" },
-  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange", shadowColor: "hsl(var(--orange))" },
-  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-accent", shadowColor: "hsl(var(--accent))" },
-  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal", shadowColor: "hsl(var(--teal))" },
-  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted", shadowColor: "hsl(var(--muted))" },
+  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent" },
+  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary" },
+  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary" },
+  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender" },
+  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange" },
+  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-accent" },
+  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal" },
+  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted" },
 ];
 
 export function MainMenu({ isOpen, onClose }: MainMenuProps) {
@@ -101,8 +101,8 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
                   style={{ 
                     borderWidth: "3px",
                     boxShadow: isActive 
-                      ? `6px 6px 0 0 hsl(var(--foreground))`
-                      : `6px 6px 0 0 ${item.shadowColor}`,
+                      ? `6px 6px 0 0 hsl(var(--destructive))`
+                      : `6px 6px 0 0 hsl(var(--foreground))`,
                   }}
                 >
                   <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground transition-colors ${isActive ? "bg-white/20" : item.color}`}>
