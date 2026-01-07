@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transport Page Template - MojVis</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="mobile-frame">
+    
+    <!-- HEADER WITH BACK -->
+    <header class="app-header">
+      <button class="header-btn" aria-label="Go back">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m12 19-7-7 7-7"></path>
+          <path d="M19 12H5"></path>
+        </svg>
+      </button>
+      <h1 class="header-title">Ferry Schedule</h1>
+      <div class="header-spacer"></div>
+    </header>
+
+    <main class="page-content">
+      
+      <!-- PAGE HERO -->
+      <section class="page-hero page-hero--transport">
+        <div class="hero-icon">
+          <svg class="icon icon--xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+            <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path>
+            <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path>
+            <path d="M12 10v4"></path>
+            <path d="M12 2v3"></path>
+          </svg>
+        </div>
+        <h2 class="hero-title">Ferry Connections</h2>
+        <p class="hero-subtitle">Schedules between Vis and Split</p>
+      </section>
+
+      <!-- DATE SELECTOR -->
+      <section class="date-selector">
+        <button class="date-btn date-btn--prev" aria-label="Previous day">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m15 18-6-6 6-6"></path>
+          </svg>
+        </button>
+        <div class="date-display">
+          <span class="date-day">Today</span>
+          <span class="date-full">Monday, July 7, 2024</span>
+        </div>
+        <button class="date-btn date-btn--next" aria-label="Next day">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="m9 18 6-6-6-6"></path>
+          </svg>
+        </button>
+      </section>
+
+      <!-- DIRECTION TABS -->
+      <div class="direction-tabs">
+        <button class="direction-tab direction-tab--active">
+          <span class="direction-from">Vis</span>
+          <svg class="direction-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+          <span class="direction-to">Split</span>
+        </button>
+        <button class="direction-tab">
+          <span class="direction-from">Split</span>
+          <svg class="direction-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+          <span class="direction-to">Vis</span>
+        </button>
+      </div>
+
+      <!-- SCHEDULE LIST -->
+      <section class="schedule-list">
+        
+        <!-- Next Departure (Highlighted) -->
+        <div class="schedule-card-wrapper">
+          <div class="schedule-card-shadow schedule-card-shadow--primary"></div>
+          <button class="schedule-card schedule-card--next">
+            <div class="schedule-time">
+              <span class="schedule-time-value">09:30</span>
+              <span class="schedule-time-label">Departure</span>
+            </div>
+            <div class="schedule-details">
+              <div class="schedule-route">
+                <span class="schedule-port">Vis</span>
+                <svg class="schedule-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+                <span class="schedule-port">Split</span>
+              </div>
+              <div class="schedule-meta">
+                <span class="schedule-duration">2h 20min</span>
+                <span class="schedule-separator">•</span>
+                <span class="schedule-type">Ferry</span>
+              </div>
+            </div>
+            <div class="schedule-status">
+              <span class="badge badge--primary">Next</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Regular Schedule Card -->
+        <div class="schedule-card-wrapper">
+          <div class="schedule-card-shadow"></div>
+          <button class="schedule-card">
+            <div class="schedule-time">
+              <span class="schedule-time-value">14:00</span>
+              <span class="schedule-time-label">Departure</span>
+            </div>
+            <div class="schedule-details">
+              <div class="schedule-route">
+                <span class="schedule-port">Vis</span>
+                <svg class="schedule-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+                <span class="schedule-port">Split</span>
+              </div>
+              <div class="schedule-meta">
+                <span class="schedule-duration">2h 20min</span>
+                <span class="schedule-separator">•</span>
+                <span class="schedule-type">Ferry</span>
+              </div>
+            </div>
+            <svg class="schedule-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Catamaran Card -->
+        <div class="schedule-card-wrapper">
+          <div class="schedule-card-shadow"></div>
+          <button class="schedule-card">
+            <div class="schedule-time">
+              <span class="schedule-time-value">17:30</span>
+              <span class="schedule-time-label">Departure</span>
+            </div>
+            <div class="schedule-details">
+              <div class="schedule-route">
+                <span class="schedule-port">Vis</span>
+                <svg class="schedule-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+                <span class="schedule-port">Split</span>
+              </div>
+              <div class="schedule-meta">
+                <span class="schedule-duration">1h 15min</span>
+                <span class="schedule-separator">•</span>
+                <span class="schedule-type">Catamaran</span>
+              </div>
+            </div>
+            <svg class="schedule-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Past Departure (Dimmed) -->
+        <div class="schedule-card-wrapper">
+          <div class="schedule-card-shadow"></div>
+          <button class="schedule-card schedule-card--past">
+            <div class="schedule-time">
+              <span class="schedule-time-value">06:00</span>
+              <span class="schedule-time-label">Departed</span>
+            </div>
+            <div class="schedule-details">
+              <div class="schedule-route">
+                <span class="schedule-port">Vis</span>
+                <svg class="schedule-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14"></path>
+                  <path d="m12 5 7 7-7 7"></path>
+                </svg>
+                <span class="schedule-port">Split</span>
+              </div>
+              <div class="schedule-meta">
+                <span class="schedule-duration">2h 20min</span>
+                <span class="schedule-separator">•</span>
+                <span class="schedule-type">Ferry</span>
+              </div>
+            </div>
+            <svg class="schedule-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- INFO NOTICE -->
+      <section class="info-notice">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 16v-4"></path>
+          <path d="M12 8h.01"></path>
+        </svg>
+        <p>Schedules may change during off-season. Check for updates before travel.</p>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>
