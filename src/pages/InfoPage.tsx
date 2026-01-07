@@ -29,7 +29,6 @@ const pageData = {
   },
   emergencyNumbers: [
     { icon: Phone, label: "Police", number: "192", color: "bg-primary", textColor: "text-primary-foreground" },
-    { icon: Ambulance, label: "Ambulance", number: "194", color: "bg-destructive", textColor: "text-destructive-foreground" },
     { icon: Flame, label: "Fire", number: "193", color: "bg-accent", textColor: "text-accent-foreground" },
     { icon: Anchor, label: "Sea Rescue", number: "195", color: "bg-secondary", textColor: "text-secondary-foreground" },
     { icon: AlertCircle, label: "Emergency", number: "112", color: "bg-destructive", textColor: "text-destructive-foreground" },
