@@ -17,7 +17,7 @@ const upcomingEvents = [
 const categoryItems = [
   { icon: Calendar, label: "Events", path: "/events", color: "bg-primary", textColor: "text-primary-foreground" },
   { icon: Bus, label: "Bus", path: "/transport/road", color: "bg-secondary", textColor: "text-secondary-foreground" },
-  { icon: Ship, label: "Ferry", path: "/transport/sea", color: "bg-teal", textColor: "text-primary-foreground" },
+  { icon: Ship, label: "Ferry", path: "/transport/sea", color: "bg-destructive", textColor: "text-destructive-foreground" },
   { icon: Info, label: "Info", path: "/info", color: "bg-accent", textColor: "text-accent-foreground" },
 ];
 
