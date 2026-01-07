@@ -13,8 +13,8 @@ const menuItems = [
   { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary", shadowColor: "hsl(var(--secondary))" },
   { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender", shadowColor: "hsl(var(--lavender))" },
   { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange", shadowColor: "hsl(var(--orange))" },
-  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-secondary", shadowColor: "hsl(var(--secondary))" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
+  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-accent", shadowColor: "hsl(var(--accent))" },
   { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal", shadowColor: "hsl(var(--teal))" },
   { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted", shadowColor: "hsl(var(--muted))" },
 ];
