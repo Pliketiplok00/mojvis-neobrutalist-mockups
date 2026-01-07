@@ -1,4 +1,4 @@
-import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish } from "lucide-react";
+import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish, ArrowRight } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 
@@ -33,99 +33,78 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
   
   return (
     <>
-      {/* Backdrop - striped pattern */}
+      {/* Backdrop */}
       <div 
-        className="fixed inset-0 z-40 bg-foreground/70"
+        className="fixed inset-0 z-40 bg-foreground/60"
         onClick={onClose}
-        style={{
-          backgroundImage: `repeating-linear-gradient(
-            -45deg,
-            transparent,
-            transparent 10px,
-            hsl(var(--foreground) / 0.1) 10px,
-            hsl(var(--foreground) / 0.1) 20px
-          )`
-        }}
       />
       
       {/* Menu Panel */}
-      <nav className="fixed left-0 top-0 z-50 h-full w-[300px] max-w-[88vw] bg-background flex flex-col border-r-4 border-foreground">
+      <nav className="fixed left-0 top-0 z-50 h-full w-[300px] max-w-[88vw] bg-muted/30 flex flex-col border-r-4 border-foreground overflow-hidden">
         
-        {/* Header */}
-        <div className="bg-primary border-b-4 border-foreground p-4">
+        {/* Header - matches homepage greeting block style */}
+        <div className="border-b-4 border-foreground bg-primary p-5">
           <div className="flex items-center justify-between">
-            <div className="border-2 border-foreground bg-background px-4 py-2">
-              <h2 className="font-display text-xl font-black uppercase tracking-tight text-foreground">
+            <div>
+              <h2 className="font-display text-2xl font-bold uppercase leading-tight text-primary-foreground tracking-tight">
                 Moj Vis
               </h2>
+              <p className="mt-1 font-body text-xs text-primary-foreground/80">
+                Izbornik
+              </p>
             </div>
-            <button
-              onClick={onClose}
-              className="flex h-11 w-11 items-center justify-center bg-foreground border-2 border-foreground hover:bg-destructive transition-colors active:scale-95"
-              aria-label="Close menu"
-            >
-              <X className="h-5 w-5 text-background" strokeWidth={2.5} />
-            </button>
+            <div className="relative">
+              <div className="absolute inset-0 translate-x-1 translate-y-1 bg-foreground" />
+              <button
+                onClick={onClose}
+                className="relative flex h-10 w-10 items-center justify-center border-2 border-foreground bg-background transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-0.5 active:translate-y-0.5"
+                aria-label="Close menu"
+              >
+                <X className="h-5 w-5" strokeWidth={2} />
+              </button>
+            </div>
           </div>
         </div>
         
-        {/* Menu Items */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-2 pb-20">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path || 
-              location.pathname.startsWith(item.path + "/") ||
-              (item.path === "/home" && location.pathname === "/");
-            
-            return (
-              <div key={item.path} className="relative">
-                {/* Shadow layer */}
-                <div className={`absolute inset-0 translate-x-1.5 translate-y-1.5 ${isActive ? "bg-foreground" : "bg-foreground"}`} />
-                
-                <button
-                  onClick={() => handleNavigation(item.path)}
-                  className={`relative flex w-full items-center gap-3 border-2 border-foreground p-3 text-left transition-transform ${
-                    isActive 
-                      ? "bg-foreground text-background translate-x-[-1px] translate-y-[-1px]" 
-                      : "bg-background hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1"
-                  }`}
-                >
-                  {/* Icon box */}
-                  <div className={`flex h-10 w-10 items-center justify-center border-2 ${
-                    isActive 
-                      ? "border-background bg-background/10" 
-                      : `border-foreground ${item.color}`
-                  }`}>
-                    <item.icon 
-                      className={`h-5 w-5 ${isActive ? "text-background" : "text-foreground"}`} 
-                      strokeWidth={2} 
-                    />
-                  </div>
-                  
-                  {/* Label */}
-                  <span className="flex-1 font-display text-sm font-bold uppercase tracking-wide">
-                    {t(item.labelKey as any)}
-                  </span>
-                  
-                  {/* Active indicator */}
-                  {isActive && (
-                    <div className="h-5 w-1.5 bg-accent" />
-                  )}
-                </button>
-              </div>
-            );
-          })}
+        {/* Menu Items - matches homepage list style */}
+        <div className="flex-1 overflow-y-auto p-4 bg-background border-b-4 border-foreground">
+          <h3 className="mb-3 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            Navigacija
+          </h3>
+          <div className="flex flex-col gap-2">
+            {menuItems.map((item) => {
+              const isActive = location.pathname === item.path || 
+                location.pathname.startsWith(item.path + "/") ||
+                (item.path === "/home" && location.pathname === "/");
+              
+              return (
+                <div key={item.path} className="relative">
+                  <div className={`absolute inset-0 translate-x-1.5 translate-y-1.5 ${isActive ? 'bg-primary' : 'bg-foreground/20'}`} />
+                  <button
+                    onClick={() => handleNavigation(item.path)}
+                    className={`relative flex w-full items-center gap-3 border-2 border-foreground p-3 text-left transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1 ${
+                      isActive ? "bg-accent" : "bg-background"
+                    }`}
+                  >
+                    <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground ${item.color} shrink-0`}>
+                      <item.icon className="h-5 w-5 text-foreground" strokeWidth={2} />
+                    </div>
+                    <span className="flex-1 font-display text-sm font-bold uppercase tracking-tight">
+                      {t(item.labelKey as any)}
+                    </span>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" strokeWidth={2} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
         
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 border-t-4 border-foreground bg-foreground px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="h-2.5 w-2.5 bg-accent" />
-            <div className="h-2.5 w-2.5 bg-primary" />
-            <div className="h-2.5 w-2.5 bg-teal" />
-            <span className="ml-auto font-body text-[10px] text-background/60 uppercase tracking-widest">
-              v3.0
-            </span>
-          </div>
+        {/* Footer - simple info */}
+        <div className="p-4 bg-muted/30">
+          <p className="font-body text-xs text-muted-foreground text-center">
+            Općina Vis • v3.0
+          </p>
         </div>
       </nav>
     </>
