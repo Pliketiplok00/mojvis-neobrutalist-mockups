@@ -201,7 +201,7 @@ export async function adminInboxRoutes(
         tags: tags,
         active_from: body.active_from ? new Date(body.active_from) : null,
         active_to: body.active_to ? new Date(body.active_to) : null,
-        created_by: null, // TODO: Get from authenticated user
+        created_by: null, // TODO: Get from device ID context
       });
 
       return reply.status(201).send(toAdminResponse(message));

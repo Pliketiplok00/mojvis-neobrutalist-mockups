@@ -16,7 +16,10 @@ const API_BASE_URL = import.meta.env.DEV
   : 'https://api.mojvis.hr';
 
 /**
- * Make authenticated API request
+ * Make API request to admin endpoints
+ *
+ * NOTE: Admin panel will have supervisor login in future phases.
+ * Currently no authentication is implemented.
  */
 async function apiRequest<T>(
   endpoint: string,
@@ -24,7 +27,7 @@ async function apiRequest<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  // TODO: Add auth token from auth context
+  // TODO: Add supervisor session token when implemented
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     // 'Authorization': `Bearer ${getToken()}`,

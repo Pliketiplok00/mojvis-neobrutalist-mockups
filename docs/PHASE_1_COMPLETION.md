@@ -205,7 +205,7 @@ Phase 1 explicitly excludes:
 - Push notifications
 - Search/filter in Inbox
 - Backend unread sync
-- Authentication (TODO markers in place)
+- User accounts or login (anonymous device ID only)
 
 ---
 
@@ -259,11 +259,14 @@ admin/src/App.tsx (added routes)
 
 ## Next Steps (Phase 2+)
 
-1. Authentication implementation (device ID validation)
+1. Anonymous device identification / device ID validation
 2. Events module
 3. Static content pages (CMS)
 4. Transport schedules integration
 5. Push notifications setup
+
+**NOTE**: There is NO login, NO auth system, and NO user accounts.
+Only anonymous device ID for tracking preferences.
 
 ---
 
