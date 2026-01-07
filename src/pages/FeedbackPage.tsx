@@ -6,6 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RateLimitWarning } from "@/components/ui/states";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { useI18n } from "@/lib/i18n";
 import { Lightbulb, MessageSquare, ThumbsDown, ThumbsUp, Send, Check, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -18,16 +21,19 @@ const feedbackTypes = [
 
 export default function FeedbackPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const rateLimit = useRateLimit("feedback");
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const isValid = selectedType && subject.trim() && message.trim();
+  const isValid = selectedType && subject.trim() && message.trim() && rateLimit.canSubmit;
 
   const handleSubmit = () => {
     if (!isValid) return;
+    rateLimit.recordSubmission();
     setIsSubmitted(true);
   };
 
@@ -38,9 +44,9 @@ export default function FeedbackPage() {
           <div className="w-24 h-24 bg-secondary neo-border-heavy neo-shadow-lg flex items-center justify-center mb-8">
             <Check size={48} strokeWidth={3} className="text-secondary-foreground" />
           </div>
-          <h1 className="font-display font-bold text-3xl text-center mb-4">PORUKA POSLANA</h1>
+          <h1 className="font-display font-bold text-3xl text-center mb-4">{t("messageSent").toUpperCase()}</h1>
           <p className="font-body text-muted-foreground text-center mb-8">
-            Tvoja povratna informacija je zaprimljena. Status možeš pratiti u Inboxu.
+            {t("messageSentDesc")}
           </p>
           <Button 
             size="lg"
@@ -48,7 +54,7 @@ export default function FeedbackPage() {
             onClick={() => navigate("/home")}
           >
             <Home size={24} strokeWidth={2.5} className="mr-3" />
-            POVRATAK NA POČETNU
+            {t("returnHome").toUpperCase()}
           </Button>
         </div>
       </MobileFrame>
@@ -150,10 +156,8 @@ export default function FeedbackPage() {
             </Button>
           </div>
 
-          {/* Rate limit note */}
-          <p className="font-body text-xs text-muted-foreground text-center border-t-2 border-foreground pt-4">
-            Možeš poslati najviše 3 poruke dnevno.
-          </p>
+          {/* Rate limit indicator */}
+          <RateLimitWarning remaining={rateLimit.remaining} max={rateLimit.max} />
         </div>
       </main>
     </MobileFrame>

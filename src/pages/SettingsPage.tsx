@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { MainMenu } from "@/components/layout/MainMenu";
@@ -6,15 +6,14 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Globe, User, Building2, Check, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useI18n, Locale } from "@/lib/i18n";
 
 export default function SettingsPage() {
   const navigate = useNavigate();
+  const { locale, setLocale, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   
   // Load saved preferences
-  const [language, setLanguage] = useState<string>(
-    localStorage.getItem("app_language") || "hr"
-  );
   const [userMode, setUserMode] = useState<string>(
     localStorage.getItem("user_mode") || "visitor"
   );
@@ -22,9 +21,8 @@ export default function SettingsPage() {
     localStorage.getItem("municipality") || ""
   );
 
-  const handleLanguageChange = (lang: string) => {
-    setLanguage(lang);
-    localStorage.setItem("app_language", lang);
+  const handleLanguageChange = (lang: Locale) => {
+    setLocale(lang);
   };
 
   const handleUserModeChange = (mode: string) => {
@@ -43,7 +41,7 @@ export default function SettingsPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="Postavke" onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader title={t("settings")} onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">
@@ -54,8 +52,10 @@ export default function SettingsPage() {
               <Globe size={20} strokeWidth={2.5} className="text-primary-foreground" />
             </div>
             <div>
-              <h3 className="font-display font-bold uppercase">Jezik / Language</h3>
-              <p className="font-body text-xs text-muted-foreground">Odaberi jezik aplikacije</p>
+              <h3 className="font-display font-bold uppercase">{t("language")}</h3>
+              <p className="font-body text-xs text-muted-foreground">
+                {locale === "hr" ? "Odaberi jezik aplikacije" : "Select app language"}
+              </p>
             </div>
           </div>
           
@@ -63,24 +63,24 @@ export default function SettingsPage() {
             <button
               onClick={() => handleLanguageChange("hr")}
               className={`neo-border-heavy p-3 flex items-center justify-center gap-2 transition-all ${
-                language === "hr" 
+                locale === "hr" 
                   ? "bg-primary text-primary-foreground" 
                   : "bg-card hover:bg-muted"
               }`}
             >
-              <span className="font-display font-bold text-sm">HRVATSKI</span>
-              {language === "hr" && <Check size={16} strokeWidth={3} />}
+              <span className="font-display font-bold text-sm">{t("croatian").toUpperCase()}</span>
+              {locale === "hr" && <Check size={16} strokeWidth={3} />}
             </button>
             <button
               onClick={() => handleLanguageChange("en")}
               className={`neo-border-heavy p-3 flex items-center justify-center gap-2 transition-all ${
-                language === "en" 
+                locale === "en" 
                   ? "bg-primary text-primary-foreground" 
                   : "bg-card hover:bg-muted"
               }`}
             >
-              <span className="font-display font-bold text-sm">ENGLISH</span>
-              {language === "en" && <Check size={16} strokeWidth={3} />}
+              <span className="font-display font-bold text-sm">{t("english").toUpperCase()}</span>
+              {locale === "en" && <Check size={16} strokeWidth={3} />}
             </button>
           </div>
         </Card>

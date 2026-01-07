@@ -3,7 +3,9 @@ import { AppHeader } from "@/components/layout/AppHeader";
 import { MainMenu } from "@/components/layout/MainMenu";
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/states";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "@/lib/i18n";
 import { Bell, Send, AlertCircle, MessageSquare, Calendar, AlertTriangle, ArrowRight } from "lucide-react";
 
 type TabType = "received" | "sent";
@@ -108,10 +110,13 @@ export default function InboxPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("received");
   const navigate = useNavigate();
+  const { t } = useI18n();
+
+  const currentMessages = activeTab === "received" ? receivedMessages : sentMessages;
 
   return (
     <MobileFrame>
-      <AppHeader title="Inbox" onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader title={t("inbox")} onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col">
@@ -127,7 +132,7 @@ export default function InboxPage() {
             style={{ borderRightWidth: "3px" }}
           >
             <Bell className="h-5 w-5" strokeWidth={2.5} />
-            Received
+            {t("received")}
           </button>
           <button
             onClick={() => setActiveTab("sent")}
@@ -138,12 +143,19 @@ export default function InboxPage() {
             }`}
           >
             <Send className="h-5 w-5" strokeWidth={2.5} />
-            Sent
+            {t("sent")}
           </button>
         </div>
 
-        {/* Messages List */}
-        <div className="flex flex-col">
+        {/* Messages List or Empty State */}
+        {currentMessages.length === 0 ? (
+          <EmptyState 
+            variant="inbox"
+            title={t("noMessages")}
+            message={t("noMessagesDesc")}
+          />
+        ) : (
+          <div className="flex flex-col">
           {activeTab === "received" ? (
             receivedMessages.map((msg, index) => {
               const Icon = typeIcons[msg.type] || AlertCircle;
@@ -212,9 +224,8 @@ export default function InboxPage() {
               );
             })
           )}
-        </div>
-
-        {/* Empty state would go here */}
+          </div>
+        )}
       </main>
     </MobileFrame>
   );
