@@ -2,11 +2,10 @@ import { useState } from "react";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { MainMenu } from "@/components/layout/MainMenu";
 import { MobileFrame } from "@/components/layout/MobileFrame";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Calendar, Bus, Ship, MessageSquare, AlertTriangle, Leaf, Fish, Info, AlertCircle, ArrowRight } from "lucide-react";
+import { Calendar, Bus, Ship, MessageSquare, Info, AlertCircle, ArrowRight } from "lucide-react";
 
 // Mock data
 const upcomingEvents = [
@@ -32,63 +31,55 @@ export default function HomePage() {
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col bg-muted/30">
-        {/* Active Notification Banner - Harsh alert with offset shadow */}
-        <div className="relative border-b-4 border-foreground">
-          <div className="absolute inset-0 translate-x-1 translate-y-1 bg-destructive" />
-          <button 
-            onClick={() => navigate("/inbox/1")}
-            className="relative flex items-center gap-3 border-b-4 border-foreground bg-accent p-4 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px]"
-          >
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center border-4 border-foreground bg-destructive rotate-3">
-              <AlertCircle className="h-6 w-6 text-destructive-foreground" strokeWidth={3} />
-            </div>
-            <div className="flex-1">
-              <p className="font-display text-sm font-bold uppercase tracking-tight">Road Works Notice</p>
-              <p className="font-body text-xs">Main road closed until 18:00 today</p>
-            </div>
-            <Badge variant="destructive" className="uppercase border-2 border-foreground font-display">New</Badge>
-          </button>
-        </div>
+        {/* Active Notification Banner */}
+        <button 
+          onClick={() => navigate("/inbox/1")}
+          className="flex items-center gap-3 border-b-4 border-foreground bg-accent p-4 text-left transition-colors hover:bg-accent/90"
+        >
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-foreground bg-destructive">
+            <AlertCircle className="h-5 w-5 text-destructive-foreground" strokeWidth={2.5} />
+          </div>
+          <div className="flex-1">
+            <p className="font-display text-sm font-bold uppercase tracking-tight">Road Works Notice</p>
+            <p className="font-body text-xs text-foreground/70">Main road closed until 18:00 today</p>
+          </div>
+          <Badge variant="destructive" className="uppercase border-2 border-foreground font-display text-xs">New</Badge>
+        </button>
 
-        {/* Greeting Block - Giant brutalist hero with diagonal accent */}
-        <section className="relative border-b-4 border-foreground bg-primary p-6 overflow-hidden">
-          <div className="absolute -right-8 -top-8 h-32 w-32 rotate-12 bg-accent border-4 border-foreground" />
-          <div className="absolute -right-4 bottom-0 h-16 w-16 bg-secondary border-4 border-foreground" />
-          <h2 className="relative font-display text-4xl font-bold uppercase leading-none text-primary-foreground tracking-tight">
-            Welcome<br />to Vis!
+        {/* Greeting Block */}
+        <section className="border-b-4 border-foreground bg-primary p-6">
+          <h2 className="font-display text-3xl font-bold uppercase leading-tight text-primary-foreground tracking-tight">
+            Welcome to Vis!
           </h2>
-          <p className="relative mt-4 font-body text-xs text-primary-foreground/90 uppercase tracking-widest">
-            Your island guide • Events • Transport • Services
+          <p className="mt-2 font-body text-sm text-primary-foreground/80">
+            Your island guide for events, transport & services
           </p>
         </section>
 
-        {/* Category Grid - Larger 2x2 blocks with permanent shadows */}
+        {/* Category Grid */}
         <section className="border-b-4 border-foreground bg-background p-5">
-          <h3 className="mb-5 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground border-b-2 border-foreground pb-2">
+          <h3 className="mb-4 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
             Quick Access
           </h3>
-          <div className="grid grid-cols-2 gap-4">
-            {categoryItems.map((item, index) => (
+          <div className="grid grid-cols-2 gap-3">
+            {categoryItems.map((item) => (
               <div key={item.path} className="relative">
-                {/* Shadow block */}
-                <div className={`absolute inset-0 translate-x-2 translate-y-2 border-4 border-foreground ${index % 2 === 0 ? 'bg-foreground' : 'bg-foreground'}`} />
+                <div className="absolute inset-0 translate-x-1.5 translate-y-1.5 bg-foreground" />
                 <button
                   onClick={() => navigate(item.path)}
-                  className={`relative flex flex-col items-center justify-center gap-3 border-4 border-foreground ${item.color} ${item.textColor} p-6 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1`}
+                  className={`relative flex flex-col items-center justify-center gap-2 border-2 border-foreground ${item.color} ${item.textColor} p-5 transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1 w-full`}
                 >
-                  <div className="p-2 border-3 border-current bg-background/20" style={{ borderWidth: "3px" }}>
-                    <item.icon className="h-8 w-8" strokeWidth={2.5} />
-                  </div>
-                  <span className="font-display text-sm font-bold uppercase tracking-wide">{item.label}</span>
+                  <item.icon className="h-7 w-7" strokeWidth={2} />
+                  <span className="font-display text-sm font-bold uppercase">{item.label}</span>
                 </button>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Upcoming Events - Stacked cards with offset shadows */}
+        {/* Upcoming Events */}
         <section className="p-5 bg-background border-b-4 border-foreground">
-          <div className="mb-5 flex items-center justify-between border-b-2 border-foreground pb-2">
+          <div className="mb-4 flex items-center justify-between">
             <h3 className="font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Upcoming Events
             </h3>
@@ -96,60 +87,55 @@ export default function HomePage() {
               variant="ghost" 
               size="sm" 
               onClick={() => navigate("/events")} 
-              className="uppercase text-xs font-display font-bold border-2 border-foreground hover:bg-accent"
+              className="uppercase text-xs font-display font-bold hover:bg-muted px-2 h-8"
             >
               View all
-              <ArrowRight className="ml-1 h-3 w-3" strokeWidth={3} />
+              <ArrowRight className="ml-1 h-3 w-3" />
             </Button>
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {upcomingEvents.map((event, index) => (
               <div key={event.id} className="relative">
-                {/* Shadow block */}
-                <div className={`absolute inset-0 translate-x-2 translate-y-2 ${index === 0 ? 'bg-primary' : 'bg-foreground'}`} />
+                <div className={`absolute inset-0 translate-x-1.5 translate-y-1.5 ${index === 0 ? 'bg-primary' : 'bg-foreground/20'}`} />
                 <button
                   onClick={() => navigate(`/events/${event.id}`)}
-                  className={`relative flex items-center gap-4 border-4 border-foreground p-4 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1 ${
+                  className={`relative flex items-center gap-3 border-2 border-foreground p-3 text-left transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1 w-full ${
                     index === 0 ? "bg-accent" : "bg-background"
                   }`}
                 >
-                  {/* Date block with rotation */}
-                  <div className={`flex h-16 w-16 flex-col items-center justify-center border-4 border-foreground bg-primary text-primary-foreground ${index === 0 ? '-rotate-3' : ''}`}>
-                    <span className="font-display text-2xl font-bold leading-none">{event.date.split("/")[0]}</span>
-                    <span className="font-body text-[10px] uppercase tracking-wider">{event.date.split("/")[1]}</span>
+                  <div className="flex h-12 w-12 flex-col items-center justify-center border-2 border-foreground bg-primary text-primary-foreground shrink-0">
+                    <span className="font-display text-lg font-bold leading-none">{event.date.split("/")[0]}</span>
+                    <span className="font-body text-[10px] uppercase">{event.date.split("/")[1]}</span>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-display text-base font-bold uppercase tracking-tight">{event.title}</h4>
-                    <p className="font-body text-xs text-muted-foreground mt-1">{event.location}</p>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-display text-sm font-bold uppercase tracking-tight truncate">{event.title}</h4>
+                    <p className="font-body text-xs text-muted-foreground">{event.location}</p>
                   </div>
-                  <div className="font-display text-lg font-bold border-2 border-foreground px-2 py-1 bg-muted">{event.time}</div>
+                  <span className="font-display text-sm font-bold text-muted-foreground shrink-0">{event.time}</span>
                 </button>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Feedback Entry - Bold CTA with large shadow */}
+        {/* Feedback Entry */}
         <section className="p-5 pb-8 bg-muted/30">
           <div className="relative">
-            {/* Large offset shadow */}
-            <div className="absolute inset-0 translate-x-3 translate-y-3 bg-foreground" />
+            <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
             <button
               onClick={() => navigate("/feedback")}
-              className="relative flex w-full items-center gap-4 border-4 border-foreground bg-secondary p-5 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1"
+              className="relative flex w-full items-center gap-4 border-2 border-foreground bg-secondary p-4 text-left transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1"
             >
-              <div className="flex h-16 w-16 items-center justify-center border-4 border-foreground bg-background rotate-6">
-                <MessageSquare className="h-8 w-8" strokeWidth={2.5} />
+              <div className="flex h-12 w-12 items-center justify-center border-2 border-foreground bg-background shrink-0">
+                <MessageSquare className="h-6 w-6" strokeWidth={2} />
               </div>
               <div className="flex-1">
-                <h4 className="font-display text-xl font-bold uppercase tracking-tight">Share Your Thoughts</h4>
-                <p className="font-body text-xs text-secondary-foreground/80 uppercase tracking-widest mt-1">
-                  Ideas • Suggestions • Feedback
+                <h4 className="font-display text-base font-bold uppercase tracking-tight">Share Your Thoughts</h4>
+                <p className="font-body text-xs text-secondary-foreground/70">
+                  Ideas, suggestions & feedback
                 </p>
               </div>
-              <div className="h-10 w-10 flex items-center justify-center border-3 border-foreground bg-accent" style={{ borderWidth: "3px" }}>
-                <ArrowRight className="h-5 w-5" strokeWidth={3} />
-              </div>
+              <ArrowRight className="h-5 w-5 shrink-0" />
             </button>
           </div>
         </section>
