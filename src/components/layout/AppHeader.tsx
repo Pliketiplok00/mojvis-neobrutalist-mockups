@@ -1,16 +1,15 @@
-import { Menu, Inbox, ChevronLeft } from "lucide-react";
+import { Menu, Inbox } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ReactNode } from "react";
 
 interface AppHeaderProps {
   title?: string;
-  showBack?: boolean;
   hideInbox?: boolean;
   onMenuClick?: () => void;
   rightAction?: ReactNode;
 }
 
-export function AppHeader({ title = "MOJ VIS", showBack = false, hideInbox = false, onMenuClick, rightAction }: AppHeaderProps) {
+export function AppHeader({ title = "MOJ VIS", hideInbox = false, onMenuClick, rightAction }: AppHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -21,18 +20,14 @@ export function AppHeader({ title = "MOJ VIS", showBack = false, hideInbox = fal
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
       <div className="flex h-16 items-center justify-between px-4">
-        {/* Left: Menu or Back */}
+        {/* Left: Menu (always hamburger) */}
         <button
-          onClick={showBack ? () => navigate(-1) : onMenuClick}
+          onClick={onMenuClick}
           className="flex h-12 w-12 items-center justify-center border-3 border-foreground bg-accent transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           style={{ borderWidth: "3px" }}
-          aria-label={showBack ? "Go back" : "Open menu"}
+          aria-label="Open menu"
         >
-          {showBack ? (
-            <ChevronLeft className="h-6 w-6" strokeWidth={3} />
-          ) : (
-            <Menu className="h-6 w-6" strokeWidth={3} />
-          )}
+          <Menu className="h-6 w-6" strokeWidth={3} />
         </button>
         
         {/* Center: Title - Bold uppercase */}
