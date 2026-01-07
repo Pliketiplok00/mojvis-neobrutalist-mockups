@@ -1,4 +1,4 @@
-import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish, ChevronRight } from "lucide-react";
+import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 
@@ -8,15 +8,15 @@ interface MainMenuProps {
 }
 
 const menuItems = [
-  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent" },
-  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary" },
-  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary" },
-  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender" },
-  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange" },
-  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-accent" },
-  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal" },
-  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted" },
+  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent", size: "large" },
+  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary", size: "medium" },
+  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary", size: "medium" },
+  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender", size: "small" },
+  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange", size: "small" },
+  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary", size: "small" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-accent", size: "small" },
+  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal", size: "medium" },
+  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted", size: "small" },
 ];
 
 export function MainMenu({ isOpen, onClose }: MainMenuProps) {
@@ -33,93 +33,114 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
   
   return (
     <>
-      {/* Backdrop - harsh grid pattern */}
+      {/* Backdrop - dotted pattern */}
       <div 
-        className="fixed inset-0 z-40 bg-foreground/40"
+        className="fixed inset-0 z-40 bg-foreground/60 backdrop-blur-sm"
         onClick={onClose}
         style={{
-          backgroundImage: `repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 20px,
-            hsl(var(--foreground) / 0.05) 20px,
-            hsl(var(--foreground) / 0.05) 21px
-          ),
-          repeating-linear-gradient(
-            90deg,
-            transparent,
-            transparent 20px,
-            hsl(var(--foreground) / 0.05) 20px,
-            hsl(var(--foreground) / 0.05) 21px
-          )`
+          backgroundImage: `radial-gradient(circle, hsl(var(--background)) 2px, transparent 2px)`,
+          backgroundSize: '24px 24px'
         }}
       />
       
-      {/* Menu Panel - Heavy brutalist style */}
+      {/* Menu Panel - Full height with chunky header */}
       <nav 
-        className="fixed left-0 top-0 z-50 h-full w-[320px] max-w-[90vw] border-r-4 border-foreground bg-background overflow-y-auto"
-        style={{
-          boxShadow: "8px 0 0 0 hsl(var(--foreground))"
-        }}
+        className="fixed left-0 top-0 z-50 h-full w-[340px] max-w-[92vw] bg-background overflow-hidden flex flex-col border-r-[6px] border-foreground"
       >
-        {/* Header - Bold block */}
-        <div className="flex items-center justify-between border-b-4 border-foreground bg-primary p-4">
-          <div>
-            <h2 className="font-display text-2xl font-bold uppercase tracking-tight text-primary-foreground">
-              Menu
-            </h2>
-            <p className="font-body text-xs text-primary-foreground/80 uppercase tracking-widest">
-              MOJ VIS
-            </p>
-          </div>
+        {/* Header - Massive brutalist block */}
+        <div className="relative bg-foreground p-6 pb-8">
           <button
             onClick={onClose}
-            className="flex h-12 w-12 items-center justify-center border-3 border-foreground bg-background transition-transform hover:rotate-90 hover:scale-110 active:scale-95"
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center bg-background border-3 border-foreground rotate-3 hover:rotate-12 hover:scale-110 transition-all active:scale-95"
             style={{ borderWidth: "3px" }}
             aria-label="Close menu"
           >
-            <X className="h-6 w-6" strokeWidth={3} />
+            <X className="h-5 w-5" strokeWidth={3} />
           </button>
+          
+          <p className="font-body text-[10px] text-background/60 uppercase tracking-[0.3em] mb-1">
+            Island Guide
+          </p>
+          <h2 className="font-display text-4xl font-black uppercase tracking-tighter text-background leading-none">
+            MOJ
+          </h2>
+          <h2 className="font-display text-5xl font-black uppercase tracking-tighter text-accent leading-none -mt-1">
+            VIS
+          </h2>
         </div>
         
-        {/* Menu Items - Stacked blocks with colorful shadows */}
-        <ul className="p-3 space-y-3 pb-20">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path || 
-              location.pathname.startsWith(item.path + "/") ||
-              (item.path === "/home" && location.pathname === "/");
-            
-            return (
-              <li key={item.path}>
+        {/* Menu Grid - Asymmetric brutalist cards */}
+        <div className="flex-1 overflow-y-auto p-4 pb-24">
+          <div className="grid grid-cols-2 gap-3 auto-rows-min">
+            {menuItems.map((item, index) => {
+              const isActive = location.pathname === item.path || 
+                location.pathname.startsWith(item.path + "/") ||
+                (item.path === "/home" && location.pathname === "/");
+              
+              // Determine grid span based on size
+              const spanClass = item.size === "large" 
+                ? "col-span-2" 
+                : item.size === "medium" 
+                  ? "col-span-1" 
+                  : "col-span-1";
+              
+              // Stagger rotation for visual interest
+              const rotation = index % 3 === 0 ? "rotate-[-1deg]" : index % 3 === 1 ? "rotate-[0.5deg]" : "rotate-0";
+              
+              return (
                 <button
+                  key={item.path}
                   onClick={() => handleNavigation(item.path)}
-                  className={`group flex w-full items-center gap-4 border-3 border-foreground p-4 text-left font-display font-bold uppercase tracking-wide transition-all duration-200 ${
+                  className={`group relative ${spanClass} ${rotation} border-3 border-foreground p-4 text-left transition-all duration-150 hover:translate-x-[-3px] hover:translate-y-[-3px] active:translate-x-[1px] active:translate-y-[1px] ${
                     isActive 
                       ? `${item.color} text-white` 
-                      : "bg-background hover:translate-x-[-4px] hover:translate-y-[-4px]"
-                  } active:translate-x-[2px] active:translate-y-[2px]`}
+                      : "bg-background"
+                  } ${item.size === "large" ? "py-6" : ""}`}
                   style={{ 
                     borderWidth: "3px",
                     boxShadow: isActive 
-                      ? `6px 6px 0 0 hsl(var(--destructive))`
-                      : `6px 6px 0 0 hsl(var(--foreground))`,
+                      ? `4px 4px 0 0 hsl(var(--destructive))`
+                      : `4px 4px 0 0 hsl(var(--foreground))`,
                   }}
                 >
-                  <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground transition-colors ${isActive ? "bg-white/20" : item.color}`}>
-                    <item.icon className={`h-5 w-5 ${isActive ? "text-white" : ""}`} strokeWidth={2.5} />
+                  {/* Icon - positioned differently based on size */}
+                  <div className={`inline-flex items-center justify-center border-2 border-foreground mb-2 ${
+                    item.size === "large" ? "h-12 w-12" : "h-9 w-9"
+                  } ${isActive ? "bg-white/20 border-white/50" : item.color}`}>
+                    <item.icon 
+                      className={`${item.size === "large" ? "h-6 w-6" : "h-4 w-4"} ${isActive ? "text-white" : "text-foreground"}`} 
+                      strokeWidth={2.5} 
+                    />
                   </div>
-                  <span className="flex-1 text-sm">{t(item.labelKey as any)}</span>
-                  <ChevronRight className={`h-5 w-5 transition-transform ${isActive ? "" : "group-hover:translate-x-1"}`} strokeWidth={3} />
+                  
+                  {/* Label */}
+                  <div className={`font-display font-bold uppercase tracking-wide leading-tight ${
+                    item.size === "large" ? "text-base" : "text-xs"
+                  }`}>
+                    {t(item.labelKey as any)}
+                  </div>
+                  
+                  {/* Decorative corner for large items */}
+                  {item.size === "large" && (
+                    <div className="absolute bottom-2 right-2 w-6 h-6 border-r-3 border-b-3 border-foreground opacity-20" 
+                      style={{ borderWidth: "3px" }} 
+                    />
+                  )}
                 </button>
-              </li>
-            );
-          })}
-        </ul>
+              );
+            })}
+          </div>
+        </div>
         
-        {/* Footer - Raw block */}
-        <div className="absolute bottom-0 left-0 right-0 border-t-4 border-foreground bg-foreground p-4">
-          <p className="text-center font-body text-xs font-bold uppercase tracking-widest text-background">
-            Version 3.0 • Island Guide
+        {/* Footer - Chunky bottom bar */}
+        <div className="absolute bottom-0 left-0 right-0 border-t-4 border-foreground bg-muted p-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 bg-primary border border-foreground" />
+            <div className="w-3 h-3 bg-accent border border-foreground" />
+            <div className="w-3 h-3 bg-secondary border border-foreground" />
+          </div>
+          <p className="font-body text-[10px] font-bold uppercase tracking-widest text-foreground/60">
+            v3.0
           </p>
         </div>
       </nav>
