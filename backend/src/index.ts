@@ -4,6 +4,10 @@
  * Main entry point for the Fastify server.
  *
  * Phase 1: Inbox core & banners.
+ * Phase 2: Events & reminders.
+ * Phase 3: Static pages CMS.
+ * Phase 4: Transport timetables (read-only).
+ * Phase 5: Feedback (anonymous, device-based).
  */
 
 import Fastify, { FastifyInstance } from 'fastify';
@@ -13,6 +17,14 @@ import { initDatabase, closeDatabase } from './lib/database.js';
 import { healthRoutes } from './routes/health.js';
 import { inboxRoutes } from './routes/inbox.js';
 import { adminInboxRoutes } from './routes/admin-inbox.js';
+import { eventRoutes } from './routes/events.js';
+import { adminEventRoutes } from './routes/admin-events.js';
+import { adminReminderRoutes } from './routes/admin-reminders.js';
+import { staticPageRoutes } from './routes/static-pages.js';
+import { adminStaticPageRoutes } from './routes/admin-static-pages.js';
+import { roadTransportRoutes, seaTransportRoutes } from './routes/transport.js';
+import { feedbackRoutes } from './routes/feedback.js';
+import { adminFeedbackRoutes } from './routes/admin-feedback.js';
 
 // Create Fastify instance with logging
 const fastify: FastifyInstance = Fastify({
@@ -48,6 +60,31 @@ async function registerPlugins(): Promise<void> {
 
   // Admin routes (Phase 1)
   await fastify.register(adminInboxRoutes);
+
+  // Event routes (Phase 2)
+  await fastify.register(eventRoutes);
+
+  // Admin event routes (Phase 2)
+  await fastify.register(adminEventRoutes);
+
+  // Admin reminder routes (Phase 2)
+  await fastify.register(adminReminderRoutes);
+
+  // Static page routes (Phase 3)
+  await fastify.register(staticPageRoutes);
+
+  // Admin static page routes (Phase 3)
+  await fastify.register(adminStaticPageRoutes);
+
+  // Transport routes (Phase 4) - read-only, no admin routes
+  await fastify.register(roadTransportRoutes);
+  await fastify.register(seaTransportRoutes);
+
+  // Feedback routes (Phase 5)
+  await fastify.register(feedbackRoutes);
+
+  // Admin feedback routes (Phase 5)
+  await fastify.register(adminFeedbackRoutes);
 }
 
 /**
@@ -99,7 +136,15 @@ async function start(): Promise<void> {
     console.info(`[Server] Health: http://${env.HOST}:${env.PORT}/health`);
     console.info(`[Server] Inbox: http://${env.HOST}:${env.PORT}/inbox`);
     console.info(`[Server] Banners: http://${env.HOST}:${env.PORT}/banners/active`);
-    console.info(`[Server] Admin: http://${env.HOST}:${env.PORT}/admin/inbox`);
+    console.info(`[Server] Events: http://${env.HOST}:${env.PORT}/events`);
+    console.info(`[Server] Admin Inbox: http://${env.HOST}:${env.PORT}/admin/inbox`);
+    console.info(`[Server] Admin Events: http://${env.HOST}:${env.PORT}/admin/events`);
+    console.info(`[Server] Pages: http://${env.HOST}:${env.PORT}/pages`);
+    console.info(`[Server] Admin Pages: http://${env.HOST}:${env.PORT}/admin/pages`);
+    console.info(`[Server] Road Transport: http://${env.HOST}:${env.PORT}/transport/road/lines`);
+    console.info(`[Server] Sea Transport: http://${env.HOST}:${env.PORT}/transport/sea/lines`);
+    console.info(`[Server] Feedback: http://${env.HOST}:${env.PORT}/feedback`);
+    console.info(`[Server] Admin Feedback: http://${env.HOST}:${env.PORT}/admin/feedback`);
     console.info('='.repeat(50));
   } catch (error) {
     console.error('[Server] Failed to start:', error);

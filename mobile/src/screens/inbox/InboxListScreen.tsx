@@ -3,7 +3,7 @@
  *
  * Main inbox screen with tabs:
  * - Primljeno (Received): Shows inbox messages
- * - Poslano (Sent): Empty placeholder per Phase 1 spec
+ * - Poslano (Sent): Shows user-submitted feedback (Phase 5)
  *
  * Rules:
  * - Header type is 'inbox' (no inbox icon shown)
@@ -27,8 +27,9 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUnread } from '../../contexts/UnreadContext';
-import { inboxApi } from '../../services/api';
+import { inboxApi, feedbackApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
+import type { SentItemResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
@@ -36,15 +37,26 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 // Tab options
 type TabType = 'received' | 'sent';
 
+// Status colors
+const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
+  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },
+  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },
+  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },
+  odbijeno: { bg: '#FFEBEE', text: '#C62828' },
+};
+
 export function InboxListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { isUnread, markAsRead, registerMessages } = useUnread();
 
   const [activeTab, setActiveTab] = useState<TabType>('received');
   const [messages, setMessages] = useState<InboxMessage[]>([]);
+  const [sentItems, setSentItems] = useState<SentItemResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [sentLoading, setSentLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sentError, setSentError] = useState<string | null>(null);
 
   // TODO: Get from user context
   const userContext = { userMode: 'visitor' as const, municipality: null };
@@ -70,17 +82,55 @@ export function InboxListScreen(): React.JSX.Element {
     }
   }, [registerMessages]);
 
+  const fetchSentItems = useCallback(async (showRefresh = false) => {
+    if (showRefresh) {
+      setRefreshing(true);
+    } else {
+      setSentLoading(true);
+    }
+    setSentError(null);
+
+    try {
+      const response = await feedbackApi.getSentItems();
+      setSentItems(response.items);
+    } catch (err) {
+      console.error('[Inbox] Error fetching sent items:', err);
+      setSentError('Greška pri učitavanju poslanih poruka.');
+    } finally {
+      setSentLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
   useEffect(() => {
     void fetchMessages();
   }, [fetchMessages]);
+
+  useEffect(() => {
+    if (activeTab === 'sent') {
+      void fetchSentItems();
+    }
+  }, [activeTab, fetchSentItems]);
 
   const handleMessagePress = (message: InboxMessage): void => {
     markAsRead(message.id);
     navigation.navigate('InboxDetail', { messageId: message.id });
   };
 
+  const handleSentItemPress = (item: SentItemResponse): void => {
+    navigation.navigate('FeedbackDetail', { feedbackId: item.id });
+  };
+
+  const handleNewFeedback = (): void => {
+    navigation.navigate('FeedbackForm');
+  };
+
   const handleRefresh = (): void => {
-    void fetchMessages(true);
+    if (activeTab === 'received') {
+      void fetchMessages(true);
+    } else {
+      void fetchSentItems(true);
+    }
   };
 
   const renderMessage = ({ item }: { item: InboxMessage }): React.JSX.Element => {
@@ -151,13 +201,58 @@ export function InboxListScreen(): React.JSX.Element {
     </View>
   );
 
-  const renderSentPlaceholder = (): React.JSX.Element => (
+  const renderSentItem = ({ item }: { item: SentItemResponse }): React.JSX.Element => {
+    const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.zaprimljeno;
+
+    return (
+      <TouchableOpacity
+        style={styles.messageItem}
+        onPress={() => handleSentItemPress(item)}
+        accessibilityLabel={item.subject}
+        accessibilityHint="Dodirnite za otvaranje poruke"
+      >
+        <View style={styles.messageContent}>
+          {/* Status badge */}
+          <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
+            <Text style={[styles.statusText, { color: statusColor.text }]}>
+              {item.status_label}
+            </Text>
+          </View>
+
+          {/* Subject */}
+          <Text style={styles.messageTitle} numberOfLines={1}>
+            {item.subject}
+          </Text>
+
+          {/* Date */}
+          <Text style={styles.messageDate}>
+            {formatDate(item.created_at)}
+          </Text>
+        </View>
+
+        {/* Navigation chevron */}
+        <Text style={styles.chevron}>›</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderSentEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyIcon}>📤</Text>
-      <Text style={styles.emptyTitle}>Poslane poruke</Text>
+      <Text style={styles.emptyTitle}>Nema poslanih poruka</Text>
       <Text style={styles.emptySubtitle}>
-        Ovdje će se prikazivati vaše poslane poruke
+        Pošaljite prvu poruku putem gumba ispod
       </Text>
+    </View>
+  );
+
+  const renderSentErrorState = (): React.JSX.Element => (
+    <View style={styles.errorState}>
+      <Text style={styles.errorIcon}>⚠️</Text>
+      <Text style={styles.errorTitle}>{sentError}</Text>
+      <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
+        <Text style={styles.retryText}>Pokušaj ponovo</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -217,7 +312,38 @@ export function InboxListScreen(): React.JSX.Element {
           />
         )
       ) : (
-        renderSentPlaceholder()
+        <View style={styles.sentContainer}>
+          {sentLoading ? (
+            <View style={styles.loadingState}>
+              <ActivityIndicator size="large" color="#000000" />
+              <Text style={styles.loadingText}>Učitavanje...</Text>
+            </View>
+          ) : sentError ? (
+            renderSentErrorState()
+          ) : (
+            <FlatList
+              data={sentItems}
+              keyExtractor={(item) => item.id}
+              renderItem={renderSentItem}
+              ListEmptyComponent={renderSentEmptyState}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+              }
+              contentContainerStyle={sentItems.length === 0 ? styles.listEmpty : undefined}
+            />
+          )}
+
+          {/* New Feedback Button */}
+          <View style={styles.newFeedbackContainer}>
+            <TouchableOpacity
+              style={styles.newFeedbackButton}
+              onPress={handleNewFeedback}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.newFeedbackButtonText}>Nova poruka</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       )}
     </SafeAreaView>
   );
@@ -377,6 +503,38 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#CCCCCC',
     marginLeft: 8,
+  },
+  sentContainer: {
+    flex: 1,
+  },
+  statusBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  newFeedbackContainer: {
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    backgroundColor: '#FFFFFF',
+  },
+  newFeedbackButton: {
+    backgroundColor: '#000000',
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+  },
+  newFeedbackButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });
 

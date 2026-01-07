@@ -18,9 +18,10 @@ interface DashboardLayoutProps {
 }
 
 const navItems = [
-  { path: '/dashboard', label: 'Nadzorna ploča', icon: '📊' },
+  { path: '/dashboard', label: 'Nadzorna ploca', icon: '📊' },
   { path: '/messages', label: 'Poruke', icon: '✉️' },
-  { path: '/events', label: 'Događaji', icon: '📅' },
+  { path: '/feedback', label: 'Povratne inf.', icon: '💬' },
+  { path: '/events', label: 'Dogadaji', icon: '📅' },
   { path: '/pages', label: 'Stranice', icon: '📄' },
   { path: '/transport', label: 'Promet', icon: '🚌' },
 ];

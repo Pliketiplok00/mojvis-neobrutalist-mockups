@@ -3,6 +3,9 @@
  *
  * Type definitions for React Navigation stacks.
  * Phase 1: Added Inbox screens.
+ * Phase 2: Added Events screens.
+ * Phase 4: Added Transport screens (hub, road, sea, line detail).
+ * Phase 5: Added Feedback screens.
  */
 
 /**
@@ -22,11 +25,20 @@ export type OnboardingStackParamList = {
 export type MainStackParamList = {
   Home: undefined;
   Events: undefined;
-  Transport: undefined;
+  EventDetail: { eventId: string };
+  // Transport (Phase 4)
+  TransportHub: undefined;
   RoadTransport: undefined;
+  RoadLineDetail: { lineId: string };
   SeaTransport: undefined;
+  SeaLineDetail: { lineId: string };
+  // Inbox
   Inbox: undefined;
   InboxDetail: { messageId: string };
+  // Feedback (Phase 5)
+  FeedbackForm: undefined;
+  FeedbackConfirmation: { feedbackId: string };
+  FeedbackDetail: { feedbackId: string };
   Settings: undefined;
   // Static content pages accessed by slug
   StaticPage: { slug: string };

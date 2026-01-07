@@ -9,6 +9,10 @@
  *   - Main Stack (after onboarding)
  *
  * Phase 1: Added Inbox screens.
+ * Phase 2: Added Events screens.
+ * Phase 3: Added Static Pages screen.
+ * Phase 4: Added Transport screens (hub, road, sea, line detail).
+ * Phase 5: Added Feedback screens.
  */
 
 import React from 'react';
@@ -25,8 +29,17 @@ import { MunicipalitySelectionScreen } from '../screens/onboarding/MunicipalityS
 import { HomeScreen } from '../screens/home/HomeScreen';
 import { InboxListScreen } from '../screens/inbox/InboxListScreen';
 import { InboxDetailScreen } from '../screens/inbox/InboxDetailScreen';
+import { TransportHubScreen } from '../screens/transport/TransportHubScreen';
 import { RoadTransportScreen } from '../screens/transport/RoadTransportScreen';
+import { RoadLineDetailScreen } from '../screens/transport/RoadLineDetailScreen';
 import { SeaTransportScreen } from '../screens/transport/SeaTransportScreen';
+import { SeaLineDetailScreen } from '../screens/transport/SeaLineDetailScreen';
+import { EventsScreen } from '../screens/events/EventsScreen';
+import { EventDetailScreen } from '../screens/events/EventDetailScreen';
+import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
+import { FeedbackFormScreen } from '../screens/feedback/FeedbackFormScreen';
+import { FeedbackConfirmationScreen } from '../screens/feedback/FeedbackConfirmationScreen';
+import { FeedbackDetailScreen } from '../screens/feedback/FeedbackDetailScreen';
 
 // Create navigators
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -74,12 +87,19 @@ function MainNavigator(): React.JSX.Element {
       }}
     >
       <MainStack.Screen name="Home" component={HomeScreen} />
+      <MainStack.Screen name="Events" component={EventsScreen} />
+      <MainStack.Screen name="EventDetail" component={EventDetailScreen} />
       <MainStack.Screen name="Inbox" component={InboxListScreen} />
       <MainStack.Screen name="InboxDetail" component={InboxDetailScreen} />
+      <MainStack.Screen name="TransportHub" component={TransportHubScreen} />
       <MainStack.Screen name="RoadTransport" component={RoadTransportScreen} />
+      <MainStack.Screen name="RoadLineDetail" component={RoadLineDetailScreen} />
       <MainStack.Screen name="SeaTransport" component={SeaTransportScreen} />
-      {/* TODO: Add more screens in later phases */}
-      {/* <MainStack.Screen name="Events" component={EventsScreen} /> */}
+      <MainStack.Screen name="SeaLineDetail" component={SeaLineDetailScreen} />
+      <MainStack.Screen name="FeedbackForm" component={FeedbackFormScreen} />
+      <MainStack.Screen name="FeedbackConfirmation" component={FeedbackConfirmationScreen} />
+      <MainStack.Screen name="FeedbackDetail" component={FeedbackDetailScreen} />
+      <MainStack.Screen name="StaticPage" component={StaticPageScreen} />
     </MainStack.Navigator>
   );
 }

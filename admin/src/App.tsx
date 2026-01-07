@@ -4,6 +4,9 @@
  * Root component with routing.
  *
  * Phase 1: Added Inbox CRUD routes.
+ * Phase 2: Added Events CRUD routes.
+ * Phase 3: Added Static Pages CMS routes.
+ * Phase 5: Added Feedback routes.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -11,6 +14,12 @@ import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { InboxListPage } from './pages/inbox/InboxListPage';
 import { InboxEditPage } from './pages/inbox/InboxEditPage';
+import { EventsListPage } from './pages/events/EventsListPage';
+import { EventEditPage } from './pages/events/EventEditPage';
+import { PagesListPage } from './pages/pages/PagesListPage';
+import { PageEditPage } from './pages/pages/PageEditPage';
+import { FeedbackListPage } from './pages/feedback/FeedbackListPage';
+import { FeedbackDetailPage } from './pages/feedback/FeedbackDetailPage';
 
 function App() {
   return (
@@ -24,8 +33,14 @@ function App() {
         <Route path="/messages" element={<InboxListPage />} />
         <Route path="/messages/new" element={<InboxEditPage />} />
         <Route path="/messages/:id" element={<InboxEditPage />} />
-        <Route path="/events" element={<PlaceholderPage title="Događaji" />} />
-        <Route path="/pages" element={<PlaceholderPage title="Statične stranice" />} />
+        <Route path="/events" element={<EventsListPage />} />
+        <Route path="/events/new" element={<EventEditPage />} />
+        <Route path="/events/:id" element={<EventEditPage />} />
+        <Route path="/pages" element={<PagesListPage />} />
+        <Route path="/pages/new" element={<PageEditPage />} />
+        <Route path="/pages/:id" element={<PageEditPage />} />
+        <Route path="/feedback" element={<FeedbackListPage />} />
+        <Route path="/feedback/:id" element={<FeedbackDetailPage />} />
         <Route path="/transport" element={<PlaceholderPage title="Promet" />} />
 
         {/* Default redirect */}
