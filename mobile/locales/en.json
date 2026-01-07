@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "MOJ VIS"
+  },
+  "onboarding": {
+    "languageSelection": {
+      "title": "Welcome",
+      "subtitle": "Select language"
+    },
+    "userMode": {
+      "title": "How do you use the app?",
+      "visitor": "Visitor",
+      "visitorDescription": "Visiting the island as a tourist",
+      "local": "Local",
+      "localDescription": "I live or work on the island",
+      "hint": "You can change this later in settings."
+    },
+    "municipality": {
+      "title": "Select your municipality",
+      "hint": "This determines which municipal notifications you receive."
+    }
+  },
+  "home": {
+    "greeting": "Welcome to Vis!",
+    "subtitle": "Your guide to life and visiting the island",
+    "categories": "Categories",
+    "upcomingEvents": "Upcoming Events",
+    "feedback": {
+      "title": "Have a suggestion?",
+      "subtitle": "Send us your feedback"
+    }
+  },
+  "navigation": {
+    "back": "Back",
+    "menu": "Menu",
+    "inbox": "Inbox"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "empty": "No data"
+  }
+}

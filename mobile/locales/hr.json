@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "MOJ VIS"
+  },
+  "onboarding": {
+    "languageSelection": {
+      "title": "Dobrodošli",
+      "subtitle": "Odaberite jezik"
+    },
+    "userMode": {
+      "title": "Kako koristite aplikaciju?",
+      "visitor": "Posjetitelj",
+      "visitorDescription": "Turistička posjeta otoku",
+      "local": "Lokalac",
+      "localDescription": "Živim ili radim na otoku",
+      "hint": "Možete promijeniti kasnije u postavkama."
+    },
+    "municipality": {
+      "title": "Odaberite općinu",
+      "hint": "Ovo određuje koje općinske obavijesti primate."
+    }
+  },
+  "home": {
+    "greeting": "Dobrodošli na Vis!",
+    "subtitle": "Vaš vodič za život i posjetu otoku",
+    "categories": "Kategorije",
+    "upcomingEvents": "Nadolazeći događaji",
+    "feedback": {
+      "title": "Imate prijedlog?",
+      "subtitle": "Pošaljite nam povratnu informaciju"
+    }
+  },
+  "navigation": {
+    "back": "Natrag",
+    "menu": "Izbornik",
+    "inbox": "Pristiglo"
+  },
+  "common": {
+    "loading": "Učitavanje...",
+    "error": "Došlo je do greške",
+    "retry": "Pokušaj ponovo",
+    "empty": "Nema podataka"
+  }
+}
