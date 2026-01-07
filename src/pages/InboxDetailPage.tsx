@@ -68,7 +68,7 @@ export default function InboxDetailPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="Message" showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader title="MOJ VIS" onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col">

@@ -47,7 +47,7 @@ export default function EventDetailPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="Event" showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col pb-24">

@@ -188,7 +188,7 @@ export default function TransportSeaDetailPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="MOJ VIS" showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">

@@ -83,7 +83,7 @@ export default function ClickFixPage() {
 
   return (
     <MobileFrame>
-      <AppHeader showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col bg-muted/30">
