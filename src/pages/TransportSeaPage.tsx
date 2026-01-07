@@ -106,44 +106,44 @@ export default function TransportSeaPage() {
         <section className="p-5 bg-background border-b-4 border-foreground">
           <h2 className="font-display font-bold text-xs uppercase tracking-widest text-muted-foreground mb-4 border-b-2 border-foreground pb-2">Linije</h2>
           <div className="space-y-4">
-            {seaLines.map((line, index) => (
+            {seaLines.map((line) => (
               <div key={line.id} className="relative">
                 <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
                 <button
                   onClick={() => navigate(`/transport/sea/${line.id}`)}
                   className="relative w-full bg-background border-4 border-foreground p-0 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1"
                 >
-                  <div className="flex items-center">
-                    <div className={`w-16 h-full min-h-[80px] flex items-center justify-center border-r-4 border-foreground ${
-                      line.type === "ferry" ? "bg-primary" : "bg-teal"
-                    }`}>
+                  {/* Title bar with full-width route name */}
+                  <div className={`w-full px-4 py-3 border-b-4 border-foreground flex items-center justify-between ${
+                    line.type === "ferry" ? "bg-primary" : "bg-teal"
+                  }`}>
+                    <div className="flex items-center gap-3">
                       {line.type === "ferry" ? (
-                        <Ship size={28} strokeWidth={2.5} className="text-white" />
+                        <Ship size={22} strokeWidth={2.5} className="text-white flex-shrink-0" />
                       ) : (
-                        <Anchor size={28} strokeWidth={2.5} className="text-white" />
+                        <Anchor size={22} strokeWidth={2.5} className="text-white flex-shrink-0" />
                       )}
+                      <p className="font-display font-bold text-base uppercase text-white">{line.name}</p>
                     </div>
-                    <div className="flex-1 p-4">
-                      <p className="font-display font-bold text-base uppercase">{line.name}</p>
-                      <div className="flex items-center gap-4 mt-1">
-                        <span className="flex items-center gap-1 font-body text-xs text-muted-foreground">
-                          <Clock size={12} strokeWidth={2.5} />
-                          {line.duration}
-                        </span>
-                        <span className="flex items-center gap-1 font-body text-xs text-muted-foreground">
-                          <MapPin size={12} strokeWidth={2.5} />
-                          {line.stops.length} luke
-                        </span>
-                      </div>
-                      <p className="font-body text-[11px] text-muted-foreground mt-2 leading-relaxed">
-                        {line.stops.join(" → ")}
-                      </p>
+                    <div className="w-8 h-8 border-2 border-white/50 bg-white/20 flex items-center justify-center flex-shrink-0">
+                      <ChevronRight size={18} strokeWidth={3} className="text-white" />
                     </div>
-                    <div className="pr-4">
-                      <div className="w-10 h-10 border-3 border-foreground bg-accent flex items-center justify-center" style={{ borderWidth: "3px" }}>
-                        <ChevronRight size={20} strokeWidth={3} />
-                      </div>
+                  </div>
+                  {/* Details row */}
+                  <div className="px-4 py-3">
+                    <div className="flex items-center gap-4 mb-2">
+                      <span className="flex items-center gap-1 font-body text-xs text-muted-foreground">
+                        <Clock size={12} strokeWidth={2.5} />
+                        {line.duration}
+                      </span>
+                      <span className="flex items-center gap-1 font-body text-xs text-muted-foreground">
+                        <MapPin size={12} strokeWidth={2.5} />
+                        {line.stops.length} luke
+                      </span>
                     </div>
+                    <p className="font-body text-[11px] text-muted-foreground leading-relaxed">
+                      {line.stops.join(" → ")}
+                    </p>
                   </div>
                 </button>
               </div>
