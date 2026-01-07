@@ -5,13 +5,18 @@ import { ReactNode } from "react";
 interface AppHeaderProps {
   title?: string;
   showBack?: boolean;
+  hideInbox?: boolean;
   onMenuClick?: () => void;
   rightAction?: ReactNode;
 }
 
-export function AppHeader({ title = "MOJ VIS", showBack = false, onMenuClick, rightAction }: AppHeaderProps) {
+export function AppHeader({ title = "MOJ VIS", showBack = false, hideInbox = false, onMenuClick, rightAction }: AppHeaderProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Auto-hide inbox icon on inbox pages
+  const isInboxPage = location.pathname.startsWith("/inbox");
+  const shouldHideInbox = hideInbox || isInboxPage;
   
   return (
     <header className="sticky top-0 z-50 w-full border-b-4 border-foreground bg-background">
@@ -33,8 +38,12 @@ export function AppHeader({ title = "MOJ VIS", showBack = false, onMenuClick, ri
         {/* Center: Title - Bold uppercase */}
         <h1 className="font-display text-xl font-bold uppercase tracking-tight">{title}</h1>
         
-        {/* Right: Custom action or Inbox */}
-        {rightAction || (
+        {/* Right: Custom action or Inbox (hidden on inbox pages) */}
+        {rightAction ? (
+          rightAction
+        ) : shouldHideInbox ? (
+          <div className="w-12" /> // Spacer for layout balance
+        ) : (
           <button
             onClick={() => navigate("/inbox")}
             className="relative flex h-12 w-12 items-center justify-center border-3 border-foreground bg-primary text-primary-foreground transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
