@@ -7,7 +7,9 @@ import { TextBlock } from "@/components/content/TextBlock";
 import { HighlightBlock } from "@/components/content/HighlightBlock";
 import { ContactBlock } from "@/components/content/ContactBlock";
 import { LinkListBlock } from "@/components/content/LinkListBlock";
+import { MediaBlock } from "@/components/content/MediaBlock";
 import { Info } from "lucide-react";
+import infoVisTownImg from "@/assets/info-vis-town.jpg";
 
 // Mock CMS data
 const pageData = {
@@ -15,6 +17,9 @@ const pageData = {
     title: "Information",
     subtitle: "Essential contacts & useful links",
   },
+  mediaImages: [
+    { src: infoVisTownImg, alt: "Aerial view of Vis town harbor" },
+  ],
   intro: {
     title: "About the Island",
     body: [
@@ -106,6 +111,11 @@ export default function InfoPage() {
           title={pageData.header.title}
           subtitle={pageData.header.subtitle}
           icon={<Info className="h-6 w-6" strokeWidth={2.5} />}
+        />
+
+        <MediaBlock
+          images={pageData.mediaImages}
+          caption="Vis town - the eastern gateway to the island"
         />
 
         <TextBlock
