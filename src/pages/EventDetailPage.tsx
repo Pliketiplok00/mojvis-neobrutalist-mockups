@@ -4,10 +4,9 @@ import { MainMenu } from "@/components/layout/MainMenu";
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { MapPin, Clock, Calendar, User, Users, Bell, Share2, Check } from "lucide-react";
 
-// Mock event data
 const mockEvent = {
   id: 1,
   title: "Summer Festival",
@@ -25,13 +24,11 @@ Local restaurants will be serving traditional dishes including fresh seafood, gr
 This is a family-friendly event with activities for children including face painting, games, and a treasure hunt around the old town.`,
   organizer: "Municipality of Vis",
   capacity: 500,
-  image: null,
 };
 
 export default function EventDetailPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [hasReminder, setHasReminder] = useState(false);
-  const navigate = useNavigate();
   const { id } = useParams();
 
   const handleReminder = () => {
@@ -53,101 +50,112 @@ export default function EventDetailPage() {
       <AppHeader title="Event" showBack onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
-      <main className="flex flex-col">
-        {/* Event Image Placeholder */}
-        <div className="relative aspect-video w-full border-b-2 border-foreground bg-gradient-to-br from-primary to-secondary">
+      <main className="flex flex-col pb-24">
+        {/* Event Image - Bold pattern placeholder */}
+        <div 
+          className="relative aspect-[16/10] w-full border-b-4 border-foreground bg-primary"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 20px,
+              hsl(var(--primary-foreground) / 0.1) 20px,
+              hsl(var(--primary-foreground) / 0.1) 40px
+            )`
+          }}
+        >
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-display text-6xl font-bold text-primary-foreground/20">VIS</span>
+            <span className="font-display text-7xl font-bold uppercase text-primary-foreground/20">VIS</span>
           </div>
           <div className="absolute bottom-4 left-4">
-            <Badge variant="accent" className="text-sm">Featured Event</Badge>
+            <Badge variant="accent" className="text-sm uppercase font-bold">Featured</Badge>
           </div>
         </div>
 
-        {/* Event Info */}
-        <div className="border-b-2 border-foreground p-5">
-          <h1 className="font-display text-2xl font-bold">{mockEvent.title}</h1>
+        {/* Event Title */}
+        <div className="border-b-4 border-foreground bg-accent p-5">
+          <h1 className="font-display text-2xl font-bold uppercase">{mockEvent.title}</h1>
+        </div>
+
+        {/* Event Info Grid */}
+        <div className="grid grid-cols-2 border-b-4 border-foreground">
+          {/* Date */}
+          <div className="flex items-center gap-3 border-b-3 border-r-3 border-foreground p-4" style={{ borderWidth: "3px" }}>
+            <div className="flex h-11 w-11 items-center justify-center border-2 border-foreground bg-primary text-primary-foreground">
+              <Calendar className="h-5 w-5" strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="font-display text-sm font-bold">{mockEvent.date}</p>
+              <p className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">Date</p>
+            </div>
+          </div>
           
-          <div className="mt-4 flex flex-col gap-3">
-            {/* Date */}
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-accent">
-                <Calendar className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-display font-bold">{mockEvent.date}</p>
-                <p className="font-body text-sm text-muted-foreground">Date</p>
-              </div>
+          {/* Time */}
+          <div className="flex items-center gap-3 border-b-3 border-foreground p-4" style={{ borderBottomWidth: "3px" }}>
+            <div className="flex h-11 w-11 items-center justify-center border-2 border-foreground bg-secondary text-secondary-foreground">
+              <Clock className="h-5 w-5" strokeWidth={2.5} />
             </div>
-            
-            {/* Time */}
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-secondary text-secondary-foreground">
-                <Clock className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-display font-bold">{mockEvent.startTime} - {mockEvent.endTime}</p>
-                <p className="font-body text-sm text-muted-foreground">Time</p>
-              </div>
+            <div>
+              <p className="font-display text-sm font-bold">{mockEvent.startTime}</p>
+              <p className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">Start</p>
             </div>
-            
-            {/* Location */}
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-primary text-primary-foreground">
-                <MapPin className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-display font-bold">{mockEvent.location}</p>
-                <p className="font-body text-sm text-muted-foreground">{mockEvent.address}</p>
-              </div>
+          </div>
+          
+          {/* Location */}
+          <div className="flex items-center gap-3 border-r-3 border-foreground p-4 col-span-2" style={{ borderRightWidth: "0" }}>
+            <div className="flex h-11 w-11 items-center justify-center border-2 border-foreground bg-teal text-primary-foreground">
+              <MapPin className="h-5 w-5" strokeWidth={2.5} />
             </div>
-            
-            {/* Organizer */}
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-lavender">
-                <User className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="font-display font-bold">{mockEvent.organizer}</p>
-                <p className="font-body text-sm text-muted-foreground">Organizer</p>
-              </div>
+            <div className="flex-1">
+              <p className="font-display text-sm font-bold">{mockEvent.location}</p>
+              <p className="font-body text-[10px] uppercase tracking-wider text-muted-foreground">{mockEvent.address}</p>
             </div>
-            
-            {/* Capacity */}
-            {mockEvent.capacity && (
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-teal text-primary-foreground">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-display font-bold">{mockEvent.capacity} people</p>
-                  <p className="font-body text-sm text-muted-foreground">Capacity</p>
-                </div>
-              </div>
-            )}
+          </div>
+        </div>
+
+        {/* Organizer & Capacity */}
+        <div className="flex border-b-4 border-foreground">
+          <div className="flex flex-1 items-center gap-3 border-r-3 border-foreground p-4" style={{ borderRightWidth: "3px" }}>
+            <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-lavender">
+              <User className="h-5 w-5" strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="font-display text-xs font-bold uppercase">{mockEvent.organizer}</p>
+              <p className="font-body text-[10px] uppercase text-muted-foreground">Organizer</p>
+            </div>
+          </div>
+          <div className="flex flex-1 items-center gap-3 p-4">
+            <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-orange">
+              <Users className="h-5 w-5" strokeWidth={2.5} />
+            </div>
+            <div>
+              <p className="font-display text-xs font-bold">{mockEvent.capacity}</p>
+              <p className="font-body text-[10px] uppercase text-muted-foreground">Capacity</p>
+            </div>
           </div>
         </div>
 
         {/* Description */}
-        <div className="border-b-2 border-foreground p-5">
-          <h2 className="mb-3 font-display text-lg font-bold">About</h2>
-          <p className="whitespace-pre-line font-body text-base leading-relaxed text-foreground/90">
+        <div className="p-5">
+          <h2 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">About</h2>
+          <p className="whitespace-pre-line font-body text-sm leading-relaxed">
             {mockEvent.description}
           </p>
         </div>
 
-        {/* Actions */}
-        <div className="sticky bottom-0 flex gap-3 border-t-2 border-foreground bg-background p-4">
+        {/* Actions - Fixed bottom */}
+        <div className="fixed bottom-0 left-0 right-0 mx-auto max-w-md flex gap-3 border-t-4 border-foreground bg-background p-4">
           <Button
             variant={hasReminder ? "secondary" : "outline"}
-            className="flex-1"
+            className="flex-1 uppercase"
+            size="lg"
             onClick={handleReminder}
           >
-            {hasReminder ? <Check className="h-4 w-4" /> : <Bell className="h-4 w-4" />}
-            {hasReminder ? "Reminder Set" : "Remind Me"}
+            {hasReminder ? <Check className="h-5 w-5" strokeWidth={3} /> : <Bell className="h-5 w-5" strokeWidth={2.5} />}
+            {hasReminder ? "Set!" : "Remind"}
           </Button>
-          <Button variant="accent" className="flex-1" onClick={handleShare}>
-            <Share2 className="h-4 w-4" />
+          <Button variant="accent" className="flex-1 uppercase" size="lg" onClick={handleShare}>
+            <Share2 className="h-5 w-5" strokeWidth={2.5} />
             Share
           </Button>
         </div>
