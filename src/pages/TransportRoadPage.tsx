@@ -63,85 +63,107 @@ export default function TransportRoadPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="MOJ VIS" onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
-      <div className="p-4 space-y-6">
+      <main className="flex flex-col bg-muted/30">
         {/* Active Notice Banner */}
         {activeNotice && (
-          <button 
-            onClick={() => navigate(`/inbox/${activeNotice.id}`)}
-            className="w-full bg-destructive neo-border-heavy p-4 flex items-center gap-4 neo-hover"
-          >
-            <div className="w-10 h-10 bg-white/20 neo-border flex items-center justify-center flex-shrink-0">
-              <AlertTriangle size={20} strokeWidth={2.5} className="text-white" />
-            </div>
-            <div className="flex-1 text-left">
-              <p className="font-display font-bold text-sm text-white">{activeNotice.title}</p>
-              <p className="font-body text-xs text-white/80">{activeNotice.description}</p>
-            </div>
-            <ChevronRight size={20} strokeWidth={2.5} className="text-white" />
-          </button>
+          <div className="relative border-b-4 border-foreground">
+            <div className="absolute inset-0 translate-x-1 translate-y-1 bg-destructive" />
+            <button 
+              onClick={() => navigate(`/inbox/${activeNotice.id}`)}
+              className="relative w-full bg-accent p-4 flex items-center gap-4 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px]"
+            >
+              <div className="w-12 h-12 bg-destructive border-4 border-foreground flex items-center justify-center rotate-3">
+                <AlertTriangle size={24} strokeWidth={2.5} className="text-white" />
+              </div>
+              <div className="flex-1 text-left">
+                <p className="font-display font-bold text-sm">{activeNotice.title}</p>
+                <p className="font-body text-xs text-muted-foreground">{activeNotice.description}</p>
+              </div>
+              <ChevronRight size={24} strokeWidth={3} />
+            </button>
+          </div>
         )}
 
+        {/* Section Header */}
+        <section className="border-b-4 border-foreground bg-secondary p-5">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-background border-4 border-foreground flex items-center justify-center -rotate-3">
+              <Bus size={28} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl font-bold uppercase text-secondary-foreground">Autobusne linije</h1>
+              <p className="font-body text-xs text-secondary-foreground/80 uppercase tracking-widest">Otočni prijevoz</p>
+            </div>
+          </div>
+        </section>
+
         {/* Section A: Lines List */}
-        <div>
-          <h2 className="font-display font-bold text-xl mb-4 uppercase">Linije</h2>
-          <div className="space-y-3">
-            {busLines.map((line) => (
-              <Card 
-                key={line.id}
-                variant="flat" 
-                className="neo-border-heavy neo-shadow neo-hover overflow-hidden cursor-pointer"
-                onClick={() => navigate(`/transport/road/${line.id}`)}
-              >
-                <div className="flex items-center">
-                  <div className="w-16 h-16 bg-secondary flex items-center justify-center border-r-[3px] border-foreground">
-                    <Bus size={28} strokeWidth={2.5} className="text-white" />
-                  </div>
-                  <div className="flex-1 p-4">
-                    <p className="font-display font-bold">{line.name}</p>
-                    <div className="flex items-center gap-4 mt-1">
-                      <span className="flex items-center gap-1 font-body text-sm text-muted-foreground">
-                        <Clock size={14} strokeWidth={2} />
-                        {line.duration}
-                      </span>
-                      <span className="flex items-center gap-1 font-body text-sm text-muted-foreground">
-                        <MapPin size={14} strokeWidth={2} />
-                        {line.stops.length} stanica
-                      </span>
+        <section className="p-5 bg-background border-b-4 border-foreground">
+          <h2 className="font-display font-bold text-xs uppercase tracking-widest text-muted-foreground mb-4 border-b-2 border-foreground pb-2">Linije</h2>
+          <div className="space-y-4">
+            {busLines.map((line, index) => (
+              <div key={line.id} className="relative">
+                <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
+                <button
+                  onClick={() => navigate(`/transport/road/${line.id}`)}
+                  className="relative w-full bg-background border-4 border-foreground p-0 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1"
+                >
+                  <div className="flex items-center">
+                    <div className={`w-16 h-full min-h-[80px] ${index % 2 === 0 ? 'bg-primary' : 'bg-secondary'} flex items-center justify-center border-r-4 border-foreground`}>
+                      <Bus size={28} strokeWidth={2.5} className="text-white" />
                     </div>
-                    <p className="font-body text-xs text-muted-foreground mt-1">
-                      {line.stops.length <= 5 
-                        ? line.stops.join(" → ") 
-                        : `${line.stops.slice(0, 5).join(" → ")} +${line.stops.length - 5} stanica`
-                      }
-                    </p>
+                    <div className="flex-1 p-4">
+                      <p className="font-display font-bold text-base uppercase">{line.name}</p>
+                      <div className="flex items-center gap-4 mt-1">
+                        <span className="flex items-center gap-1 font-body text-xs text-muted-foreground">
+                          <Clock size={12} strokeWidth={2.5} />
+                          {line.duration}
+                        </span>
+                        <span className="flex items-center gap-1 font-body text-xs text-muted-foreground">
+                          <MapPin size={12} strokeWidth={2.5} />
+                          {line.stops.length} stanica
+                        </span>
+                      </div>
+                      <p className="font-body text-[11px] text-muted-foreground mt-2 leading-relaxed">
+                        {line.stops.length <= 5 
+                          ? line.stops.join(" → ") 
+                          : `${line.stops.slice(0, 5).join(" → ")} +${line.stops.length - 5} stanica`
+                        }
+                      </p>
+                    </div>
+                    <div className="pr-4">
+                      <div className="w-10 h-10 border-3 border-foreground bg-accent flex items-center justify-center" style={{ borderWidth: "3px" }}>
+                        <ChevronRight size={20} strokeWidth={3} />
+                      </div>
+                    </div>
                   </div>
-                  <ChevronRight size={24} strokeWidth={2.5} className="text-muted-foreground mr-4" />
-                </div>
-              </Card>
+                </button>
+              </div>
             ))}
           </div>
-        </div>
+        </section>
 
         {/* Section B: Today's Departures */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-bold text-xl uppercase">Današnji polasci</h2>
-            <span className="bg-accent neo-border px-2 py-1 font-display font-bold text-xs">
+        <section className="p-5 bg-background border-b-4 border-foreground">
+          <div className="flex items-center justify-between mb-4 border-b-2 border-foreground pb-2">
+            <h2 className="font-display font-bold text-xs uppercase tracking-widest text-muted-foreground">Današnji polasci</h2>
+            <span className="bg-primary border-3 border-foreground px-3 py-1 font-display font-bold text-xs text-primary-foreground" style={{ borderWidth: "3px" }}>
               {new Date().toLocaleDateString('hr-HR', { day: 'numeric', month: 'short' }).toUpperCase()}
             </span>
           </div>
           
-          <Card variant="flat" className="neo-border-heavy overflow-hidden">
-            <div className="max-h-64 overflow-y-auto">
+          <div className="relative">
+            <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
+            <div className="relative bg-background border-4 border-foreground max-h-64 overflow-y-auto">
               {todaysDepartures.map((departure, i) => (
                 <div 
                   key={i}
                   className={`flex items-center gap-4 p-3 ${i !== todaysDepartures.length - 1 ? 'border-b-2 border-foreground' : ''}`}
                 >
-                  <div className="w-16 h-10 bg-primary neo-border flex items-center justify-center">
+                  <div className="w-16 h-10 bg-primary border-3 border-foreground flex items-center justify-center" style={{ borderWidth: "3px" }}>
                     <span className="font-display font-bold text-sm text-primary-foreground">{departure.time}</span>
                   </div>
                   <div className="flex-1">
@@ -151,34 +173,35 @@ export default function TransportRoadPage() {
                 </div>
               ))}
             </div>
-          </Card>
-        </div>
+          </div>
+        </section>
 
         {/* Section C: Contacts */}
-        <div>
-          <h2 className="font-display font-bold text-xl mb-4 uppercase">Kontakti</h2>
-          <div className="space-y-3">
+        <section className="p-5 pb-8 bg-muted/30">
+          <h2 className="font-display font-bold text-xs uppercase tracking-widest text-muted-foreground mb-4 border-b-2 border-foreground pb-2">Kontakti</h2>
+          <div className="space-y-4">
             {contacts.map((contact, i) => (
-              <Card 
-                key={i}
-                variant="flat" 
-                className="neo-border-heavy neo-hover p-4 cursor-pointer"
-                onClick={() => handleCall(contact.phone)}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-accent neo-border-heavy flex items-center justify-center">
-                    <Phone size={24} strokeWidth={2.5} className="text-foreground" />
+              <div key={i} className="relative">
+                <div className="absolute inset-0 translate-x-2 translate-y-2 bg-secondary" />
+                <button
+                  onClick={() => handleCall(contact.phone)}
+                  className="relative w-full bg-background border-4 border-foreground p-4 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 bg-accent border-4 border-foreground flex items-center justify-center rotate-3">
+                      <Phone size={24} strokeWidth={2.5} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-display font-bold uppercase">{contact.name}</p>
+                      <p className="font-body text-sm text-muted-foreground">{contact.phone}</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-display font-bold">{contact.name}</p>
-                    <p className="font-body text-sm text-muted-foreground">{contact.phone}</p>
-                  </div>
-                </div>
-              </Card>
+                </button>
+              </div>
             ))}
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </MobileFrame>
   );
 }

@@ -57,85 +57,105 @@ export default function FeedbackPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="POVRATNE INFO" onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader showBack onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
-      <div className="p-4 space-y-6">
-        {/* Feedback Type (Required) */}
-        <div>
-          <h2 className="font-display font-bold text-sm text-muted-foreground mb-3 uppercase">
-            1. Vrsta povratne informacije <span className="text-destructive">*</span>
-          </h2>
-          <div className="grid grid-cols-2 gap-3">
-            {feedbackTypes.map((type) => {
-              const Icon = type.icon;
-              const isSelected = selectedType === type.id;
-              return (
-                <button
-                  key={type.id}
-                  onClick={() => setSelectedType(type.id)}
-                  className={`neo-border-heavy neo-shadow neo-hover p-4 flex flex-col items-center gap-2 transition-all ${
-                    isSelected ? `${type.color} ring-4 ring-offset-2 ring-foreground` : "bg-card"
-                  }`}
-                >
-                  <Icon 
-                    size={28} 
-                    strokeWidth={2.5} 
-                    className={isSelected ? "text-white" : "text-foreground"}
-                  />
-                  <span className={`font-display font-bold text-xs ${
-                    isSelected ? "text-white" : "text-foreground"
-                  }`}>
-                    {type.label}
-                  </span>
-                </button>
-              );
-            })}
+      <main className="flex flex-col bg-muted/30">
+        {/* Header */}
+        <section className="border-b-4 border-foreground bg-lavender p-5">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-background border-4 border-foreground flex items-center justify-center -rotate-3">
+              <MessageSquare size={28} strokeWidth={2.5} />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl font-bold uppercase">Povratne informacije</h1>
+              <p className="font-body text-xs uppercase tracking-widest">Ideje • Prijedlozi • Pohvale</p>
+            </div>
           </div>
+        </section>
+
+        <div className="p-5 space-y-6">
+          {/* Feedback Type (Required) */}
+          <div>
+            <h2 className="font-display font-bold text-xs text-muted-foreground mb-3 uppercase tracking-widest border-b-2 border-foreground pb-2">
+              1. Vrsta poruke <span className="text-destructive">*</span>
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {feedbackTypes.map((type) => {
+                const Icon = type.icon;
+                const isSelected = selectedType === type.id;
+                return (
+                  <div key={type.id} className="relative">
+                    <div className={`absolute inset-0 translate-x-2 translate-y-2 ${isSelected ? 'bg-foreground' : 'bg-muted-foreground/30'}`} />
+                    <button
+                      onClick={() => setSelectedType(type.id)}
+                      className={`relative w-full border-4 border-foreground p-4 flex flex-col items-center gap-2 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1 ${
+                        isSelected ? `${type.color}` : "bg-background"
+                      }`}
+                    >
+                      <Icon 
+                        size={28} 
+                        strokeWidth={2.5} 
+                        className={isSelected ? "text-white" : "text-foreground"}
+                      />
+                      <span className={`font-display font-bold text-xs ${
+                        isSelected ? "text-white" : "text-foreground"
+                      }`}>
+                        {type.label}
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Subject (Required) */}
+          <div>
+            <h2 className="font-display font-bold text-xs text-muted-foreground mb-3 uppercase tracking-widest border-b-2 border-foreground pb-2">
+              2. Naslov <span className="text-destructive">*</span>
+            </h2>
+            <Input 
+              placeholder="Unesi naslov poruke..."
+              className="border-4 border-foreground font-body bg-background focus:ring-0 focus:border-foreground"
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+            />
+          </div>
+
+          {/* Message (Required) */}
+          <div>
+            <h2 className="font-display font-bold text-xs text-muted-foreground mb-3 uppercase tracking-widest border-b-2 border-foreground pb-2">
+              3. Poruka <span className="text-destructive">*</span>
+            </h2>
+            <Textarea 
+              placeholder="Napiši svoju poruku..."
+              className="border-4 border-foreground font-body min-h-[150px] bg-background focus:ring-0 focus:border-foreground"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </div>
+
+          {/* Submit */}
+          <div className="relative">
+            <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
+            <Button 
+              size="lg" 
+              className="relative w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+              onClick={handleSubmit}
+              disabled={!isValid}
+            >
+              <Send size={24} strokeWidth={2.5} className="mr-3" />
+              POŠALJI PORUKU
+            </Button>
+          </div>
+
+          {/* Rate limit note */}
+          <p className="font-body text-xs text-muted-foreground text-center border-t-2 border-foreground pt-4">
+            Možeš poslati najviše 3 poruke dnevno.
+          </p>
         </div>
-
-        {/* Subject (Required) */}
-        <div>
-          <h2 className="font-display font-bold text-sm text-muted-foreground mb-3 uppercase">
-            2. Naslov <span className="text-destructive">*</span>
-          </h2>
-          <Input 
-            placeholder="Unesi naslov poruke..."
-            className="neo-border-heavy font-body"
-            value={subject}
-            onChange={(e) => setSubject(e.target.value)}
-          />
-        </div>
-
-        {/* Message (Required) */}
-        <div>
-          <h2 className="font-display font-bold text-sm text-muted-foreground mb-3 uppercase">
-            3. Poruka <span className="text-destructive">*</span>
-          </h2>
-          <Textarea 
-            placeholder="Napiši svoju poruku..."
-            className="neo-border-heavy font-body min-h-[150px]"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-        </div>
-
-        {/* Submit */}
-        <Button 
-          size="lg" 
-          className="w-full bg-primary text-primary-foreground neo-border-heavy neo-shadow font-display text-lg py-6"
-          onClick={handleSubmit}
-          disabled={!isValid}
-        >
-          <Send size={24} strokeWidth={2.5} className="mr-3" />
-          POŠALJI PORUKU
-        </Button>
-
-        {/* Rate limit note */}
-        <p className="font-body text-xs text-muted-foreground text-center">
-          Možeš poslati najviše 3 poruke dnevno.
-        </p>
-      </div>
+      </main>
     </MobileFrame>
   );
 }
