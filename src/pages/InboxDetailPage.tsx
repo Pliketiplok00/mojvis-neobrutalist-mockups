@@ -115,7 +115,7 @@ export default function InboxDetailPage() {
 
           {/* Notice Active Period */}
           {!isSent && "activeFrom" in message && message.activeFrom && (
-            <div className="mt-5 border-4 border-foreground bg-muted p-4">
+            <div className="mt-5 border-4 border-foreground bg-destructive/15 p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
