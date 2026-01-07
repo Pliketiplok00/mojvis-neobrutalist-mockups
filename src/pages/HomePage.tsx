@@ -31,106 +31,127 @@ export default function HomePage() {
       <AppHeader onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
-      <main className="flex flex-col">
-        {/* Active Notification Banner - Harsh alert */}
-        <button 
-          onClick={() => navigate("/inbox/1")}
-          className="flex items-center gap-3 border-b-4 border-foreground bg-accent p-4 text-left transition-colors hover:bg-accent/80"
-        >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center border-3 border-foreground bg-destructive" style={{ borderWidth: "3px" }}>
-            <AlertCircle className="h-5 w-5 text-destructive-foreground" strokeWidth={3} />
-          </div>
-          <div className="flex-1">
-            <p className="font-display text-sm font-bold uppercase">Road Works Notice</p>
-            <p className="font-body text-xs">Main road closed until 18:00 today</p>
-          </div>
-          <Badge variant="destructive" className="uppercase">New</Badge>
-        </button>
+      <main className="flex flex-col bg-muted/30">
+        {/* Active Notification Banner - Harsh alert with offset shadow */}
+        <div className="relative border-b-4 border-foreground">
+          <div className="absolute inset-0 translate-x-1 translate-y-1 bg-destructive" />
+          <button 
+            onClick={() => navigate("/inbox/1")}
+            className="relative flex items-center gap-3 border-b-4 border-foreground bg-accent p-4 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px]"
+          >
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center border-4 border-foreground bg-destructive rotate-3">
+              <AlertCircle className="h-6 w-6 text-destructive-foreground" strokeWidth={3} />
+            </div>
+            <div className="flex-1">
+              <p className="font-display text-sm font-bold uppercase tracking-tight">Road Works Notice</p>
+              <p className="font-body text-xs">Main road closed until 18:00 today</p>
+            </div>
+            <Badge variant="destructive" className="uppercase border-2 border-foreground font-display">New</Badge>
+          </button>
+        </div>
 
-        {/* Greeting Block - Giant brutalist hero */}
-        <section className="border-b-4 border-foreground bg-primary p-6">
-          <h2 className="font-display text-3xl font-bold uppercase leading-tight text-primary-foreground">
+        {/* Greeting Block - Giant brutalist hero with diagonal accent */}
+        <section className="relative border-b-4 border-foreground bg-primary p-6 overflow-hidden">
+          <div className="absolute -right-8 -top-8 h-32 w-32 rotate-12 bg-accent border-4 border-foreground" />
+          <div className="absolute -right-4 bottom-0 h-16 w-16 bg-secondary border-4 border-foreground" />
+          <h2 className="relative font-display text-4xl font-bold uppercase leading-none text-primary-foreground tracking-tight">
             Welcome<br />to Vis!
           </h2>
-          <p className="mt-3 font-body text-sm text-primary-foreground/90 uppercase tracking-wide">
+          <p className="relative mt-4 font-body text-xs text-primary-foreground/90 uppercase tracking-widest">
             Your island guide • Events • Transport • Services
           </p>
         </section>
 
-        {/* Category Grid - Larger 2x2 blocks */}
-        <section className="border-b-4 border-foreground p-4">
-          <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
+        {/* Category Grid - Larger 2x2 blocks with permanent shadows */}
+        <section className="border-b-4 border-foreground bg-background p-5">
+          <h3 className="mb-5 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground border-b-2 border-foreground pb-2">
             Quick Access
           </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {categoryItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center gap-3 border-3 border-foreground ${item.color} ${item.textColor} p-5 transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none`}
-                style={{ borderWidth: "3px" }}
-              >
-                <item.icon className="h-10 w-10" strokeWidth={2} />
-                <span className="font-display text-sm font-bold uppercase tracking-wide">{item.label}</span>
-              </button>
+          <div className="grid grid-cols-2 gap-4">
+            {categoryItems.map((item, index) => (
+              <div key={item.path} className="relative">
+                {/* Shadow block */}
+                <div className={`absolute inset-0 translate-x-2 translate-y-2 border-4 border-foreground ${index % 2 === 0 ? 'bg-foreground' : 'bg-foreground'}`} />
+                <button
+                  onClick={() => navigate(item.path)}
+                  className={`relative flex flex-col items-center justify-center gap-3 border-4 border-foreground ${item.color} ${item.textColor} p-6 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1`}
+                >
+                  <div className="p-2 border-3 border-current bg-background/20" style={{ borderWidth: "3px" }}>
+                    <item.icon className="h-8 w-8" strokeWidth={2.5} />
+                  </div>
+                  <span className="font-display text-sm font-bold uppercase tracking-wide">{item.label}</span>
+                </button>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* Upcoming Events - Stacked cards */}
-        <section className="p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
+        {/* Upcoming Events - Stacked cards with offset shadows */}
+        <section className="p-5 bg-background border-b-4 border-foreground">
+          <div className="mb-5 flex items-center justify-between border-b-2 border-foreground pb-2">
+            <h3 className="font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
               Upcoming Events
             </h3>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/events")} className="uppercase text-xs">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate("/events")} 
+              className="uppercase text-xs font-display font-bold border-2 border-foreground hover:bg-accent"
+            >
               View all
-              <ArrowRight className="ml-1 h-3 w-3" />
+              <ArrowRight className="ml-1 h-3 w-3" strokeWidth={3} />
             </Button>
           </div>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {upcomingEvents.map((event, index) => (
-              <button
-                key={event.id}
-                onClick={() => navigate(`/events/${event.id}`)}
-                className={`flex items-center gap-4 border-3 border-foreground p-4 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none ${
-                  index === 0 ? "bg-accent" : "bg-background"
-                }`}
-                style={{ borderWidth: "3px" }}
-              >
-                {/* Date block */}
-                <div className="flex h-14 w-14 flex-col items-center justify-center border-2 border-foreground bg-primary text-primary-foreground">
-                  <span className="font-display text-lg font-bold leading-none">{event.date.split("/")[0]}</span>
-                  <span className="font-body text-[10px] uppercase">{event.date.split("/")[1]}</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-display font-bold uppercase">{event.title}</h4>
-                  <p className="font-body text-xs text-muted-foreground">{event.location}</p>
-                </div>
-                <div className="font-display text-sm font-bold">{event.time}</div>
-              </button>
+              <div key={event.id} className="relative">
+                {/* Shadow block */}
+                <div className={`absolute inset-0 translate-x-2 translate-y-2 ${index === 0 ? 'bg-primary' : 'bg-foreground'}`} />
+                <button
+                  onClick={() => navigate(`/events/${event.id}`)}
+                  className={`relative flex items-center gap-4 border-4 border-foreground p-4 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1 ${
+                    index === 0 ? "bg-accent" : "bg-background"
+                  }`}
+                >
+                  {/* Date block with rotation */}
+                  <div className={`flex h-16 w-16 flex-col items-center justify-center border-4 border-foreground bg-primary text-primary-foreground ${index === 0 ? '-rotate-3' : ''}`}>
+                    <span className="font-display text-2xl font-bold leading-none">{event.date.split("/")[0]}</span>
+                    <span className="font-body text-[10px] uppercase tracking-wider">{event.date.split("/")[1]}</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-display text-base font-bold uppercase tracking-tight">{event.title}</h4>
+                    <p className="font-body text-xs text-muted-foreground mt-1">{event.location}</p>
+                  </div>
+                  <div className="font-display text-lg font-bold border-2 border-foreground px-2 py-1 bg-muted">{event.time}</div>
+                </button>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* Feedback Entry - Bold CTA */}
-        <section className="p-4 pb-8">
-          <button
-            onClick={() => navigate("/feedback")}
-            className="flex w-full items-center gap-4 border-3 border-foreground bg-secondary p-5 text-left transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
-            style={{ borderWidth: "3px" }}
-          >
-            <div className="flex h-14 w-14 items-center justify-center border-3 border-foreground bg-background" style={{ borderWidth: "3px" }}>
-              <MessageSquare className="h-7 w-7" strokeWidth={2.5} />
-            </div>
-            <div className="flex-1">
-              <h4 className="font-display text-lg font-bold uppercase">Share Your Thoughts</h4>
-              <p className="font-body text-xs text-secondary-foreground/80 uppercase tracking-wide">
-                Ideas • Suggestions • Feedback
-              </p>
-            </div>
-            <ArrowRight className="h-6 w-6" strokeWidth={3} />
-          </button>
+        {/* Feedback Entry - Bold CTA with large shadow */}
+        <section className="p-5 pb-8 bg-muted/30">
+          <div className="relative">
+            {/* Large offset shadow */}
+            <div className="absolute inset-0 translate-x-3 translate-y-3 bg-foreground" />
+            <button
+              onClick={() => navigate("/feedback")}
+              className="relative flex w-full items-center gap-4 border-4 border-foreground bg-secondary p-5 text-left transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-1 active:translate-y-1"
+            >
+              <div className="flex h-16 w-16 items-center justify-center border-4 border-foreground bg-background rotate-6">
+                <MessageSquare className="h-8 w-8" strokeWidth={2.5} />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-display text-xl font-bold uppercase tracking-tight">Share Your Thoughts</h4>
+                <p className="font-body text-xs text-secondary-foreground/80 uppercase tracking-widest mt-1">
+                  Ideas • Suggestions • Feedback
+                </p>
+              </div>
+              <div className="h-10 w-10 flex items-center justify-center border-3 border-foreground bg-accent" style={{ borderWidth: "3px" }}>
+                <ArrowRight className="h-5 w-5" strokeWidth={3} />
+              </div>
+            </button>
+          </div>
         </section>
       </main>
     </MobileFrame>
