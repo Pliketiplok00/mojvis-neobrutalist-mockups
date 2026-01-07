@@ -1,10 +1,16 @@
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Button } from "@/components/ui/button";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function OnboardingSplashPage() {
   const navigate = useNavigate();
+
+  const handleLanguageSelect = (language: "hr" | "en") => {
+    // Store language selection locally
+    localStorage.setItem("app_language", language);
+    navigate("/onboarding/mode");
+  };
 
   return (
     <MobileFrame>
@@ -50,34 +56,31 @@ export default function OnboardingSplashPage() {
           </div>
         </div>
 
-        {/* Feature Pills */}
-        <div className="px-6 mb-8">
-          <div className="flex flex-wrap justify-center gap-2">
-            {["OBAVIJESTI", "DOGAĐAJI", "PRIJAVE", "PROMET", "POVRATNE INFO"].map((feature) => (
-              <span 
-                key={feature}
-                className="bg-muted neo-border px-3 py-1 font-display font-bold text-xs"
-              >
-                {feature}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* CTA Section */}
+        {/* Language Selection */}
         <div className="p-6 bg-card neo-border-t">
-          <Button 
-            size="lg" 
-            className="w-full bg-primary text-primary-foreground neo-border-heavy neo-shadow font-display text-lg py-6"
-            onClick={() => navigate("/onboarding/mode")}
-          >
-            ZAPOČNI
-            <ArrowRight size={24} strokeWidth={3} className="ml-3" />
-          </Button>
+          <p className="font-display font-bold text-center text-sm text-muted-foreground mb-4 uppercase">
+            Odaberi jezik / Select language
+          </p>
           
-          <p className="text-center font-body text-sm text-muted-foreground mt-4">
-            Već imaš račun?{" "}
-            <button className="font-display font-bold underline">PRIJAVI SE</button>
+          <div className="grid grid-cols-2 gap-4">
+            <Button 
+              size="lg" 
+              className="bg-primary text-primary-foreground neo-border-heavy neo-shadow font-display text-lg py-6"
+              onClick={() => handleLanguageSelect("hr")}
+            >
+              HRVATSKI
+            </Button>
+            <Button 
+              size="lg" 
+              className="bg-secondary text-secondary-foreground neo-border-heavy neo-shadow font-display text-lg py-6"
+              onClick={() => handleLanguageSelect("en")}
+            >
+              ENGLISH
+            </Button>
+          </div>
+          
+          <p className="text-center font-body text-xs text-muted-foreground mt-4">
+            Jezik možeš promijeniti kasnije u Postavkama
           </p>
         </div>
       </div>

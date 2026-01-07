@@ -1,25 +1,33 @@
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User, Building2, ArrowRight, ArrowLeft, Check } from "lucide-react";
+import { User, MapPin, ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const modes = [
   {
-    id: "citizen",
+    id: "visitor",
     icon: User,
-    title: "GRAĐANIN",
-    description: "Primaj obavijesti, prijavi probleme, sudjeluj u životu grada",
-    features: ["Personalizirane obavijesti", "Prijava komunalnih problema", "Kalendar događanja", "Prometne info"],
+    title: "POSJETITELJ",
+    description: "Primaj opće obavijesti, kulturne događaje i hitne informacije",
+    features: [
+      "Opće obavijesti",
+      "Kulturni događaji",
+      "Hitne / urgentne obavijesti",
+    ],
     color: "bg-primary",
   },
   {
-    id: "official",
-    icon: Building2,
-    title: "SLUŽBENIK",
-    description: "Upravljaj prijavama, objavljuj obavijesti, komuniciraj s građanima",
-    features: ["Dashboard prijava", "Objava obavijesti", "Analitika", "Direktna komunikacija"],
+    id: "local",
+    icon: MapPin,
+    title: "LOKALNI STANOVNIK",
+    description: "Sve kao posjetitelj + općinske obavijesti za tvoju općinu",
+    features: [
+      "Sve obavijesti za posjetitelje",
+      "Općinske obavijesti",
+      "Općinske poruke u inboxu",
+    ],
     color: "bg-secondary",
   },
 ];
@@ -27,6 +35,21 @@ const modes = [
 export default function OnboardingModePage() {
   const navigate = useNavigate();
   const [selectedMode, setSelectedMode] = useState<string | null>(null);
+
+  const handleContinue = () => {
+    if (!selectedMode) return;
+    
+    // Store user mode
+    localStorage.setItem("user_mode", selectedMode);
+    
+    if (selectedMode === "visitor") {
+      // Visitors go directly to home
+      navigate("/home");
+    } else {
+      // Locals need to select municipality
+      navigate("/onboarding/municipality");
+    }
+  };
 
   return (
     <MobileFrame>
@@ -40,9 +63,9 @@ export default function OnboardingModePage() {
             <ArrowLeft size={20} strokeWidth={3} />
             NATRAG
           </button>
-          <h1 className="font-display font-bold text-3xl">ODABERI NAČIN</h1>
+          <h1 className="font-display font-bold text-3xl">KAKO KORISTIŠ APP?</h1>
           <p className="font-body text-muted-foreground mt-2">
-            Kako ćeš koristiti MOJVIS?
+            Odabir možeš promijeniti kasnije u Postavkama
           </p>
         </div>
 
@@ -57,7 +80,7 @@ export default function OnboardingModePage() {
                 key={mode.id}
                 variant="flat"
                 className={`neo-border-heavy neo-shadow neo-hover p-0 overflow-hidden cursor-pointer transition-all ${
-                  isSelected ? 'ring-4 ring-offset-2 ring-foreground' : ''
+                  isSelected ? "ring-4 ring-offset-2 ring-foreground" : ""
                 }`}
                 onClick={() => setSelectedMode(mode.id)}
               >
@@ -95,9 +118,8 @@ export default function OnboardingModePage() {
           <div className="flex gap-2">
             <div className="flex-1 h-2 bg-foreground neo-border" />
             <div className="flex-1 h-2 bg-foreground neo-border" />
-            <div className="flex-1 h-2 bg-muted neo-border" />
           </div>
-          <p className="font-body text-xs text-muted-foreground text-center mt-2">KORAK 2 OD 3</p>
+          <p className="font-body text-xs text-muted-foreground text-center mt-2">KORAK 2 OD 2</p>
         </div>
 
         {/* CTA */}
@@ -105,10 +127,10 @@ export default function OnboardingModePage() {
           <Button 
             size="lg" 
             className="w-full bg-foreground text-background neo-border-heavy font-display text-lg py-6"
-            onClick={() => navigate("/onboarding/municipality")}
+            onClick={handleContinue}
             disabled={!selectedMode}
           >
-            NASTAVI
+            {selectedMode === "visitor" ? "ZAVRŠI" : "NASTAVI"}
             <ArrowRight size={24} strokeWidth={3} className="ml-3" />
           </Button>
         </div>
