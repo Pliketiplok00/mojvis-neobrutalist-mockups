@@ -7,16 +7,16 @@ interface MainMenuProps {
 }
 
 const menuItems = [
-  { icon: Home, label: "Home", path: "/home", color: "bg-accent" },
-  { icon: Calendar, label: "Events", path: "/events", color: "bg-primary" },
-  { icon: Bus, label: "Road Transport", path: "/transport/road", color: "bg-secondary" },
-  { icon: Ship, label: "Sea Transport", path: "/transport/sea", color: "bg-teal" },
-  { icon: MessageSquare, label: "Feedback", path: "/feedback", color: "bg-lavender" },
-  { icon: AlertTriangle, label: "Click & Fix", path: "/click-fix", color: "bg-orange" },
-  { icon: Leaf, label: "Flora", path: "/flora", color: "bg-secondary" },
-  { icon: Fish, label: "Fauna", path: "/fauna", color: "bg-primary" },
-  { icon: Info, label: "Information", path: "/info", color: "bg-teal" },
-  { icon: Settings, label: "Settings", path: "/settings", color: "bg-muted" },
+  { icon: Home, label: "Home", path: "/home", color: "bg-accent", iconColor: "text-amber-500" },
+  { icon: Calendar, label: "Events", path: "/events", color: "bg-primary", iconColor: "text-primary" },
+  { icon: Bus, label: "Road Transport", path: "/transport/road", color: "bg-secondary", iconColor: "text-emerald-500" },
+  { icon: Ship, label: "Sea Transport", path: "/transport/sea", color: "bg-teal", iconColor: "text-destructive" },
+  { icon: MessageSquare, label: "Feedback", path: "/feedback", color: "bg-lavender", iconColor: "text-violet-500" },
+  { icon: AlertTriangle, label: "Click & Fix", path: "/click-fix", color: "bg-orange", iconColor: "text-amber-500" },
+  { icon: Leaf, label: "Flora", path: "/flora", color: "bg-secondary", iconColor: "text-emerald-500" },
+  { icon: Fish, label: "Fauna", path: "/fauna", color: "bg-primary", iconColor: "text-primary" },
+  { icon: Info, label: "Information", path: "/info", color: "bg-teal", iconColor: "text-violet-500" },
+  { icon: Settings, label: "Settings", path: "/settings", color: "bg-muted", iconColor: "text-foreground" },
 ];
 
 export function MainMenu({ isOpen, onClose }: MainMenuProps) {
@@ -99,7 +99,7 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
                   style={{ borderWidth: "3px" }}
                 >
                   <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground ${isActive ? "bg-background" : item.color}`}>
-                    <item.icon className="h-5 w-5" strokeWidth={2.5} />
+                    <item.icon className={`h-5 w-5 ${isActive ? item.iconColor : ""}`} strokeWidth={2.5} />
                   </div>
                   <span className="flex-1 text-sm">{item.label}</span>
                   <ChevronRight className={`h-5 w-5 transition-transform ${isActive ? "" : "group-hover:translate-x-1"}`} strokeWidth={3} />
