@@ -8,6 +8,15 @@ import InboxPage from "./pages/InboxPage";
 import InboxDetailPage from "./pages/InboxDetailPage";
 import EventsCalendarPage from "./pages/EventsCalendarPage";
 import EventDetailPage from "./pages/EventDetailPage";
+import ClickFixPage from "./pages/ClickFixPage";
+import ClickFixReportPage from "./pages/ClickFixReportPage";
+import FeedbackPage from "./pages/FeedbackPage";
+import TransportPage from "./pages/TransportPage";
+import TransportRoadPage from "./pages/TransportRoadPage";
+import TransportRoadDetailPage from "./pages/TransportRoadDetailPage";
+import OnboardingSplashPage from "./pages/OnboardingSplashPage";
+import OnboardingModePage from "./pages/OnboardingModePage";
+import OnboardingMunicipalityPage from "./pages/OnboardingMunicipalityPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +34,15 @@ const App = () => (
           <Route path="/inbox/:id" element={<InboxDetailPage />} />
           <Route path="/events" element={<EventsCalendarPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/click-fix" element={<ClickFixPage />} />
+          <Route path="/click-fix/report" element={<ClickFixReportPage />} />
+          <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/transport" element={<TransportPage />} />
+          <Route path="/transport/road" element={<TransportRoadPage />} />
+          <Route path="/transport/road/:roadId" element={<TransportRoadDetailPage />} />
+          <Route path="/onboarding" element={<OnboardingSplashPage />} />
+          <Route path="/onboarding/mode" element={<OnboardingModePage />} />
+          <Route path="/onboarding/municipality" element={<OnboardingMunicipalityPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
