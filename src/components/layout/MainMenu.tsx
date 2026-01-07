@@ -1,5 +1,6 @@
-import { X, Home, Calendar, Bus, Ship, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish, ChevronRight } from "lucide-react";
+import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish, ChevronRight } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useI18n } from "@/lib/i18n";
 
 interface MainMenuProps {
   isOpen: boolean;
@@ -7,21 +8,21 @@ interface MainMenuProps {
 }
 
 const menuItems = [
-  { icon: Home, label: "Home", path: "/home", color: "bg-accent" },
-  { icon: Calendar, label: "Events", path: "/events", color: "bg-primary" },
-  { icon: Bus, label: "Road Transport", path: "/transport/road", color: "bg-secondary" },
-  { icon: Ship, label: "Sea Transport", path: "/transport/sea", color: "bg-teal" },
-  { icon: MessageSquare, label: "Feedback", path: "/feedback", color: "bg-lavender" },
-  { icon: AlertTriangle, label: "Click & Fix", path: "/click-fix", color: "bg-orange" },
-  { icon: Leaf, label: "Flora", path: "/flora", color: "bg-secondary" },
-  { icon: Fish, label: "Fauna", path: "/fauna", color: "bg-primary" },
-  { icon: Info, label: "Information", path: "/info", color: "bg-teal" },
-  { icon: Settings, label: "Settings", path: "/settings", color: "bg-muted" },
+  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent" },
+  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary" },
+  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary" },
+  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender" },
+  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange" },
+  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-secondary" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-primary" },
+  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal" },
+  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted" },
 ];
 
 export function MainMenu({ isOpen, onClose }: MainMenuProps) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useI18n();
   
   const handleNavigation = (path: string) => {
     navigate(path);
@@ -101,7 +102,7 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
                   <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground ${isActive ? "bg-background" : item.color}`}>
                     <item.icon className="h-5 w-5" strokeWidth={2.5} />
                   </div>
-                  <span className="flex-1 text-sm">{item.label}</span>
+                  <span className="flex-1 text-sm">{t(item.labelKey as any)}</span>
                   <ChevronRight className={`h-5 w-5 transition-transform ${isActive ? "" : "group-hover:translate-x-1"}`} strokeWidth={3} />
                 </button>
               </li>

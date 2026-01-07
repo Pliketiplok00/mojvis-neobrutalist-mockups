@@ -17,6 +17,7 @@ const translations = {
   // Navigation
   home: { hr: "Početna", en: "Home" },
   events: { hr: "Događanja", en: "Events" },
+  timetables: { hr: "Vozni red", en: "Timetables" },
   roadTransport: { hr: "Autobusni prijevoz", en: "Road Transport" },
   seaTransport: { hr: "Pomorski prijevoz", en: "Sea Transport" },
   feedback: { hr: "Povratne informacije", en: "Feedback" },
@@ -25,6 +26,17 @@ const translations = {
   fauna: { hr: "Fauna", en: "Fauna" },
   info: { hr: "Informacije", en: "Information" },
   settings: { hr: "Postavke", en: "Settings" },
+  
+  // Menu labels (with menu. prefix)
+  "menu.home": { hr: "Početna", en: "Home" },
+  "menu.events": { hr: "Događanja", en: "Events" },
+  "menu.timetables": { hr: "Vozni red", en: "Timetables" },
+  "menu.feedback": { hr: "Povratne informacije", en: "Feedback" },
+  "menu.clickFix": { hr: "Klikni & Popravi", en: "Click & Fix" },
+  "menu.flora": { hr: "Flora", en: "Flora" },
+  "menu.fauna": { hr: "Fauna", en: "Fauna" },
+  "menu.info": { hr: "Informacije", en: "Information" },
+  "menu.settings": { hr: "Postavke", en: "Settings" },
   
   // Inbox
   inbox: { hr: "Poruke", en: "Inbox" },
