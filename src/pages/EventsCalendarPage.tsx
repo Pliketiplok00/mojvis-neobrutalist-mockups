@@ -101,7 +101,7 @@ export default function EventsCalendarPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="Events" onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col">

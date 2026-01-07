@@ -203,7 +203,7 @@ export default function TransportRoadDetailPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="MOJ VIS" showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader showBack onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">
