@@ -41,7 +41,14 @@ describe('Health Routes', () => {
       });
 
       // Note: Database won't be connected in test, so expect degraded
-      const body = response.json();
+      interface HealthBody {
+        status: string;
+        timestamp: string;
+        environment: string;
+        checks: { server: boolean; database: boolean };
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body: HealthBody = response.json();
 
       expect(body).toHaveProperty('status');
       expect(body).toHaveProperty('timestamp');

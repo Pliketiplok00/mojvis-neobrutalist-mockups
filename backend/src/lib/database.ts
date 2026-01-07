@@ -36,7 +36,7 @@ export async function initDatabase(): Promise<void> {
   // Test connection
   try {
     const client = await pool.connect();
-    const result = await client.query('SELECT NOW() as now');
+    const result = await client.query<{ now: Date }>('SELECT NOW() as now');
     console.info(`[DB] Connection successful. Server time: ${String(result.rows[0]?.now)}`);
     client.release();
   } catch (error) {
