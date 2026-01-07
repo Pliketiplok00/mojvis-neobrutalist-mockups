@@ -132,13 +132,19 @@ There is no concept of:
 
 Inbox contains:
 - System notices
-- Event reminders
+- Event reminders (backend-generated at 00:01 Europe/Zagreb on event day)
 - Feedback submissions
 - Click & Fix reports
 - Admin replies
 - Admin status tags
 
 This replaces multiple messaging channels from V2.
+
+Event reminder rules:
+- Mobile app may only **subscribe or unsubscribe** to reminders
+- Mobile app **never generates** reminder messages
+- Backend generates reminder Inbox messages exclusively
+- Mobile app fetches reminders via standard Inbox API
 
 Unread state:
 - May be local-only for MVP
@@ -199,6 +205,11 @@ Applied per:
 - anonymous user ID
 - IP (as secondary guard)
 
+Implementation rule (V1):
+- **Database-backed counters by default**
+- Redis or external stores are optional optimizations, not required for V1
+- Keep implementation simple; do not overengineer
+
 No captcha required in MVP.
 
 ---
@@ -235,7 +246,11 @@ No captcha required in MVP.
   - EN required
   - required fields present
   - CMS constraints respected
-- Audit log is recommended but not required for MVP
+- Audit log scope (MVP):
+  - **Minimal logging only**: who / what / when / entity
+  - No full diff history
+  - No enterprise-grade auditing (versioning, rollback, change tracking)
+  - Purpose is accountability, not forensic reconstruction
 
 ---
 

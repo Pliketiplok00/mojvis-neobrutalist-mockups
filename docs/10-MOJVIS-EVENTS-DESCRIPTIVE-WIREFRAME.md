@@ -120,7 +120,7 @@ Provide full information about a single event and allow user interaction (remind
 
 ---
 
-## SECTION 4: Reminder (“Remind Me”)
+## SECTION 4: Reminder ("Remind Me")
 
 ### Purpose
 Allow users to receive a reminder on the day of the event.
@@ -128,13 +128,19 @@ Allow users to receive a reminder on the day of the event.
 ### Behavior
 - Available to **all users** (visitor and local)
 - When activated:
-  - A reminder message is delivered to the user’s Inbox
-  - Delivery time is **00:01 on the day the event starts**
+  - User subscribes to a reminder for this event
+  - A reminder Inbox message is delivered at **00:01 Europe/Zagreb on the day the event starts**
 
 ### Rules
-- One reminder per user per event
+- One reminder subscription per user per event
 - Reminder creation does not depend on push notification permissions
-- Reminder appears as a standard inbox message
+- Reminder appears as a standard Inbox message
+
+### Reminder generation (backend responsibility)
+- The **mobile app NEVER generates reminder messages**
+- The mobile app may only **subscribe or unsubscribe** to event reminders
+- Reminder Inbox messages are generated **exclusively by the backend**
+- The mobile app fetches and displays reminders via the standard Inbox API
 
 ---
 
