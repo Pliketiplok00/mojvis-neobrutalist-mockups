@@ -8,9 +8,24 @@ import { useState } from "react";
 
 // Mock data for bus lines
 const busLines = [
-  { id: "vis-komiza", name: "Vis – Komiža – Vis", duration: "~25 min", stops: 4 },
-  { id: "vis-marina", name: "Vis – Marina – Vis", duration: "~15 min", stops: 2 },
-  { id: "vis-plisko", name: "Vis – Plisko Polje – Vis", duration: "~20 min", stops: 3 },
+  { 
+    id: "vis-komiza", 
+    name: "Vis – Komiža – Vis", 
+    duration: "~25 min", 
+    stops: ["Vis (luka)", "Rukavac", "Podšpilje", "Komiža (centar)"]
+  },
+  { 
+    id: "vis-marina", 
+    name: "Vis – Marina – Vis", 
+    duration: "~15 min", 
+    stops: ["Vis (luka)", "Marina"]
+  },
+  { 
+    id: "vis-plisko", 
+    name: "Vis – Plisko Polje – Vis", 
+    duration: "~20 min", 
+    stops: ["Vis (luka)", "Dračevo Polje", "Plisko Polje"]
+  },
 ];
 
 // Mock today's departures (aggregated from all lines)
@@ -93,9 +108,15 @@ export default function TransportRoadPage() {
                       </span>
                       <span className="flex items-center gap-1 font-body text-sm text-muted-foreground">
                         <MapPin size={14} strokeWidth={2} />
-                        {line.stops} stanica
+                        {line.stops.length} stanica
                       </span>
                     </div>
+                    <p className="font-body text-xs text-muted-foreground mt-1">
+                      {line.stops.length <= 5 
+                        ? line.stops.join(" → ") 
+                        : `${line.stops.slice(0, 5).join(" → ")} +${line.stops.length - 5} stanica`
+                      }
+                    </p>
                   </div>
                   <ChevronRight size={24} strokeWidth={2.5} className="text-muted-foreground mr-4" />
                 </div>
