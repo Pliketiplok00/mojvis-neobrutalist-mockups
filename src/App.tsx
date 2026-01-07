@@ -13,6 +13,9 @@ import FeedbackPage from "./pages/FeedbackPage";
 import TransportPage from "./pages/TransportPage";
 import TransportRoadPage from "./pages/TransportRoadPage";
 import TransportRoadDetailPage from "./pages/TransportRoadDetailPage";
+import TransportSeaPage from "./pages/TransportSeaPage";
+import TransportSeaDetailPage from "./pages/TransportSeaDetailPage";
+import SettingsPage from "./pages/SettingsPage";
 import OnboardingSplashPage from "./pages/OnboardingSplashPage";
 import OnboardingModePage from "./pages/OnboardingModePage";
 import OnboardingMunicipalityPage from "./pages/OnboardingMunicipalityPage";
@@ -38,6 +41,9 @@ const App = () => (
           <Route path="/transport" element={<TransportPage />} />
           <Route path="/transport/road" element={<TransportRoadPage />} />
           <Route path="/transport/road/:lineId" element={<TransportRoadDetailPage />} />
+          <Route path="/transport/sea" element={<TransportSeaPage />} />
+          <Route path="/transport/sea/:lineId" element={<TransportSeaDetailPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/onboarding" element={<OnboardingSplashPage />} />
           <Route path="/onboarding/mode" element={<OnboardingModePage />} />
           <Route path="/onboarding/municipality" element={<OnboardingMunicipalityPage />} />
