@@ -39,7 +39,7 @@ export default function TransportPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="VOZNI REDOVI" onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader title="MOJ VIS" onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">

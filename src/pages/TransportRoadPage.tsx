@@ -48,7 +48,7 @@ export default function TransportRoadPage() {
 
   return (
     <MobileFrame>
-      <AppHeader title="CESTOVNI PRIJEVOZ" showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader title="MOJ VIS" onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">

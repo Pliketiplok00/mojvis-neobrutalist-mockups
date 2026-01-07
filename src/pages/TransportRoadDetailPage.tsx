@@ -2,10 +2,14 @@ import { MobileFrame } from "@/components/layout/MobileFrame";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { MainMenu } from "@/components/layout/MainMenu";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertTriangle, ChevronRight, Clock, Phone, Calendar, ArrowLeftRight, Bus } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { AlertTriangle, ChevronRight, Clock, Phone, CalendarIcon, ArrowLeftRight, Bus } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
+import { format } from "date-fns";
+import { hr } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 // Mock line data
 const lineData: Record<string, {
@@ -13,71 +17,75 @@ const lineData: Record<string, {
   duration: string;
   directions: [string, string];
   stops: string[];
+  isMultiStop: boolean;
 }> = {
   "vis-komiza": {
     name: "Vis – Komiža – Vis",
     duration: "~25 min",
     directions: ["Vis → Komiža", "Komiža → Vis"],
-    stops: ["Vis (autobusni)", "Rukavac", "Podšpilje", "Komiža"]
+    stops: ["Vis (autobusni)", "Rukavac", "Podšpilje", "Komiža"],
+    isMultiStop: true
   },
   "vis-marina": {
     name: "Vis – Marina – Vis",
     duration: "~15 min",
     directions: ["Vis → Marina", "Marina → Vis"],
-    stops: ["Vis (centar)", "Marina"]
+    stops: ["Vis (centar)", "Marina"],
+    isMultiStop: false
   },
   "vis-plisko": {
     name: "Vis – Plisko Polje – Vis",
     duration: "~20 min",
     directions: ["Vis → Plisko Polje", "Plisko Polje → Vis"],
-    stops: ["Vis (autobusni)", "Podstražje", "Plisko Polje"]
+    stops: ["Vis (autobusni)", "Podstražje", "Plisko Polje"],
+    isMultiStop: true
   },
 };
 
 // Mock departures per direction
-const departuresData: Record<string, Record<string, { time: string; note?: string }[]>> = {
+const departuresData: Record<string, Record<string, { time: string; destination: string; via?: string }[]>> = {
   "vis-komiza": {
     "0": [
-      { time: "06:30" },
-      { time: "08:30" },
-      { time: "10:45" },
-      { time: "13:00" },
-      { time: "15:30" },
-      { time: "18:00" },
-      { time: "20:30", note: "Samo radnim danom" },
+      { time: "06:30", destination: "Komiža", via: "Podšpilje" },
+      { time: "08:30", destination: "Komiža", via: "Podšpilje" },
+      { time: "10:45", destination: "Komiža", via: "Podšpilje" },
+      { time: "13:00", destination: "Komiža", via: "Podšpilje" },
+      { time: "15:30", destination: "Komiža", via: "Podšpilje" },
+      { time: "18:00", destination: "Komiža", via: "Podšpilje" },
+      { time: "20:30", destination: "Komiža", via: "Podšpilje" },
     ],
     "1": [
-      { time: "07:00" },
-      { time: "09:00" },
-      { time: "11:15" },
-      { time: "13:30" },
-      { time: "16:00" },
-      { time: "18:30" },
-      { time: "21:00", note: "Samo radnim danom" },
+      { time: "07:00", destination: "Vis", via: "Podšpilje" },
+      { time: "09:00", destination: "Vis", via: "Podšpilje" },
+      { time: "11:15", destination: "Vis", via: "Podšpilje" },
+      { time: "13:30", destination: "Vis", via: "Podšpilje" },
+      { time: "16:00", destination: "Vis", via: "Podšpilje" },
+      { time: "18:30", destination: "Vis", via: "Podšpilje" },
+      { time: "21:00", destination: "Vis", via: "Podšpilje" },
     ],
   },
   "vis-marina": {
     "0": [
-      { time: "07:15" },
-      { time: "12:00" },
-      { time: "17:30" },
+      { time: "07:15", destination: "Marina" },
+      { time: "12:00", destination: "Marina" },
+      { time: "17:30", destination: "Marina" },
     ],
     "1": [
-      { time: "07:45" },
-      { time: "12:30" },
-      { time: "18:00" },
+      { time: "07:45", destination: "Vis" },
+      { time: "12:30", destination: "Vis" },
+      { time: "18:00", destination: "Vis" },
     ],
   },
   "vis-plisko": {
     "0": [
-      { time: "09:30" },
-      { time: "14:00" },
-      { time: "19:00" },
+      { time: "09:30", destination: "Plisko Polje", via: "Podstražje" },
+      { time: "14:00", destination: "Plisko Polje", via: "Podstražje" },
+      { time: "19:00", destination: "Plisko Polje", via: "Podstražje" },
     ],
     "1": [
-      { time: "10:00" },
-      { time: "14:30" },
-      { time: "19:30" },
+      { time: "10:00", destination: "Vis", via: "Podstražje" },
+      { time: "14:30", destination: "Vis", via: "Podstražje" },
+      { time: "19:30", destination: "Vis", via: "Podstražje" },
     ],
   },
 };
@@ -88,14 +96,19 @@ const contacts = [
 ];
 
 // Mock active notice
-const activeNotice = null; // Set to object to show notice
+const activeNotice = {
+  id: "notice-1",
+  title: "IZMJENA VOZNOG REDA",
+  description: "Linija Vis-Komiža: privremena izmjena od 15.01."
+};
 
 export default function TransportRoadDetailPage() {
   const navigate = useNavigate();
   const { lineId } = useParams();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedDirection, setSelectedDirection] = useState(0);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const line = lineData[lineId || "vis-komiza"] || lineData["vis-komiza"];
   const departures = departuresData[lineId || "vis-komiza"]?.[String(selectedDirection)] || [];
@@ -104,37 +117,28 @@ export default function TransportRoadDetailPage() {
     window.location.href = `tel:${phone.replace(/\s/g, '')}`;
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('hr-HR', { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short' 
-    }).toUpperCase();
-  };
-
-  const changeDate = (days: number) => {
-    const newDate = new Date(selectedDate);
-    newDate.setDate(newDate.getDate() + days);
-    // Don't allow past dates
-    if (newDate >= new Date(new Date().setHours(0, 0, 0, 0))) {
-      setSelectedDate(newDate);
-    }
-  };
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   return (
     <MobileFrame>
-      <AppHeader title={line.name.split(' – ')[0].toUpperCase()} showBack onMenuClick={() => setMenuOpen(true)} />
+      <AppHeader title="MOJ VIS" showBack onMenuClick={() => setMenuOpen(true)} />
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <div className="p-4 space-y-6">
         {/* Active Notice Banner */}
         {activeNotice && (
           <button 
-            onClick={() => navigate(`/inbox/notice-1`)}
+            onClick={() => navigate(`/inbox/${activeNotice.id}`)}
             className="w-full bg-destructive neo-border-heavy p-4 flex items-center gap-4 neo-hover"
           >
-            <AlertTriangle size={20} strokeWidth={2.5} className="text-white" />
-            <span className="font-display font-bold text-sm text-white flex-1 text-left">OBAVIJEST O IZMJENI</span>
+            <div className="w-10 h-10 bg-white/20 neo-border flex items-center justify-center flex-shrink-0">
+              <AlertTriangle size={20} strokeWidth={2.5} className="text-white" />
+            </div>
+            <div className="flex-1 text-left">
+              <p className="font-display font-bold text-sm text-white">{activeNotice.title}</p>
+              <p className="font-body text-xs text-white/80">{activeNotice.description}</p>
+            </div>
             <ChevronRight size={20} strokeWidth={2.5} className="text-white" />
           </button>
         )}
@@ -150,37 +154,48 @@ export default function TransportRoadDetailPage() {
               <div className="flex items-center gap-2 mt-1">
                 <Clock size={14} strokeWidth={2.5} className="text-white/80" />
                 <span className="font-body text-sm text-white/80">{line.duration}</span>
+                {line.isMultiStop && (
+                  <span className="bg-white/20 px-2 py-0.5 text-xs font-display text-white rounded">
+                    VIŠE STANICA
+                  </span>
+                )}
               </div>
             </div>
           </div>
         </Card>
 
-        {/* Date Selector */}
+        {/* Date Selector - Calendar Picker */}
         <Card variant="flat" className="neo-border-heavy p-4">
           <label className="font-display font-bold text-sm text-muted-foreground block mb-3">
-            <Calendar size={16} strokeWidth={2.5} className="inline mr-2" />
+            <CalendarIcon size={16} strokeWidth={2.5} className="inline mr-2" />
             DATUM
           </label>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              className="neo-border-heavy font-display"
-              onClick={() => changeDate(-1)}
-              disabled={selectedDate <= new Date(new Date().setHours(0, 0, 0, 0))}
-            >
-              ←
-            </Button>
-            <div className="flex-1 bg-accent neo-border-heavy p-3 text-center">
-              <span className="font-display font-bold">{formatDate(selectedDate)}</span>
-            </div>
-            <Button 
-              variant="outline" 
-              className="neo-border-heavy font-display"
-              onClick={() => changeDate(1)}
-            >
-              →
-            </Button>
-          </div>
+          <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+            <PopoverTrigger asChild>
+              <button className="w-full bg-accent neo-border-heavy p-4 flex items-center justify-between neo-hover">
+                <span className="font-display font-bold">
+                  {format(selectedDate, "EEEE, d. MMMM yyyy.", { locale: hr }).toUpperCase()}
+                </span>
+                <CalendarIcon size={20} strokeWidth={2.5} />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 neo-border-heavy" align="center">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => {
+                  if (date) {
+                    setSelectedDate(date);
+                    setCalendarOpen(false);
+                  }
+                }}
+                disabled={(date) => date < today}
+                initialFocus
+                locale={hr}
+                className={cn("p-3 pointer-events-auto")}
+              />
+            </PopoverContent>
+          </Popover>
         </Card>
 
         {/* Direction Toggle */}
@@ -215,7 +230,7 @@ export default function TransportRoadDetailPage() {
               <Bus size={48} strokeWidth={2} className="mx-auto text-muted-foreground mb-4" />
               <p className="font-display font-bold text-muted-foreground">NEMA POLAZAKA</p>
               <p className="font-body text-sm text-muted-foreground mt-2">
-                Za odabrani datum nema predviđenih polazaka
+                Za odabrani datum nema predviđenih polazaka.
               </p>
             </Card>
           ) : (
@@ -229,9 +244,9 @@ export default function TransportRoadDetailPage() {
                     <span className="font-display font-bold text-lg text-primary-foreground">{departure.time}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-display font-bold">{line.directions[selectedDirection]}</p>
-                    {departure.note && (
-                      <p className="font-body text-xs text-muted-foreground">{departure.note}</p>
+                    <p className="font-display font-bold">{departure.destination}</p>
+                    {departure.via && (
+                      <p className="font-body text-xs text-muted-foreground">via {departure.via}</p>
                     )}
                   </div>
                 </div>
