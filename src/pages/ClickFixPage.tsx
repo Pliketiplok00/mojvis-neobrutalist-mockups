@@ -5,11 +5,16 @@ import { MainMenu } from "@/components/layout/MainMenu";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { RateLimitWarning } from "@/components/ui/states";
+import { useRateLimit } from "@/hooks/useRateLimit";
+import { useI18n } from "@/lib/i18n";
 import { Camera, MapPin, X, Send, Check, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function ClickFixPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const rateLimit = useRateLimit("click_fix");
   const [menuOpen, setMenuOpen] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number; label?: string } | null>(null);
   const [photos, setPhotos] = useState<string[]>([]);
@@ -17,7 +22,7 @@ export default function ClickFixPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showNoPhotoWarning, setShowNoPhotoWarning] = useState(false);
 
-  const isValid = location && description.length >= 15;
+  const isValid = location && description.length >= 15 && rateLimit.canSubmit;
 
   const handleGetLocation = () => {
     // Mock location - in real app would use GPS
@@ -48,6 +53,7 @@ export default function ClickFixPage() {
     }
     
     // Submit report
+    rateLimit.recordSubmission();
     setIsSubmitted(true);
   };
 
@@ -58,9 +64,9 @@ export default function ClickFixPage() {
           <div className="w-24 h-24 bg-secondary neo-border-heavy neo-shadow-lg flex items-center justify-center mb-8">
             <Check size={48} strokeWidth={3} className="text-secondary-foreground" />
           </div>
-          <h1 className="font-display font-bold text-3xl text-center mb-4">PRIJAVA POSLANA</h1>
+          <h1 className="font-display font-bold text-3xl text-center mb-4">{t("reportSent").toUpperCase()}</h1>
           <p className="font-body text-muted-foreground text-center mb-8">
-            Tvoja prijava je zaprimljena. Status možeš pratiti u Inboxu.
+            {t("reportSentDesc")}
           </p>
           <Button 
             size="lg"
@@ -68,7 +74,7 @@ export default function ClickFixPage() {
             onClick={() => navigate("/home")}
           >
             <Home size={24} strokeWidth={2.5} className="mr-3" />
-            POVRATAK NA POČETNU
+            {t("returnHome").toUpperCase()}
           </Button>
         </div>
       </MobileFrame>
@@ -232,9 +238,12 @@ export default function ClickFixPage() {
               disabled={!isValid}
             >
               <Send size={24} strokeWidth={2.5} className="mr-3" />
-              POŠALJI PRIJAVU
+              {t("sendReport").toUpperCase()}
             </Button>
           </div>
+
+          {/* Rate limit indicator */}
+          <RateLimitWarning remaining={rateLimit.remaining} max={rateLimit.max} />
         </div>
       </main>
     </MobileFrame>
