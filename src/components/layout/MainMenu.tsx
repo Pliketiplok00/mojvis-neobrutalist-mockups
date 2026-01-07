@@ -15,7 +15,7 @@ const menuItems = [
   { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange", shadowColor: "hsl(var(--orange))" },
   { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-secondary", shadowColor: "hsl(var(--secondary))" },
   { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
-  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal", shadowColor: "hsl(var(--teal))" },
+  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-accent", shadowColor: "hsl(var(--accent))" },
   { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted", shadowColor: "hsl(var(--muted))" },
 ];
 
