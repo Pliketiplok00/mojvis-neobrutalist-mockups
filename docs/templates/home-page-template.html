@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page Template - MojVis</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="mobile-frame">
+    
+    <!-- HEADER -->
+    <header class="app-header">
+      <button class="header-btn" aria-label="Open menu">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <h1 class="header-title">MojVis</h1>
+      <button class="header-btn header-btn--inbox" aria-label="Inbox">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 12h-6l-2 3h-4l-2-3H2"></path>
+          <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+        </svg>
+        <span class="inbox-badge">3</span>
+      </button>
+    </header>
+
+    <main class="page-content">
+      
+      <!-- ACTIVE NOTIFICATION BANNER -->
+      <button class="notification-banner">
+        <div class="notification-icon notification-icon--alert">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        </div>
+        <div class="notification-content">
+          <p class="notification-title">Road Works Notice</p>
+          <p class="notification-subtitle">Main road closed until 18:00 today</p>
+        </div>
+        <span class="badge badge--destructive">New</span>
+      </button>
+
+      <!-- GREETING BLOCK -->
+      <section class="greeting-block">
+        <h2 class="greeting-title">Welcome to Vis!</h2>
+        <p class="greeting-subtitle">Your island guide for events, transport & services</p>
+      </section>
+
+      <!-- CATEGORY GRID -->
+      <section class="section">
+        <h3 class="section-label">Quick Access</h3>
+        <div class="category-grid">
+          
+          <div class="category-card-wrapper">
+            <div class="category-card-shadow"></div>
+            <button class="category-card category-card--primary">
+              <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span class="category-label">Events</span>
+            </button>
+          </div>
+
+          <div class="category-card-wrapper">
+            <div class="category-card-shadow"></div>
+            <button class="category-card category-card--secondary">
+              <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M8 6v6"></path>
+                <path d="M15 6v6"></path>
+                <path d="M2 12h19.6"></path>
+                <path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"></path>
+                <circle cx="7" cy="18" r="2"></circle>
+                <circle cx="17" cy="18" r="2"></circle>
+              </svg>
+              <span class="category-label">Bus</span>
+            </button>
+          </div>
+
+          <div class="category-card-wrapper">
+            <div class="category-card-shadow"></div>
+            <button class="category-card category-card--destructive">
+              <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"></path>
+                <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"></path>
+                <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"></path>
+                <path d="M12 10v4"></path>
+                <path d="M12 2v3"></path>
+              </svg>
+              <span class="category-label">Ferry</span>
+            </button>
+          </div>
+
+          <div class="category-card-wrapper">
+            <div class="category-card-shadow"></div>
+            <button class="category-card category-card--accent">
+              <svg class="category-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+              <span class="category-label">Info</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- UPCOMING EVENTS -->
+      <section class="section">
+        <div class="section-header">
+          <h3 class="section-label">Upcoming Events</h3>
+          <button class="section-link">
+            View all
+            <svg class="icon icon--sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+        <div class="event-list">
+          
+          <!-- Featured Event (first) -->
+          <div class="event-card-wrapper">
+            <div class="event-card-shadow event-card-shadow--primary"></div>
+            <button class="event-card event-card--featured">
+              <div class="event-date">
+                <span class="event-date-day">15</span>
+                <span class="event-date-month">07</span>
+              </div>
+              <div class="event-info">
+                <h4 class="event-title">Summer Festival</h4>
+                <p class="event-location">Vis Town Square</p>
+              </div>
+              <span class="event-time">19:00</span>
+            </button>
+          </div>
+
+          <!-- Regular Event -->
+          <div class="event-card-wrapper">
+            <div class="event-card-shadow"></div>
+            <button class="event-card">
+              <div class="event-date">
+                <span class="event-date-day">18</span>
+                <span class="event-date-month">07</span>
+              </div>
+              <div class="event-info">
+                <h4 class="event-title">Traditional Fishing Night</h4>
+                <p class="event-location">Komiža Harbor</p>
+              </div>
+              <span class="event-time">20:00</span>
+            </button>
+          </div>
+
+          <!-- Regular Event -->
+          <div class="event-card-wrapper">
+            <div class="event-card-shadow"></div>
+            <button class="event-card">
+              <div class="event-date">
+                <span class="event-date-day">20</span>
+                <span class="event-date-month">07</span>
+              </div>
+              <div class="event-info">
+                <h4 class="event-title">Wine Tasting Event</h4>
+                <p class="event-location">Local Winery</p>
+              </div>
+              <span class="event-time">18:00</span>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- FEEDBACK ENTRY -->
+      <section class="section section--muted">
+        <div class="feedback-card-wrapper">
+          <div class="feedback-card-shadow"></div>
+          <button class="feedback-card">
+            <div class="feedback-icon">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </div>
+            <div class="feedback-content">
+              <h4 class="feedback-title">Share Your Thoughts</h4>
+              <p class="feedback-subtitle">Ideas, suggestions & feedback</p>
+            </div>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>

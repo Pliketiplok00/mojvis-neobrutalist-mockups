@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Static Content Page Template - MojVis</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="mobile-frame">
+    
+    <!-- HEADER WITH BACK -->
+    <header class="app-header">
+      <button class="header-btn" aria-label="Go back">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="m12 19-7-7 7-7"></path>
+          <path d="M19 12H5"></path>
+        </svg>
+      </button>
+      <h1 class="header-title">Flora of Vis</h1>
+      <div class="header-spacer"></div>
+    </header>
+
+    <main class="page-content page-content--static">
+      
+      <!-- MEDIA HEADER -->
+      <section class="media-header">
+        <img 
+          src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=800" 
+          alt="Mediterranean flora" 
+          class="media-header-image"
+        />
+        <div class="media-header-overlay">
+          <h1 class="media-header-title">Flora of Vis</h1>
+          <p class="media-header-subtitle">Discover the island's plant life</p>
+        </div>
+      </section>
+
+      <!-- TEXT BLOCK -->
+      <section class="content-block">
+        <div class="text-block">
+          <p class="text-lead">The island of Vis boasts a rich variety of Mediterranean plant species, many endemic to the Adriatic region.</p>
+          <p>From aromatic herbs covering the hillsides to ancient olive groves that have stood for centuries, the flora of Vis tells the story of the island's history and unique microclimate.</p>
+        </div>
+      </section>
+
+      <!-- HIGHLIGHT BLOCK -->
+      <section class="content-block">
+        <div class="highlight-block">
+          <div class="highlight-icon">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 20h10"></path>
+              <path d="M10 20c5.5-2.5.8-6.4 3-10"></path>
+              <path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"></path>
+              <path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"></path>
+            </svg>
+          </div>
+          <div class="highlight-content">
+            <h3 class="highlight-title">Did You Know?</h3>
+            <p class="highlight-text">Vis is home to over 1,000 plant species, including 50 that are endemic to the Adriatic islands.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD LIST BLOCK -->
+      <section class="content-block">
+        <h2 class="content-block-title">Notable Species</h2>
+        <div class="card-list">
+          
+          <div class="card-item-wrapper">
+            <div class="card-item-shadow"></div>
+            <button class="card-item">
+              <img 
+                src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=200" 
+                alt="Olive tree" 
+                class="card-item-image"
+              />
+              <div class="card-item-content">
+                <h3 class="card-item-title">Olive Trees</h3>
+                <p class="card-item-description">Ancient groves dating back centuries, producing premium olive oil.</p>
+              </div>
+              <svg class="card-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="card-item-wrapper">
+            <div class="card-item-shadow"></div>
+            <button class="card-item">
+              <img 
+                src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=200" 
+                alt="Rosemary" 
+                class="card-item-image"
+              />
+              <div class="card-item-content">
+                <h3 class="card-item-title">Wild Rosemary</h3>
+                <p class="card-item-description">Aromatic herb covering the hillsides with purple blooms in spring.</p>
+              </div>
+              <svg class="card-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="card-item-wrapper">
+            <div class="card-item-shadow"></div>
+            <button class="card-item">
+              <img 
+                src="https://images.unsplash.com/photo-1504567961542-e24d9439a724?w=200" 
+                alt="Lavender" 
+                class="card-item-image"
+              />
+              <div class="card-item-content">
+                <h3 class="card-item-title">Lavender</h3>
+                <p class="card-item-description">Traditional crop still cultivated for essential oils and honey production.</p>
+              </div>
+              <svg class="card-item-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- MEDIA BLOCK -->
+      <section class="content-block">
+        <h2 class="content-block-title">Gallery</h2>
+        <div class="media-grid">
+          <div class="media-grid-item">
+            <img 
+              src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400" 
+              alt="Mediterranean landscape" 
+              class="media-grid-image"
+            />
+          </div>
+          <div class="media-grid-item">
+            <img 
+              src="https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=400" 
+              alt="Olive grove" 
+              class="media-grid-image"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- LINK LIST BLOCK -->
+      <section class="content-block">
+        <h2 class="content-block-title">Learn More</h2>
+        <div class="link-list">
+          <a href="#" class="link-item">
+            <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span class="link-text">Download Flora Guide (PDF)</span>
+            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+          <a href="#" class="link-item">
+            <svg class="link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span class="link-text">Visit Botanical Garden Website</span>
+            <svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- CONTACT BLOCK -->
+      <section class="content-block content-block--muted">
+        <h2 class="content-block-title">Contact</h2>
+        <div class="contact-block">
+          <div class="contact-info">
+            <h3 class="contact-name">Vis Nature Center</h3>
+            <p class="contact-address">Trg Šetalište 5, Vis</p>
+          </div>
+          <div class="contact-actions">
+            <a href="tel:+38521711456" class="contact-btn">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <span>Call</span>
+            </a>
+            <a href="mailto:info@vis-nature.hr" class="contact-btn">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+              <span>Email</span>
+            </a>
+            <a href="#" class="contact-btn">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>Map</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</body>
+</html>
