@@ -341,6 +341,35 @@ Manual verification was initially blocked by an onboarding navigation regression
 
 **Verification:** Run `npx tsx scripts/smoke-check-onboarding.ts` in mobile directory.
 
+### Hamburger Menu Regression (RESOLVED)
+
+Manual verification was also blocked by hamburger menu not opening:
+- **Root cause:** No menu implementation existed. Hamburger handlers were TODO placeholders (`console.info` only).
+- **Initial attempt:** Used `@react-navigation/drawer` with `react-native-reanimated`, but this caused native binary mismatch errors in Expo Go (`WorkletsError: Mismatch between JavaScript part and native part`).
+- **Final fix:** Implemented custom `MenuOverlay` using React Native's built-in `Animated` API (no native modules required):
+  - Created `MenuContext` for open/close state management
+  - Created `MenuOverlay.tsx` - animated slide-in panel with menu items
+  - Updated root screens to use `useMenu()` hook
+- **Files added/modified:**
+  - `mobile/src/components/MenuOverlay.tsx` (NEW)
+  - `mobile/src/contexts/MenuContext.tsx` (NEW)
+  - `mobile/App.tsx` (MODIFIED - added MenuProvider and MenuOverlay)
+  - `mobile/src/navigation/AppNavigator.tsx` (MODIFIED - accepts navigation ref)
+  - `mobile/src/screens/home/HomeScreen.tsx` (MODIFIED - uses useMenu)
+  - `mobile/src/screens/transport/TransportHubScreen.tsx` (MODIFIED - uses useMenu)
+  - `mobile/src/screens/events/EventsScreen.tsx` (MODIFIED - uses useMenu)
+  - `mobile/scripts/smoke-check-menu.ts` (NEW)
+
+**Verification:** Run `npx tsx scripts/smoke-check-menu.ts` in mobile directory.
+
+**Manual verification:**
+1. Start app with `npx expo start --ios`
+2. Complete onboarding if needed
+3. On Home screen, tap hamburger icon (top-left)
+4. Menu overlay should slide in from left with items: Pocetna, Vozni red, Dogadaji, Pristiglo
+5. Tap "Vozni red" - should navigate to Transport Hub
+6. Tap hamburger again - menu should open
+
 ### Checklist
 
 See [PHASE_5_MANUAL_VERIFICATION.md](./PHASE_5_MANUAL_VERIFICATION.md) for the complete checklist.

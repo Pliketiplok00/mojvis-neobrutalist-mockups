@@ -17,10 +17,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { useMenu } from '../../contexts/MenuContext';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 
 export function HomeScreen(): React.JSX.Element {
+  const { openMenu } = useMenu();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
 
   // TODO: Get from user context
@@ -42,8 +44,7 @@ export function HomeScreen(): React.JSX.Element {
   }, [fetchBanners]);
 
   const handleMenuPress = (): void => {
-    // TODO: Open drawer menu
-    console.info('Menu pressed');
+    openMenu();
   };
 
   return (

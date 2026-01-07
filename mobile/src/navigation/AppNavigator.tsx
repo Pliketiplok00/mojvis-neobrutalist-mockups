@@ -14,24 +14,29 @@
  * Phase 4: Added Transport screens (hub, road, sea, line detail).
  * Phase 5: Added Feedback screens.
  * Phase 5.1: Fixed onboarding navigation with persistence.
+ * Phase 5.2: Menu uses MenuOverlay (no native drawer required).
  */
 
 import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useOnboarding } from '../contexts/OnboardingContext';
 
 // Types
 import type { RootStackParamList, OnboardingStackParamList, MainStackParamList } from './types';
 
-// Screens
+interface AppNavigatorProps {
+  navigationRef?: React.RefObject<NavigationContainerRef<MainStackParamList> | null>;
+}
+
+// Screens - Onboarding
 import { LanguageSelectionScreen } from '../screens/onboarding/LanguageSelectionScreen';
 import { UserModeSelectionScreen } from '../screens/onboarding/UserModeSelectionScreen';
 import { MunicipalitySelectionScreen } from '../screens/onboarding/MunicipalitySelectionScreen';
+
+// Screens - Main
 import { HomeScreen } from '../screens/home/HomeScreen';
-import { InboxListScreen } from '../screens/inbox/InboxListScreen';
-import { InboxDetailScreen } from '../screens/inbox/InboxDetailScreen';
 import { TransportHubScreen } from '../screens/transport/TransportHubScreen';
 import { RoadTransportScreen } from '../screens/transport/RoadTransportScreen';
 import { RoadLineDetailScreen } from '../screens/transport/RoadLineDetailScreen';
@@ -39,10 +44,12 @@ import { SeaTransportScreen } from '../screens/transport/SeaTransportScreen';
 import { SeaLineDetailScreen } from '../screens/transport/SeaLineDetailScreen';
 import { EventsScreen } from '../screens/events/EventsScreen';
 import { EventDetailScreen } from '../screens/events/EventDetailScreen';
-import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
+import { InboxListScreen } from '../screens/inbox/InboxListScreen';
+import { InboxDetailScreen } from '../screens/inbox/InboxDetailScreen';
 import { FeedbackFormScreen } from '../screens/feedback/FeedbackFormScreen';
 import { FeedbackConfirmationScreen } from '../screens/feedback/FeedbackConfirmationScreen';
 import { FeedbackDetailScreen } from '../screens/feedback/FeedbackDetailScreen';
+import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
 
 // Create navigators
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -51,7 +58,7 @@ const MainStack = createNativeStackNavigator<MainStackParamList>();
 
 /**
  * Onboarding Navigator
- * Language → User Mode → Municipality (if local) → Home
+ * Language -> User Mode -> Municipality (if local) -> Home
  */
 function OnboardingNavigator(): React.JSX.Element {
   return (
@@ -85,20 +92,20 @@ function MainNavigator(): React.JSX.Element {
   return (
     <MainStack.Navigator
       screenOptions={{
-        headerShown: false, // We use GlobalHeader component
+        headerShown: false,
         animation: 'slide_from_right',
       }}
     >
       <MainStack.Screen name="Home" component={HomeScreen} />
-      <MainStack.Screen name="Events" component={EventsScreen} />
-      <MainStack.Screen name="EventDetail" component={EventDetailScreen} />
-      <MainStack.Screen name="Inbox" component={InboxListScreen} />
-      <MainStack.Screen name="InboxDetail" component={InboxDetailScreen} />
       <MainStack.Screen name="TransportHub" component={TransportHubScreen} />
       <MainStack.Screen name="RoadTransport" component={RoadTransportScreen} />
       <MainStack.Screen name="RoadLineDetail" component={RoadLineDetailScreen} />
       <MainStack.Screen name="SeaTransport" component={SeaTransportScreen} />
       <MainStack.Screen name="SeaLineDetail" component={SeaLineDetailScreen} />
+      <MainStack.Screen name="Events" component={EventsScreen} />
+      <MainStack.Screen name="EventDetail" component={EventDetailScreen} />
+      <MainStack.Screen name="Inbox" component={InboxListScreen} />
+      <MainStack.Screen name="InboxDetail" component={InboxDetailScreen} />
       <MainStack.Screen name="FeedbackForm" component={FeedbackFormScreen} />
       <MainStack.Screen name="FeedbackConfirmation" component={FeedbackConfirmationScreen} />
       <MainStack.Screen name="FeedbackDetail" component={FeedbackDetailScreen} />
@@ -111,7 +118,7 @@ function MainNavigator(): React.JSX.Element {
  * Root Navigator
  * Decides whether to show onboarding or main app.
  */
-export function AppNavigator(): React.JSX.Element {
+export function AppNavigator({ navigationRef }: AppNavigatorProps): React.JSX.Element {
   const { isComplete, isLoading } = useOnboarding();
 
   // Show loading screen while checking onboarding status
@@ -124,7 +131,7 @@ export function AppNavigator(): React.JSX.Element {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <RootStack.Navigator screenOptions={{ headerShown: false }}>
         {isComplete ? (
           <RootStack.Screen name="Main" component={MainNavigator} />

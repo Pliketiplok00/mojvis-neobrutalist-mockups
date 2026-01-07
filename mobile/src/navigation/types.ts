@@ -7,6 +7,7 @@
  * Phase 4: Added Transport screens (hub, road, sea, line detail).
  * Phase 5: Added Feedback screens.
  * Phase 5.1: Updated onboarding params for persistence.
+ * Phase 5.2: Simplified to use MenuOverlay instead of drawer navigation.
  */
 
 // Onboarding data types
@@ -26,27 +27,23 @@ export type OnboardingStackParamList = {
 
 /**
  * Main App Stack
- * Root screens accessible from menu.
+ * All screens accessible after onboarding.
  */
 export type MainStackParamList = {
   Home: undefined;
   Events: undefined;
   EventDetail: { eventId: string };
-  // Transport (Phase 4)
   TransportHub: undefined;
   RoadTransport: undefined;
   RoadLineDetail: { lineId: string };
   SeaTransport: undefined;
   SeaLineDetail: { lineId: string };
-  // Inbox
   Inbox: undefined;
   InboxDetail: { messageId: string };
-  // Feedback (Phase 5)
   FeedbackForm: undefined;
   FeedbackConfirmation: { feedbackId: string };
   FeedbackDetail: { feedbackId: string };
   Settings: undefined;
-  // Static content pages accessed by slug
   StaticPage: { slug: string };
 };
 
