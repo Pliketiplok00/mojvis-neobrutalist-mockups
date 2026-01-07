@@ -8,7 +8,7 @@ import { HighlightBlock } from "@/components/content/HighlightBlock";
 import { ContactBlock } from "@/components/content/ContactBlock";
 import { LinkListBlock } from "@/components/content/LinkListBlock";
 import { MediaBlock } from "@/components/content/MediaBlock";
-import { Info } from "lucide-react";
+import { Info, Phone, Ambulance, Flame, Anchor, AlertCircle } from "lucide-react";
 import infoVisTownImg from "@/assets/info-vis-town.jpg";
 
 // Mock CMS data
@@ -27,11 +27,13 @@ const pageData = {
       "The island has two main settlements: Vis town on the eastern coast and Komiža on the western coast. Both offer essential services, restaurants, and accommodation.",
     ],
   },
-  emergencyNotice: {
-    title: "Emergency Numbers",
-    body: "Police: 192 • Ambulance: 194 • Fire: 193 • Sea Rescue: 195 • General Emergency: 112",
-    variant: "warning" as const,
-  },
+  emergencyNumbers: [
+    { icon: Phone, label: "Police", number: "192", color: "bg-primary", textColor: "text-primary-foreground" },
+    { icon: Ambulance, label: "Ambulance", number: "194", color: "bg-destructive", textColor: "text-destructive-foreground" },
+    { icon: Flame, label: "Fire", number: "193", color: "bg-accent", textColor: "text-accent-foreground" },
+    { icon: Anchor, label: "Sea Rescue", number: "195", color: "bg-secondary", textColor: "text-secondary-foreground" },
+    { icon: AlertCircle, label: "Emergency", number: "112", color: "bg-destructive", textColor: "text-destructive-foreground" },
+  ],
   contacts: [
     {
       id: "tourist-office-vis",
@@ -123,11 +125,30 @@ export default function InfoPage() {
           body={pageData.intro.body}
         />
 
-        <HighlightBlock
-          title={pageData.emergencyNotice.title}
-          body={pageData.emergencyNotice.body}
-          variant={pageData.emergencyNotice.variant}
-        />
+        {/* Emergency Numbers Grid */}
+        <section className="border-b-2 border-border bg-background p-5">
+          <h3 className="mb-4 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
+            Emergency Numbers
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {pageData.emergencyNumbers.map((item) => (
+              <a 
+                key={item.number} 
+                href={`tel:${item.number}`}
+                className="relative block"
+              >
+                <div className="absolute inset-0 translate-x-1.5 translate-y-1.5 bg-foreground" />
+                <div
+                  className={`relative flex flex-col items-center justify-center gap-1 border-2 border-foreground ${item.color} ${item.textColor} p-4 transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1`}
+                >
+                  <item.icon className="h-7 w-7" strokeWidth={2} />
+                  <span className="font-display text-xs font-bold uppercase">{item.label}</span>
+                  <span className="font-display text-2xl font-bold">{item.number}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </section>
 
         <ContactBlock
           title="Important Contacts"
