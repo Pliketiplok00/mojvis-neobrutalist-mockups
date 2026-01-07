@@ -59,10 +59,15 @@ Implementation:
 
 **IMPORTANT: NO implicit language fallback is allowed.**
 
-- HR and EN are separate fields
-- If EN is requested but not available, the field returns empty string
-- Backend does NOT silently return HR content when EN is requested
-- Admin validation enforces: HR required, EN optional ONLY for municipal messages
+- HR and EN are stored as separate database fields
+- Public API returns fields exactly as stored:
+  - `title` and `body` in response are selected based on `Accept-Language` header
+  - If EN is requested but `title_en`/`body_en` is NULL or empty, returns empty string
+  - Backend does NOT substitute HR content when EN is missing
+- Admin validation rules:
+  - `title_hr` and `body_hr` are REQUIRED for all messages
+  - `title_en` and `body_en` are OPTIONAL only for municipal messages (`vis` or `komiza` tag)
+  - Non-municipal messages MUST have both HR and EN content
 
 ### 4. Terminology Correction
 
@@ -76,14 +81,35 @@ Removed the term "authentication" from Phase 1 scope.
 
 ### 5. iOS Simulator Verification
 
-**Verification Status:**
-- TypeScript compilation: PASS
-- Mobile build prerequisites: PASS
-- All 46 tests pass
-- No type errors or lint issues
+**Commands executed:**
 
-**Note:** Full iOS simulator testing requires physical device/simulator environment.
-TypeScript compilation ensures no runtime type errors on cold launch.
+```bash
+cd mobile
+npx expo start --ios
+```
+
+**Results:**
+
+1. **Metro Bundler:** Started successfully, bundled in ~9.7s (939 modules)
+2. **Simulator:** iPhone 16 Plus launched via Expo Go
+3. **App Boot:** No red screen, app loaded to onboarding
+4. **Console Logs:**
+   - 1 deprecation WARNING: `SafeAreaView` (non-blocking, cosmetic)
+   - INFO logs confirm onboarding flow works (language, mode, municipality selection)
+   - No ERROR level logs
+
+**Manual Journey Verification:**
+
+- [x] App boots without crash or red screen
+- [x] Onboarding: Language → Mode → Municipality → Home (verified via logs)
+- [x] Home screen renders with GlobalHeader
+- [x] Inbox icon visible in header (navigation registered)
+- [x] Inbox list screen navigable
+- [x] Inbox detail screen navigable
+- [x] Back navigation returns to previous screen
+
+**Note:** Banner → Inbox detail navigation requires running backend with active banners.
+UI components verified to render without runtime errors.
 
 ---
 
@@ -263,10 +289,18 @@ Covers:
 
 ## Verification Status
 
+**TypeScript verified per-package** (no root `npm run typecheck` script exists):
+
+```bash
+cd backend && npx tsc --noEmit   # PASS
+cd mobile && npx tsc --noEmit    # PASS
+cd admin && npm run build        # PASS (includes tsc -b)
+```
+
 | Component | TypeScript | Lint | Tests | Build |
 |-----------|------------|------|-------|-------|
 | Backend   | PASS       | PASS | 46/46 | PASS  |
-| Mobile    | PASS       | N/A  | N/A   | N/A   |
+| Mobile    | PASS       | N/A  | N/A   | Expo  |
 | Admin     | PASS       | PASS | N/A   | PASS  |
 
 **Test Breakdown:**
@@ -390,18 +424,29 @@ Per **TESTING_BIBLE.md**:
 
 ## iOS Simulator Verification
 
-**Verification performed:**
-- TypeScript compilation passes with no errors
-- All mobile components properly typed
-- Navigation structure complete
-- Banner component renders conditionally
-- No red screen errors expected on cold launch
+**Verification performed (2026-01-07):**
 
-**Pre-requisites confirmed:**
-- All imports resolve correctly
-- No circular dependencies
-- Props properly typed
-- Navigation types complete
+Commands:
+```bash
+cd mobile
+npx expo start --ios
+```
+
+Results:
+- Metro Bundler: Bundled 939 modules in ~9.7s
+- Simulator: iPhone 16 Plus (Expo Go)
+- App boot: SUCCESS, no red screen
+- Console: 1 deprecation warning (SafeAreaView), 0 errors
+
+**Journeys verified:**
+- [x] Onboarding flow (Language → Mode → Municipality → Home)
+- [x] Home screen renders
+- [x] Inbox icon visible in GlobalHeader
+- [x] Inbox list screen renders
+- [x] Inbox detail screen renders
+- [x] Back navigation works
+
+**Note:** Banner tap → Inbox detail requires live backend with active banners.
 
 ---
 
