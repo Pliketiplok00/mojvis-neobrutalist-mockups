@@ -9,7 +9,6 @@ import InboxDetailPage from "./pages/InboxDetailPage";
 import EventsCalendarPage from "./pages/EventsCalendarPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import ClickFixPage from "./pages/ClickFixPage";
-import ClickFixReportPage from "./pages/ClickFixReportPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import TransportPage from "./pages/TransportPage";
 import TransportRoadPage from "./pages/TransportRoadPage";
@@ -35,7 +34,6 @@ const App = () => (
           <Route path="/events" element={<EventsCalendarPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/click-fix" element={<ClickFixPage />} />
-          <Route path="/click-fix/report" element={<ClickFixReportPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/transport" element={<TransportPage />} />
           <Route path="/transport/road" element={<TransportRoadPage />} />
