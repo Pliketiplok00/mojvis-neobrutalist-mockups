@@ -1,147 +1,303 @@
 # ROAD TRANSPORT – DESCRIPTIVE WIREFRAME (BUS / ISLAND LINES)
+UPDATED VERSION
 
 ---
 
 ## DATA MODEL (assumed)
-Hierarchy:
-transport_type (road)
-  → line
-    → date
-      → departures[] (bidirectional; filtered by direction)
 
-Key properties:
-- line is bidirectional (two directions)
-- line is mostly multi-stop, but some are one-stop
-- schedule is provided via backend/import
-- contacts are admin-editable
-- service notices use the same notice system (active within from→to) and open Inbox detail on click
+Hierarchy:
+
+transport_type (road)  
+→ line  
+→ pattern  
+→ direction  
+→ date  
+→ departures[]
+
+---
+
+### Key properties
+
+- Line is bidirectional (two directions).
+- Lines may be multi-stop or single-stop.
+- A line may define **one or more stop patterns** (variants).
+- Each departure references a pattern.
+- Schedule data is provided via backend/import.
+- Contacts are admin-editable.
+- Service notices use the global notice system (active within from → to).
+- Clicking any notice banner opens the **Inbox message detail**.
+
+---
+
+### Stop patterns (multi-stop support)
+
+- A **pattern** defines the ordered list of stops for a line.
+- Each stop has a relative time offset from the departure time.
+
+Pattern example:
+
+- Vis (luka) — offset 0 min  
+- Rukavac — offset +8 min  
+- Podšpilje — offset +15 min  
+- Komiža (centar) — offset +25 min  
+
+Rules:
+- Offsets are **relative**, not absolute times.
+- Offsets are stored **once per pattern**, not per departure.
+- A departure references one pattern (default: `base`).
+
+---
+
+## GLOBAL HEADER RULES (Road Transport)
+
+Applies to all Road Transport screens unless explicitly stated otherwise.
+
+### Header layout
+
+- Left: Hamburger menu (opens main menu)
+- Center: App name (**MOJ VIS**)
+- Right: Inbox icon (with unread badge if applicable)
+
+**Exception:**  
+Inbox screens themselves do **not** display the Inbox icon.
 
 ---
 
 ## SCREEN: Timetables – Transport Type Selection
-ID: TIMETABLES_01
+**ID:** TIMETABLES_01
 
 ### Purpose
-Entry point for timetables. Lets users choose between:
-- Sea transport (ferries/catamarans)
+
+Entry point for all timetables. Lets users choose between:
+- Sea transport (ferries / catamarans)
 - Road transport (buses)
 
 ### Behavior
-- Selecting "Road transport" navigates to `ROAD_01`
-- If an active notice relevant to timetables exists (emergency/general/municipal/transport-related):
-  - show banner on top of this screen
-  - banner click opens Inbox detail for that notice
+
+- Selecting **Road transport** navigates to `ROAD_01`.
+- If a relevant active notice exists (emergency / general / municipal / transport-related):
+  - show notice banner at top of the screen
+  - banner is clickable and opens Inbox message detail
 
 ---
 
 ## SCREEN: Road Transport – Lines Overview
-ID: ROAD_01
+**ID:** ROAD_01
+
+### Screen type
+
+Root-level screen (accessed from main menu).
 
 ### Purpose
-Show available bus lines and provide quick view of today’s departures across all road lines.
 
-### UI Structure
-- Header area with screen title/subtitle
+Show available bus lines and provide a quick overview of **today’s departures** across all road lines.
+
+### UI structure
+
+- Header (global rules apply)
 - Section A: Lines list
-- Section B: "Today’s departures" aggregated list
+- Section B: Today’s departures (aggregated)
 - Section C: Contacts
 
-### Section A: Lines List (Road)
-- Displays all available road lines
-- Each line item opens the line detail screen `ROAD_LINE_02`
+---
 
-### Section B: Today’s Departures (aggregated)
+### Section A: Lines List
+
+- Displays all available road lines.
+- Each line item:
+  - shows route name (e.g. `Vis – Komiža – Vis`)
+  - may indicate if the line is multi-stop
+- Tapping a line opens `ROAD_LINE_02`.
+
+---
+
+### Section B: Today’s Departures (Aggregated)
+
 Definition:
-- shows ALL departures (across all road lines) that run **to/from Vis** for the current day
+- Shows **all departures** (across all road lines) that run **to or from Vis** for **today only**.
 
 Rules:
-- Uses today’s date only (not user-selected date, because this is the overview screen)
-- Ordered chronologically
+- Date is fixed to today (no user date selection on this screen).
+- Departures are ordered chronologically.
+- Each item shows:
+  - departure time
+  - line name
+  - direction
+  - final destination
+
+---
 
 ### Section C: Contacts
-- Displays one or more contacts relevant to road transport
-- Contacts are admin-editable (name + phone)
-- Clicking a contact initiates a phone call (device default)
+
+- Displays one or more road transport contacts.
+- Fields:
+  - name
+  - phone number
+- Clicking initiates a phone call.
+
+---
 
 ### Notices
-- If a relevant active notice exists (same notice system: active within from→to):
+
+- If a relevant active notice exists:
   - show banner at top of the screen
-  - clicking banner opens Inbox detail
+  - banner click opens Inbox message detail
 
 ---
 
 ## SCREEN: Road Line Detail (Bidirectional)
-ID: ROAD_LINE_02
+**ID:** ROAD_LINE_02  
+**Example:** Vis – Komiža – Vis
 
-Example: Vis–Komiža–Vis
+### Screen type
+
+Child screen within the Transport stack.
+
+---
 
 ### Purpose
-Allow user to select a date and direction for a specific road line and view departures.
 
-### Default State
-- On screen load:
-  - selected date = today
-  - selected direction:
-    - recommended default: Vis → destination
-    - app should store and reuse last selected direction per line (optional but recommended)
+Allow user to:
+- select a date
+- select a direction
+- view departures for a specific road line
+
+---
+
+### Default state
+
+On screen load:
+- Selected date = today
+- Selected direction:
+  - default: Vis → destination
+  - app may remember last selected direction per line (optional)
+
+---
+
+### Header
+
+- Left: Back button (returns to previous context)
+- Center: App name (**MOJ VIS**)
+- Right: Inbox icon
+
+---
 
 ### Inputs / Controls
-- Date selector:
-  - opens calendar picker
-  - user cannot select dates in the past
-- Direction toggle (two options):
-  - Direction A (e.g., Vis → Komiža)
-  - Direction B (e.g., Komiža → Vis)
+
+#### Date selector
+
+- Rendered as a single date field.
+- Default value: today’s date.
+- On tap:
+  - opens calendar picker overlay.
+- User cannot select past dates.
+- No “Today / Tomorrow” shortcuts.
+- Date selection is a filter, not primary navigation.
+
+#### Direction toggle
+
+- Binary toggle control:
+  - Direction A (e.g. `Vis → Komiža`)
+  - Direction B (e.g. `Komiža → Vis`)
+- Changing direction keeps the currently selected date.
+
+---
+
+### Departures list
+
+Shows all departures for:
+- selected line
+- selected date
+- selected direction
 
 Rules:
-- Changing direction keeps the same selected date
-- Date + direction filters the departures list
+- Ordered chronologically.
+- Each departure row shows:
+  - departure time
+  - final destination
+  - total duration
+  - indicator if the line is multi-stop
+- Each row is **expandable**.
 
-### Departures List
-- Shows all departures for:
-  - selected line
-  - selected date
-  - selected direction
-- Ordered chronologically (earlier → later)
+---
 
-Empty State
-- If no departures exist for selected date/direction:
-  - show message: "No departures for the selected date"
+### Expanded departure (multi-stop)
 
-### Duration Display
-- Duration is fixed per line (e.g. ~25 min)
-- (Implementation note) For cases where duration varies (e.g. catamaran stop patterns):
-  - prefer storing duration per departure or allow duration override ranges
-  - for road lines, default is fixed per line
+When expanded, show ordered list of stops with **planned times**:
 
-### Contacts (Line / Transport Contacts)
-- Displays one or more contacts (name + phone)
-- Contacts are admin-editable
-- Clicking initiates a call
+- Planned time is calculated as:
+  departure time + stop offset.
+- No distinction between arrival/departure times.
+- If a stop time crosses into the next calendar day:
+  - indicate with “(+1 day)” or equivalent visual marker.
 
-### Navigation
-- Back returns to the previous context
+Example:
+
+- Vis (luka) — 06:30  
+- Rukavac — 06:38  
+- Podšpilje — 06:45  
+- Komiža (centar) — 06:55  
+
+---
+
+### Empty state
+
+If no departures exist for selected date/direction:
+
+No departures for the selected date.
+
+---
+
+### Duration display
+
+- Duration is fixed per pattern or per line.
+- For multi-stop patterns:
+  - duration refers to total trip duration to final stop.
+
+---
+
+### Contacts (Line / Transport)
+
+- Displays one or more contacts.
+- Admin-editable.
+- Clicking initiates a phone call.
+
+---
 
 ### Notices
+
 - If a relevant active notice exists:
-  - show banner at top of screen (regardless of which line it references)
-  - clicking banner opens Inbox detail
+  - show banner at top of the screen
+  - banner click opens Inbox message detail
 
 ---
 
 ## ADMIN / BACKEND NOTES (Road)
 
-### Schedule Data Source
-- Line definitions and schedules are managed via backend/import (not edited manually by admin in the mobile UI)
+### Schedule data source
 
-### Admin-Editable Data
+- Line definitions, patterns and schedules are managed via backend/import.
+- Not editable via mobile UI.
+
+---
+
+### Admin-editable data
+
 - Contacts:
-  - one or more contacts per transport type and/or per line (implementation choice)
+  - may be defined per transport type and/or per line
   - fields: name, phone number
-- Optional: external ticket links per line (see below)
+- Optional external links per line.
 
-### Optional: External Links (per line)
-- Links (e.g., operator website) are line-specific
-- Open in external browser
-- May be admin-editable or fixed in config
+---
 
+### Optional: External links (per line)
+
+- Example: ticket purchase or operator website.
+- Opens in external browser.
+- May be admin-editable or fixed via config.
+
+### Lines Overview – Stop Visibility
+
+- On the road lines overview screen, each line item should display the ordered list of stop names (without times) to clearly communicate route coverage.
+- If a line has more than 5 stops, truncate the list and indicate remaining stops with “+X stops”.
+- Detailed stop times are shown only on the line detail screen.

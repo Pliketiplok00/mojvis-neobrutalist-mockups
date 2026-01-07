@@ -41,6 +41,151 @@ This document defines global constraints, UX rules, localization requirements, c
   - Empty state
   - Error state (friendly + actionable)
 
+### 3.1 Global Header & Navigation Canon (Non-Negotiable)
+
+The MOJ VIS app uses a **strict, non-contextual header system** to ensure consistency, predictability, and accessibility across all screens.
+
+---
+
+#### Screen classification
+
+Screens are classified into two categories:
+
+**Root screens**
+- Examples: Home, Events, Transport (Road / Sea overview), Static content pages
+- Entry points via the main menu
+
+**Child / detail screens**
+- Examples: Event detail, Road line detail, Inbox message detail, Feedback / Click & Fix forms
+
+---
+
+#### Header rules by screen type
+
+**Root screens**
+- Left: **Hamburger menu**
+- Center: **App name (“MOJ VIS”)**
+- Right: **Inbox icon** (with unread badge if applicable)
+- No back button is shown in the header
+
+**Child / detail screens**
+- Left: **Back button**
+- Center: **App name (“MOJ VIS”)**
+- Right: **Inbox icon**
+- Back returns to the previous navigation context (stack-based)
+
+---
+
+#### Inbox icon rules (absolute)
+
+- The Inbox icon:
+  - is **always visible** on all screens **except Inbox screens themselves**
+  - is **never replaced** by any other action (filter, close, confirm, settings, etc.)
+- The Inbox icon always opens the Inbox list screen.
+
+---
+
+#### Title rules (absolute)
+
+- The header title is **always the app name (“MOJ VIS”)**.
+- Entity names (event titles, line names, routes, dates, etc.):
+  - must **never** appear in the header title
+  - are displayed within the screen content itself.
+
+---
+
+#### Navigation guarantees
+
+- A back affordance must always exist:
+  - visible back button on child / detail screens
+  - iOS swipe-back enabled where navigation stack allows
+  - Android hardware back button supported everywhere
+- Navigation behavior must be consistent regardless of entry point (menu, banner, deep link, notification).
+
+### 3.2 Global List Item Rules (Canonical)
+
+This section defines **non-negotiable rules** for how list items behave across the entire MOJ VIS app.
+These rules apply to **all lists**, regardless of content type (transport, events, inbox, forms, static content, etc.).
+
+The goal is to ensure predictability, consistency, and to prevent accidental navigation or UX ambiguity.
+
+---
+
+#### List item types
+
+All list items MUST belong to exactly one of the following types.
+
+---
+
+#### 1) Navigational list item
+
+A navigational list item represents a single entity and leads to a new screen.
+
+**Examples:**
+- Transport line (Vis – Komiža – Vis)
+- Event in event list
+- Inbox message
+- Static content page link
+
+**Rules:**
+- The **entire item is tappable**
+- Tap ALWAYS navigates to another screen
+- No inline expand/collapse is allowed
+- A clear visual affordance (e.g. chevron / arrow) SHOULD indicate navigation
+- Tapping the item MUST NOT trigger any other action
+
+---
+
+#### 2) Expandable list item
+
+An expandable list item reveals additional information **within the same screen**.
+
+**Examples:**
+- Departure row that expands to show intermediate stops
+- Inline detail sections within an already selected context
+
+**Rules:**
+- Tapping the item does NOT navigate to another screen
+- Expand/collapse happens inline
+- Expanded state MUST NOT change the header or navigation context
+- A clear expand/collapse affordance MUST be present
+- Multiple expandable items MAY be expanded at the same time
+
+---
+
+#### 3) Action list item
+
+An action list item performs an immediate action.
+
+**Examples:**
+- “Call transport operator”
+- “Open external website”
+- “Send feedback” (entry point)
+
+**Rules:**
+- Tap performs an action immediately
+- No navigation to a new internal screen
+- Action MUST be visually distinguishable from navigational items
+- Action items MUST NOT be expandable
+
+---
+
+#### Mixed behavior (explicitly forbidden)
+
+- A list item MUST NOT both navigate AND expand.
+- A list item MUST NOT change behavior depending on where it appears.
+- Navigation behavior MUST be consistent regardless of entry point (menu, deep link, banner).
+
+---
+
+#### State handling
+
+All list items, regardless of type, must support:
+- Loading state (skeleton or placeholder)
+- Empty state (friendly explanation)
+- Error state (message + retry where applicable)
+
+
 ---
 
 ## 4) Identity, Privacy & Data Minimization (No Login)
