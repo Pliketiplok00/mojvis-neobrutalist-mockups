@@ -8,7 +8,7 @@
  *   - Onboarding Stack (first launch)
  *   - Main Stack (after onboarding)
  *
- * Phase 0: Basic skeleton, no persistence logic.
+ * Phase 1: Added Inbox screens.
  */
 
 import React from 'react';
@@ -23,6 +23,8 @@ import { LanguageSelectionScreen } from '../screens/onboarding/LanguageSelection
 import { UserModeSelectionScreen } from '../screens/onboarding/UserModeSelectionScreen';
 import { MunicipalitySelectionScreen } from '../screens/onboarding/MunicipalitySelectionScreen';
 import { HomeScreen } from '../screens/home/HomeScreen';
+import { InboxListScreen } from '../screens/inbox/InboxListScreen';
+import { InboxDetailScreen } from '../screens/inbox/InboxDetailScreen';
 
 // Create navigators
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -70,10 +72,11 @@ function MainNavigator(): React.JSX.Element {
       }}
     >
       <MainStack.Screen name="Home" component={HomeScreen} />
+      <MainStack.Screen name="Inbox" component={InboxListScreen} />
+      <MainStack.Screen name="InboxDetail" component={InboxDetailScreen} />
       {/* TODO: Add more screens in later phases */}
       {/* <MainStack.Screen name="Events" component={EventsScreen} /> */}
       {/* <MainStack.Screen name="Transport" component={TransportScreen} /> */}
-      {/* <MainStack.Screen name="Inbox" component={InboxScreen} /> */}
     </MainStack.Navigator>
   );
 }

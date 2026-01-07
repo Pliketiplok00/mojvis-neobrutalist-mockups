@@ -10,14 +10,36 @@
  * 4. Upcoming Events
  * 5. Feedback Entry
  *
- * Phase 0: UI skeleton only, no API calls.
+ * Phase 1: Added active banners from API.
  */
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { BannerList } from '../../components/Banner';
+import { inboxApi } from '../../services/api';
+import type { InboxMessage } from '../../types/inbox';
 
 export function HomeScreen(): React.JSX.Element {
+  const [banners, setBanners] = useState<InboxMessage[]>([]);
+
+  // TODO: Get from user context
+  const userContext = { userMode: 'visitor' as const, municipality: null };
+
+  const fetchBanners = useCallback(async () => {
+    try {
+      const response = await inboxApi.getActiveBanners(userContext);
+      setBanners(response.banners);
+    } catch (err) {
+      console.error('[Home] Error fetching banners:', err);
+      // Silently fail - banners are optional
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchBanners();
+  }, [fetchBanners]);
+
   const handleMenuPress = (): void => {
     // TODO: Open drawer menu
     console.info('Menu pressed');
@@ -28,12 +50,8 @@ export function HomeScreen(): React.JSX.Element {
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        {/* Section 1: Active Notifications (placeholder) */}
-        <View style={styles.bannerPlaceholder}>
-          <Text style={styles.placeholderText}>
-            [Banner: Active notifications will appear here]
-          </Text>
-        </View>
+        {/* Section 1: Active Notifications */}
+        <BannerList banners={banners} />
 
         {/* Section 2: Greeting Block */}
         <View style={styles.greetingSection}>

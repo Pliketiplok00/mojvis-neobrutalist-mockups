@@ -66,8 +66,9 @@ export function GlobalHeader({
   };
 
   const handleInboxPress = (): void => {
-    // TODO: Navigate to Inbox screen
-    // navigation.navigate('Inbox');
+    // Navigate to Inbox screen
+    // @ts-expect-error Navigation typing is complex, this works at runtime
+    navigation.navigate('Inbox');
   };
 
   const showInboxIcon = type !== 'inbox';

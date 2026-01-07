@@ -2,7 +2,7 @@
  * Navigation Types
  *
  * Type definitions for React Navigation stacks.
- * Phase 0: Basic structure only.
+ * Phase 1: Added Inbox screens.
  */
 
 /**
@@ -24,6 +24,7 @@ export type MainStackParamList = {
   Events: undefined;
   Transport: undefined;
   Inbox: undefined;
+  InboxDetail: { messageId: string };
   Settings: undefined;
   // Static content pages accessed by slug
   StaticPage: { slug: string };
