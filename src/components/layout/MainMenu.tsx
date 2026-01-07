@@ -8,15 +8,15 @@ interface MainMenuProps {
 }
 
 const menuItems = [
-  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent" },
-  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary" },
-  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary" },
-  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender" },
-  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange" },
-  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-secondary" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-primary" },
-  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal" },
-  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted" },
+  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent", shadowColor: "hsl(var(--accent))" },
+  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
+  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary", shadowColor: "hsl(var(--secondary))" },
+  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender", shadowColor: "hsl(var(--lavender))" },
+  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-orange", shadowColor: "hsl(var(--orange))" },
+  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-secondary", shadowColor: "hsl(var(--secondary))" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-primary", shadowColor: "hsl(var(--primary))" },
+  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-teal", shadowColor: "hsl(var(--teal))" },
+  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted", shadowColor: "hsl(var(--muted))" },
 ];
 
 export function MainMenu({ isOpen, onClose }: MainMenuProps) {
@@ -82,25 +82,31 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
           </button>
         </div>
         
-        {/* Menu Items - Stacked blocks */}
-        <ul className="p-3 space-y-2">
-          {menuItems.map((item, index) => {
+        {/* Menu Items - Stacked blocks with colorful shadows */}
+        <ul className="p-3 space-y-3 pb-20">
+          {menuItems.map((item) => {
             const isActive = location.pathname === item.path || 
+              location.pathname.startsWith(item.path + "/") ||
               (item.path === "/home" && location.pathname === "/");
             
             return (
               <li key={item.path}>
                 <button
                   onClick={() => handleNavigation(item.path)}
-                  className={`group flex w-full items-center gap-4 border-3 border-foreground p-4 text-left font-display font-bold uppercase tracking-wide transition-all ${
+                  className={`group flex w-full items-center gap-4 border-3 border-foreground p-4 text-left font-display font-bold uppercase tracking-wide transition-all duration-200 ${
                     isActive 
-                      ? `${item.color} shadow-[6px_6px_0_0_hsl(var(--foreground))]` 
-                      : "bg-background hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))]"
-                  } active:translate-x-[3px] active:translate-y-[3px] active:shadow-none`}
-                  style={{ borderWidth: "3px" }}
+                      ? `${item.color} text-white` 
+                      : "bg-background hover:translate-x-[-4px] hover:translate-y-[-4px]"
+                  } active:translate-x-[2px] active:translate-y-[2px]`}
+                  style={{ 
+                    borderWidth: "3px",
+                    boxShadow: isActive 
+                      ? `6px 6px 0 0 hsl(var(--foreground))`
+                      : `6px 6px 0 0 ${item.shadowColor}`,
+                  }}
                 >
-                  <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground ${isActive ? "bg-background" : item.color}`}>
-                    <item.icon className="h-5 w-5" strokeWidth={2.5} />
+                  <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground transition-colors ${isActive ? "bg-white/20" : item.color}`}>
+                    <item.icon className={`h-5 w-5 ${isActive ? "text-white" : ""}`} strokeWidth={2.5} />
                   </div>
                   <span className="flex-1 text-sm">{t(item.labelKey as any)}</span>
                   <ChevronRight className={`h-5 w-5 transition-transform ${isActive ? "" : "group-hover:translate-x-1"}`} strokeWidth={3} />
