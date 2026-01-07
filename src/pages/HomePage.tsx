@@ -19,10 +19,6 @@ const categoryItems = [
   { icon: Calendar, label: "Events", path: "/events", color: "bg-primary", textColor: "text-primary-foreground" },
   { icon: Bus, label: "Bus", path: "/transport/road", color: "bg-secondary", textColor: "text-secondary-foreground" },
   { icon: Ship, label: "Ferry", path: "/transport/sea", color: "bg-teal", textColor: "text-primary-foreground" },
-  { icon: MessageSquare, label: "Feedback", path: "/feedback", color: "bg-lavender", textColor: "text-foreground" },
-  { icon: AlertTriangle, label: "Report", path: "/click-fix", color: "bg-orange", textColor: "text-foreground" },
-  { icon: Leaf, label: "Flora", path: "/flora", color: "bg-secondary", textColor: "text-secondary-foreground" },
-  { icon: Fish, label: "Fauna", path: "/fauna", color: "bg-primary", textColor: "text-primary-foreground" },
   { icon: Info, label: "Info", path: "/info", color: "bg-accent", textColor: "text-accent-foreground" },
 ];
 
@@ -61,21 +57,21 @@ export default function HomePage() {
           </p>
         </section>
 
-        {/* Category Grid - Chunky blocks */}
+        {/* Category Grid - Larger 2x2 blocks */}
         <section className="border-b-4 border-foreground p-4">
           <h3 className="mb-4 font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
             Quick Access
           </h3>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {categoryItems.map((item) => (
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center gap-2 border-3 border-foreground ${item.color} ${item.textColor} p-3 transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
+                className={`flex flex-col items-center justify-center gap-3 border-3 border-foreground ${item.color} ${item.textColor} p-5 transition-all hover:translate-x-[-3px] hover:translate-y-[-3px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[3px] active:translate-y-[3px] active:shadow-none`}
                 style={{ borderWidth: "3px" }}
               >
-                <item.icon className="h-6 w-6" strokeWidth={2.5} />
-                <span className="font-display text-[10px] font-bold uppercase tracking-wide">{item.label}</span>
+                <item.icon className="h-10 w-10" strokeWidth={2} />
+                <span className="font-display text-sm font-bold uppercase tracking-wide">{item.label}</span>
               </button>
             ))}
           </div>
