@@ -3,7 +3,7 @@
  *
  * Main entry point for the Fastify server.
  *
- * Phase 0: Minimal skeleton with health endpoint and DB connection.
+ * Phase 1: Inbox core & banners.
  */
 
 import Fastify, { FastifyInstance } from 'fastify';
@@ -11,6 +11,7 @@ import cors from '@fastify/cors';
 import { env } from './config/env.js';
 import { initDatabase, closeDatabase } from './lib/database.js';
 import { healthRoutes } from './routes/health.js';
+import { inboxRoutes } from './routes/inbox.js';
 
 // Create Fastify instance with logging
 const fastify: FastifyInstance = Fastify({
@@ -41,7 +42,8 @@ async function registerPlugins(): Promise<void> {
   // Health routes
   await fastify.register(healthRoutes);
 
-  // TODO: Phase 1+ routes will be registered here
+  // Inbox routes (Phase 1)
+  await fastify.register(inboxRoutes);
 }
 
 /**
@@ -91,6 +93,8 @@ async function start(): Promise<void> {
     console.info('='.repeat(50));
     console.info(`[Server] MOJ VIS API running at http://${env.HOST}:${env.PORT}`);
     console.info(`[Server] Health check: http://${env.HOST}:${env.PORT}/health`);
+    console.info(`[Server] Inbox API: http://${env.HOST}:${env.PORT}/inbox`);
+    console.info(`[Server] Banners API: http://${env.HOST}:${env.PORT}/banners/active`);
     console.info('='.repeat(50));
   } catch (error) {
     console.error('[Server] Failed to start:', error);
