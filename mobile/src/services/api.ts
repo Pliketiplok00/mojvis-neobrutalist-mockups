@@ -10,6 +10,7 @@ import type {
   BannerResponse,
   UserMode,
   Municipality,
+  ScreenContext,
 } from '../types/inbox';
 
 // TODO: Move to config/environment
@@ -105,10 +106,21 @@ export const inboxApi = {
   },
 
   /**
-   * Get active banners
+   * Get active banners for a specific screen context
+   *
+   * Banner placement rules (per spec):
+   * - Home: hitno, opcenito, vis/komiza (for matching locals)
+   * - Road Transport: cestovni_promet OR hitno ONLY
+   * - Sea Transport: pomorski_promet OR hitno ONLY
    */
-  async getActiveBanners(context: UserContext): Promise<BannerResponse> {
-    return apiRequest<BannerResponse>('/banners/active', context);
+  async getActiveBanners(
+    context: UserContext,
+    screenContext: ScreenContext
+  ): Promise<BannerResponse> {
+    return apiRequest<BannerResponse>(
+      `/banners/active?screen=${screenContext}`,
+      context
+    );
   },
 };
 

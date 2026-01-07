@@ -23,6 +23,8 @@ export type MainStackParamList = {
   Home: undefined;
   Events: undefined;
   Transport: undefined;
+  RoadTransport: undefined;
+  SeaTransport: undefined;
   Inbox: undefined;
   InboxDetail: { messageId: string };
   Settings: undefined;

@@ -25,6 +25,8 @@ import { MunicipalitySelectionScreen } from '../screens/onboarding/MunicipalityS
 import { HomeScreen } from '../screens/home/HomeScreen';
 import { InboxListScreen } from '../screens/inbox/InboxListScreen';
 import { InboxDetailScreen } from '../screens/inbox/InboxDetailScreen';
+import { RoadTransportScreen } from '../screens/transport/RoadTransportScreen';
+import { SeaTransportScreen } from '../screens/transport/SeaTransportScreen';
 
 // Create navigators
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -74,9 +76,10 @@ function MainNavigator(): React.JSX.Element {
       <MainStack.Screen name="Home" component={HomeScreen} />
       <MainStack.Screen name="Inbox" component={InboxListScreen} />
       <MainStack.Screen name="InboxDetail" component={InboxDetailScreen} />
+      <MainStack.Screen name="RoadTransport" component={RoadTransportScreen} />
+      <MainStack.Screen name="SeaTransport" component={SeaTransportScreen} />
       {/* TODO: Add more screens in later phases */}
       {/* <MainStack.Screen name="Events" component={EventsScreen} /> */}
-      {/* <MainStack.Screen name="Transport" component={TransportScreen} /> */}
     </MainStack.Navigator>
   );
 }

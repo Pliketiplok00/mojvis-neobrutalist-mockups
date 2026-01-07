@@ -28,7 +28,8 @@ export function HomeScreen(): React.JSX.Element {
 
   const fetchBanners = useCallback(async () => {
     try {
-      const response = await inboxApi.getActiveBanners(userContext);
+      // Pass 'home' screen context for banner filtering
+      const response = await inboxApi.getActiveBanners(userContext, 'home');
       setBanners(response.banners);
     } catch (err) {
       console.error('[Home] Error fetching banners:', err);

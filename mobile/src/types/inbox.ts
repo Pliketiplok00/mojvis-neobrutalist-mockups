@@ -57,3 +57,13 @@ export type UserMode = 'visitor' | 'local';
  * Municipality for context
  */
 export type Municipality = 'vis' | 'komiza' | null;
+
+/**
+ * Screen context for banner filtering
+ *
+ * Banner placement rules (per spec):
+ * - home: hitno, opcenito, vis/komiza (for matching locals)
+ * - transport_road: cestovni_promet OR hitno ONLY
+ * - transport_sea: pomorski_promet OR hitno ONLY
+ */
+export type ScreenContext = 'home' | 'transport_road' | 'transport_sea';
