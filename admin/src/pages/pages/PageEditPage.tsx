@@ -32,6 +32,7 @@ import type {
   ContactItem,
   CardListBlockContent,
   CardItem,
+  MediaBlockContent,
 } from '../../types/static-page';
 import {
   BLOCK_TYPE_LABELS,
@@ -813,9 +814,18 @@ function BlockContentEditor({
       );
     }
 
+    case 'media': {
+      const content = block.content as MediaBlockContent;
+      return (
+        <MediaBlockEditor
+          content={content}
+          onContentChange={onContentChange}
+        />
+      );
+    }
+
     // Block types without editors yet - show neutral placeholder
     // NO JSON preview, NO raw data visibility, NO editing capability
-    case 'media':
     case 'map':
       return (
         <div style={styles.blockContent}>
@@ -1651,6 +1661,162 @@ function CardItemEditor({
 }
 
 /**
+ * Media Block Editor component
+ */
+function MediaBlockEditor({
+  content,
+  onContentChange,
+}: {
+  content: MediaBlockContent;
+  onContentChange: (content: MediaBlockContent) => void;
+}) {
+  const isValidUrl = (url: string) => {
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  const isImageUrl = (url: string) => {
+    const lower = url.toLowerCase();
+    return lower.endsWith('.png') || lower.endsWith('.jpg') ||
+           lower.endsWith('.jpeg') || lower.endsWith('.webp') ||
+           lower.endsWith('.gif');
+  };
+
+  const missingUrl = !content.url.trim();
+  const urlError = content.url.trim() && !isValidUrl(content.url);
+  const showImagePreview = content.url && isValidUrl(content.url) && isImageUrl(content.url);
+
+  return (
+    <div style={styles.blockContent}>
+      {/* URL (required) */}
+      <div style={styles.field}>
+        <label style={styles.label}>
+          URL medija *
+          {missingUrl && <span style={styles.fieldError}> (obavezno)</span>}
+          {urlError && <span style={styles.fieldError}> (mora poceti s http:// ili https://)</span>}
+        </label>
+        <input
+          type="text"
+          value={content.url}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            onContentChange({ ...content, url: e.target.value })
+          }
+          style={{
+            ...styles.input,
+            ...((missingUrl || urlError) ? styles.inputError : {}),
+          }}
+          placeholder="https://example.com/image.jpg"
+        />
+      </div>
+
+      {/* Preview */}
+      {content.url && isValidUrl(content.url) && (
+        <div style={styles.mediaPreview}>
+          {showImagePreview ? (
+            <img
+              src={content.url}
+              alt={content.alt_hr || 'Preview'}
+              style={styles.mediaPreviewImage}
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          ) : (
+            <div style={styles.mediaPreviewLink}>
+              <span style={styles.mediaPreviewLabel}>Link preview:</span>
+              <span style={styles.mediaPreviewUrl}>{content.url}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Alt text (optional) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>Alt tekst (HR)</label>
+          <input
+            type="text"
+            value={content.alt_hr || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onContentChange({ ...content, alt_hr: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Opis slike za pristupacnost"
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Alt tekst (EN)</label>
+          <input
+            type="text"
+            value={content.alt_en || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onContentChange({ ...content, alt_en: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Image description for accessibility"
+          />
+        </div>
+      </div>
+
+      {/* Caption (optional) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>Potpis (HR)</label>
+          <input
+            type="text"
+            value={content.caption_hr || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onContentChange({ ...content, caption_hr: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Potpis ispod slike"
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Potpis (EN)</label>
+          <input
+            type="text"
+            value={content.caption_en || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onContentChange({ ...content, caption_en: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Caption below image"
+          />
+        </div>
+      </div>
+
+      {/* Credit (optional) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>Kredit (HR)</label>
+          <input
+            type="text"
+            value={content.credit_hr || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onContentChange({ ...content, credit_hr: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Foto: Geopark Vis"
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Kredit (EN)</label>
+          <input
+            type="text"
+            value={content.credit_en || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onContentChange({ ...content, credit_en: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Photo: Geopark Vis"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Get default content for new block
  */
 function getDefaultBlockContent(type: BlockType): ContentBlock['content'] {
@@ -1674,7 +1840,15 @@ function getDefaultBlockContent(type: BlockType): ContentBlock['content'] {
     case 'card_list':
       return { cards: [] };
     case 'media':
-      return { images: [], caption_hr: null, caption_en: null };
+      return {
+        url: '',
+        caption_hr: null,
+        caption_en: null,
+        alt_hr: null,
+        alt_en: null,
+        credit_hr: null,
+        credit_en: null,
+      };
     case 'map':
       return { pins: [] };
     case 'contact':
@@ -2249,6 +2423,35 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     cursor: 'pointer',
     width: '100%',
+  },
+  // Media editor styles
+  mediaPreview: {
+    marginBottom: '16px',
+    padding: '12px',
+    backgroundColor: '#f8f9fa',
+    borderRadius: '6px',
+    border: '1px solid #e0e0e0',
+  },
+  mediaPreviewImage: {
+    maxWidth: '100%',
+    maxHeight: '160px',
+    display: 'block',
+    borderRadius: '4px',
+  },
+  mediaPreviewLink: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+  },
+  mediaPreviewLabel: {
+    fontSize: '12px',
+    color: '#666666',
+    fontWeight: '500',
+  },
+  mediaPreviewUrl: {
+    fontSize: '13px',
+    color: '#333333',
+    wordBreak: 'break-all',
   },
 };
 
