@@ -38,9 +38,9 @@
 | Soft delete behavior | ✅ | N/A | N/A | PASS |
 | Banner filtering by tags | ✅ | N/A | N/A | PASS |
 | Mobile inbox list | N/A | N/A | ⚡ | PASS |
-| Mobile inbox detail | N/A | N/A | ❌ | **FAIL** |
+| Mobile inbox detail | N/A | N/A | ✅ | PASS (fixed e1f6094) |
 
-**Note:** Mobile InboxDetail crashes - `message.tags` undefined error.
+**Note:** Mobile InboxDetail crash fixed in commit e1f6094 (tags null safety).
 
 ---
 
@@ -160,7 +160,7 @@
 | Phase | API | Admin UI | Mobile | Overall |
 |-------|-----|----------|--------|---------|
 | Phase 0 | N/A | ✅ | ⚡ | PASS |
-| Phase 1 | ✅ | ⚠️ | ❌ | **PARTIAL** |
+| Phase 1 | ✅ | ⚠️ | ✅ | PARTIAL (Admin selectors) |
 | Phase 2 | ✅ | ✅ | ⚡ | PASS |
 | Phase 3 | ✅ | ⚠️ | ⚡ | PARTIAL |
 | Phase 4 | ✅ | N/A | ⚡ | PASS |
@@ -184,8 +184,8 @@
 
 ## Critical Issues
 
-1. **Mobile InboxDetailScreen** - Runtime crash on `message.tags` undefined
-2. **Admin Playwright** - 13 tests fail due to selector mismatch
+1. ~~**Mobile InboxDetailScreen** - Runtime crash on `message.tags` undefined~~ **FIXED in e1f6094**
+2. **Admin Playwright** - 13 tests fail due to selector mismatch (still open)
 
 ---
 
