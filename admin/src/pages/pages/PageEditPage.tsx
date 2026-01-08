@@ -28,6 +28,8 @@ import type {
   HighlightBlockContent,
   LinkListBlockContent,
   LinkItem,
+  ContactBlockContent,
+  ContactItem,
 } from '../../types/static-page';
 import {
   BLOCK_TYPE_LABELS,
@@ -789,12 +791,21 @@ function BlockContentEditor({
       );
     }
 
+    case 'contact': {
+      const content = block.content as ContactBlockContent;
+      return (
+        <ContactBlockEditor
+          content={content}
+          onContentChange={onContentChange}
+        />
+      );
+    }
+
     // Block types without editors yet - show neutral placeholder
     // NO JSON preview, NO raw data visibility, NO editing capability
     case 'card_list':
     case 'media':
     case 'map':
-    case 'contact':
       return (
         <div style={styles.blockContent}>
           <div style={styles.notImplementedInfo}>
@@ -984,6 +995,340 @@ function LinkListEditor({
       >
         + Dodaj link
       </button>
+    </div>
+  );
+}
+
+/**
+ * Contact Block Editor component
+ */
+function ContactBlockEditor({
+  content,
+  onContentChange,
+}: {
+  content: ContactBlockContent;
+  onContentChange: (content: ContactBlockContent) => void;
+}) {
+  const contacts = content.contacts || [];
+
+  const generateId = () => `contact_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  const handleAddContact = () => {
+    const newContact: ContactItem = {
+      id: generateId(),
+      icon: null,
+      name_hr: '',
+      name_en: '',
+      address_hr: null,
+      address_en: null,
+      phones: [],
+      email: null,
+      working_hours_hr: null,
+      working_hours_en: null,
+      note_hr: null,
+      note_en: null,
+    };
+    onContentChange({ contacts: [...contacts, newContact] });
+  };
+
+  const handleRemoveContact = (contactId: string) => {
+    onContentChange({ contacts: contacts.filter((c) => c.id !== contactId) });
+  };
+
+  const handleContactChange = (contactId: string, updates: Partial<ContactItem>) => {
+    onContentChange({
+      contacts: contacts.map((c) =>
+        c.id === contactId ? { ...c, ...updates } : c
+      ),
+    });
+  };
+
+  const handleMoveContact = (contactId: string, direction: 'up' | 'down') => {
+    const currentIndex = contacts.findIndex((c) => c.id === contactId);
+    if (currentIndex === -1) return;
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= contacts.length) return;
+
+    const newContacts = [...contacts];
+    [newContacts[currentIndex], newContacts[targetIndex]] = [newContacts[targetIndex], newContacts[currentIndex]];
+    onContentChange({ contacts: newContacts });
+  };
+
+  return (
+    <div style={styles.blockContent}>
+      {contacts.length === 0 && (
+        <div style={styles.emptyList}>
+          Nema kontakata. Dodajte prvi kontakt.
+        </div>
+      )}
+
+      {contacts.map((contact, index) => (
+        <ContactItemEditor
+          key={contact.id}
+          contact={contact}
+          index={index}
+          totalContacts={contacts.length}
+          onChange={(updates) => handleContactChange(contact.id, updates)}
+          onRemove={() => handleRemoveContact(contact.id)}
+          onMoveUp={() => handleMoveContact(contact.id, 'up')}
+          onMoveDown={() => handleMoveContact(contact.id, 'down')}
+        />
+      ))}
+
+      <button
+        type="button"
+        style={styles.addContactButton}
+        onClick={handleAddContact}
+      >
+        + Dodaj kontakt
+      </button>
+    </div>
+  );
+}
+
+/**
+ * Contact Item Editor component
+ */
+function ContactItemEditor({
+  contact,
+  index,
+  totalContacts,
+  onChange,
+  onRemove,
+  onMoveUp,
+  onMoveDown,
+}: {
+  contact: ContactItem;
+  index: number;
+  totalContacts: number;
+  onChange: (updates: Partial<ContactItem>) => void;
+  onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+}) {
+  const missingNameHr = !contact.name_hr.trim();
+  const missingNameEn = !contact.name_en.trim();
+
+  const handleAddPhone = () => {
+    onChange({ phones: [...contact.phones, ''] });
+  };
+
+  const handleRemovePhone = (phoneIndex: number) => {
+    onChange({ phones: contact.phones.filter((_, i) => i !== phoneIndex) });
+  };
+
+  const handlePhoneChange = (phoneIndex: number, value: string) => {
+    const newPhones = [...contact.phones];
+    newPhones[phoneIndex] = value;
+    onChange({ phones: newPhones });
+  };
+
+  return (
+    <div style={styles.contactItem}>
+      {/* Header with index and actions */}
+      <div style={styles.contactItemHeader}>
+        <span style={styles.contactItemIndex}>Kontakt #{index + 1}</span>
+        <div style={styles.contactItemActions}>
+          <button
+            type="button"
+            style={styles.contactReorderBtn}
+            onClick={onMoveUp}
+            disabled={index === 0}
+            title="Pomakni gore"
+          >
+            ↑
+          </button>
+          <button
+            type="button"
+            style={styles.contactReorderBtn}
+            onClick={onMoveDown}
+            disabled={index === totalContacts - 1}
+            title="Pomakni dolje"
+          >
+            ↓
+          </button>
+          <button
+            type="button"
+            style={styles.contactRemoveBtn}
+            onClick={onRemove}
+            title="Ukloni kontakt"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      {/* Name (required) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>
+            Naziv (HR) *
+            {missingNameHr && <span style={styles.fieldError}> (obavezno)</span>}
+          </label>
+          <input
+            type="text"
+            value={contact.name_hr}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ name_hr: e.target.value })
+            }
+            style={{
+              ...styles.input,
+              ...(missingNameHr ? styles.inputError : {}),
+            }}
+            placeholder="Naziv kontakta na hrvatskom"
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>
+            Naziv (EN) *
+            {missingNameEn && <span style={styles.fieldError}> (obavezno)</span>}
+          </label>
+          <input
+            type="text"
+            value={contact.name_en}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ name_en: e.target.value })
+            }
+            style={{
+              ...styles.input,
+              ...(missingNameEn ? styles.inputError : {}),
+            }}
+            placeholder="Contact name in English"
+          />
+        </div>
+      </div>
+
+      {/* Address (optional) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>Adresa (HR)</label>
+          <input
+            type="text"
+            value={contact.address_hr || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ address_hr: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Adresa na hrvatskom"
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Adresa (EN)</label>
+          <input
+            type="text"
+            value={contact.address_en || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ address_en: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Address in English"
+          />
+        </div>
+      </div>
+
+      {/* Phone numbers (repeatable) */}
+      <div style={styles.field}>
+        <label style={styles.label}>Telefoni</label>
+        {contact.phones.map((phone, phoneIndex) => (
+          <div key={phoneIndex} style={styles.phoneRow}>
+            <input
+              type="text"
+              value={phone}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handlePhoneChange(phoneIndex, e.target.value)
+              }
+              style={styles.phoneInput}
+              placeholder="+385 XX XXX XXXX"
+            />
+            <button
+              type="button"
+              style={styles.phoneRemoveBtn}
+              onClick={() => handleRemovePhone(phoneIndex)}
+              title="Ukloni telefon"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          style={styles.addPhoneButton}
+          onClick={handleAddPhone}
+        >
+          + Dodaj telefon
+        </button>
+      </div>
+
+      {/* Email (optional) */}
+      <div style={styles.field}>
+        <label style={styles.label}>Email</label>
+        <input
+          type="email"
+          value={contact.email || ''}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            onChange({ email: e.target.value || null })
+          }
+          style={styles.input}
+          placeholder="email@example.com"
+        />
+      </div>
+
+      {/* Working hours (optional) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>Radno vrijeme (HR)</label>
+          <input
+            type="text"
+            value={contact.working_hours_hr || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ working_hours_hr: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Pon-Pet: 08:00-16:00"
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Radno vrijeme (EN)</label>
+          <input
+            type="text"
+            value={contact.working_hours_en || ''}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onChange({ working_hours_en: e.target.value || null })
+            }
+            style={styles.input}
+            placeholder="Mon-Fri: 08:00-16:00"
+          />
+        </div>
+      </div>
+
+      {/* Note (optional) */}
+      <div style={styles.fieldRow}>
+        <div style={styles.field}>
+          <label style={styles.label}>Napomena (HR)</label>
+          <textarea
+            value={contact.note_hr || ''}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              onChange({ note_hr: e.target.value || null })
+            }
+            style={styles.textarea}
+            rows={2}
+            placeholder="Dodatne informacije..."
+          />
+        </div>
+        <div style={styles.field}>
+          <label style={styles.label}>Napomena (EN)</label>
+          <textarea
+            value={contact.note_en || ''}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              onChange({ note_en: e.target.value || null })
+            }
+            style={styles.textarea}
+            rows={2}
+            placeholder="Additional information..."
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -1429,6 +1774,103 @@ const styles: Record<string, React.CSSProperties> = {
   },
   inputError: {
     borderColor: '#dc3545',
+  },
+  // Contact editor styles
+  contactItem: {
+    padding: '16px',
+    marginBottom: '16px',
+    border: '1px solid #e0e0e0',
+    borderRadius: '8px',
+    backgroundColor: '#fafafa',
+  },
+  contactItemHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px',
+    paddingBottom: '12px',
+    borderBottom: '1px solid #e0e0e0',
+  },
+  contactItemIndex: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#333333',
+  },
+  contactItemActions: {
+    display: 'flex',
+    gap: '4px',
+  },
+  contactReorderBtn: {
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    color: '#333333',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+  },
+  contactRemoveBtn: {
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    color: '#dc3545',
+    border: '1px solid #dc3545',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+  },
+  addContactButton: {
+    padding: '12px 16px',
+    backgroundColor: '#ffffff',
+    color: '#333333',
+    border: '1px dashed #ccc',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    width: '100%',
+  },
+  phoneRow: {
+    display: 'flex',
+    gap: '8px',
+    marginBottom: '8px',
+  },
+  phoneInput: {
+    flex: 1,
+    padding: '8px 12px',
+    fontSize: '14px',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    boxSizing: 'border-box',
+  },
+  phoneRemoveBtn: {
+    width: '32px',
+    height: '32px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    color: '#dc3545',
+    border: '1px solid #dc3545',
+    borderRadius: '4px',
+    fontSize: '12px',
+    cursor: 'pointer',
+    flexShrink: 0,
+  },
+  addPhoneButton: {
+    padding: '6px 12px',
+    backgroundColor: '#ffffff',
+    color: '#666666',
+    border: '1px dashed #ccc',
+    borderRadius: '4px',
+    fontSize: '12px',
+    cursor: 'pointer',
   },
 };
 
