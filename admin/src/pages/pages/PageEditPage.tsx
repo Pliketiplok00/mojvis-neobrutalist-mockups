@@ -216,6 +216,22 @@ export function PageEditPage() {
     );
   };
 
+  const handleToggleStructureLock = (blockId: string) => {
+    setBlocks((prev) =>
+      prev.map((b) =>
+        b.id === blockId ? { ...b, structure_locked: !b.structure_locked } : b
+      )
+    );
+  };
+
+  const handleToggleContentLock = (blockId: string) => {
+    setBlocks((prev) =>
+      prev.map((b) =>
+        b.id === blockId ? { ...b, content_locked: !b.content_locked } : b
+      )
+    );
+  };
+
   /**
    * Move a block up or down in the order.
    * Re-normalizes order values to sequential integers (0, 1, 2, ...).
@@ -428,6 +444,8 @@ export function PageEditPage() {
                 onRemove={() => void handleRemoveBlock(block.id)}
                 onMoveUp={() => handleMoveBlock(block.id, 'up')}
                 onMoveDown={() => handleMoveBlock(block.id, 'down')}
+                onToggleStructureLock={() => handleToggleStructureLock(block.id)}
+                onToggleContentLock={() => handleToggleContentLock(block.id)}
               />
             ))}
           </div>
@@ -513,6 +531,8 @@ function BlockEditor({
   onRemove,
   onMoveUp,
   onMoveDown,
+  onToggleStructureLock,
+  onToggleContentLock,
 }: {
   block: ContentBlock;
   index: number;
@@ -522,6 +542,8 @@ function BlockEditor({
   onRemove: () => void;
   onMoveUp: () => void;
   onMoveDown: () => void;
+  onToggleStructureLock: () => void;
+  onToggleContentLock: () => void;
 }) {
   const canEdit = canEditBlockContent(block, isSupervisor);
   // Reordering is a structure change - only supervisor can reorder, and block must not be structure_locked
@@ -532,14 +554,40 @@ function BlockEditor({
       <div style={styles.blockHeader}>
         <span style={styles.blockIndex}>#{index + 1}</span>
         <span style={styles.blockType}>{BLOCK_TYPE_LABELS[block.type]}</span>
-        <div style={styles.blockLocks}>
-          {block.structure_locked && (
-            <span style={styles.lockBadge} title="Struktura zakljucana">S</span>
-          )}
-          {block.content_locked && (
-            <span style={styles.lockBadge} title="Sadrzaj zakljucan">C</span>
-          )}
-        </div>
+        {/* Supervisor-only lock toggles */}
+        {isSupervisor && (
+          <div style={styles.lockToggles}>
+            <label style={styles.lockToggle} title="Zaključaj strukturu (onemogući brisanje/premještanje)">
+              <input
+                type="checkbox"
+                checked={block.structure_locked}
+                onChange={onToggleStructureLock}
+                style={styles.lockCheckbox}
+              />
+              <span style={styles.lockToggleLabel}>Zaključaj strukturu</span>
+            </label>
+            <label style={styles.lockToggle} title="Zaključaj sadržaj (onemogući uređivanje)">
+              <input
+                type="checkbox"
+                checked={block.content_locked}
+                onChange={onToggleContentLock}
+                style={styles.lockCheckbox}
+              />
+              <span style={styles.lockToggleLabel}>Zaključaj sadržaj</span>
+            </label>
+          </div>
+        )}
+        {/* Lock badges for non-supervisor view */}
+        {!isSupervisor && (
+          <div style={styles.blockLocks}>
+            {block.structure_locked && (
+              <span style={styles.lockBadge} title="Struktura zakljucana">S</span>
+            )}
+            {block.content_locked && (
+              <span style={styles.lockBadge} title="Sadrzaj zakljucan">C</span>
+            )}
+          </div>
+        )}
         {/* Reorder buttons - supervisor only, respects structure lock */}
         {canReorder && (
           <div style={styles.reorderButtons}>
@@ -1050,6 +1098,27 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '4px',
     fontSize: '11px',
     fontWeight: 'bold',
+  },
+  lockToggles: {
+    display: 'flex',
+    gap: '12px',
+    marginLeft: '8px',
+  },
+  lockToggle: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    color: '#666666',
+  },
+  lockCheckbox: {
+    width: '14px',
+    height: '14px',
+    cursor: 'pointer',
+  },
+  lockToggleLabel: {
+    userSelect: 'none',
   },
   reorderButtons: {
     display: 'flex',
