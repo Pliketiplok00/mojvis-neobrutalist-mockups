@@ -42,3 +42,56 @@
 
 **Re-Verification Result:** All checks PASS. Fix commit e1f6094 verified.
 
+---
+
+## Admin E2E Fix Verification (28/28 PASS)
+
+| 15:30:00 | admin | `npx playwright test` | PASS - 28/28 tests passed |
+
+**Playwright Output:**
+```
+Running 28 tests using 1 worker
+
+  ✓   1 [chromium] › e2e/feedback-clickfix.spec.ts:34:3 › Feedback UI › should display feedback list (950ms)
+  ✓   2 [chromium] › e2e/feedback-clickfix.spec.ts:44:3 › Feedback UI › should open feedback detail (697ms)
+  ✓   3 [chromium] › e2e/feedback-clickfix.spec.ts:56:3 › Feedback UI › should change feedback status (658ms)
+  ✓   4 [chromium] › e2e/feedback-clickfix.spec.ts:74:3 › Feedback UI › should add reply to feedback (628ms)
+  ✓   5 [chromium] › e2e/feedback-clickfix.spec.ts:170:3 › Click & Fix UI › should display click-fix list (601ms)
+  ✓   6 [chromium] › e2e/feedback-clickfix.spec.ts:179:3 › Click & Fix UI › should open click-fix detail (564ms)
+  ✓   7 [chromium] › e2e/feedback-clickfix.spec.ts:191:3 › Click & Fix UI › should display photos in click-fix detail (613ms)
+  ✓   8 [chromium] › e2e/feedback-clickfix.spec.ts:206:3 › Click & Fix UI › should have map link in click-fix detail (732ms)
+  ✓   9 [chromium] › e2e/feedback-clickfix.spec.ts:219:3 › Click & Fix UI › should change click-fix status (699ms)
+  ✓  10 [chromium] › e2e/feedback-clickfix.spec.ts:236:3 › Click & Fix UI › should add reply to click-fix (643ms)
+  ✓  11 [chromium] › e2e/feedback-clickfix.spec.ts:310:3 › Static Pages UI › should display pages list (485ms)
+  ✓  12 [chromium] › e2e/feedback-clickfix.spec.ts:319:3 › Static Pages UI › should open page editor (615ms)
+  ✓  13 [chromium] › e2e/feedback-clickfix.spec.ts:331:3 › Static Pages UI › should show placeholder for unimplemented block editors (552ms)
+  ✓  14 [chromium] › e2e/inbox.spec.ts:19:3 › Inbox CRUD › should display messages list (508ms)
+  ✓  15 [chromium] › e2e/inbox.spec.ts:24:3 › Inbox CRUD › should navigate to new message form (561ms)
+  ✓  16 [chromium] › e2e/inbox.spec.ts:32:3 › Inbox CRUD › should create a new message (727ms)
+  ✓  17 [chromium] › e2e/inbox.spec.ts:49:3 › Inbox CRUD › should edit an existing message (781ms)
+  ✓  18 [chromium] › e2e/inbox.spec.ts:98:3 › Inbox CRUD › should delete a message (1.5s)
+  ✓  19 [chromium] › e2e/inbox.spec.ts:125:3 › Inbox HITNO Lock UI › should show locked state for pushed messages (784ms)
+  ✓  20 [chromium] › e2e/inbox.spec.ts:197:3 › Inbox HITNO Lock UI › should prevent editing locked message (480ms)
+  ✓  21 [chromium] › e2e/navigation.spec.ts:13:3 › Admin Navigation › should load dashboard page (479ms)
+  ✓  22 [chromium] › e2e/navigation.spec.ts:19:3 › Admin Navigation › should have all sidebar navigation links (488ms)
+  ✓  23 [chromium] › e2e/navigation.spec.ts:39:3 › Admin Navigation › should navigate to Messages (Inbox) page (439ms)
+  ✓  24 [chromium] › e2e/navigation.spec.ts:45:3 › Admin Navigation › should navigate to Events page (532ms)
+  ✓  25 [chromium] › e2e/navigation.spec.ts:51:3 › Admin Navigation › should navigate to Pages page (440ms)
+  ✓  26 [chromium] › e2e/navigation.spec.ts:57:3 › Admin Navigation › should navigate to Feedback page (452ms)
+  ✓  27 [chromium] › e2e/navigation.spec.ts:63:3 › Admin Navigation › should navigate to Click & Fix page (433ms)
+  ✓  28 [chromium] › e2e/navigation.spec.ts:69:3 › Admin Navigation › should have logout button (428ms)
+
+  28 passed (19.6s)
+```
+
+**Configuration:** Tests run with `workers: 1` (serial execution) for determinism.
+
+**Fixes Applied:**
+1. Added `data-testid` attributes to Admin UI components
+2. Updated Playwright selectors to use data-testid
+3. Fixed test isolation (each test creates own data via API)
+4. Fixed API response status expectation (201 vs 200 for reply endpoints)
+5. Fixed frontend state update (refetch after addReply)
+6. Configured `workers: 1` in playwright.config.ts
+
+**Report:** `admin/E2E_TEST_REPORT.md`

@@ -8,8 +8,9 @@ Playwright E2E tests for the MOJ VIS Admin panel with `data-testid` selector mig
 
 ```
 Total: 28 tests
-Passed: 25
-Skipped: 3 (marked as fixme)
+Passed: 28
+Skipped: 0
+Failed: 0
 ```
 
 **Run command:**
@@ -22,64 +23,54 @@ cd admin && npx playwright test
 ### Navigation (`navigation.spec.ts`)
 | Test | Status |
 |------|--------|
-| should load dashboard page | ✓ |
-| should have all sidebar navigation links | ✓ |
-| should navigate to Messages (Inbox) page | ✓ |
-| should navigate to Events page | ✓ |
-| should navigate to Pages page | ✓ |
-| should navigate to Feedback page | ✓ |
-| should navigate to Click & Fix page | ✓ |
-| should have logout button | ✓ |
+| should load dashboard page | PASS |
+| should have all sidebar navigation links | PASS |
+| should navigate to Messages (Inbox) page | PASS |
+| should navigate to Events page | PASS |
+| should navigate to Pages page | PASS |
+| should navigate to Feedback page | PASS |
+| should navigate to Click & Fix page | PASS |
+| should have logout button | PASS |
 
 ### Inbox CRUD (`inbox.spec.ts`)
 | Test | Status |
 |------|--------|
-| should display messages list | ✓ |
-| should navigate to new message form | ✓ |
-| should create a new message | ✓ |
-| should edit an existing message | FIXME |
-| should delete a message | ✓ |
-| should show locked state for pushed messages | ✓ |
-| should prevent editing locked message | ✓ |
+| should display messages list | PASS |
+| should navigate to new message form | PASS |
+| should create a new message | PASS |
+| should edit an existing message | PASS |
+| should delete a message | PASS |
+| should show locked state for pushed messages | PASS |
+| should prevent editing locked message | PASS |
 
 ### Feedback (`feedback-clickfix.spec.ts`)
 | Test | Status |
 |------|--------|
-| should display feedback list | ✓ |
-| should open feedback detail | ✓ |
-| should change feedback status | ✓ |
-| should add reply to feedback | FIXME |
+| should display feedback list | PASS |
+| should open feedback detail | PASS |
+| should change feedback status | PASS |
+| should add reply to feedback | PASS |
 
 ### Click & Fix (`feedback-clickfix.spec.ts`)
 | Test | Status |
 |------|--------|
-| should display click-fix list | ✓ |
-| should open click-fix detail | ✓ |
-| should display photos in click-fix detail | ✓ |
-| should have map link in click-fix detail | ✓ |
-| should change click-fix status | ✓ |
-| should add reply to click-fix | FIXME |
+| should display click-fix list | PASS |
+| should open click-fix detail | PASS |
+| should display photos in click-fix detail | PASS |
+| should have map link in click-fix detail | PASS |
+| should change click-fix status | PASS |
+| should add reply to click-fix | PASS |
 
 ### Static Pages (`feedback-clickfix.spec.ts`)
 | Test | Status |
 |------|--------|
-| should display pages list | ✓ |
-| should open page editor | ✓ |
-| should show placeholder for unimplemented block editors | ✓ |
+| should display pages list | PASS |
+| should open page editor | PASS |
+| should show placeholder for unimplemented block editors | PASS |
 
-## Known Issues (FIXME Tests)
+## Configuration
 
-### 1. Inbox Edit Test
-**Issue:** Tags normalization causes EN validation issues in parallel runs.
-**Root cause:** When creating a message via API with `tags: ['vis']`, the frontend may not receive the tags correctly due to JSON string/array normalization timing.
-
-### 2. Feedback Reply Test
-**Issue:** Reply doesn't appear after submission in parallel runs.
-**Root cause:** API response timing and state update race conditions.
-
-### 3. Click-Fix Reply Test
-**Issue:** Same as feedback reply - input not cleared after submission.
-**Root cause:** API response timing and state update race conditions.
+Tests run serially (`workers: 1`) to prevent API contention issues that occur in parallel execution. This provides deterministic, reliable results.
 
 ## Data-TestID Naming Convention
 
@@ -120,19 +111,51 @@ cd admin && npx playwright test
 - `clickfix-row-{id}` - Table row
 - `clickfix-view-{id}` - View button
 - `clickfix-photos` - Photos section
+- `clickfix-photo-{index}` - Individual photo
 - `clickfix-map-link` - Map link
 - `clickfix-reply-input` - Reply textarea
 - `clickfix-reply-submit` - Reply submit button
 - `clickfix-status-{status}` - Status change buttons
+- `clickfix-reply-{id}` - Reply card
+- `clickfix-reply-body` - Reply text
 
 ### Static Pages
 - `pages-list` - Table container
 - `pages-row-{id}` - Table row
 - `pages-view-{id}` - View button
 
-## Code Fixes Applied
+## Fixes Applied
 
-### 1. `isNew` Detection Fix
+### 1. Test Isolation via Data Strategy
+Each test that needs existing data creates its own entities via API:
+- Inbox edit: Creates unique message with `e2e-edit-${Date.now()}`
+- Feedback reply: Creates unique feedback with `e2e-reply-${Date.now()}`
+- Click-fix reply: Creates unique click-fix with `e2e-clickfix-reply-${Date.now()}`
+
+### 2. API Response Status Fix
+Reply endpoints return HTTP 201 (Created), not 200:
+```typescript
+// Before (incorrect)
+page.waitForResponse(resp => resp.url().includes('/reply') && resp.status() === 200)
+
+// After (correct)
+page.waitForResponse(resp => resp.url().includes('/reply') && resp.status() === 201)
+```
+
+### 3. Frontend State Update Fix
+Reply submission now refetches full detail after adding reply:
+```typescript
+// Before (bug: API returns only reply, not full detail)
+const updated = await api.addReply(id, { body });
+setFeedback(updated); // Corrupts state!
+
+// After (correct: refetch full detail)
+await api.addReply(id, { body });
+const updated = await api.getFeedbackDetail(id);
+setFeedback(updated);
+```
+
+### 4. `isNew` Detection Fix
 **Files:** `InboxEditPage.tsx`, `PageEditPage.tsx`
 ```typescript
 // Before (bug: id is undefined for /messages/new route)
@@ -142,7 +165,7 @@ const isNew = id === 'new';
 const isNew = !id || id === 'new';
 ```
 
-### 2. Tags Normalization
+### 5. Tags Normalization
 **File:** `api.ts`
 ```typescript
 function normalizeTags(tags: unknown): string[] {
@@ -157,7 +180,7 @@ function normalizeTags(tags: unknown): string[] {
 }
 ```
 
-### 3. FeedbackListResponse Type Fix
+### 6. FeedbackListResponse Type Fix
 **File:** `feedback.ts`
 ```typescript
 // Before

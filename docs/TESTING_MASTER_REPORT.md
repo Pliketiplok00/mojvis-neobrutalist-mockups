@@ -11,14 +11,13 @@
 | Component | Status | Tests | Verdict |
 |-----------|--------|-------|---------|
 | Backend API E2E | **PASS** | 40/40 | Production-ready |
-| Admin Navigation | **PASS** | 8/8 | Works |
-| Admin CRUD | **FAIL** | 15/28 | Selector mismatch |
+| Admin UI E2E | **PASS** | 28/28 | Production-ready |
 | Mobile TypeScript | **PASS** | 0 errors | Compiles |
 | Mobile Deep Link | **PASS** | 5/5 | Logic verified |
 | Mobile iOS Build | **PASS** | Build succeeded | App installs |
 | Mobile Runtime | **PASS** | 0 crashes | Fixed (tags null safety) |
 
-**Overall Verdict:** PARTIAL PASS - Backend API solid (40/40), Admin CRUD tests FAIL (selector mismatch), Mobile runtime PASS (e1f6094)
+**Overall Verdict:** VERIFIED - Backend API (40/40), Admin UI E2E (28/28), Mobile runtime all PASS.
 
 ---
 
@@ -49,10 +48,10 @@ Total: 40 | Passed: 40 | Failed: 0
 ### Key Verifications
 
 - [x] `/health` returns 200 with `database: true`
-- [x] Inbox CRUD (create → list → read → update → delete)
+- [x] Inbox CRUD (create -> list -> read -> update -> delete)
 - [x] HITNO push-lock flow with MockExpoPushProvider
 - [x] Locked message returns 409 on edit
-- [x] Feedback flow (submit → sent → admin → status → reply)
+- [x] Feedback flow (submit -> sent -> admin -> status -> reply)
 - [x] Click-Fix multipart with photo upload
 - [x] Static file serving for uploads
 - [x] Transport endpoints accessible
@@ -62,41 +61,62 @@ Total: 40 | Passed: 40 | Failed: 0
 ## B) Admin UI E2E Tests (Playwright)
 
 **Location:** `admin/e2e/*.spec.ts`
-**Command:** `cd admin && npm run test:e2e`
+**Command:** `cd admin && npx playwright test`
+**Report:** `admin/E2E_TEST_REPORT.md`
 
-### Result: PARTIAL (15/28 passed, 13 failed)
+### Result: PASS (28/28)
+
+```
+Running 28 tests using 1 worker
+
+  28 passed (19.6s)
+```
+
+**Configuration:** Tests run serially (`workers: 1`) for deterministic results.
 
 ### Test Breakdown
 
-| File | Passed | Failed | Status |
-|------|--------|--------|--------|
-| navigation.spec.ts | 8 | 0 | PASS |
-| inbox.spec.ts | 2 | 5 | FAIL |
-| feedback-clickfix.spec.ts | 5 | 8 | FAIL |
+| File | Tests | Status |
+|------|-------|--------|
+| navigation.spec.ts | 8 | PASS |
+| inbox.spec.ts | 7 | PASS |
+| feedback-clickfix.spec.ts | 13 | PASS |
 
-### Failure Analysis
+### Full Test List
 
-**Root Cause:** Playwright selectors don't match Admin UI component structure.
+**Navigation (8/8):**
+- should load dashboard page
+- should have all sidebar navigation links
+- should navigate to Messages (Inbox) page
+- should navigate to Events page
+- should navigate to Pages page
+- should navigate to Feedback page
+- should navigate to Click & Fix page
+- should have logout button
 
-**Failed Selectors:**
-- `table tbody tr` - Admin UI doesn't use standard table markup
-- `[data-testid="..."]` - No data-testid attributes exist
-- Form inputs by name - Different naming conventions
+**Inbox CRUD (7/7):**
+- should display messages list
+- should navigate to new message form
+- should create a new message
+- should edit an existing message
+- should delete a message
+- should show locked state for pushed messages
+- should prevent editing locked message
 
-### What Actually Works
-
-- [x] Dashboard loads
-- [x] All sidebar navigation links present
-- [x] Navigation to all sections
-- [x] Click-Fix list/photos/map/status/reply
-- [x] Pages list
-
-### What Fails
-
-- [ ] Inbox list/create/edit/delete (selectors)
-- [ ] Feedback list/detail/status/reply (selectors)
-- [ ] HITNO lock UI state (selectors)
-- [ ] Page editor navigation (selectors)
+**Feedback/Click-Fix/Pages (13/13):**
+- should display feedback list
+- should open feedback detail
+- should change feedback status
+- should add reply to feedback
+- should display click-fix list
+- should open click-fix detail
+- should display photos in click-fix detail
+- should have map link in click-fix detail
+- should change click-fix status
+- should add reply to click-fix
+- should display pages list
+- should open page editor
+- should show placeholder for unimplemented block editors
 
 ---
 
@@ -155,7 +175,7 @@ ERROR  [TypeError: message.tags.filter is not a function (it is undefined)]
 
 ---
 
-## D) Critical Issues Found
+## D) Issues Resolved
 
 ### Issue 1: Mobile InboxDetailScreen Crash - FIXED
 
@@ -171,14 +191,18 @@ TypeError: message.tags.filter is not a function (it is undefined)
 1. `mobile/src/services/api.ts` - Added `normalizeInboxMessage()` boundary normalization
 2. `mobile/src/screens/inbox/InboxDetailScreen.tsx` - Added defensive array check
 
-### Issue 2: Admin Playwright Selector Mismatch
+### Issue 2: Admin Playwright Selector Mismatch - FIXED
 
-**Severity:** HIGH
-**Impact:** 13/28 Admin UI tests fail
+**Severity:** HIGH (was)
+**Status:** RESOLVED
 
-**Fix Required:**
-1. Add `data-testid` attributes to Admin UI components
-2. Update Playwright selectors to use data-testid
+**What was fixed:**
+1. Added `data-testid` attributes to all Admin UI components
+2. Updated Playwright selectors to use data-testid
+3. Fixed test isolation (each test creates own data via API)
+4. Fixed API response status (201 vs 200 for reply endpoints)
+5. Fixed frontend state update (refetch after addReply)
+6. Configured serial execution (`workers: 1`) for determinism
 
 ---
 
@@ -190,7 +214,8 @@ TypeError: message.tags.filter is not a function (it is undefined)
 | API E2E Report | docs/API_E2E_REPORT.md |
 | Playwright Config | admin/playwright.config.ts |
 | Playwright Tests | admin/e2e/*.spec.ts |
-| Playwright Report | admin/e2e-report/ |
+| Playwright Report | admin/E2E_TEST_REPORT.md |
+| Playwright HTML | admin/e2e-report/ |
 | Deep Link Test | mobile/scripts/smoke-deeplink.ts |
 | Command Log | docs/COMMAND_LOG.md |
 | Known Limitations | docs/KNOWN_LIMITATIONS.md |
@@ -210,6 +235,9 @@ TypeError: message.tags.filter is not a function (it is undefined)
 | 11:13:30 | mobile | `npx tsc --noEmit` | PASS (0 errors) |
 | 11:13:35 | mobile | `npx tsx scripts/smoke-deeplink.ts` | PASS (5/5) |
 | 11:14:00 | mobile | `npx expo run:ios --device "iPhone 16 Plus"` | PARTIAL (build OK, runtime crash) |
+| 11:45:00 | mobile | `npx tsc --noEmit` | PASS (after fix) |
+| 11:46:00 | mobile | `npx expo run:ios` | PASS (no runtime errors) |
+| **15:30:00** | **admin** | **`npx playwright test`** | **PASS (28/28)** |
 
 ---
 
@@ -223,9 +251,10 @@ TypeError: message.tags.filter is not a function (it is undefined)
 
 ### Admin UI E2E
 - [x] Playwright installed and configured
-- [x] Navigation tests pass
-- [ ] CRUD tests pass ← BLOCKED (selectors)
-- [ ] HITNO lock tests pass ← BLOCKED (selectors)
+- [x] Navigation tests pass (8/8)
+- [x] CRUD tests pass (7/7 inbox + 13/13 feedback/clickfix/pages)
+- [x] HITNO lock tests pass
+- [x] All 28 tests pass with workers=1
 
 ### Mobile
 - [x] TypeScript compiles without errors
@@ -242,14 +271,9 @@ TypeError: message.tags.filter is not a function (it is undefined)
 ### What's Actually Working
 
 1. **Backend API** - Rock solid, 100% pass rate, DB-backed
-2. **Admin Navigation** - Routing works, all pages accessible
+2. **Admin UI E2E** - Full coverage, 100% pass rate, deterministic
 3. **Mobile Build Chain** - TypeScript, native build, CocoaPods all working
 4. **Deep Link Logic** - Correctly resolves inbox_message_id to InboxDetail route
-
-### What's Broken
-
-1. ~~**Mobile InboxDetailScreen** - Crashes on undefined tags~~ **FIXED**
-2. **Admin Playwright Tests** - Wrong selectors, need data-testid
 
 ### What's Not Tested
 
@@ -263,22 +287,17 @@ TypeError: message.tags.filter is not a function (it is undefined)
 
 ## I) Recommended Next Steps
 
-### Immediate (Before Release)
+### Short Term
 
-1. ~~Fix `message.tags` null safety in InboxDetailScreen~~ **DONE**
-2. ~~Run mobile again to verify fix~~ **DONE**
-
-### Short Term (This Sprint)
-
-1. Add `data-testid` attributes to Admin UI
-2. Update Playwright selectors
-3. Re-run Admin E2E tests
+1. Configure CI/CD pipeline with Playwright
+2. Add visual regression testing
+3. Add Detox for mobile E2E
 
 ### Medium Term
 
-1. Add visual regression testing
-2. Configure CI/CD pipeline
-3. Add Detox for mobile E2E
+1. Add authentication flow
+2. Add performance testing
+3. Add accessibility testing
 
 ---
 
@@ -288,15 +307,13 @@ TypeError: message.tags.filter is not a function (it is undefined)
 |-----------|----------------------|
 | Backend API | YES |
 | Admin UI (functionality) | YES |
-| Admin UI (tests) | NO - tests need selector fixes |
+| Admin UI (tests) | YES |
 | Mobile (build) | YES |
-| Mobile (runtime) | YES - InboxDetail fixed |
+| Mobile (runtime) | YES |
 
-**Bottom Line:** Backend API is production-ready (40/40 tests). Admin UI functionality works but Playwright CRUD tests fail (selector mismatch - 13/28). Mobile runtime crash fixed in e1f6094 and verified.
-
-**Note:** Full production readiness requires Admin CRUD test fixes.
+**Bottom Line:** All components verified and production-ready. Backend API 40/40, Admin UI E2E 28/28, Mobile runtime PASS.
 
 ---
 
 *Generated by Phase 8 evidence-based verification run*
-*Re-verified: 2026-01-08 (commit e1f6094)*
+*Final verification: 2026-01-08*
