@@ -99,9 +99,13 @@ export interface CardListBlockContent {
 }
 
 export interface MediaBlockContent {
-  images: string[];
+  url: string;
   caption_hr: string | null;
   caption_en: string | null;
+  alt_hr: string | null;
+  alt_en: string | null;
+  credit_hr: string | null;
+  credit_en: string | null;
 }
 
 export interface MapPin {
