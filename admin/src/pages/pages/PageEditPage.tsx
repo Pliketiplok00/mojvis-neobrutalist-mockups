@@ -26,6 +26,8 @@ import type {
   BlockType,
   TextBlockContent,
   HighlightBlockContent,
+  LinkListBlockContent,
+  LinkItem,
 } from '../../types/static-page';
 import {
   BLOCK_TYPE_LABELS,
@@ -777,13 +779,22 @@ function BlockContentEditor({
       );
     }
 
+    case 'link_list': {
+      const content = block.content as LinkListBlockContent;
+      return (
+        <LinkListEditor
+          content={content}
+          onContentChange={onContentChange}
+        />
+      );
+    }
+
     // Block types without editors yet - show neutral placeholder
     // NO JSON preview, NO raw data visibility, NO editing capability
     case 'card_list':
     case 'media':
     case 'map':
     case 'contact':
-    case 'link_list':
       return (
         <div style={styles.blockContent}>
           <div style={styles.notImplementedInfo}>
@@ -801,6 +812,180 @@ function BlockContentEditor({
         </div>
       );
   }
+}
+
+/**
+ * Link List Editor component
+ */
+function LinkListEditor({
+  content,
+  onContentChange,
+}: {
+  content: LinkListBlockContent;
+  onContentChange: (content: LinkListBlockContent) => void;
+}) {
+  const links = content.links || [];
+
+  const generateId = () => `link_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  const handleAddLink = () => {
+    const newLink: LinkItem = {
+      id: generateId(),
+      title_hr: '',
+      title_en: '',
+      link_type: 'external',
+      link_target: '',
+    };
+    onContentChange({ links: [...links, newLink] });
+  };
+
+  const handleRemoveLink = (linkId: string) => {
+    onContentChange({ links: links.filter((l) => l.id !== linkId) });
+  };
+
+  const handleLinkChange = (linkId: string, field: keyof LinkItem, value: string) => {
+    onContentChange({
+      links: links.map((l) =>
+        l.id === linkId ? { ...l, [field]: value } : l
+      ),
+    });
+  };
+
+  const handleMoveLink = (linkId: string, direction: 'up' | 'down') => {
+    const currentIndex = links.findIndex((l) => l.id === linkId);
+    if (currentIndex === -1) return;
+
+    const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+    if (targetIndex < 0 || targetIndex >= links.length) return;
+
+    const newLinks = [...links];
+    [newLinks[currentIndex], newLinks[targetIndex]] = [newLinks[targetIndex], newLinks[currentIndex]];
+    onContentChange({ links: newLinks });
+  };
+
+  const isValidUrl = (url: string) => {
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  return (
+    <div style={styles.blockContent}>
+      {links.length === 0 && (
+        <div style={styles.emptyList}>
+          Nema linkova. Dodajte prvi link.
+        </div>
+      )}
+
+      {links.map((link, index) => {
+        const urlError = link.link_target && !isValidUrl(link.link_target);
+        const missingHr = !link.title_hr.trim();
+        const missingEn = !link.title_en.trim();
+        const missingUrl = !link.link_target.trim();
+
+        return (
+          <div key={link.id} style={styles.linkItem}>
+            <div style={styles.linkItemHeader}>
+              <span style={styles.linkItemIndex}>#{index + 1}</span>
+              <div style={styles.linkItemActions}>
+                <button
+                  type="button"
+                  style={styles.linkReorderBtn}
+                  onClick={() => handleMoveLink(link.id, 'up')}
+                  disabled={index === 0}
+                  title="Pomakni gore"
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  style={styles.linkReorderBtn}
+                  onClick={() => handleMoveLink(link.id, 'down')}
+                  disabled={index === links.length - 1}
+                  title="Pomakni dolje"
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  style={styles.linkRemoveBtn}
+                  onClick={() => handleRemoveLink(link.id)}
+                  title="Ukloni link"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div style={styles.fieldRow}>
+              <div style={styles.field}>
+                <label style={styles.label}>
+                  Naslov (HR) *
+                  {missingHr && <span style={styles.fieldError}> (obavezno)</span>}
+                </label>
+                <input
+                  type="text"
+                  value={link.title_hr}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleLinkChange(link.id, 'title_hr', e.target.value)
+                  }
+                  style={{
+                    ...styles.input,
+                    ...(missingHr ? styles.inputError : {}),
+                  }}
+                  placeholder="Naslov linka na hrvatskom"
+                />
+              </div>
+              <div style={styles.field}>
+                <label style={styles.label}>
+                  Naslov (EN) *
+                  {missingEn && <span style={styles.fieldError}> (obavezno)</span>}
+                </label>
+                <input
+                  type="text"
+                  value={link.title_en}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    handleLinkChange(link.id, 'title_en', e.target.value)
+                  }
+                  style={{
+                    ...styles.input,
+                    ...(missingEn ? styles.inputError : {}),
+                  }}
+                  placeholder="Link title in English"
+                />
+              </div>
+            </div>
+
+            <div style={styles.field}>
+              <label style={styles.label}>
+                URL *
+                {missingUrl && <span style={styles.fieldError}> (obavezno)</span>}
+                {urlError && <span style={styles.fieldError}> (mora poceti s http:// ili https://)</span>}
+              </label>
+              <input
+                type="text"
+                value={link.link_target}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleLinkChange(link.id, 'link_target', e.target.value)
+                }
+                style={{
+                  ...styles.input,
+                  ...((missingUrl || urlError) ? styles.inputError : {}),
+                }}
+                placeholder="https://example.com"
+              />
+            </div>
+          </div>
+        );
+      })}
+
+      <button
+        type="button"
+        style={styles.addLinkButton}
+        onClick={handleAddLink}
+      >
+        + Dodaj link
+      </button>
+    </div>
+  );
 }
 
 /**
@@ -1168,6 +1353,82 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  // LinkList editor styles
+  emptyList: {
+    padding: '24px',
+    textAlign: 'center',
+    color: '#999999',
+    fontStyle: 'italic',
+    backgroundColor: '#fafafa',
+    borderRadius: '4px',
+    marginBottom: '12px',
+  },
+  linkItem: {
+    padding: '12px',
+    marginBottom: '12px',
+    border: '1px solid #e0e0e0',
+    borderRadius: '6px',
+    backgroundColor: '#fafafa',
+  },
+  linkItemHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '12px',
+  },
+  linkItemIndex: {
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#666666',
+  },
+  linkItemActions: {
+    display: 'flex',
+    gap: '4px',
+  },
+  linkReorderBtn: {
+    width: '24px',
+    height: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    color: '#333333',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '12px',
+    cursor: 'pointer',
+  },
+  linkRemoveBtn: {
+    width: '24px',
+    height: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    color: '#dc3545',
+    border: '1px solid #dc3545',
+    borderRadius: '4px',
+    fontSize: '12px',
+    cursor: 'pointer',
+  },
+  addLinkButton: {
+    padding: '10px 16px',
+    backgroundColor: '#ffffff',
+    color: '#333333',
+    border: '1px dashed #ccc',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
+    width: '100%',
+  },
+  fieldError: {
+    color: '#dc3545',
+    fontSize: '12px',
+    fontWeight: 'normal',
+  },
+  inputError: {
+    borderColor: '#dc3545',
   },
 };
 
