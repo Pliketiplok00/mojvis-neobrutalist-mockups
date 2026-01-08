@@ -8,6 +8,7 @@
  * Phase 5: Added Feedback screens.
  * Phase 5.1: Updated onboarding params for persistence.
  * Phase 5.2: Simplified to use MenuOverlay instead of drawer navigation.
+ * Phase 6: Added Click & Fix screens.
  */
 
 // Onboarding data types
@@ -43,6 +44,9 @@ export type MainStackParamList = {
   FeedbackForm: undefined;
   FeedbackConfirmation: { feedbackId: string };
   FeedbackDetail: { feedbackId: string };
+  ClickFixForm: undefined;
+  ClickFixConfirmation: { clickFixId: string };
+  ClickFixDetail: { clickFixId: string };
   Settings: undefined;
   StaticPage: { slug: string };
 };

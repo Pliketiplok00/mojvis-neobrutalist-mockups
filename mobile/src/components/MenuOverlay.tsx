@@ -35,6 +35,7 @@ const MENU_ITEMS: MenuItem[] = [
   { label: 'Vozni red', labelEn: 'Transport', icon: '🚌', route: 'TransportHub' },
   { label: 'Dogadaji', labelEn: 'Events', icon: '📅', route: 'Events' },
   { label: 'Pristiglo', labelEn: 'Inbox', icon: '📥', route: 'Inbox' },
+  { label: 'Postavke', labelEn: 'Settings', icon: '⚙️', route: 'Settings' },
 ];
 
 interface MenuOverlayProps {

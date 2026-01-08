@@ -71,11 +71,13 @@ export function FeedbackDetailPage() {
 
     setSubmitting(true);
     try {
-      const updated = await adminFeedbackApi.addReply(
+      await adminFeedbackApi.addReply(
         id,
         { body: replyBody.trim() },
         adminMunicipality
       );
+      // Refetch to get updated feedback with new reply
+      const updated = await adminFeedbackApi.getFeedbackDetail(id, adminMunicipality);
       setFeedback(updated);
       setReplyBody('');
     } catch (err) {

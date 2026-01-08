@@ -54,6 +54,11 @@ export interface UserContext {
  * - Hard delete is NOT allowed
  * - deleted_at timestamp indicates soft-deleted state
  * - Public endpoints MUST exclude messages where deleted_at IS NOT NULL
+ *
+ * Push notification policy (Phase 7):
+ * - is_locked = true after push sent (no edits allowed)
+ * - pushed_at = timestamp when push was sent
+ * - pushed_by = admin who triggered the push
  */
 export interface InboxMessage {
   id: string;
@@ -68,6 +73,10 @@ export interface InboxMessage {
   updated_at: Date;
   created_by: string | null; // admin user ID
   deleted_at: Date | null; // soft delete timestamp (NULL = active)
+  // Phase 7: Push notification fields
+  is_locked: boolean; // TRUE if pushed (no edits allowed)
+  pushed_at: Date | null; // When push was sent
+  pushed_by: string | null; // Admin who triggered push
 }
 
 /**
@@ -112,6 +121,10 @@ export interface AdminInboxMessageResponse {
   created_by: string | null;
   deleted_at: string | null; // soft delete timestamp (NULL = active)
   is_urgent: boolean;
+  // Phase 7: Push notification fields
+  is_locked: boolean; // TRUE if pushed (no edits allowed)
+  pushed_at: string | null; // When push was sent
+  pushed_by: string | null; // Admin who triggered push
 }
 
 /**

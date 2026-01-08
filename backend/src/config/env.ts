@@ -23,6 +23,12 @@ export interface EnvConfig {
   DB_NAME: string;
   DB_USER: string;
   DB_PASSWORD: string;
+
+  // Mock mode (explicit opt-in only)
+  DB_MOCK_MODE: boolean;
+
+  // Push mock mode (auto-enabled in dev/test, explicit in production)
+  PUSH_MOCK_MODE: boolean;
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -66,6 +72,13 @@ export function loadEnvConfig(): EnvConfig {
     DB_NAME: getEnvVar('DB_NAME', useDefaults ? 'mojvis_test' : undefined),
     DB_USER: getEnvVar('DB_USER', useDefaults ? 'postgres' : undefined),
     DB_PASSWORD: getEnvVar('DB_PASSWORD', useDefaults ? 'postgres' : undefined),
+
+    // Mock mode - MUST be explicitly enabled, never default
+    DB_MOCK_MODE: process.env['DB_MOCK_MODE'] === 'true',
+
+    // Push mock mode - auto-enabled in dev/test (no real Expo calls), can override
+    PUSH_MOCK_MODE: process.env['PUSH_MOCK_MODE'] === 'true' ||
+      (process.env['PUSH_MOCK_MODE'] !== 'false' && (nodeEnv === 'development' || nodeEnv === 'test')),
   };
 }
 

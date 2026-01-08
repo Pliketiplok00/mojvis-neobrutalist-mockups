@@ -46,9 +46,8 @@ test.describe('Inbox CRUD', () => {
     await page.waitForURL('/messages', { timeout: 10000 });
   });
 
-  // FIXME: Flaky test - tags normalization causes EN validation issues in parallel runs
-  test.fixme('should edit an existing message', async ({ page }) => {
-    // Create a fresh message via API to get a known ID
+  test('should edit an existing message', async ({ page }) => {
+    // Create a fresh message via API with municipal tag (makes EN optional)
     const uniqueId = `e2e-edit-${Date.now()}`;
     const createResponse = await page.request.post('http://localhost:3000/admin/inbox', {
       headers: { 'Content-Type': 'application/json' },
@@ -58,35 +57,42 @@ test.describe('Inbox CRUD', () => {
         tags: ['vis'],
       },
     });
+    expect(createResponse.ok()).toBeTruthy();
     const created = await createResponse.json();
     const messageId = created.id;
 
     // Navigate directly to edit this message
     await page.goto(`/messages/${messageId}`);
 
-    // Wait for form to load
-    await page.waitForSelector('[data-testid="inbox-title-hr"]', { timeout: 10000 });
+    // Wait for form to fully load - title input should have the value
+    const titleInput = page.locator('[data-testid="inbox-title-hr"]');
+    await expect(titleInput).toBeVisible({ timeout: 10000 });
+    await expect(titleInput).toHaveValue(`${uniqueId} Original`, { timeout: 5000 });
 
     // Verify submit button is visible (not a locked message)
     const submitButton = page.locator('[data-testid="inbox-submit"]');
     await expect(submitButton).toBeVisible({ timeout: 5000 });
 
-    // Modify title
-    const titleInput = page.locator('[data-testid="inbox-title-hr"]');
-    await titleInput.fill(`${uniqueId} Updated`);
-
-    // Ensure Vis tag is selected to avoid EN validation
-    const visCheckbox = page.getByText('Vis (općinska)');
-    const checkboxInput = page.locator('input[type="checkbox"]').filter({ has: page.locator('..').filter({ hasText: 'Vis (općinska)' }) }).first();
-    if (!(await checkboxInput.isChecked().catch(() => false))) {
-      await visCheckbox.click();
+    // Ensure Vis tag checkbox is checked (click label if not)
+    const visLabel = page.locator('label').filter({ hasText: 'Vis (općinska)' });
+    const visCheckbox = visLabel.locator('input[type="checkbox"]');
+    if (!(await visCheckbox.isChecked())) {
+      await visLabel.click();
+      // Wait for state to update
+      await expect(visCheckbox).toBeChecked({ timeout: 2000 });
     }
+
+    // Modify title
+    await titleInput.fill(`${uniqueId} Updated`);
 
     // Save
     await submitButton.click();
 
-    // Should show success or redirect
+    // Should redirect to list
     await page.waitForURL('/messages', { timeout: 10000 });
+
+    // Verify the updated message appears in the list
+    await page.waitForSelector('[data-testid="inbox-list"]', { timeout: 10000 });
   });
 
   test('should delete a message', async ({ page }) => {

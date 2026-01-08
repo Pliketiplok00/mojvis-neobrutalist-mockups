@@ -3,12 +3,48 @@
  *
  * Provides connection pool and basic query interface.
  * Connection is env-based, no schema defined yet (Phase 0).
+ *
+ * Mock mode is ONLY enabled if DB_MOCK_MODE=true env var is set.
+ * Without explicit opt-in, DB failures cause degraded mode (503 health).
  */
 
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { env } from '../config/env.js';
 
 let pool: Pool | null = null;
+let mockMode = false;
+let dbConnectionFailed = false;
+
+/**
+ * Check if running in mock mode (explicit opt-in only)
+ */
+export function isMockMode(): boolean {
+  return mockMode;
+}
+
+/**
+ * Check if database connection failed (for health checks)
+ */
+export function isDbConnectionFailed(): boolean {
+  return dbConnectionFailed;
+}
+
+/**
+ * Enable mock mode - ONLY if DB_MOCK_MODE env var is true
+ * Returns true if mock mode was enabled, false otherwise
+ */
+export function tryEnableMockMode(): boolean {
+  if (env.DB_MOCK_MODE) {
+    mockMode = true;
+    console.info('[DB] Mock mode ENABLED via DB_MOCK_MODE=true');
+    console.warn('[DB] WARNING: All data is in-memory, not persisted!');
+    return true;
+  }
+  console.warn('[DB] Mock mode NOT enabled (DB_MOCK_MODE not set to true)');
+  console.warn('[DB] Server will run in DEGRADED mode - /health returns 503');
+  dbConnectionFailed = true;
+  return false;
+}
 
 /**
  * Initialize database connection pool
@@ -46,9 +82,12 @@ export async function initDatabase(): Promise<void> {
 }
 
 /**
- * Get the connection pool
+ * Get the connection pool (returns null in mock mode)
  */
-export function getPool(): Pool {
+export function getPool(): Pool | null {
+  if (mockMode) {
+    return null;
+  }
   if (!pool) {
     throw new Error('Database pool not initialized. Call initDatabase() first.');
   }
@@ -57,16 +96,33 @@ export function getPool(): Pool {
 
 /**
  * Execute a query
+ * In mock mode, returns empty results
  */
 export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
   params?: unknown[]
 ): Promise<QueryResult<T>> {
-  const pool = getPool();
+  // Mock mode: return empty results
+  if (mockMode) {
+    const isCount = text.toLowerCase().includes('count(*)');
+    return {
+      rows: isCount ? [{ count: '0' } as unknown as T] : [],
+      command: '',
+      rowCount: isCount ? 1 : 0,
+      oid: 0,
+      fields: [],
+    };
+  }
+
+  const currentPool = getPool();
+  if (!currentPool) {
+    throw new Error('Database not available');
+  }
+
   const start = Date.now();
 
   try {
-    const result = await pool.query<T>(text, params);
+    const result = await currentPool.query<T>(text, params);
     const duration = Date.now() - start;
 
     if (env.NODE_ENV === 'development') {
@@ -82,10 +138,17 @@ export async function query<T extends QueryResultRow = QueryResultRow>(
 
 /**
  * Get a client from the pool for transactions
+ * Throws in mock mode as transactions aren't supported
  */
 export async function getClient(): Promise<PoolClient> {
-  const pool = getPool();
-  return pool.connect();
+  if (mockMode) {
+    throw new Error('Transactions not supported in mock mode');
+  }
+  const currentPool = getPool();
+  if (!currentPool) {
+    throw new Error('Database not available');
+  }
+  return currentPool.connect();
 }
 
 /**
@@ -102,11 +165,18 @@ export async function closeDatabase(): Promise<void> {
 
 /**
  * Check if database is connected and responsive
+ * Returns false in mock mode
  */
 export async function isDatabaseHealthy(): Promise<boolean> {
+  if (mockMode) {
+    return false;
+  }
   try {
-    const pool = getPool();
-    const result = await pool.query('SELECT 1 as health');
+    const currentPool = getPool();
+    if (!currentPool) {
+      return false;
+    }
+    const result = await currentPool.query('SELECT 1 as health');
     return result.rows.length === 1;
   } catch {
     return false;

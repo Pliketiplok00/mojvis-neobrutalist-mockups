@@ -3,7 +3,7 @@
  *
  * Main inbox screen with tabs:
  * - Primljeno (Received): Shows inbox messages
- * - Poslano (Sent): Shows user-submitted feedback (Phase 5)
+ * - Poslano (Sent): Shows user-submitted feedback (Phase 5) and Click & Fix (Phase 6)
  *
  * Rules:
  * - Header type is 'inbox' (no inbox icon shown)
@@ -27,10 +27,22 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUnread } from '../../contexts/UnreadContext';
-import { inboxApi, feedbackApi } from '../../services/api';
+import { inboxApi, feedbackApi, clickFixApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { SentItemResponse } from '../../types/feedback';
+import type { ClickFixSentItemResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
+
+// Combined sent item type
+interface CombinedSentItem {
+  id: string;
+  type: 'feedback' | 'click_fix';
+  subject: string;
+  status: string;
+  status_label: string;
+  photo_count?: number;
+  created_at: string;
+}
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -51,7 +63,7 @@ export function InboxListScreen(): React.JSX.Element {
 
   const [activeTab, setActiveTab] = useState<TabType>('received');
   const [messages, setMessages] = useState<InboxMessage[]>([]);
-  const [sentItems, setSentItems] = useState<SentItemResponse[]>([]);
+  const [sentItems, setSentItems] = useState<CombinedSentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [sentLoading, setSentLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -91,8 +103,34 @@ export function InboxListScreen(): React.JSX.Element {
     setSentError(null);
 
     try {
-      const response = await feedbackApi.getSentItems();
-      setSentItems(response.items);
+      // Fetch both feedback and click_fix items in parallel
+      const [feedbackResponse, clickFixResponse] = await Promise.all([
+        feedbackApi.getSentItems(),
+        clickFixApi.getSentItems(),
+      ]);
+
+      // Combine and sort by date (newest first)
+      const combinedItems: CombinedSentItem[] = [
+        ...feedbackResponse.items.map((item: SentItemResponse): CombinedSentItem => ({
+          id: item.id,
+          type: 'feedback',
+          subject: item.subject,
+          status: item.status,
+          status_label: item.status_label,
+          created_at: item.created_at,
+        })),
+        ...clickFixResponse.items.map((item: ClickFixSentItemResponse): CombinedSentItem => ({
+          id: item.id,
+          type: 'click_fix',
+          subject: item.subject,
+          status: item.status,
+          status_label: item.status_label,
+          photo_count: item.photo_count,
+          created_at: item.created_at,
+        })),
+      ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setSentItems(combinedItems);
     } catch (err) {
       console.error('[Inbox] Error fetching sent items:', err);
       setSentError('Greška pri učitavanju poslanih poruka.');
@@ -117,12 +155,20 @@ export function InboxListScreen(): React.JSX.Element {
     navigation.navigate('InboxDetail', { messageId: message.id });
   };
 
-  const handleSentItemPress = (item: SentItemResponse): void => {
-    navigation.navigate('FeedbackDetail', { feedbackId: item.id });
+  const handleSentItemPress = (item: CombinedSentItem): void => {
+    if (item.type === 'click_fix') {
+      navigation.navigate('ClickFixDetail', { clickFixId: item.id });
+    } else {
+      navigation.navigate('FeedbackDetail', { feedbackId: item.id });
+    }
   };
 
   const handleNewFeedback = (): void => {
     navigation.navigate('FeedbackForm');
+  };
+
+  const handleNewClickFix = (): void => {
+    navigation.navigate('ClickFixForm');
   };
 
   const handleRefresh = (): void => {
@@ -201,8 +247,9 @@ export function InboxListScreen(): React.JSX.Element {
     </View>
   );
 
-  const renderSentItem = ({ item }: { item: SentItemResponse }): React.JSX.Element => {
+  const renderSentItem = ({ item }: { item: CombinedSentItem }): React.JSX.Element => {
     const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.zaprimljeno;
+    const isClickFix = item.type === 'click_fix';
 
     return (
       <TouchableOpacity
@@ -212,17 +259,29 @@ export function InboxListScreen(): React.JSX.Element {
         accessibilityHint="Dodirnite za otvaranje poruke"
       >
         <View style={styles.messageContent}>
-          {/* Status badge */}
-          <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
-            <Text style={[styles.statusText, { color: statusColor.text }]}>
-              {item.status_label}
-            </Text>
+          {/* Type and Status badges */}
+          <View style={styles.badgeRow}>
+            {isClickFix && (
+              <View style={styles.typeBadge}>
+                <Text style={styles.typeBadgeText}>PRIJAVA</Text>
+              </View>
+            )}
+            <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
+              <Text style={[styles.statusText, { color: statusColor.text }]}>
+                {item.status_label}
+              </Text>
+            </View>
           </View>
 
           {/* Subject */}
           <Text style={styles.messageTitle} numberOfLines={1}>
             {item.subject}
           </Text>
+
+          {/* Photo count for Click & Fix */}
+          {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
+            <Text style={styles.photoCount}>{item.photo_count} slika</Text>
+          )}
 
           {/* Date */}
           <Text style={styles.messageDate}>
@@ -333,7 +392,7 @@ export function InboxListScreen(): React.JSX.Element {
             />
           )}
 
-          {/* New Feedback Button */}
+          {/* New submission buttons */}
           <View style={styles.newFeedbackContainer}>
             <TouchableOpacity
               style={styles.newFeedbackButton}
@@ -341,6 +400,13 @@ export function InboxListScreen(): React.JSX.Element {
               activeOpacity={0.7}
             >
               <Text style={styles.newFeedbackButtonText}>Nova poruka</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.newClickFixButton}
+              onPress={handleNewClickFix}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.newClickFixButtonText}>Prijavi problem</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -530,11 +596,46 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
+    marginBottom: 8,
   },
   newFeedbackButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  newClickFixButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#000000',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  newClickFixButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 4,
+  },
+  typeBadge: {
+    backgroundColor: '#6B46C1',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  typeBadgeText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  photoCount: {
+    fontSize: 12,
+    color: '#666666',
+    marginBottom: 2,
   },
 });
 

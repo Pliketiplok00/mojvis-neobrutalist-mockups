@@ -8,12 +8,16 @@
  * Phase 3: Static pages CMS.
  * Phase 4: Transport timetables (read-only).
  * Phase 5: Feedback (anonymous, device-based).
+ * Phase 6: Click & Fix (anonymous issue reporting with photos).
+ * Phase 7: Push notifications (emergency hitno messages only).
  */
 
 import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
+import fastifyStatic from '@fastify/static';
+import { join } from 'path';
 import { env } from './config/env.js';
-import { initDatabase, closeDatabase } from './lib/database.js';
+import { initDatabase, closeDatabase, tryEnableMockMode } from './lib/database.js';
 import { healthRoutes } from './routes/health.js';
 import { inboxRoutes } from './routes/inbox.js';
 import { adminInboxRoutes } from './routes/admin-inbox.js';
@@ -25,6 +29,9 @@ import { adminStaticPageRoutes } from './routes/admin-static-pages.js';
 import { roadTransportRoutes, seaTransportRoutes } from './routes/transport.js';
 import { feedbackRoutes } from './routes/feedback.js';
 import { adminFeedbackRoutes } from './routes/admin-feedback.js';
+import { clickFixRoutes } from './routes/click-fix.js';
+import { adminClickFixRoutes } from './routes/admin-click-fix.js';
+import { deviceRoutes } from './routes/device.js';
 
 // Create Fastify instance with logging
 const fastify: FastifyInstance = Fastify({
@@ -50,6 +57,13 @@ async function registerPlugins(): Promise<void> {
   // CORS - allow all origins in development
   await fastify.register(cors, {
     origin: env.NODE_ENV === 'development' ? true : false, // TODO: Configure for production
+  });
+
+  // Static file serving for uploads (Phase 6: Click & Fix photos)
+  await fastify.register(fastifyStatic, {
+    root: join(process.cwd(), 'uploads'),
+    prefix: '/uploads/',
+    decorateReply: false,
   });
 
   // Health routes
@@ -85,6 +99,15 @@ async function registerPlugins(): Promise<void> {
 
   // Admin feedback routes (Phase 5)
   await fastify.register(adminFeedbackRoutes);
+
+  // Click & Fix routes (Phase 6)
+  await fastify.register(clickFixRoutes);
+
+  // Admin Click & Fix routes (Phase 6)
+  await fastify.register(adminClickFixRoutes);
+
+  // Device routes (Phase 7) - push token registration
+  await fastify.register(deviceRoutes);
 }
 
 /**
@@ -120,7 +143,16 @@ async function start(): Promise<void> {
 
   try {
     // Initialize database connection
-    await initDatabase();
+    try {
+      await initDatabase();
+    } catch (dbError) {
+      console.error('[Server] Database connection failed:', (dbError as Error).message);
+      // Only enable mock mode if explicitly configured
+      const mockEnabled = tryEnableMockMode();
+      if (!mockEnabled) {
+        console.warn('[Server] Running in DEGRADED mode - admin APIs may fail');
+      }
+    }
 
     // Register all plugins and routes
     await registerPlugins();
@@ -145,6 +177,9 @@ async function start(): Promise<void> {
     console.info(`[Server] Sea Transport: http://${env.HOST}:${env.PORT}/transport/sea/lines`);
     console.info(`[Server] Feedback: http://${env.HOST}:${env.PORT}/feedback`);
     console.info(`[Server] Admin Feedback: http://${env.HOST}:${env.PORT}/admin/feedback`);
+    console.info(`[Server] Click & Fix: http://${env.HOST}:${env.PORT}/click-fix`);
+    console.info(`[Server] Admin Click & Fix: http://${env.HOST}:${env.PORT}/admin/click-fix`);
+    console.info(`[Server] Device (Push): http://${env.HOST}:${env.PORT}/device/push-token`);
     console.info('='.repeat(50));
   } catch (error) {
     console.error('[Server] Failed to start:', error);

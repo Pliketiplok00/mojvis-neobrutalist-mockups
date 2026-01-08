@@ -15,6 +15,7 @@
  * Phase 5: Added Feedback screens.
  * Phase 5.1: Fixed onboarding navigation with persistence.
  * Phase 5.2: Menu uses MenuOverlay (no native drawer required).
+ * Phase 6: Added Click & Fix screens.
  */
 
 import React from 'react';
@@ -49,7 +50,11 @@ import { InboxDetailScreen } from '../screens/inbox/InboxDetailScreen';
 import { FeedbackFormScreen } from '../screens/feedback/FeedbackFormScreen';
 import { FeedbackConfirmationScreen } from '../screens/feedback/FeedbackConfirmationScreen';
 import { FeedbackDetailScreen } from '../screens/feedback/FeedbackDetailScreen';
+import { ClickFixFormScreen } from '../screens/click-fix/ClickFixFormScreen';
+import { ClickFixConfirmationScreen } from '../screens/click-fix/ClickFixConfirmationScreen';
+import { ClickFixDetailScreen } from '../screens/click-fix/ClickFixDetailScreen';
 import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
+import { SettingsScreen } from '../screens/settings/SettingsScreen';
 
 // Create navigators
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -109,7 +114,11 @@ function MainNavigator(): React.JSX.Element {
       <MainStack.Screen name="FeedbackForm" component={FeedbackFormScreen} />
       <MainStack.Screen name="FeedbackConfirmation" component={FeedbackConfirmationScreen} />
       <MainStack.Screen name="FeedbackDetail" component={FeedbackDetailScreen} />
+      <MainStack.Screen name="ClickFixForm" component={ClickFixFormScreen} />
+      <MainStack.Screen name="ClickFixConfirmation" component={ClickFixConfirmationScreen} />
+      <MainStack.Screen name="ClickFixDetail" component={ClickFixDetailScreen} />
       <MainStack.Screen name="StaticPage" component={StaticPageScreen} />
+      <MainStack.Screen name="Settings" component={SettingsScreen} />
     </MainStack.Navigator>
   );
 }

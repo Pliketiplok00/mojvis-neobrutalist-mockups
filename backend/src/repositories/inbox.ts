@@ -21,6 +21,10 @@ interface InboxMessageRow {
   updated_at: Date;
   created_by: string | null;
   deleted_at: Date | null;
+  // Phase 7: Push notification fields
+  is_locked: boolean;
+  pushed_at: Date | null;
+  pushed_by: string | null;
 }
 
 /**
@@ -44,7 +48,8 @@ export async function getInboxMessages(
   // Get paginated messages (excluding soft-deleted)
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by, deleted_at
+            active_from, active_to, created_at, updated_at, created_by, deleted_at,
+            is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE deleted_at IS NULL
      ORDER BY created_at DESC
@@ -68,7 +73,8 @@ export async function getInboxMessageById(
 ): Promise<InboxMessage | null> {
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by, deleted_at
+            active_from, active_to, created_at, updated_at, created_by, deleted_at,
+            is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE id = $1 AND deleted_at IS NULL`,
     [id]
@@ -91,7 +97,8 @@ export async function getInboxMessageByIdAdmin(
 ): Promise<InboxMessage | null> {
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by, deleted_at
+            active_from, active_to, created_at, updated_at, created_by, deleted_at,
+            is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE id = $1`,
     [id]
@@ -113,7 +120,8 @@ export async function getInboxMessageByIdAdmin(
 export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by, deleted_at
+            active_from, active_to, created_at, updated_at, created_by, deleted_at,
+            is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE (active_from IS NOT NULL OR active_to IS NOT NULL)
        AND deleted_at IS NULL
@@ -127,14 +135,15 @@ export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
  * Create a new inbox message
  */
 export async function createInboxMessage(
-  message: Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at'>
+  message: Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'is_locked' | 'pushed_at' | 'pushed_by'>
 ): Promise<InboxMessage> {
   const result = await query<InboxMessageRow>(
     `INSERT INTO inbox_messages
        (title_hr, title_en, body_hr, body_en, tags, active_from, active_to, created_by)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING id, title_hr, title_en, body_hr, body_en, tags,
-               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at,
+               is_locked, pushed_at, pushed_by`,
     [
       message.title_hr,
       message.title_en,
@@ -151,13 +160,14 @@ export async function createInboxMessage(
 }
 
 /**
- * Update an existing inbox message (excludes soft-deleted)
+ * Update an existing inbox message (excludes soft-deleted and locked)
  *
  * NOTE: Soft-deleted messages cannot be updated via this function.
+ * NOTE: Locked messages cannot be updated (returns null).
  */
 export async function updateInboxMessage(
   id: string,
-  updates: Partial<Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at'>>
+  updates: Partial<Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'is_locked' | 'pushed_at' | 'pushed_by'>>
 ): Promise<InboxMessage | null> {
   // Build dynamic update query
   const fields: string[] = [];
@@ -201,9 +211,10 @@ export async function updateInboxMessage(
   const result = await query<InboxMessageRow>(
     `UPDATE inbox_messages
      SET ${fields.join(', ')}
-     WHERE id = $${paramIndex} AND deleted_at IS NULL
+     WHERE id = $${paramIndex} AND deleted_at IS NULL AND is_locked = false
      RETURNING id, title_hr, title_en, body_hr, body_en, tags,
-               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at,
+               is_locked, pushed_at, pushed_by`,
     values
   );
 
@@ -219,6 +230,7 @@ export async function updateInboxMessage(
  *
  * NOTE: Hard delete is NOT allowed. This sets deleted_at = now().
  * Returns the soft-deleted message for logging purposes.
+ * Soft delete is allowed even for locked messages (for auditability).
  */
 export async function softDeleteInboxMessage(id: string): Promise<InboxMessage | null> {
   const result = await query<InboxMessageRow>(
@@ -226,7 +238,8 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
      SET deleted_at = NOW()
      WHERE id = $1 AND deleted_at IS NULL
      RETURNING id, title_hr, title_en, body_hr, body_en, tags,
-               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at,
+               is_locked, pushed_at, pushed_by`,
     [id]
   );
 
@@ -255,7 +268,8 @@ export async function getInboxMessagesAdmin(
   // Get paginated messages (including soft-deleted)
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags,
-            active_from, active_to, created_at, updated_at, created_by, deleted_at
+            active_from, active_to, created_at, updated_at, created_by, deleted_at,
+            is_locked, pushed_at, pushed_by
      FROM inbox_messages
      ORDER BY created_at DESC
      LIMIT $1 OFFSET $2`,
@@ -277,7 +291,8 @@ export async function restoreInboxMessage(id: string): Promise<InboxMessage | nu
      SET deleted_at = NULL
      WHERE id = $1 AND deleted_at IS NOT NULL
      RETURNING id, title_hr, title_en, body_hr, body_en, tags,
-               active_from, active_to, created_at, updated_at, created_by, deleted_at`,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at,
+               is_locked, pushed_at, pushed_by`,
     [id]
   );
 
@@ -286,6 +301,38 @@ export async function restoreInboxMessage(id: string): Promise<InboxMessage | nu
   }
 
   return rowToInboxMessage(result.rows[0]);
+}
+
+/**
+ * Mark a message as locked after push sent (Phase 7)
+ */
+export async function markMessageAsLocked(
+  id: string,
+  adminId: string | null
+): Promise<InboxMessage | null> {
+  const result = await query<InboxMessageRow>(
+    `UPDATE inbox_messages
+     SET is_locked = true, pushed_at = NOW(), pushed_by = $2
+     WHERE id = $1 AND is_locked = false AND deleted_at IS NULL
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at,
+               is_locked, pushed_at, pushed_by`,
+    [id, adminId]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return rowToInboxMessage(result.rows[0]);
+}
+
+/**
+ * Check if a message is locked
+ */
+export async function isMessageLocked(id: string): Promise<boolean> {
+  const message = await getInboxMessageByIdAdmin(id);
+  return message?.is_locked ?? false;
 }
 
 /**
@@ -305,5 +352,8 @@ function rowToInboxMessage(row: InboxMessageRow): InboxMessage {
     updated_at: row.updated_at,
     created_by: row.created_by,
     deleted_at: row.deleted_at,
+    is_locked: row.is_locked ?? false,
+    pushed_at: row.pushed_at,
+    pushed_by: row.pushed_by,
   };
 }

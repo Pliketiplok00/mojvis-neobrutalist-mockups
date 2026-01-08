@@ -1,0 +1,754 @@
+{
+  "_comment": "TODO: Replace this seed data with real imported datasets. This is for Phase 4 testing only.",
+  "_format_version": "1.0",
+
+  "stops": [
+    {
+      "id": "stop-split",
+      "name_hr": "Split",
+      "name_en": "Split",
+      "transport_type": "sea",
+      "latitude": 43.5081,
+      "longitude": 16.4402
+    },
+    {
+      "id": "stop-milna",
+      "name_hr": "Milna",
+      "name_en": "Milna",
+      "transport_type": "sea",
+      "latitude": 43.3256,
+      "longitude": 16.4519
+    },
+    {
+      "id": "stop-hvar",
+      "name_hr": "Hvar",
+      "name_en": "Hvar",
+      "transport_type": "sea",
+      "latitude": 43.1729,
+      "longitude": 16.4411
+    },
+    {
+      "id": "stop-vis",
+      "name_hr": "Vis",
+      "name_en": "Vis",
+      "transport_type": "sea",
+      "latitude": 43.0614,
+      "longitude": 16.1839
+    }
+  ],
+
+  "seasons": [
+    {
+      "id": "season-2026-off",
+      "season_type": "OFF",
+      "year": 2026,
+      "date_from": "2026-01-01",
+      "date_to": "2026-03-31",
+      "label_hr": "Izvan sezone",
+      "label_en": "Off season"
+    },
+    {
+      "id": "season-2026-pre",
+      "season_type": "PRE",
+      "year": 2026,
+      "date_from": "2026-04-01",
+      "date_to": "2026-06-14",
+      "label_hr": "Predsezone",
+      "label_en": "Pre-season"
+    },
+    {
+      "id": "season-2026-high",
+      "season_type": "HIGH",
+      "year": 2026,
+      "date_from": "2026-06-15",
+      "date_to": "2026-09-15",
+      "label_hr": "Sezona",
+      "label_en": "High season"
+    },
+    {
+      "id": "season-2026-post",
+      "season_type": "POST",
+      "year": 2026,
+      "date_from": "2026-09-16",
+      "date_to": "2026-12-31",
+      "label_hr": "Postsezona",
+      "label_en": "Post-season"
+    }
+  ],
+
+  "lines": [
+    {
+      "id": "line-split-vis-catamaran",
+      "transport_type": "sea",
+      "name_hr": "Split - Milna - Hvar - Vis (katamaran)",
+      "name_en": "Split - Milna - Hvar - Vis (catamaran)",
+      "subtype_hr": "Katamaran",
+      "subtype_en": "Catamaran",
+      "display_order": 1,
+      "contacts": [
+        {
+          "operator_hr": "Jadrolinija",
+          "operator_en": "Jadrolinija",
+          "phone": "+385 21 338 333",
+          "email": "info@jadrolinija.hr",
+          "website": "https://www.jadrolinija.hr"
+        }
+      ],
+      "routes": [
+        {
+          "direction": 0,
+          "direction_label_hr": "Split → Vis",
+          "direction_label_en": "Split → Vis",
+          "origin_stop_id": "stop-split",
+          "destination_stop_id": "stop-vis",
+          "typical_duration_minutes": 135,
+          "stops": [
+            { "stop_id": "stop-split", "stop_order": 0 },
+            { "stop_id": "stop-milna", "stop_order": 1 },
+            { "stop_id": "stop-hvar", "stop_order": 2 },
+            { "stop_id": "stop-vis", "stop_order": 3 }
+          ],
+          "departures": [
+            {
+              "_comment": "OFF season: Mon-Fri morning departure, skips Milna",
+              "day_type": "MON",
+              "season_type": "OFF",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:15"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "OFF",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:15"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "OFF",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:15"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "OFF",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "OFF",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:15"]
+            },
+            {
+              "_comment": "OFF season: Saturday stops at all ports",
+              "day_type": "SAT",
+              "season_type": "OFF",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"]
+            },
+            {
+              "_comment": "OFF season: Sunday - no service",
+              "day_type": "SUN",
+              "season_type": "OFF",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", null, "10:15", "11:15"],
+              "notes_hr": "Nedjeljom samo polazak u 9:00",
+              "notes_en": "Sundays only 9:00 departure"
+            },
+            {
+              "_comment": "OFF season: Holiday schedule (uses Saturday times)",
+              "day_type": "PRAZNIK",
+              "season_type": "OFF",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "_comment": "HIGH season: morning departure with all stops",
+              "day_type": "MON",
+              "season_type": "HIGH",
+              "departure_time": "06:30",
+              "stop_times": ["06:30", "07:05", "08:00", "08:45"]
+            },
+            {
+              "day_type": "MON",
+              "season_type": "HIGH",
+              "departure_time": "10:30",
+              "stop_times": ["10:30", "11:05", "12:00", "12:45"]
+            },
+            {
+              "day_type": "MON",
+              "season_type": "HIGH",
+              "departure_time": "16:00",
+              "stop_times": ["16:00", null, "17:15", "18:00"],
+              "notes_hr": "Popodnevni polazak - ne staje u Milni",
+              "notes_en": "Afternoon departure - skips Milna"
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "HIGH",
+              "departure_time": "06:30",
+              "stop_times": ["06:30", "07:05", "08:00", "08:45"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "HIGH",
+              "departure_time": "10:30",
+              "stop_times": ["10:30", "11:05", "12:00", "12:45"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "HIGH",
+              "departure_time": "16:00",
+              "stop_times": ["16:00", null, "17:15", "18:00"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "HIGH",
+              "departure_time": "06:30",
+              "stop_times": ["06:30", "07:05", "08:00", "08:45"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "HIGH",
+              "departure_time": "10:30",
+              "stop_times": ["10:30", "11:05", "12:00", "12:45"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "HIGH",
+              "departure_time": "16:00",
+              "stop_times": ["16:00", null, "17:15", "18:00"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "HIGH",
+              "departure_time": "06:30",
+              "stop_times": ["06:30", "07:05", "08:00", "08:45"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "HIGH",
+              "departure_time": "10:30",
+              "stop_times": ["10:30", "11:05", "12:00", "12:45"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "HIGH",
+              "departure_time": "16:00",
+              "stop_times": ["16:00", null, "17:15", "18:00"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "06:30",
+              "stop_times": ["06:30", "07:05", "08:00", "08:45"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "10:30",
+              "stop_times": ["10:30", "11:05", "12:00", "12:45"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "16:00",
+              "stop_times": ["16:00", null, "17:15", "18:00"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "19:30",
+              "stop_times": ["19:30", "20:05", "21:00", "21:45"],
+              "notes_hr": "Dodatni petkom",
+              "notes_en": "Additional Friday departure"
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "HIGH",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", "07:35", "08:30", "09:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "HIGH",
+              "departure_time": "11:00",
+              "stop_times": ["11:00", "11:35", "12:30", "13:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "HIGH",
+              "departure_time": "17:00",
+              "stop_times": ["17:00", "17:35", "18:30", "19:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "HIGH",
+              "departure_time": "17:00",
+              "stop_times": ["17:00", "17:35", "18:30", "19:15"]
+            },
+            {
+              "_comment": "HIGH season: PRAZNIK (holiday) schedule - same as Sunday",
+              "day_type": "PRAZNIK",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "HIGH",
+              "departure_time": "17:00",
+              "stop_times": ["17:00", "17:35", "18:30", "19:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "_comment": "PRE season: reduced schedule",
+              "day_type": "MON",
+              "season_type": "PRE",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "PRE",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "PRE",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "PRE",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "PRE",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "PRE",
+              "departure_time": "15:00",
+              "stop_times": ["15:00", "15:35", "16:30", "17:15"],
+              "notes_hr": "Dodatni petkom",
+              "notes_en": "Additional Friday"
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "PRE",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "PRE",
+              "departure_time": "17:00",
+              "stop_times": ["17:00", null, "18:15", "19:00"]
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "PRE",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "_comment": "POST season: same as PRE",
+              "day_type": "MON",
+              "season_type": "POST",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "POST",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "POST",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "POST",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "POST",
+              "departure_time": "07:00",
+              "stop_times": ["07:00", null, "08:15", "09:00"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "POST",
+              "departure_time": "15:00",
+              "stop_times": ["15:00", "15:35", "16:30", "17:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "POST",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "POST",
+              "departure_time": "17:00",
+              "stop_times": ["17:00", null, "18:15", "19:00"]
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "POST",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:35", "10:30", "11:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            }
+          ]
+        },
+        {
+          "direction": 1,
+          "direction_label_hr": "Vis → Split",
+          "direction_label_en": "Vis → Split",
+          "origin_stop_id": "stop-vis",
+          "destination_stop_id": "stop-split",
+          "typical_duration_minutes": 135,
+          "stops": [
+            { "stop_id": "stop-vis", "stop_order": 0 },
+            { "stop_id": "stop-hvar", "stop_order": 1 },
+            { "stop_id": "stop-milna", "stop_order": 2 },
+            { "stop_id": "stop-split", "stop_order": 3 }
+          ],
+          "departures": [
+            {
+              "_comment": "OFF season: return trips",
+              "day_type": "MON",
+              "season_type": "OFF",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "OFF",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "OFF",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "OFF",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "OFF",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "OFF",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "OFF",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", null, "14:15"]
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "OFF",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "_comment": "HIGH season: multiple return trips",
+              "day_type": "MON",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:45", "10:20", "11:15"]
+            },
+            {
+              "day_type": "MON",
+              "season_type": "HIGH",
+              "departure_time": "13:00",
+              "stop_times": ["13:00", "13:45", "14:20", "15:15"]
+            },
+            {
+              "day_type": "MON",
+              "season_type": "HIGH",
+              "departure_time": "18:30",
+              "stop_times": ["18:30", "19:15", null, "20:45"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:45", "10:20", "11:15"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "HIGH",
+              "departure_time": "13:00",
+              "stop_times": ["13:00", "13:45", "14:20", "15:15"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "HIGH",
+              "departure_time": "18:30",
+              "stop_times": ["18:30", "19:15", null, "20:45"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:45", "10:20", "11:15"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "HIGH",
+              "departure_time": "13:00",
+              "stop_times": ["13:00", "13:45", "14:20", "15:15"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "HIGH",
+              "departure_time": "18:30",
+              "stop_times": ["18:30", "19:15", null, "20:45"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:45", "10:20", "11:15"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "HIGH",
+              "departure_time": "13:00",
+              "stop_times": ["13:00", "13:45", "14:20", "15:15"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "HIGH",
+              "departure_time": "18:30",
+              "stop_times": ["18:30", "19:15", null, "20:45"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "09:00",
+              "stop_times": ["09:00", "09:45", "10:20", "11:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "13:00",
+              "stop_times": ["13:00", "13:45", "14:20", "15:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "HIGH",
+              "departure_time": "18:30",
+              "stop_times": ["18:30", "19:15", null, "20:45"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "HIGH",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", "11:20", "12:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "HIGH",
+              "departure_time": "14:00",
+              "stop_times": ["14:00", "14:45", "15:20", "16:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "HIGH",
+              "departure_time": "20:00",
+              "stop_times": ["20:00", "20:45", "21:20", "22:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "HIGH",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "HIGH",
+              "departure_time": "20:00",
+              "stop_times": ["20:00", "20:45", "21:20", "22:15"]
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "HIGH",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "HIGH",
+              "departure_time": "20:00",
+              "stop_times": ["20:00", "20:45", "21:20", "22:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "_comment": "PRE/POST season simplified schedules",
+              "day_type": "MON",
+              "season_type": "PRE",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "PRE",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "PRE",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "PRE",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "PRE",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "PRE",
+              "departure_time": "18:00",
+              "stop_times": ["18:00", "18:45", "19:20", "20:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "PRE",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "PRE",
+              "departure_time": "20:00",
+              "stop_times": ["20:00", "20:45", null, "22:15"]
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "PRE",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            },
+            {
+              "day_type": "MON",
+              "season_type": "POST",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "TUE",
+              "season_type": "POST",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "WED",
+              "season_type": "POST",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "THU",
+              "season_type": "POST",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "POST",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45", null, "12:15"]
+            },
+            {
+              "day_type": "FRI",
+              "season_type": "POST",
+              "departure_time": "18:00",
+              "stop_times": ["18:00", "18:45", "19:20", "20:15"]
+            },
+            {
+              "day_type": "SAT",
+              "season_type": "POST",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"]
+            },
+            {
+              "day_type": "SUN",
+              "season_type": "POST",
+              "departure_time": "20:00",
+              "stop_times": ["20:00", "20:45", null, "22:15"]
+            },
+            {
+              "day_type": "PRAZNIK",
+              "season_type": "POST",
+              "departure_time": "12:00",
+              "stop_times": ["12:00", "12:45", "13:20", "14:15"],
+              "notes_hr": "Praznik - blagdanski vozni red",
+              "notes_en": "Holiday schedule"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

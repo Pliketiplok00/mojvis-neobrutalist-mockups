@@ -33,6 +33,9 @@ function createMessage(
     updated_at: new Date(),
     created_by: null,
     deleted_at: null,
+    is_locked: false,
+    pushed_at: null,
+    pushed_by: null,
     ...overrides,
   };
 }

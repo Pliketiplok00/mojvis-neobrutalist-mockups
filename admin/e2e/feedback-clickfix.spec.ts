@@ -71,33 +71,59 @@ test.describe('Feedback UI', () => {
     }
   });
 
-  // FIXME: Flaky test - feedback API reply doesn't reliably clear input in parallel runs
-  test.fixme('should add reply to feedback', async ({ page }) => {
-    await page.goto('/feedback');
-    await page.waitForSelector('[data-testid="feedback-list"]', { timeout: 10000 });
+  test('should add reply to feedback', async ({ page }) => {
+    // Create a dedicated feedback for this test
+    const deviceId = `e2e-reply-${Date.now()}`;
+    const createResponse = await page.request.post('http://localhost:3000/feedback', {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Device-ID': deviceId,
+        'X-User-Mode': 'local',
+        'X-Municipality': 'vis',
+        'Accept-Language': 'hr',
+      },
+      data: {
+        subject: `E2E Reply Test ${deviceId}`,
+        body: 'Feedback specifically for testing reply functionality.',
+      },
+    });
+    expect(createResponse.ok()).toBeTruthy();
+    const feedback = await createResponse.json();
+    const feedbackId = feedback.id;
 
-    // Click on first feedback row
-    const firstRow = page.locator('[data-testid^="feedback-row-"]').first();
-    await expect(firstRow).toBeVisible({ timeout: 5000 });
-    await firstRow.click();
+    // Navigate directly to this feedback
+    await page.goto(`/feedback/${feedbackId}`);
 
-    // Wait for detail page to load
-    await page.waitForURL(/\/feedback\/[a-z0-9-]+/, { timeout: 10000 });
+    // Wait for detail page to fully load - check for subject heading
+    await page.waitForSelector('h2', { timeout: 10000 });
 
-    // Find reply input using data-testid
+    // Wait for reply input
     const replyInput = page.locator('[data-testid="feedback-reply-input"]');
     await expect(replyInput).toBeVisible({ timeout: 10000 });
 
+    // Get initial reply count
+    const repliesHeader = page.locator('h3').filter({ hasText: 'Odgovori' });
+    await expect(repliesHeader).toBeVisible({ timeout: 5000 });
+
+    // Fill in the reply
     const replyText = `E2E Test Reply ${Date.now()}`;
     await replyInput.fill(replyText);
 
-    // Submit reply
+    // Submit reply and wait for network response
     const submitButton = page.locator('[data-testid="feedback-reply-submit"]');
     await expect(submitButton).toBeEnabled({ timeout: 5000 });
-    await submitButton.click();
 
-    // Wait for input to be cleared (indicates success)
-    await expect(replyInput).toHaveValue('', { timeout: 10000 });
+    // Click and wait for the API response (201 Created)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/reply') && resp.status() === 201, { timeout: 10000 }),
+      submitButton.click(),
+    ]);
+
+    // After successful API, wait for input to be cleared (state updated)
+    await expect(replyInput).toHaveValue('', { timeout: 5000 });
+
+    // Verify the reply text appears on page
+    await expect(page.getByText(replyText)).toBeVisible({ timeout: 5000 });
   });
 });
 
@@ -207,29 +233,76 @@ test.describe('Click & Fix UI', () => {
     }
   });
 
-  // FIXME: Flaky test - click-fix API reply doesn't reliably clear input in parallel runs
-  test.fixme('should add reply to click-fix', async ({ page }) => {
-    await page.goto('/click-fix');
-    await page.waitForSelector('[data-testid="clickfix-list"]', { timeout: 10000 });
+  test('should add reply to click-fix', async ({ page }) => {
+    // Create a dedicated click-fix for this test
+    const deviceId = `e2e-clickfix-reply-${Date.now()}`;
 
-    // Click on first item
-    await page.locator('[data-testid^="clickfix-row-"]').first().click();
+    // Create small test image
+    const pngData = Buffer.from([
+      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52,
+      0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90, 0x77, 0x53,
+      0xde, 0x00, 0x00, 0x00, 0x0c, 0x49, 0x44, 0x41, 0x54, 0x08, 0xd7, 0x63, 0xf8, 0xcf, 0xc0, 0x00,
+      0x00, 0x00, 0x03, 0x00, 0x01, 0x00, 0x18, 0xdd, 0x8d, 0xb4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45,
+      0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
+    ]);
 
-    // Wait for detail page to load
-    await page.waitForURL(/\/click-fix\/[a-z0-9-]+/, { timeout: 10000 });
+    const boundary = `----formdata-reply-${Date.now()}`;
+    const bodyParts = [
+      `--${boundary}\r\nContent-Disposition: form-data; name="subject"\r\n\r\nE2E Reply Test Click-Fix\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="description"\r\n\r\nClick-fix for testing reply functionality.\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="location"\r\n\r\n{"lat":43.0622,"lng":16.1836}\r\n`,
+      `--${boundary}\r\nContent-Disposition: form-data; name="photos"; filename="test.png"\r\nContent-Type: image/png\r\n\r\n`,
+    ];
 
-    // Find reply input using data-testid
+    const body = Buffer.concat([
+      Buffer.from(bodyParts.join('')),
+      pngData,
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+
+    const createResponse = await page.request.post('http://localhost:3000/click-fix', {
+      headers: {
+        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+        'X-Device-ID': deviceId,
+        'X-User-Mode': 'local',
+        'X-Municipality': 'vis',
+        'Accept-Language': 'hr',
+      },
+      data: body,
+    });
+    expect(createResponse.ok()).toBeTruthy();
+    const clickFix = await createResponse.json();
+    const clickFixId = clickFix.id;
+
+    // Navigate directly to this click-fix
+    await page.goto(`/click-fix/${clickFixId}`);
+
+    // Wait for detail page to fully load - check for subject heading
+    await page.waitForSelector('h2', { timeout: 10000 });
+
+    // Wait for reply input
     const replyInput = page.locator('[data-testid="clickfix-reply-input"]');
     await expect(replyInput).toBeVisible({ timeout: 10000 });
-    await replyInput.fill('E2E Click-Fix Reply from Playwright');
 
-    // Submit reply
+    // Fill in the reply
+    const replyText = `E2E Click-Fix Reply ${Date.now()}`;
+    await replyInput.fill(replyText);
+
+    // Submit reply and wait for network response
     const submitButton = page.locator('[data-testid="clickfix-reply-submit"]');
     await expect(submitButton).toBeEnabled({ timeout: 5000 });
-    await submitButton.click();
 
-    // Wait for input to be cleared (indicates success)
-    await expect(replyInput).toHaveValue('', { timeout: 10000 });
+    // Click and wait for the API response (201 Created)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/reply') && resp.status() === 201, { timeout: 10000 }),
+      submitButton.click(),
+    ]);
+
+    // After successful API, wait for input to be cleared (state updated)
+    await expect(replyInput).toHaveValue('', { timeout: 5000 });
+
+    // Verify the reply text appears on page
+    await expect(page.getByText(replyText)).toBeVisible({ timeout: 5000 });
   });
 });
 

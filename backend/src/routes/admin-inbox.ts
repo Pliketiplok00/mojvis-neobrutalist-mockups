@@ -6,15 +6,18 @@
  * Endpoints:
  * - GET /admin/inbox - list all messages (admin view, includes soft-deleted)
  * - GET /admin/inbox/:id - single message (includes soft-deleted)
- * - POST /admin/inbox - create message
- * - PATCH /admin/inbox/:id - update message (excludes soft-deleted)
+ * - POST /admin/inbox - create message (triggers push if hitno + active window)
+ * - PATCH /admin/inbox/:id - update message (409 if locked)
  * - DELETE /admin/inbox/:id - SOFT delete message (sets deleted_at)
  * - POST /admin/inbox/:id/restore - restore soft-deleted message
  *
  * Note: Per spec, messages are LIVE ON SAVE (no draft workflow).
  * IMPORTANT: Hard delete is NOT allowed. All deletes are soft deletes.
  *
- * TODO: Add anonymous device identification middleware.
+ * Phase 7: Push notifications for hitno messages.
+ * - On save, if message has hitno tag + active window + now is within window => send push
+ * - After push, message is LOCKED (no edits allowed)
+ * - Update returns 409 if message is locked
  */
 
 import type { FastifyInstance, FastifyPluginOptions } from 'fastify';
@@ -25,6 +28,8 @@ import {
   updateInboxMessage,
   softDeleteInboxMessage,
   restoreInboxMessage,
+  markMessageAsLocked,
+  isMessageLocked,
 } from '../repositories/inbox.js';
 import type {
   InboxMessage,
@@ -32,6 +37,11 @@ import type {
   InboxTag,
 } from '../types/inbox.js';
 import { validateTags, isUrgent } from '../types/inbox.js';
+import { shouldTriggerPush } from '../types/push.js';
+import { getEligibleDevicesForPush, createPushLog } from '../repositories/push.js';
+import { PushService, type PushContent } from '../lib/push/index.js';
+import { defaultPushProvider, MockExpoPushProvider } from '../lib/push/expo.js';
+import { env } from '../config/env.js';
 
 interface CreateMessageBody {
   title_hr: string;
@@ -53,6 +63,14 @@ interface UpdateMessageBody {
   active_to?: string | null;
 }
 
+// Push service instance - use mock provider in dev/test mode
+const pushProvider = env.PUSH_MOCK_MODE ? new MockExpoPushProvider() : defaultPushProvider;
+const pushService = new PushService(pushProvider);
+
+if (env.PUSH_MOCK_MODE) {
+  console.info('[Push] Using MockExpoPushProvider (PUSH_MOCK_MODE=true)');
+}
+
 /**
  * Transform InboxMessage to admin API response
  */
@@ -70,6 +88,9 @@ function toAdminResponse(message: InboxMessage): {
   created_by: string | null;
   deleted_at: string | null;
   is_urgent: boolean;
+  is_locked: boolean;
+  pushed_at: string | null;
+  pushed_by: string | null;
 } {
   return {
     id: message.id,
@@ -85,7 +106,69 @@ function toAdminResponse(message: InboxMessage): {
     created_by: message.created_by,
     deleted_at: message.deleted_at?.toISOString() ?? null,
     is_urgent: isUrgent(message.tags),
+    is_locked: message.is_locked,
+    pushed_at: message.pushed_at?.toISOString() ?? null,
+    pushed_by: message.pushed_by,
   };
+}
+
+/**
+ * Send push notification for a hitno message
+ */
+async function sendPushForMessage(
+  message: InboxMessage,
+  adminId: string | null
+): Promise<void> {
+  const hasEnglishContent = message.title_en !== null && message.body_en !== null;
+
+  // Get eligible devices
+  const eligibleDevices = await getEligibleDevicesForPush(
+    message.tags,
+    hasEnglishContent
+  );
+
+  if (eligibleDevices.length === 0) {
+    console.info('[Push] No eligible devices for message:', message.id);
+    return;
+  }
+
+  // Build push content
+  const contentHr: PushContent = {
+    title: message.title_hr,
+    body: message.body_hr.slice(0, 200), // Truncate for push
+    data: { inbox_message_id: message.id },
+  };
+
+  const contentEn: PushContent | null = hasEnglishContent
+    ? {
+        title: message.title_en!,
+        body: message.body_en!.slice(0, 200),
+        data: { inbox_message_id: message.id },
+      }
+    : null;
+
+  // Build targets
+  const targets = eligibleDevices.map((device) => ({
+    expo_push_token: device.expo_push_token,
+    locale: device.locale,
+  }));
+
+  // Send push
+  console.info('[Push] Sending push to', targets.length, 'devices for message:', message.id);
+  const result = await pushService.sendPush(targets, contentHr, contentEn);
+
+  // Log push
+  await createPushLog(message.id, adminId, result, pushService.getProviderName());
+
+  // Mark message as locked
+  await markMessageAsLocked(message.id, adminId);
+
+  console.info('[Push] Push completed:', {
+    message_id: message.id,
+    target_count: result.target_count,
+    success_count: result.success_count,
+    failure_count: result.failure_count,
+  });
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -193,16 +276,35 @@ export async function adminInboxRoutes(
     }
 
     try {
+      const activeFrom = body.active_from ? new Date(body.active_from) : null;
+      const activeTo = body.active_to ? new Date(body.active_to) : null;
+
       const message = await createInboxMessage({
         title_hr: body.title_hr.trim(),
         title_en: body.title_en?.trim() || null,
         body_hr: body.body_hr.trim(),
         body_en: body.body_en?.trim() || null,
         tags: tags,
-        active_from: body.active_from ? new Date(body.active_from) : null,
-        active_to: body.active_to ? new Date(body.active_to) : null,
-        created_by: null, // TODO: Get from device ID context
+        active_from: activeFrom,
+        active_to: activeTo,
+        created_by: null, // TODO: Get from admin auth context
       });
+
+      // Phase 7: Check if push should be triggered
+      if (shouldTriggerPush(message.tags, activeFrom, activeTo)) {
+        console.info('[Admin] Triggering push for hitno message:', message.id);
+        try {
+          await sendPushForMessage(message, null); // TODO: Get admin ID from auth
+          // Refetch message to get locked state
+          const updatedMessage = await getInboxMessageByIdAdmin(message.id);
+          if (updatedMessage) {
+            return reply.status(201).send(toAdminResponse(updatedMessage));
+          }
+        } catch (pushError) {
+          console.error('[Admin] Push failed, but message created:', pushError);
+          // Return the message even if push failed
+        }
+      }
 
       return reply.status(201).send(toAdminResponse(message));
     } catch (error) {
@@ -216,6 +318,7 @@ export async function adminInboxRoutes(
    *
    * Update existing inbox message.
    * Changes are LIVE immediately.
+   * Returns 409 if message is locked (pushed).
    */
   fastify.patch<{
     Params: { id: string };
@@ -225,6 +328,15 @@ export async function adminInboxRoutes(
     const body = request.body;
 
     console.info(`[Admin] PATCH /admin/inbox/${id}`);
+
+    // Phase 7: Check if message is locked
+    const locked = await isMessageLocked(id);
+    if (locked) {
+      return reply.status(409).send({
+        error: 'Message is locked. Pushed messages cannot be edited.',
+        code: 'MESSAGE_LOCKED',
+      });
+    }
 
     // Validate tags if provided
     if (body.tags !== undefined) {
@@ -277,6 +389,21 @@ export async function adminInboxRoutes(
 
       if (!message) {
         return reply.status(404).send({ error: 'Message not found' });
+      }
+
+      // Phase 7: Check if push should be triggered after update
+      if (shouldTriggerPush(message.tags, message.active_from, message.active_to)) {
+        console.info('[Admin] Triggering push for updated hitno message:', message.id);
+        try {
+          await sendPushForMessage(message, null); // TODO: Get admin ID from auth
+          // Refetch message to get locked state
+          const updatedMessage = await getInboxMessageByIdAdmin(message.id);
+          if (updatedMessage) {
+            return reply.status(200).send(toAdminResponse(updatedMessage));
+          }
+        } catch (pushError) {
+          console.error('[Admin] Push failed after update:', pushError);
+        }
       }
 
       return reply.status(200).send(toAdminResponse(message));

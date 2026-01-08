@@ -57,6 +57,9 @@ describe('Inbox Routes', () => {
             updated_at: new Date('2024-01-15T10:00:00Z'),
             created_by: null,
             deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
           },
         ],
         total: 1,
@@ -96,6 +99,9 @@ describe('Inbox Routes', () => {
             updated_at: new Date(),
             created_by: null,
             deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
           },
           {
             id: 'municipal',
@@ -110,6 +116,9 @@ describe('Inbox Routes', () => {
             updated_at: new Date(),
             created_by: null,
             deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
           },
         ],
         total: 2,
@@ -149,6 +158,9 @@ describe('Inbox Routes', () => {
             updated_at: new Date(),
             created_by: null,
             deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
           },
         ],
         total: 1,
@@ -189,6 +201,9 @@ describe('Inbox Routes', () => {
             updated_at: new Date(),
             created_by: null,
             deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
           },
         ],
         total: 1,
@@ -225,6 +240,9 @@ describe('Inbox Routes', () => {
             updated_at: new Date(),
             created_by: null,
             deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
           },
         ],
         total: 1,
@@ -262,6 +280,9 @@ describe('Inbox Routes', () => {
         updated_at: new Date(),
         created_by: null,
         deleted_at: null,
+        is_locked: false,
+        pushed_at: null,
+        pushed_by: null,
       });
 
       const response = await fastify.inject({
@@ -308,6 +329,9 @@ describe('Inbox Routes', () => {
         updated_at: new Date(),
         created_by: null,
         deleted_at: null,
+        is_locked: false,
+        pushed_at: null,
+        pushed_by: null,
       });
 
       const response = await fastify.inject({
@@ -343,6 +367,9 @@ describe('Inbox Routes', () => {
           updated_at: new Date(),
           created_by: null,
           deleted_at: null,
+          is_locked: false,
+          pushed_at: null,
+          pushed_by: null,
         },
       ]);
 

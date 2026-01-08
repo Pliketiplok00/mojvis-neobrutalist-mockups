@@ -80,11 +80,13 @@ export function ClickFixDetailPage() {
 
     setSubmitting(true);
     try {
-      const updated = await adminClickFixApi.addReply(
+      await adminClickFixApi.addReply(
         id,
         { body: replyBody.trim() },
         adminMunicipality
       );
+      // Refetch to get updated click-fix with new reply
+      const updated = await adminClickFixApi.getClickFixDetail(id, adminMunicipality);
       setClickFix(updated);
       setReplyBody('');
     } catch (err) {
@@ -234,14 +236,14 @@ export function ClickFixDetailPage() {
                 <p style={styles.noReplies}>Jos nema odgovora na ovu prijavu.</p>
               ) : (
                 clickFix.replies.map((reply) => (
-                  <div key={reply.id} style={styles.replyCard}>
+                  <div key={reply.id} style={styles.replyCard} data-testid={`clickfix-reply-${reply.id}`}>
                     <div style={styles.replyHeader}>
                       <span style={styles.replyLabel}>Odgovor admina</span>
                       <span style={styles.replyDate}>
                         {formatDate(reply.created_at)}
                       </span>
                     </div>
-                    <div style={styles.replyBody}>{reply.body}</div>
+                    <div style={styles.replyBody} data-testid="clickfix-reply-body">{reply.body}</div>
                   </div>
                 ))
               )}
