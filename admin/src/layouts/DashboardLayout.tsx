@@ -18,12 +18,13 @@ interface DashboardLayoutProps {
 }
 
 const navItems = [
-  { path: '/dashboard', label: 'Nadzorna ploca', icon: '📊' },
-  { path: '/messages', label: 'Poruke', icon: '✉️' },
-  { path: '/feedback', label: 'Povratne inf.', icon: '💬' },
-  { path: '/events', label: 'Dogadaji', icon: '📅' },
-  { path: '/pages', label: 'Stranice', icon: '📄' },
-  { path: '/transport', label: 'Promet', icon: '🚌' },
+  { path: '/dashboard', label: 'Nadzorna ploca', icon: '📊', testId: 'sidebar-link-dashboard' },
+  { path: '/messages', label: 'Poruke', icon: '✉️', testId: 'sidebar-link-inbox' },
+  { path: '/feedback', label: 'Povratne inf.', icon: '💬', testId: 'sidebar-link-feedback' },
+  { path: '/click-fix', label: 'Click & Fix', icon: '📍', testId: 'sidebar-link-clickfix' },
+  { path: '/events', label: 'Dogadaji', icon: '📅', testId: 'sidebar-link-events' },
+  { path: '/pages', label: 'Stranice', icon: '📄', testId: 'sidebar-link-pages' },
+  { path: '/transport', label: 'Promet', icon: '🚌', testId: 'sidebar-link-transport' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -49,6 +50,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <Link
               key={item.path}
               to={item.path}
+              data-testid={item.testId}
               style={{
                 ...styles.navItem,
                 ...(location.pathname === item.path ? styles.navItemActive : {}),

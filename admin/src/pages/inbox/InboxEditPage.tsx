@@ -8,6 +8,11 @@
  * - HR content required, EN optional for municipal
  * - Messages are LIVE ON SAVE (no draft workflow)
  * - HR-only admin UI
+ *
+ * Phase 7: Locked messages
+ * - Messages with hitno tag that triggered push are LOCKED
+ * - Locked messages cannot be edited
+ * - Show locked indicator with push timestamp
  */
 
 import { useState, useEffect } from 'react';
@@ -21,7 +26,7 @@ import { INBOX_TAGS, TAG_LABELS, validateTags, requiresEnglish } from '../../typ
 export function InboxEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const isNew = id === 'new';
+  const isNew = !id || id === 'new';
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
@@ -35,6 +40,10 @@ export function InboxEditPage() {
   const [selectedTags, setSelectedTags] = useState<InboxTag[]>([]);
   const [activeFrom, setActiveFrom] = useState('');
   const [activeTo, setActiveTo] = useState('');
+
+  // Phase 7: Locked state
+  const [isLocked, setIsLocked] = useState(false);
+  const [pushedAt, setPushedAt] = useState<string | null>(null);
 
   // Load existing message
   useEffect(() => {
@@ -53,6 +62,9 @@ export function InboxEditPage() {
       setSelectedTags(message.tags);
       setActiveFrom(message.active_from ? formatDateTimeLocal(message.active_from) : '');
       setActiveTo(message.active_to ? formatDateTimeLocal(message.active_to) : '');
+      // Phase 7: Load locked state
+      setIsLocked(message.is_locked);
+      setPushedAt(message.pushed_at);
     } catch (err) {
       console.error('[Admin] Error loading message:', err);
       setError('Greška pri učitavanju poruke.');
@@ -121,9 +133,16 @@ export function InboxEditPage() {
         await adminInboxApi.updateMessage(id, input);
       }
       navigate('/messages');
-    } catch (err) {
+    } catch (err: unknown) {
       console.error('[Admin] Error saving message:', err);
-      setError('Greška pri spremanju poruke. Pokušajte ponovo.');
+      // Phase 7: Handle locked message error (409)
+      const errorMessage = err instanceof Error ? err.message : '';
+      if (errorMessage.includes('locked') || errorMessage.includes('409')) {
+        setError('Ova poruka je zaključana jer je poslana push obavijest. Nije moguće uređivati.');
+        setIsLocked(true);
+      } else {
+        setError('Greška pri spremanju poruke. Pokušajte ponovo.');
+      }
     } finally {
       setSaving(false);
     }
@@ -155,16 +174,34 @@ export function InboxEditPage() {
           </button>
         </div>
 
+        {/* Phase 7: Locked message warning */}
+        {isLocked && (
+          <div style={styles.lockedBanner} data-testid="inbox-locked-badge">
+            🔒 Ova poruka je zaključana jer je poslana push obavijest.
+            {pushedAt && (
+              <span style={styles.pushedAt}>
+                {' '}(Poslano: {new Date(pushedAt).toLocaleString('hr-HR')})
+              </span>
+            )}
+            <br />
+            <span style={styles.lockedNote}>Zaključane poruke nije moguće uređivati. Možete ih samo obrisati.</span>
+          </div>
+        )}
+
         {/* Warning about live publishing */}
-        <div style={styles.warning}>
-          ⚠️ Poruke se objavljuju odmah nakon spremanja. Nema draft verzije.
-        </div>
+        {!isLocked && (
+          <div style={styles.warning}>
+            ⚠️ Poruke se objavljuju odmah nakon spremanja. Nema draft verzije.
+          </div>
+        )}
 
         {/* Error */}
         {error && <div style={styles.error}>{error}</div>}
 
         {/* Form */}
         <form onSubmit={(e) => void handleSubmit(e)} style={styles.form}>
+          {/* Phase 7: Disable entire form if locked */}
+          <fieldset disabled={isLocked} style={styles.fieldset}>
           {/* Croatian content */}
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Sadržaj (Hrvatski) *</h2>
@@ -178,6 +215,8 @@ export function InboxEditPage() {
                 style={styles.input}
                 placeholder="Naslov poruke na hrvatskom"
                 required
+                data-testid="inbox-title-hr"
+                name="title_hr"
               />
             </div>
 
@@ -190,6 +229,8 @@ export function InboxEditPage() {
                 placeholder="Tekst poruke na hrvatskom..."
                 rows={6}
                 required
+                data-testid="inbox-body-hr"
+                name="body_hr"
               />
             </div>
           </div>
@@ -302,17 +343,22 @@ export function InboxEditPage() {
               type="button"
               style={styles.cancelButton}
               onClick={() => navigate('/messages')}
+              data-testid="inbox-cancel"
             >
-              Odustani
+              {isLocked ? 'Natrag' : 'Odustani'}
             </button>
-            <button
-              type="submit"
-              style={styles.saveButton}
-              disabled={saving}
-            >
-              {saving ? 'Spremanje...' : 'Spremi i objavi'}
-            </button>
+            {!isLocked && (
+              <button
+                type="submit"
+                style={styles.saveButton}
+                disabled={saving}
+                data-testid="inbox-submit"
+              >
+                {saving ? 'Spremanje...' : 'Spremi i objavi'}
+              </button>
+            )}
           </div>
+          </fieldset>
         </form>
       </div>
     </DashboardLayout>
@@ -347,6 +393,30 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '24px',
     fontWeight: 'bold',
     margin: 0,
+  },
+  // Phase 7: Locked message styles
+  lockedBanner: {
+    padding: '16px',
+    backgroundColor: '#e5e7eb',
+    color: '#374151',
+    borderRadius: '4px',
+    marginBottom: '24px',
+    fontSize: '14px',
+    border: '2px solid #9ca3af',
+  },
+  pushedAt: {
+    color: '#6b7280',
+    fontSize: '13px',
+  },
+  lockedNote: {
+    color: '#6b7280',
+    fontSize: '13px',
+    fontStyle: 'italic',
+  },
+  fieldset: {
+    border: 'none',
+    margin: 0,
+    padding: 0,
   },
   warning: {
     padding: '12px 16px',

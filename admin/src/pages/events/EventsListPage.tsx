@@ -1,57 +1,70 @@
 /**
- * Feedback List Page (Admin)
+ * Events List Page (Admin)
  *
- * Lists all user feedback with status and actions.
+ * Lists all events with actions.
  *
  * Rules (per spec):
- * - Admin cannot create feedback (user-initiated only)
- * - Admin can change status and add replies
- * - Scoped by municipality for local admins
+ * - HR and EN both REQUIRED for events
+ * - Events are live on save (no draft workflow)
  * - HR-only UI for admin panel
  */
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminFeedbackApi } from '../../services/api';
-import type { FeedbackListItem, FeedbackStatus } from '../../types/feedback';
-import { STATUS_COLORS } from '../../types/feedback';
+import { adminEventsApi } from '../../services/api';
+import type { AdminEvent } from '../../types/event';
 
-export function FeedbackListPage() {
+export function EventsListPage() {
   const navigate = useNavigate();
-  const [feedback, setFeedback] = useState<FeedbackListItem[]>([]);
+  const [events, setEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
 
-  // TODO: Get from auth context
-  const adminMunicipality: string | undefined = undefined;
-
-  const fetchFeedback = async (pageNum: number) => {
+  const fetchEvents = async (pageNum: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await adminFeedbackApi.getFeedback(pageNum, 20, adminMunicipality);
-      setFeedback(response.feedback);
+      const response = await adminEventsApi.getEvents(pageNum, 20);
+      setEvents(response.events);
       setHasMore(response.has_more);
       setTotal(response.total);
     } catch (err) {
-      console.error('[Admin] Error fetching feedback:', err);
-      setError('Greska pri ucitavanju poruka. Pokusajte ponovo.');
+      console.error('[Admin] Error fetching events:', err);
+      setError('Greška pri učitavanju događaja. Pokušajte ponovo.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    void fetchFeedback(page);
+    void fetchEvents(page);
   }, [page]);
 
-  const handleView = (id: string) => {
-    navigate(`/feedback/${id}`);
+  const handleCreate = () => {
+    navigate('/events/new');
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/events/${id}`);
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Jeste li sigurni da želite obrisati ovaj događaj?')) {
+      return;
+    }
+
+    try {
+      await adminEventsApi.deleteEvent(id);
+      void fetchEvents(page);
+    } catch (err) {
+      console.error('[Admin] Error deleting event:', err);
+      alert('Greška pri brisanju događaja.');
+    }
   };
 
   const formatDate = (isoString: string) => {
@@ -62,16 +75,17 @@ export function FeedbackListPage() {
     return `${day}/${month}/${year}`;
   };
 
-  const getStatusBadgeStyle = (status: FeedbackStatus): React.CSSProperties => {
-    const colors = STATUS_COLORS[status];
-    return {
-      backgroundColor: colors.bg,
-      color: colors.text,
-      padding: '4px 8px',
-      borderRadius: '4px',
-      fontSize: '12px',
-      fontWeight: '600',
-    };
+  const formatTime = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('hr-HR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+
+  const isEventUpcoming = (event: AdminEvent) => {
+    return new Date(event.start_datetime) > new Date();
   };
 
   return (
@@ -80,9 +94,12 @@ export function FeedbackListPage() {
         {/* Header */}
         <div style={styles.header}>
           <div>
-            <h1 style={styles.title}>Povratne informacije</h1>
-            <p style={styles.subtitle}>{total} ukupno poruka</p>
+            <h1 style={styles.title}>Događaji</h1>
+            <p style={styles.subtitle}>{total} ukupno događaja</p>
           </div>
+          <button style={styles.createButton} onClick={handleCreate}>
+            + Novi događaj
+          </button>
         </div>
 
         {/* Error state */}
@@ -91,73 +108,74 @@ export function FeedbackListPage() {
             {error}
             <button
               style={styles.retryButton}
-              onClick={() => void fetchFeedback(page)}
+              onClick={() => void fetchEvents(page)}
             >
-              Pokusaj ponovo
+              Pokušaj ponovo
             </button>
           </div>
         )}
 
         {/* Loading state */}
-        {loading && <div style={styles.loading}>Ucitavanje...</div>}
+        {loading && <div style={styles.loading}>Učitavanje...</div>}
 
-        {/* Feedback table */}
+        {/* Events table */}
         {!loading && !error && (
-          <div style={styles.tableContainer} data-testid="feedback-list">
+          <div style={styles.tableContainer}>
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th style={styles.th}>Tema</th>
-                  <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Jezik</th>
-                  <th style={styles.th}>Odgovori</th>
+                  <th style={styles.th}>Naslov</th>
                   <th style={styles.th}>Datum</th>
+                  <th style={styles.th}>Vrijeme</th>
+                  <th style={styles.th}>Lokacija</th>
+                  <th style={styles.th}>Status</th>
                   <th style={styles.th}>Akcije</th>
                 </tr>
               </thead>
               <tbody>
-                {feedback.length === 0 ? (
+                {events.length === 0 ? (
                   <tr>
                     <td colSpan={6} style={styles.emptyRow}>
-                      Nema primljenih povratnih informacija.
+                      Nema događaja. Kliknite "Novi događaj" za kreiranje.
                     </td>
                   </tr>
                 ) : (
-                  feedback.map((item) => (
-                    <tr
-                      key={item.id}
-                      data-testid={`feedback-row-${item.id}`}
-                      style={styles.clickableRow}
-                      onClick={() => handleView(item.id)}
-                    >
+                  events.map((event) => (
+                    <tr key={event.id}>
                       <td style={styles.td}>
-                        <span style={styles.subjectText}>{item.subject}</span>
+                        <span>{event.title_hr}</span>
                       </td>
                       <td style={styles.td}>
-                        <span style={getStatusBadgeStyle(item.status)}>
-                          {item.status_label}
-                        </span>
+                        {formatDate(event.start_datetime)}
                       </td>
                       <td style={styles.td}>
-                        <span style={styles.languageTag}>
-                          {item.language.toUpperCase()}
-                        </span>
+                        {event.is_all_day
+                          ? 'Cijeli dan'
+                          : formatTime(event.start_datetime)}
                       </td>
                       <td style={styles.td}>
-                        <span style={styles.replyCount}>{item.reply_count}</span>
+                        {event.location_hr || '-'}
                       </td>
-                      <td style={styles.td}>{formatDate(item.created_at)}</td>
+                      <td style={styles.td}>
+                        {isEventUpcoming(event) ? (
+                          <span style={styles.statusUpcoming}>Nadolazeći</span>
+                        ) : (
+                          <span style={styles.statusPast}>Prošli</span>
+                        )}
+                      </td>
                       <td style={styles.td}>
                         <div style={styles.actions}>
                           <button
-                            style={styles.viewButton}
-                            data-testid={`feedback-view-${item.id}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleView(item.id);
-                            }}
+                            style={styles.editButton}
+                            onClick={() => handleEdit(event.id)}
                           >
-                            Pregledaj
+                            Uredi
+                          </button>
+                          <button
+                            style={styles.deleteButton}
+                            onClick={() => void handleDelete(event.id)}
+                          >
+                            Obriši
                           </button>
                         </div>
                       </td>
@@ -170,14 +188,14 @@ export function FeedbackListPage() {
         )}
 
         {/* Pagination */}
-        {!loading && !error && feedback.length > 0 && (
+        {!loading && !error && events.length > 0 && (
           <div style={styles.pagination}>
             <button
               style={styles.pageButton}
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
             >
-              Prethodna
+              ← Prethodna
             </button>
             <span style={styles.pageInfo}>Stranica {page}</span>
             <button
@@ -185,7 +203,7 @@ export function FeedbackListPage() {
               disabled={!hasMore}
               onClick={() => setPage(page + 1)}
             >
-              Sljedeca
+              Sljedeća →
             </button>
           </div>
         )}
@@ -214,6 +232,16 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     color: '#666666',
     margin: 0,
+  },
+  createButton: {
+    padding: '12px 24px',
+    backgroundColor: '#000000',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
   },
   error: {
     padding: '16px',
@@ -268,31 +296,29 @@ const styles: Record<string, React.CSSProperties> = {
     textAlign: 'center',
     color: '#666666',
   },
-  clickableRow: {
-    cursor: 'pointer',
-    transition: 'background-color 0.15s',
-  },
-  subjectText: {
+  statusUpcoming: {
+    color: '#28a745',
     fontWeight: '500',
   },
-  languageTag: {
-    backgroundColor: '#e9ecef',
-    padding: '2px 8px',
-    borderRadius: '4px',
-    fontSize: '12px',
-    color: '#495057',
-    fontWeight: '500',
-  },
-  replyCount: {
-    fontWeight: '500',
+  statusPast: {
+    color: '#6c757d',
   },
   actions: {
     display: 'flex',
     gap: '8px',
   },
-  viewButton: {
+  editButton: {
     padding: '6px 12px',
     backgroundColor: '#007bff',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '12px',
+    cursor: 'pointer',
+  },
+  deleteButton: {
+    padding: '6px 12px',
+    backgroundColor: '#dc3545',
     color: '#ffffff',
     border: 'none',
     borderRadius: '4px',
@@ -318,4 +344,4 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-export default FeedbackListPage;
+export default EventsListPage;

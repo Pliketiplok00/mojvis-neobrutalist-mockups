@@ -93,7 +93,11 @@ export function InboxListPage() {
             <h1 style={styles.title}>Poruke (Inbox)</h1>
             <p style={styles.subtitle}>{total} ukupno poruka</p>
           </div>
-          <button style={styles.createButton} onClick={handleCreate}>
+          <button
+            style={styles.createButton}
+            onClick={handleCreate}
+            data-testid="inbox-create"
+          >
             + Nova poruka
           </button>
         </div>
@@ -116,7 +120,7 @@ export function InboxListPage() {
 
         {/* Messages table */}
         {!loading && !error && (
-          <div style={styles.tableContainer}>
+          <div style={styles.tableContainer} data-testid="inbox-list">
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -136,11 +140,16 @@ export function InboxListPage() {
                   </tr>
                 ) : (
                   messages.map((message) => (
-                    <tr key={message.id}>
+                    <tr
+                      key={message.id}
+                      data-testid={`inbox-row-${message.id}`}
+                      style={styles.clickableRow}
+                      onClick={() => handleEdit(message.id)}
+                    >
                       <td style={styles.td}>
                         <div style={styles.titleCell}>
                           {message.tags.includes('hitno') && (
-                            <span style={styles.urgentBadge}>HITNO</span>
+                            <span style={styles.urgentBadge} data-testid={`inbox-hitno-${message.id}`}>HITNO</span>
                           )}
                           <span>{message.title_hr}</span>
                         </div>
@@ -170,13 +179,21 @@ export function InboxListPage() {
                         <div style={styles.actions}>
                           <button
                             style={styles.editButton}
-                            onClick={() => handleEdit(message.id)}
+                            data-testid={`inbox-edit-${message.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(message.id);
+                            }}
                           >
                             Uredi
                           </button>
                           <button
                             style={styles.deleteButton}
-                            onClick={() => void handleDelete(message.id)}
+                            data-testid={`inbox-delete-${message.id}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void handleDelete(message.id);
+                            }}
                           >
                             Obriši
                           </button>
@@ -298,6 +315,10 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '48px',
     textAlign: 'center',
     color: '#666666',
+  },
+  clickableRow: {
+    cursor: 'pointer',
+    transition: 'background-color 0.15s',
   },
   titleCell: {
     display: 'flex',

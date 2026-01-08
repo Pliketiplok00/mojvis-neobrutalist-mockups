@@ -1,10 +1,12 @@
 /**
- * Feedback List Page (Admin)
+ * Click & Fix List Page (Admin)
  *
- * Lists all user feedback with status and actions.
+ * Lists all Click & Fix issue reports with status and actions.
+ *
+ * Phase 6: Click & Fix feature.
  *
  * Rules (per spec):
- * - Admin cannot create feedback (user-initiated only)
+ * - Admin cannot create issues (user-initiated only)
  * - Admin can change status and add replies
  * - Scoped by municipality for local admins
  * - HR-only UI for admin panel
@@ -13,13 +15,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminFeedbackApi } from '../../services/api';
-import type { FeedbackListItem, FeedbackStatus } from '../../types/feedback';
-import { STATUS_COLORS } from '../../types/feedback';
+import { adminClickFixApi } from '../../services/api';
+import type { ClickFixListItem, ClickFixStatus } from '../../types/click-fix';
+import { STATUS_COLORS } from '../../types/click-fix';
 
-export function FeedbackListPage() {
+export function ClickFixListPage() {
   const navigate = useNavigate();
-  const [feedback, setFeedback] = useState<FeedbackListItem[]>([]);
+  const [clickFixes, setClickFixes] = useState<ClickFixListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -29,29 +31,29 @@ export function FeedbackListPage() {
   // TODO: Get from auth context
   const adminMunicipality: string | undefined = undefined;
 
-  const fetchFeedback = async (pageNum: number) => {
+  const fetchClickFixes = async (pageNum: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await adminFeedbackApi.getFeedback(pageNum, 20, adminMunicipality);
-      setFeedback(response.feedback);
+      const response = await adminClickFixApi.getClickFixes(pageNum, 20, adminMunicipality);
+      setClickFixes(response.items);
       setHasMore(response.has_more);
       setTotal(response.total);
     } catch (err) {
-      console.error('[Admin] Error fetching feedback:', err);
-      setError('Greska pri ucitavanju poruka. Pokusajte ponovo.');
+      console.error('[Admin] Error fetching click fixes:', err);
+      setError('Greska pri ucitavanju prijava. Pokusajte ponovo.');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    void fetchFeedback(page);
+    void fetchClickFixes(page);
   }, [page]);
 
   const handleView = (id: string) => {
-    navigate(`/feedback/${id}`);
+    navigate(`/click-fix/${id}`);
   };
 
   const formatDate = (isoString: string) => {
@@ -62,7 +64,7 @@ export function FeedbackListPage() {
     return `${day}/${month}/${year}`;
   };
 
-  const getStatusBadgeStyle = (status: FeedbackStatus): React.CSSProperties => {
+  const getStatusBadgeStyle = (status: ClickFixStatus): React.CSSProperties => {
     const colors = STATUS_COLORS[status];
     return {
       backgroundColor: colors.bg,
@@ -80,8 +82,8 @@ export function FeedbackListPage() {
         {/* Header */}
         <div style={styles.header}>
           <div>
-            <h1 style={styles.title}>Povratne informacije</h1>
-            <p style={styles.subtitle}>{total} ukupno poruka</p>
+            <h1 style={styles.title}>Click & Fix prijave</h1>
+            <p style={styles.subtitle}>{total} ukupno prijava</p>
           </div>
         </div>
 
@@ -91,7 +93,7 @@ export function FeedbackListPage() {
             {error}
             <button
               style={styles.retryButton}
-              onClick={() => void fetchFeedback(page)}
+              onClick={() => void fetchClickFixes(page)}
             >
               Pokusaj ponovo
             </button>
@@ -101,32 +103,32 @@ export function FeedbackListPage() {
         {/* Loading state */}
         {loading && <div style={styles.loading}>Ucitavanje...</div>}
 
-        {/* Feedback table */}
+        {/* Click fixes table */}
         {!loading && !error && (
-          <div style={styles.tableContainer} data-testid="feedback-list">
+          <div style={styles.tableContainer} data-testid="clickfix-list">
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th style={styles.th}>Tema</th>
+                  <th style={styles.th}>Naslov</th>
                   <th style={styles.th}>Status</th>
-                  <th style={styles.th}>Jezik</th>
+                  <th style={styles.th}>Slike</th>
                   <th style={styles.th}>Odgovori</th>
                   <th style={styles.th}>Datum</th>
                   <th style={styles.th}>Akcije</th>
                 </tr>
               </thead>
               <tbody>
-                {feedback.length === 0 ? (
+                {clickFixes.length === 0 ? (
                   <tr>
                     <td colSpan={6} style={styles.emptyRow}>
-                      Nema primljenih povratnih informacija.
+                      Nema primljenih Click & Fix prijava.
                     </td>
                   </tr>
                 ) : (
-                  feedback.map((item) => (
+                  clickFixes.map((item) => (
                     <tr
                       key={item.id}
-                      data-testid={`feedback-row-${item.id}`}
+                      data-testid={`clickfix-row-${item.id}`}
                       style={styles.clickableRow}
                       onClick={() => handleView(item.id)}
                     >
@@ -139,8 +141,8 @@ export function FeedbackListPage() {
                         </span>
                       </td>
                       <td style={styles.td}>
-                        <span style={styles.languageTag}>
-                          {item.language.toUpperCase()}
+                        <span style={styles.photoCount}>
+                          {item.photo_count > 0 ? `${item.photo_count} slika` : '-'}
                         </span>
                       </td>
                       <td style={styles.td}>
@@ -151,7 +153,7 @@ export function FeedbackListPage() {
                         <div style={styles.actions}>
                           <button
                             style={styles.viewButton}
-                            data-testid={`feedback-view-${item.id}`}
+                            data-testid={`clickfix-view-${item.id}`}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleView(item.id);
@@ -170,7 +172,7 @@ export function FeedbackListPage() {
         )}
 
         {/* Pagination */}
-        {!loading && !error && feedback.length > 0 && (
+        {!loading && !error && clickFixes.length > 0 && (
           <div style={styles.pagination}>
             <button
               style={styles.pageButton}
@@ -275,13 +277,8 @@ const styles: Record<string, React.CSSProperties> = {
   subjectText: {
     fontWeight: '500',
   },
-  languageTag: {
-    backgroundColor: '#e9ecef',
-    padding: '2px 8px',
-    borderRadius: '4px',
-    fontSize: '12px',
-    color: '#495057',
-    fontWeight: '500',
+  photoCount: {
+    color: '#666666',
   },
   replyCount: {
     fontWeight: '500',
@@ -318,4 +315,4 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-export default FeedbackListPage;
+export default ClickFixListPage;

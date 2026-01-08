@@ -29,6 +29,12 @@ import type {
   FeedbackStatus,
   ReplyInput,
 } from '../types/feedback';
+import type {
+  ClickFixListResponse,
+  ClickFixDetail,
+  ClickFixStatus,
+  ReplyInput as ClickFixReplyInput,
+} from '../types/click-fix';
 
 // TODO: Move to environment config
 const API_BASE_URL = import.meta.env.DEV
@@ -68,6 +74,36 @@ async function apiRequest<T>(
 }
 
 /**
+ * Normalize tags field - API may return string or array
+ */
+function normalizeTags(tags: unknown): string[] {
+  if (Array.isArray(tags)) {
+    return tags;
+  }
+  if (typeof tags === 'string') {
+    try {
+      const parsed = JSON.parse(tags);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch {
+      // Not valid JSON
+    }
+  }
+  return [];
+}
+
+/**
+ * Normalize inbox message to ensure tags is always an array
+ */
+function normalizeInboxMessage(message: InboxMessage): InboxMessage {
+  return {
+    ...message,
+    tags: normalizeTags(message.tags),
+  };
+}
+
+/**
  * Admin Inbox API
  */
 export const adminInboxApi = {
@@ -78,16 +114,21 @@ export const adminInboxApi = {
     page: number = 1,
     pageSize: number = 20
   ): Promise<InboxListResponse> {
-    return apiRequest<InboxListResponse>(
+    const response = await apiRequest<InboxListResponse>(
       `/admin/inbox?page=${page}&page_size=${pageSize}`
     );
+    return {
+      ...response,
+      messages: response.messages.map(normalizeInboxMessage),
+    };
   },
 
   /**
    * Get single inbox message by ID
    */
   async getMessage(id: string): Promise<InboxMessage> {
-    return apiRequest<InboxMessage>(`/admin/inbox/${id}`);
+    const message = await apiRequest<InboxMessage>(`/admin/inbox/${id}`);
+    return normalizeInboxMessage(message);
   },
 
   /**
@@ -386,6 +427,78 @@ export const adminFeedbackApi = {
       headers['X-Admin-Municipality'] = municipality;
     }
     return apiRequest<FeedbackDetail>(`/admin/feedback/${id}/reply`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(input),
+    });
+  },
+};
+
+/**
+ * Admin Click & Fix API
+ */
+export const adminClickFixApi = {
+  /**
+   * Get paginated list of click fix issues (scoped by municipality)
+   */
+  async getClickFixes(
+    page: number = 1,
+    pageSize: number = 20,
+    municipality?: string
+  ): Promise<ClickFixListResponse> {
+    const headers: Record<string, string> = {};
+    if (municipality) {
+      headers['X-Admin-Municipality'] = municipality;
+    }
+    return apiRequest<ClickFixListResponse>(
+      `/admin/click-fix?page=${page}&page_size=${pageSize}`,
+      { headers }
+    );
+  },
+
+  /**
+   * Get single click fix detail by ID
+   */
+  async getClickFixDetail(id: string, municipality?: string): Promise<ClickFixDetail> {
+    const headers: Record<string, string> = {};
+    if (municipality) {
+      headers['X-Admin-Municipality'] = municipality;
+    }
+    return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}`, { headers });
+  },
+
+  /**
+   * Update click fix status
+   */
+  async updateStatus(
+    id: string,
+    status: ClickFixStatus,
+    municipality?: string
+  ): Promise<ClickFixDetail> {
+    const headers: Record<string, string> = {};
+    if (municipality) {
+      headers['X-Admin-Municipality'] = municipality;
+    }
+    return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}/status`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify({ status }),
+    });
+  },
+
+  /**
+   * Add reply to click fix
+   */
+  async addReply(
+    id: string,
+    input: ClickFixReplyInput,
+    municipality?: string
+  ): Promise<ClickFixDetail> {
+    const headers: Record<string, string> = {};
+    if (municipality) {
+      headers['X-Admin-Municipality'] = municipality;
+    }
+    return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}/reply`, {
       method: 'POST',
       headers,
       body: JSON.stringify(input),

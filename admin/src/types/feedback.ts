@@ -64,7 +64,7 @@ export interface FeedbackDetail {
 
 // Feedback list response
 export interface FeedbackListResponse {
-  items: FeedbackListItem[];
+  feedback: FeedbackListItem[];
   total: number;
   page: number;
   page_size: number;

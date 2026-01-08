@@ -1,63 +1,72 @@
 /**
- * Feedback Detail Page (Admin)
+ * Click & Fix Detail Page (Admin)
  *
- * View feedback details, change status, and add replies.
+ * View Click & Fix details, photos, location, change status, and add replies.
+ *
+ * Phase 6: Click & Fix feature.
  *
  * Rules (per spec):
  * - Admin can change status
  * - Admin can add multiple replies (thread)
- * - Reply language must match original feedback language
+ * - Photos displayed in gallery
+ * - Location shown as coordinates
  * - HR-only UI for admin panel
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminFeedbackApi } from '../../services/api';
-import type { FeedbackDetail, FeedbackStatus } from '../../types/feedback';
-import { STATUS_LABELS, STATUS_COLORS } from '../../types/feedback';
+import { adminClickFixApi } from '../../services/api';
+import type { ClickFixDetail, ClickFixStatus } from '../../types/click-fix';
+import { STATUS_LABELS, STATUS_COLORS } from '../../types/click-fix';
 
-export function FeedbackDetailPage() {
+// Backend URL for photo URLs
+const API_BASE_URL = import.meta.env.DEV
+  ? 'http://localhost:3000'
+  : 'https://api.mojvis.hr';
+
+export function ClickFixDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [feedback, setFeedback] = useState<FeedbackDetail | null>(null);
+  const [clickFix, setClickFix] = useState<ClickFixDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [replyBody, setReplyBody] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
 
   // TODO: Get from auth context
   const adminMunicipality: string | undefined = undefined;
 
-  const fetchFeedback = useCallback(async () => {
+  const fetchClickFix = useCallback(async () => {
     if (!id) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const data = await adminFeedbackApi.getFeedbackDetail(id, adminMunicipality);
-      setFeedback(data);
+      const data = await adminClickFixApi.getClickFixDetail(id, adminMunicipality);
+      setClickFix(data);
     } catch (err) {
-      console.error('[Admin] Error fetching feedback:', err);
-      setError('Greska pri ucitavanju poruke.');
+      console.error('[Admin] Error fetching click fix:', err);
+      setError('Greska pri ucitavanju prijave.');
     } finally {
       setLoading(false);
     }
   }, [id, adminMunicipality]);
 
   useEffect(() => {
-    void fetchFeedback();
-  }, [fetchFeedback]);
+    void fetchClickFix();
+  }, [fetchClickFix]);
 
-  const handleStatusChange = async (newStatus: FeedbackStatus) => {
-    if (!id || !feedback) return;
+  const handleStatusChange = async (newStatus: ClickFixStatus) => {
+    if (!id || !clickFix) return;
 
     setStatusUpdating(true);
     try {
-      const updated = await adminFeedbackApi.updateStatus(id, newStatus, adminMunicipality);
-      setFeedback(updated);
+      const updated = await adminClickFixApi.updateStatus(id, newStatus, adminMunicipality);
+      setClickFix(updated);
     } catch (err) {
       console.error('[Admin] Error updating status:', err);
       alert('Greska pri promjeni statusa.');
@@ -71,12 +80,12 @@ export function FeedbackDetailPage() {
 
     setSubmitting(true);
     try {
-      const updated = await adminFeedbackApi.addReply(
+      const updated = await adminClickFixApi.addReply(
         id,
         { body: replyBody.trim() },
         adminMunicipality
       );
-      setFeedback(updated);
+      setClickFix(updated);
       setReplyBody('');
     } catch (err) {
       console.error('[Admin] Error submitting reply:', err);
@@ -96,7 +105,7 @@ export function FeedbackDetailPage() {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   };
 
-  const getStatusBadgeStyle = (status: FeedbackStatus): React.CSSProperties => {
+  const getStatusBadgeStyle = (status: ClickFixStatus): React.CSSProperties => {
     const colors = STATUS_COLORS[status];
     return {
       backgroundColor: colors.bg,
@@ -109,6 +118,14 @@ export function FeedbackDetailPage() {
     };
   };
 
+  const getPhotoUrl = (url: string): string => {
+    // If the URL is relative (starts with /uploads), prepend the API base URL
+    if (url.startsWith('/uploads')) {
+      return `${API_BASE_URL}${url}`;
+    }
+    return url;
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -119,13 +136,13 @@ export function FeedbackDetailPage() {
     );
   }
 
-  if (error || !feedback) {
+  if (error || !clickFix) {
     return (
       <DashboardLayout>
         <div style={styles.container}>
           <div style={styles.error}>
-            {error || 'Poruka nije pronadena.'}
-            <button style={styles.backButton} onClick={() => navigate('/feedback')}>
+            {error || 'Prijava nije pronadena.'}
+            <button style={styles.backButton} onClick={() => navigate('/click-fix')}>
               Natrag na popis
             </button>
           </div>
@@ -139,10 +156,10 @@ export function FeedbackDetailPage() {
       <div style={styles.container}>
         {/* Header */}
         <div style={styles.header}>
-          <button style={styles.backLink} onClick={() => navigate('/feedback')}>
+          <button style={styles.backLink} onClick={() => navigate('/click-fix')}>
             &larr; Povratak na popis
           </button>
-          <h1 style={styles.title}>Povratna informacija</h1>
+          <h1 style={styles.title}>Click & Fix prijava</h1>
         </div>
 
         {/* Main content */}
@@ -151,41 +168,80 @@ export function FeedbackDetailPage() {
           <div style={styles.mainColumn}>
             {/* Status badge */}
             <div style={styles.statusSection}>
-              <span style={getStatusBadgeStyle(feedback.status)}>
-                {feedback.status_label}
-              </span>
-              <span style={styles.languageTag}>
-                Jezik: {feedback.language.toUpperCase()}
+              <span style={getStatusBadgeStyle(clickFix.status)}>
+                {clickFix.status_label}
               </span>
             </div>
 
             {/* Original message */}
             <div style={styles.messageCard}>
-              <h2 style={styles.messageSubject}>{feedback.subject}</h2>
+              <h2 style={styles.messageSubject}>{clickFix.subject}</h2>
               <p style={styles.messageDate}>
-                Primljeno: {formatDate(feedback.created_at)}
+                Primljeno: {formatDate(clickFix.created_at)}
               </p>
-              <div style={styles.messageBody}>{feedback.body}</div>
+              <div style={styles.messageBody}>{clickFix.description}</div>
+
+              {/* Location */}
+              <div style={styles.locationSection}>
+                <span style={styles.locationLabel}>Lokacija:</span>
+                <span style={styles.locationValue}>
+                  {clickFix.location.lat.toFixed(6)}, {clickFix.location.lng.toFixed(6)}
+                </span>
+                <a
+                  href={`https://www.google.com/maps?q=${clickFix.location.lat},${clickFix.location.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={styles.mapLink}
+                  data-testid="clickfix-map-link"
+                >
+                  Otvori na karti
+                </a>
+              </div>
             </div>
+
+            {/* Photos section */}
+            {clickFix.photos.length > 0 && (
+              <div style={styles.photosSection} data-testid="clickfix-photos">
+                <h3 style={styles.sectionTitle}>
+                  Slike ({clickFix.photos.length})
+                </h3>
+                <div style={styles.photosGrid}>
+                  {clickFix.photos.map((photo, index) => (
+                    <div
+                      key={photo.id}
+                      style={styles.photoThumbnail}
+                      onClick={() => setSelectedPhotoIndex(index)}
+                      data-testid={`clickfix-photo-${index}`}
+                    >
+                      <img
+                        src={getPhotoUrl(photo.url)}
+                        alt={`Slika ${index + 1}`}
+                        style={styles.photoImage}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Replies section */}
             <div style={styles.repliesSection}>
               <h3 style={styles.sectionTitle}>
-                Odgovori ({feedback.replies.length})
+                Odgovori ({clickFix.replies.length})
               </h3>
 
-              {feedback.replies.length === 0 ? (
-                <p style={styles.noReplies}>Jos nema odgovora na ovu poruku.</p>
+              {clickFix.replies.length === 0 ? (
+                <p style={styles.noReplies}>Jos nema odgovora na ovu prijavu.</p>
               ) : (
-                feedback.replies.map((reply) => (
-                  <div key={reply.id} style={styles.replyCard} data-testid={`feedback-reply-${reply.id}`}>
+                clickFix.replies.map((reply) => (
+                  <div key={reply.id} style={styles.replyCard}>
                     <div style={styles.replyHeader}>
                       <span style={styles.replyLabel}>Odgovor admina</span>
                       <span style={styles.replyDate}>
                         {formatDate(reply.created_at)}
                       </span>
                     </div>
-                    <div style={styles.replyBody} data-testid="feedback-reply-body">{reply.body}</div>
+                    <div style={styles.replyBody}>{reply.body}</div>
                   </div>
                 ))
               )}
@@ -193,9 +249,6 @@ export function FeedbackDetailPage() {
               {/* Reply form */}
               <div style={styles.replyForm}>
                 <h4 style={styles.replyFormTitle}>Dodaj odgovor</h4>
-                <p style={styles.replyHint}>
-                  Odgovor mora biti na {feedback.language === 'hr' ? 'hrvatskom' : 'engleskom'} jeziku.
-                </p>
                 <textarea
                   style={styles.replyTextarea}
                   value={replyBody}
@@ -203,13 +256,13 @@ export function FeedbackDetailPage() {
                   placeholder="Unesite tekst odgovora..."
                   rows={4}
                   disabled={submitting}
-                  data-testid="feedback-reply-input"
+                  data-testid="clickfix-reply-input"
                 />
                 <button
                   style={styles.submitButton}
                   onClick={() => void handleSubmitReply()}
                   disabled={submitting || !replyBody.trim()}
-                  data-testid="feedback-reply-submit"
+                  data-testid="clickfix-reply-submit"
                 >
                   {submitting ? 'Slanje...' : 'Posalji odgovor'}
                 </button>
@@ -219,19 +272,19 @@ export function FeedbackDetailPage() {
 
           {/* Right column - Actions */}
           <div style={styles.sideColumn}>
-            <div style={styles.actionsCard} data-testid="feedback-status-section">
+            <div style={styles.actionsCard} data-testid="clickfix-status-section">
               <h3 style={styles.actionsTitle}>Promijeni status</h3>
               <div style={styles.statusButtons}>
-                {(Object.keys(STATUS_LABELS) as FeedbackStatus[]).map((status) => (
+                {(Object.keys(STATUS_LABELS) as ClickFixStatus[]).map((status) => (
                   <button
                     key={status}
-                    data-testid={`feedback-status-${status}`}
+                    data-testid={`clickfix-status-${status}`}
                     style={{
                       ...styles.statusButton,
-                      ...(feedback.status === status ? styles.statusButtonActive : {}),
+                      ...(clickFix.status === status ? styles.statusButtonActive : {}),
                     }}
                     onClick={() => void handleStatusChange(status)}
-                    disabled={statusUpdating || feedback.status === status}
+                    disabled={statusUpdating || clickFix.status === status}
                   >
                     {STATUS_LABELS[status]}
                   </button>
@@ -243,26 +296,73 @@ export function FeedbackDetailPage() {
               <h3 style={styles.infoTitle}>Informacije</h3>
               <div style={styles.infoRow}>
                 <span style={styles.infoLabel}>ID:</span>
-                <span style={styles.infoValue}>{feedback.id.slice(0, 8)}...</span>
+                <span style={styles.infoValue}>{clickFix.id.slice(0, 8)}...</span>
               </div>
               <div style={styles.infoRow}>
                 <span style={styles.infoLabel}>Uredaj:</span>
-                <span style={styles.infoValue}>{feedback.device_id.slice(0, 8)}...</span>
+                <span style={styles.infoValue}>{clickFix.device_id.slice(0, 8)}...</span>
               </div>
-              {feedback.municipality && (
+              {clickFix.municipality && (
                 <div style={styles.infoRow}>
                   <span style={styles.infoLabel}>Opcina:</span>
-                  <span style={styles.infoValue}>{feedback.municipality}</span>
+                  <span style={styles.infoValue}>{clickFix.municipality}</span>
                 </div>
               )}
               <div style={styles.infoRow}>
+                <span style={styles.infoLabel}>Slike:</span>
+                <span style={styles.infoValue}>{clickFix.photos.length}</span>
+              </div>
+              <div style={styles.infoRow}>
                 <span style={styles.infoLabel}>Azurirano:</span>
-                <span style={styles.infoValue}>{formatDate(feedback.updated_at)}</span>
+                <span style={styles.infoValue}>{formatDate(clickFix.updated_at)}</span>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Photo lightbox modal */}
+      {selectedPhotoIndex !== null && clickFix.photos[selectedPhotoIndex] && (
+        <div style={styles.lightbox} onClick={() => setSelectedPhotoIndex(null)}>
+          <button
+            style={styles.lightboxClose}
+            onClick={() => setSelectedPhotoIndex(null)}
+          >
+            X
+          </button>
+          <img
+            src={getPhotoUrl(clickFix.photos[selectedPhotoIndex].url)}
+            alt={`Slika ${selectedPhotoIndex + 1}`}
+            style={styles.lightboxImage}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div style={styles.lightboxNav}>
+            <button
+              style={styles.lightboxNavButton}
+              disabled={selectedPhotoIndex === 0}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPhotoIndex(selectedPhotoIndex - 1);
+              }}
+            >
+              &larr; Prethodna
+            </button>
+            <span style={styles.lightboxCounter}>
+              {selectedPhotoIndex + 1} / {clickFix.photos.length}
+            </span>
+            <button
+              style={styles.lightboxNavButton}
+              disabled={selectedPhotoIndex === clickFix.photos.length - 1}
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedPhotoIndex(selectedPhotoIndex + 1);
+              }}
+            >
+              Sljedeca &rarr;
+            </button>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
@@ -327,13 +427,6 @@ const styles: Record<string, React.CSSProperties> = {
     gap: '12px',
     marginBottom: '16px',
   },
-  languageTag: {
-    backgroundColor: '#e9ecef',
-    padding: '8px 12px',
-    borderRadius: '8px',
-    fontSize: '14px',
-    color: '#495057',
-  },
   messageCard: {
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
@@ -355,14 +448,58 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '16px',
     lineHeight: '1.6',
     whiteSpace: 'pre-wrap',
+    marginBottom: '16px',
   },
-  repliesSection: {
-    marginTop: '24px',
+  locationSection: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    paddingTop: '16px',
+    borderTop: '1px solid #e0e0e0',
+  },
+  locationLabel: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#666666',
+  },
+  locationValue: {
+    fontSize: '14px',
+    fontFamily: 'monospace',
+    color: '#2E7D32',
+  },
+  mapLink: {
+    fontSize: '14px',
+    color: '#007bff',
+    marginLeft: 'auto',
+  },
+  photosSection: {
+    marginBottom: '24px',
   },
   sectionTitle: {
     fontSize: '18px',
     fontWeight: '600',
     marginBottom: '16px',
+  },
+  photosGrid: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '12px',
+  },
+  photoThumbnail: {
+    width: '120px',
+    height: '120px',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    border: '2px solid #000000',
+    cursor: 'pointer',
+  },
+  photoImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  repliesSection: {
+    marginTop: '24px',
   },
   noReplies: {
     color: '#666666',
@@ -407,11 +544,6 @@ const styles: Record<string, React.CSSProperties> = {
   replyFormTitle: {
     fontSize: '16px',
     fontWeight: '600',
-    marginBottom: '4px',
-  },
-  replyHint: {
-    fontSize: '12px',
-    color: '#666666',
     marginBottom: '12px',
   },
   replyTextarea: {
@@ -489,6 +621,54 @@ const styles: Record<string, React.CSSProperties> = {
   infoValue: {
     fontWeight: '500',
   },
+  lightbox: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+  },
+  lightboxClose: {
+    position: 'absolute',
+    top: '20px',
+    right: '20px',
+    width: '40px',
+    height: '40px',
+    borderRadius: '20px',
+    backgroundColor: '#ffffff',
+    border: 'none',
+    fontSize: '18px',
+    fontWeight: '700',
+    cursor: 'pointer',
+  },
+  lightboxImage: {
+    maxWidth: '90%',
+    maxHeight: '80%',
+    objectFit: 'contain',
+  },
+  lightboxNav: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '24px',
+    marginTop: '24px',
+  },
+  lightboxNavButton: {
+    padding: '8px 16px',
+    backgroundColor: '#ffffff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  },
+  lightboxCounter: {
+    color: '#ffffff',
+    fontSize: '14px',
+  },
 };
 
-export default FeedbackDetailPage;
+export default ClickFixDetailPage;

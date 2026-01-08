@@ -7,6 +7,7 @@
  * Phase 2: Added Events CRUD routes.
  * Phase 3: Added Static Pages CMS routes.
  * Phase 5: Added Feedback routes.
+ * Phase 6: Added Click & Fix routes.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
@@ -20,6 +21,8 @@ import { PagesListPage } from './pages/pages/PagesListPage';
 import { PageEditPage } from './pages/pages/PageEditPage';
 import { FeedbackListPage } from './pages/feedback/FeedbackListPage';
 import { FeedbackDetailPage } from './pages/feedback/FeedbackDetailPage';
+import { ClickFixListPage } from './pages/click-fix/ClickFixListPage';
+import { ClickFixDetailPage } from './pages/click-fix/ClickFixDetailPage';
 
 function App() {
   return (
@@ -41,6 +44,8 @@ function App() {
         <Route path="/pages/:id" element={<PageEditPage />} />
         <Route path="/feedback" element={<FeedbackListPage />} />
         <Route path="/feedback/:id" element={<FeedbackDetailPage />} />
+        <Route path="/click-fix" element={<ClickFixListPage />} />
+        <Route path="/click-fix/:id" element={<ClickFixDetailPage />} />
         <Route path="/transport" element={<PlaceholderPage title="Promet" />} />
 
         {/* Default redirect */}

@@ -35,6 +35,11 @@ export const TAG_LABELS: Record<InboxTag, string> = {
 
 /**
  * Inbox message as stored/retrieved
+ *
+ * Phase 7: Added push notification fields
+ * - is_locked: TRUE after push sent (no edits allowed)
+ * - pushed_at: When push was sent
+ * - pushed_by: Admin who triggered push
  */
 export interface InboxMessage {
   id: string;
@@ -48,6 +53,12 @@ export interface InboxMessage {
   created_at: string;
   updated_at: string;
   created_by: string | null;
+  deleted_at: string | null;
+  is_urgent: boolean;
+  // Phase 7: Push notification fields
+  is_locked: boolean;
+  pushed_at: string | null;
+  pushed_by: string | null;
 }
 
 /**
