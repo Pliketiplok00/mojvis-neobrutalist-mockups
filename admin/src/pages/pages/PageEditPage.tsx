@@ -216,6 +216,43 @@ export function PageEditPage() {
     );
   };
 
+  /**
+   * Move a block up or down in the order.
+   * Re-normalizes order values to sequential integers (0, 1, 2, ...).
+   */
+  const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
+    setBlocks((prev) => {
+      // Sort by current order first
+      const sorted = [...prev].sort((a, b) =>
+        (Number.isFinite(a.order) ? a.order : 1e9) -
+        (Number.isFinite(b.order) ? b.order : 1e9)
+      );
+      const currentIndex = sorted.findIndex((b) => b.id === blockId);
+
+      if (currentIndex === -1) return prev;
+
+      const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+      // Check bounds
+      if (targetIndex < 0 || targetIndex >= sorted.length) return prev;
+
+      // Swap positions in array
+      [sorted[currentIndex], sorted[targetIndex]] = [sorted[targetIndex], sorted[currentIndex]];
+
+      // Re-normalize order values to sequential integers
+      return sorted.map((block, index) => ({
+        ...block,
+        order: index,
+      }));
+    });
+  };
+
+  // Sort blocks by order for rendering
+  const sortedBlocks = [...blocks].sort((a, b) =>
+    (Number.isFinite(a.order) ? a.order : 1e9) -
+    (Number.isFinite(b.order) ? b.order : 1e9)
+  );
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -380,14 +417,17 @@ export function PageEditPage() {
               </div>
             )}
 
-            {blocks.map((block, index) => (
+            {sortedBlocks.map((block, index) => (
               <BlockEditor
                 key={block.id}
                 block={block}
                 index={index}
+                totalBlocks={sortedBlocks.length}
                 isSupervisor={isSupervisor}
                 onContentChange={(content) => handleBlockContentChange(block.id, content)}
                 onRemove={() => void handleRemoveBlock(block.id)}
+                onMoveUp={() => handleMoveBlock(block.id, 'up')}
+                onMoveDown={() => handleMoveBlock(block.id, 'down')}
               />
             ))}
           </div>
@@ -467,17 +507,25 @@ function BlockTypeSelector({
 function BlockEditor({
   block,
   index,
+  totalBlocks,
   isSupervisor,
   onContentChange,
   onRemove,
+  onMoveUp,
+  onMoveDown,
 }: {
   block: ContentBlock;
   index: number;
+  totalBlocks: number;
   isSupervisor: boolean;
   onContentChange: (content: ContentBlock['content']) => void;
   onRemove: () => void;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
 }) {
   const canEdit = canEditBlockContent(block, isSupervisor);
+  // Reordering is a structure change - only supervisor can reorder, and block must not be structure_locked
+  const canReorder = isSupervisor && !block.structure_locked;
 
   return (
     <div style={styles.blockCard}>
@@ -492,6 +540,29 @@ function BlockEditor({
             <span style={styles.lockBadge} title="Sadrzaj zakljucan">C</span>
           )}
         </div>
+        {/* Reorder buttons - supervisor only, respects structure lock */}
+        {canReorder && (
+          <div style={styles.reorderButtons}>
+            <button
+              type="button"
+              style={styles.reorderButton}
+              onClick={onMoveUp}
+              disabled={index === 0}
+              title="Pomakni gore"
+            >
+              ↑
+            </button>
+            <button
+              type="button"
+              style={styles.reorderButton}
+              onClick={onMoveDown}
+              disabled={index === totalBlocks - 1}
+              title="Pomakni dolje"
+            >
+              ↓
+            </button>
+          </div>
+        )}
         {isSupervisor && !block.structure_locked && (
           <button
             type="button"
@@ -979,6 +1050,23 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '4px',
     fontSize: '11px',
     fontWeight: 'bold',
+  },
+  reorderButtons: {
+    display: 'flex',
+    gap: '4px',
+  },
+  reorderButton: {
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
+    color: '#333333',
+    border: '1px solid #ddd',
+    borderRadius: '4px',
+    fontSize: '14px',
+    cursor: 'pointer',
   },
   removeBlockButton: {
     padding: '4px 8px',
