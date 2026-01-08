@@ -107,18 +107,21 @@ export function InboxDetailScreen(): React.JSX.Element {
           </View>
         )}
 
-        {/* Tags */}
-        {message.tags.length > 0 && (
-          <View style={styles.tagsContainer}>
-            {message.tags
-              .filter((tag) => tag !== 'hitno')
-              .map((tag) => (
+        {/* Tags - defensive: ensure tags is always an array */}
+        {(() => {
+          const tags = Array.isArray(message.tags) ? message.tags : [];
+          const visibleTags = tags.filter((tag) => tag !== 'hitno');
+          if (visibleTags.length === 0) return null;
+          return (
+            <View style={styles.tagsContainer}>
+              {visibleTags.map((tag) => (
                 <View key={tag} style={styles.tag}>
                   <Text style={styles.tagText}>{formatTag(tag)}</Text>
                 </View>
               ))}
-          </View>
-        )}
+            </View>
+          );
+        })()}
 
         {/* Title */}
         <Text style={styles.title}>{message.title}</Text>

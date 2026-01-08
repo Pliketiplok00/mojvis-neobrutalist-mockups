@@ -36,6 +36,18 @@ import type {
   FeedbackDetailResponse,
   SentItemsListResponse,
 } from '../types/feedback';
+import type {
+  SubmitClickFixRequest,
+  ClickFixSubmitResponse,
+  ClickFixDetailResponse,
+  ClickFixSentListResponse,
+  PhotoToUpload,
+} from '../types/click-fix';
+import type {
+  PushRegistrationResponse,
+  PushOptInResponse,
+  PushStatusResponse,
+} from '../types/push';
 
 // TODO: Move to config/environment
 const API_BASE_URL = __DEV__
@@ -102,6 +114,17 @@ async function apiRequest<T>(
 }
 
 /**
+ * Normalize InboxMessage to ensure tags is always an array.
+ * Defensive boundary normalization in case API returns null/undefined.
+ */
+function normalizeInboxMessage(message: InboxMessage): InboxMessage {
+  return {
+    ...message,
+    tags: Array.isArray(message.tags) ? message.tags : [],
+  };
+}
+
+/**
  * Inbox API
  */
 export const inboxApi = {
@@ -113,10 +136,14 @@ export const inboxApi = {
     page: number = 1,
     pageSize: number = 20
   ): Promise<InboxListResponse> {
-    return apiRequest<InboxListResponse>(
+    const response = await apiRequest<InboxListResponse>(
       `/inbox?page=${page}&page_size=${pageSize}`,
       context
     );
+    return {
+      ...response,
+      messages: response.messages.map(normalizeInboxMessage),
+    };
   },
 
   /**
@@ -126,7 +153,8 @@ export const inboxApi = {
     context: UserContext,
     id: string
   ): Promise<InboxMessage> {
-    return apiRequest<InboxMessage>(`/inbox/${id}`, context);
+    const message = await apiRequest<InboxMessage>(`/inbox/${id}`, context);
+    return normalizeInboxMessage(message);
   },
 
   /**
@@ -141,10 +169,14 @@ export const inboxApi = {
     context: UserContext,
     screenContext: ScreenContext
   ): Promise<BannerResponse> {
-    return apiRequest<BannerResponse>(
+    const response = await apiRequest<BannerResponse>(
       `/banners/active?screen=${screenContext}`,
       context
     );
+    return {
+      ...response,
+      banners: response.banners.map(normalizeInboxMessage),
+    };
   },
 };
 
@@ -525,6 +557,197 @@ export const feedbackApi = {
     }
 
     return response.json() as Promise<SentItemsListResponse>;
+  },
+};
+
+/**
+ * Click & Fix API
+ *
+ * Phase 6: Anonymous issue reporting with location + photos.
+ */
+export const clickFixApi = {
+  /**
+   * Submit new Click & Fix report with optional photos
+   */
+  async submit(
+    context: UserContext,
+    data: SubmitClickFixRequest,
+    photos: PhotoToUpload[] = []
+  ): Promise<ClickFixSubmitResponse> {
+    const url = `${API_BASE_URL}/click-fix`;
+
+    // Use FormData for multipart upload
+    const formData = new FormData();
+    formData.append('subject', data.subject);
+    formData.append('description', data.description);
+    formData.append('location', JSON.stringify(data.location));
+
+    // Add photos
+    for (const photo of photos) {
+      formData.append('photos', {
+        uri: photo.uri,
+        name: photo.fileName,
+        type: photo.mimeType,
+      } as unknown as Blob);
+    }
+
+    const headers: Record<string, string> = {
+      'X-Device-ID': getDeviceId(),
+      'X-User-Mode': context.userMode,
+      'Accept-Language': getLanguage(),
+    };
+
+    if (context.municipality) {
+      headers['X-Municipality'] = context.municipality;
+    }
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+
+    if (response.status === 429) {
+      // Rate limit exceeded
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Rate limit exceeded');
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Error: ${response.status}`);
+    }
+
+    return response.json() as Promise<ClickFixSubmitResponse>;
+  },
+
+  /**
+   * Get Click & Fix detail by ID
+   */
+  async getDetail(id: string): Promise<ClickFixDetailResponse> {
+    const url = `${API_BASE_URL}/click-fix/${id}`;
+
+    const headers: Record<string, string> = {
+      'X-Device-ID': getDeviceId(),
+      'Accept-Language': getLanguage(),
+    };
+
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json() as Promise<ClickFixDetailResponse>;
+  },
+
+  /**
+   * Get sent Click & Fix items (for Inbox → Sent tab)
+   */
+  async getSentItems(
+    page: number = 1,
+    pageSize: number = 20
+  ): Promise<ClickFixSentListResponse> {
+    const url = `${API_BASE_URL}/click-fix/sent?page=${page}&page_size=${pageSize}`;
+
+    const headers: Record<string, string> = {
+      'X-Device-ID': getDeviceId(),
+      'Accept-Language': getLanguage(),
+    };
+
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json() as Promise<ClickFixSentListResponse>;
+  },
+};
+
+/**
+ * Push Notifications API
+ *
+ * Phase 7: Device push token registration and opt-in management.
+ * Push is ONLY for hitno (emergency) messages from Inbox.
+ */
+export const pushApi = {
+  /**
+   * Register or update device push token
+   */
+  async registerToken(
+    expoPushToken: string,
+    platform: 'ios' | 'android',
+    language: 'hr' | 'en'
+  ): Promise<PushRegistrationResponse> {
+    const url = `${API_BASE_URL}/device/push-token`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Device-ID': getDeviceId(),
+        'Accept-Language': language,
+      },
+      body: JSON.stringify({
+        expoPushToken,
+        platform,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Error: ${response.status}`);
+    }
+
+    return response.json() as Promise<PushRegistrationResponse>;
+  },
+
+  /**
+   * Update push notification opt-in preference
+   */
+  async updateOptIn(optIn: boolean): Promise<PushOptInResponse> {
+    const url = `${API_BASE_URL}/device/push-opt-in`;
+
+    const response = await fetch(url, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Device-ID': getDeviceId(),
+      },
+      body: JSON.stringify({ optIn }),
+    });
+
+    if (response.status === 404) {
+      throw new Error('Device not registered. Register push token first.');
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Error: ${response.status}`);
+    }
+
+    return response.json() as Promise<PushOptInResponse>;
+  },
+
+  /**
+   * Get current push registration status
+   */
+  async getStatus(): Promise<PushStatusResponse> {
+    const url = `${API_BASE_URL}/device/push-status`;
+
+    const response = await fetch(url, {
+      headers: {
+        'X-Device-ID': getDeviceId(),
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Error: ${response.status}`);
+    }
+
+    return response.json() as Promise<PushStatusResponse>;
   },
 };
 
