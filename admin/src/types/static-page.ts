@@ -108,18 +108,16 @@ export interface MediaBlockContent {
   credit_en: string | null;
 }
 
-export interface MapPin {
-  id: string;
-  latitude: number;
-  longitude: number;
-  title_hr: string;
-  title_en: string;
-  description_hr: string | null;
-  description_en: string | null;
-}
-
 export interface MapBlockContent {
-  pins: MapPin[];
+  lat: number;
+  lng: number;
+  zoom: number;
+  title_hr: string | null;
+  title_en: string | null;
+  address_hr: string | null;
+  address_en: string | null;
+  note_hr: string | null;
+  note_en: string | null;
 }
 
 export interface ContactItem {
