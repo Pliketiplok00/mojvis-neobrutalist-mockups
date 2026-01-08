@@ -27,6 +27,10 @@ This document defines global constraints, UX rules, localization requirements, c
 - Publish rule: **static pages and events cannot be published unless EN exists**
 - Exception: **municipal notices** (Vis/Komiža) may exist in a single language if required
 
+### Admin UI exception (MVP)
+- The Admin/Supervisor web editor is **HR-only for MVP**
+- Mobile app remains strictly HR + EN
+
 ---
 
 ## 3) Navigation & UX Guardrails
@@ -252,7 +256,9 @@ If at least one relevant notice is active:
 - Event lists show all events for selected day, sorted by start time
 - Reminder:
   - available to all users
-  - creates an Inbox reminder message at **00:01** on the day the event starts
+  - mobile app subscribes/unsubscribes only; **never generates reminder messages**
+  - reminder Inbox messages are generated **exclusively by the backend** at **00:01 Europe/Zagreb** on the event day
+  - mobile app fetches and displays reminders via the standard Inbox API
 - Share:
   - OS-level share sheet (generic link or internal deep link)
 
@@ -339,6 +345,8 @@ Notice blocks on pages:
 - Rate limiting:
   - feedback: 3/day/user
   - click&fix: 3/day/user
+  - **Implementation: database-backed counters by default**
+  - Redis or external stores are optional optimizations, not required for V1
 - Upload validation:
   - allow only images
   - enforce max file size post-compression

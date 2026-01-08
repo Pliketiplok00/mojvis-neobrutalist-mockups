@@ -16,11 +16,11 @@ _(This document is binding. If something here is violated, the implementation is
 
 ## 2. Inbox Is the Single Source of Truth
 - [ ] **ALL user-facing messages are Inbox messages**
-- [ ] There is **NO separate “notice” entity**
+- [ ] There is **NO separate "notice" entity**
 - [ ] Banners are **derived from Inbox messages**
 - [ ] Clicking any banner **always opens Inbox → message detail**
-- [ ] “hitno” tag = urgent notice
-- [ ] Reminders are system-generated Inbox messages
+- [ ] "hitno" tag = urgent notice
+- [ ] Reminders are **backend-generated** Inbox messages (mobile app never generates them)
 
 ---
 
@@ -82,13 +82,15 @@ Each list item must be **exactly ONE** of the following:
 - [ ] Displayed in Europe/Zagreb timezone
 - [ ] Date format: `DD/MM/YYYY`
 - [ ] Time format: `HH:mm`
-- [ ] Event reminders fire at **00:01 on the event day**
+- [ ] Event reminders fire at **00:01 Europe/Zagreb on the event day**
+- [ ] Reminder generation is **backend-only**; mobile app subscribes/unsubscribes only
 
 ---
 
 ## 9. Feedback & Click & Fix
 - [ ] Anonymous submissions only
 - [ ] Rate-limited (max 3/day per anonymous ID)
+- [ ] Rate limiting uses **database-backed counters** (Redis optional, not required for V1)
 - [ ] Click & Fix requires:
   - Location (mandatory)
   - Description (min length enforced)
@@ -141,6 +143,7 @@ A feature is NOT done unless:
 - [ ] Back navigation works correctly
 - [ ] Validation enforced on client AND server
 - [ ] UI rules above are not violated
+- [ ] Admin actions are audit-logged (minimal: who/what/when/entity; no diff history required)
 
 ---
 

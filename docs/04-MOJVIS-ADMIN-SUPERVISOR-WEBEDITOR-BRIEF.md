@@ -157,6 +157,12 @@ Minimum audit log fields:
 - what action (create/edit/publish)
 - when (timestamp)
 
+Scope clarification:
+- Audit logging is **minimal**: who / what / when / entity only
+- **No full diff history** required
+- **No enterprise-grade auditing** (versioning, rollback, change tracking)
+- Purpose is accountability, not forensic reconstruction
+
 ---
 
 ## 6) Banner & Contextual Notice Rules (Web Editor Responsibilities)
@@ -189,8 +195,11 @@ Implementation note:
 Exception:
 - Municipal messages (`vis` / `komiza`) may be single-language if required.
 
-### Admin UI localization
-(Admin UI language can be HR-only for MVP unless otherwise specified.)
+### Admin UI localization (MVP decision)
+- The Admin/Supervisor web editor is **HR-only for MVP**
+- Admin UI does NOT require English translation in V1
+- This applies to: labels, buttons, error messages, form fields, navigation
+- Mobile app remains **strictly HR + EN** (both languages required)
 
 ---
 
