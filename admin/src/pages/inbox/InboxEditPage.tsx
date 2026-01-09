@@ -21,7 +21,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
 import { adminInboxApi } from '../../services/api';
 import type { InboxTag, InboxMessageInput } from '../../types/inbox';
-import { INBOX_TAGS, TAG_LABELS, validateTags, requiresEnglish } from '../../types/inbox';
+import {
+  ACTIVE_INBOX_TAGS,
+  TAG_LABELS,
+  validateTags,
+  requiresEnglish,
+  isHitno,
+  validateHitnoRules,
+  isDeprecatedTag,
+  DEPRECATED_TAGS,
+} from '../../types/inbox';
 
 export function InboxEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -105,6 +114,17 @@ export function InboxEditPage() {
     }
     if (requiresEnglish(selectedTags) && (!titleEn.trim() || !bodyEn.trim())) {
       setError('Engleski prijevod je obavezan za ne-općinske poruke.');
+      return;
+    }
+
+    // Validate hitno rules (Phase 3)
+    const hitnoValidation = validateHitnoRules(
+      selectedTags,
+      activeFrom || null,
+      activeTo || null
+    );
+    if (!hitnoValidation.valid) {
+      setError(hitnoValidation.error || 'Neispravna konfiguracija hitno poruke.');
       return;
     }
 
@@ -280,9 +300,15 @@ export function InboxEditPage() {
             <h2 style={styles.sectionTitle}>Oznake (max. 2)</h2>
             <p style={styles.hint}>
               Odaberite do 2 oznake za kategorizaciju poruke.
+              {isHitno(selectedTags) && (
+                <span style={styles.hitnoHint}>
+                  {' '}Hitno poruke zahtijevaju točno jednu kontekst oznaku.
+                </span>
+              )}
             </p>
             <div style={styles.tagsGrid}>
-              {INBOX_TAGS.map((tag) => (
+              {/* Show active tags for selection */}
+              {ACTIVE_INBOX_TAGS.map((tag) => (
                 <label key={tag} style={styles.tagLabel}>
                   <input
                     type="checkbox"
@@ -300,42 +326,65 @@ export function InboxEditPage() {
                   </span>
                 </label>
               ))}
+              {/* Show deprecated tags as read-only if message has them */}
+              {DEPRECATED_TAGS.filter(tag => selectedTags.includes(tag)).map((tag) => (
+                <label key={tag} style={{ ...styles.tagLabel, ...styles.deprecatedTagLabel }}>
+                  <input
+                    type="checkbox"
+                    checked={true}
+                    onChange={() => handleTagToggle(tag)}
+                    style={styles.checkbox}
+                  />
+                  <span style={{ ...styles.tagText, ...styles.tagTextSelected, ...styles.deprecatedTagText }}>
+                    {TAG_LABELS[tag]}
+                  </span>
+                </label>
+              ))}
             </div>
             {selectedTags.length > 0 && (
               <p style={styles.selectedTags}>
                 Odabrano: {selectedTags.map((t) => TAG_LABELS[t]).join(', ')}
+                {selectedTags.some(isDeprecatedTag) && (
+                  <span style={styles.deprecatedWarning}>
+                    {' '}(Zastarjele oznake će biti zamijenjene s "promet" pri spremanju)
+                  </span>
+                )}
               </p>
             )}
           </div>
 
-          {/* Active window */}
-          <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>Aktivni period (za banner)</h2>
-            <p style={styles.hint}>
-              Poruka će se prikazivati kao banner samo tijekom aktivnog perioda.
-              Ostavite prazno ako ne želite banner.
-            </p>
-            <div style={styles.dateRow}>
-              <div style={styles.field}>
-                <label style={styles.label}>Od</label>
-                <input
-                  type="datetime-local"
-                  value={activeFrom}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setActiveFrom(e.target.value)}
-                  style={styles.input}
-                />
-              </div>
-              <div style={styles.field}>
-                <label style={styles.label}>Do</label>
-                <input
-                  type="datetime-local"
-                  value={activeTo}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => setActiveTo(e.target.value)}
-                  style={styles.input}
-                />
+          {/* Active window - only shown for hitno messages */}
+          {isHitno(selectedTags) && (
+            <div style={styles.section}>
+              <h2 style={styles.sectionTitle}>Aktivni period (obavezno za hitno) *</h2>
+              <p style={styles.hint}>
+                Hitno poruke se prikazuju kao banner tijekom aktivnog perioda.
+                Oba datuma su obavezna.
+              </p>
+              <div style={styles.dateRow}>
+                <div style={styles.field}>
+                  <label style={styles.label}>Od *</label>
+                  <input
+                    type="datetime-local"
+                    value={activeFrom}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setActiveFrom(e.target.value)}
+                    style={styles.input}
+                    required
+                  />
+                </div>
+                <div style={styles.field}>
+                  <label style={styles.label}>Do *</label>
+                  <input
+                    type="datetime-local"
+                    value={activeTo}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setActiveTo(e.target.value)}
+                    style={styles.input}
+                    required
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Submit */}
           <div style={styles.actions}>
@@ -516,6 +565,22 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: '12px',
     fontSize: '13px',
     color: '#666666',
+  },
+  hitnoHint: {
+    color: '#dc2626',
+    fontWeight: '500',
+  },
+  deprecatedTagLabel: {
+    backgroundColor: '#f3f4f6',
+    borderColor: '#d1d5db',
+  },
+  deprecatedTagText: {
+    color: '#6b7280',
+    fontStyle: 'italic',
+  },
+  deprecatedWarning: {
+    color: '#b45309',
+    fontStyle: 'italic',
   },
   dateRow: {
     display: 'flex',

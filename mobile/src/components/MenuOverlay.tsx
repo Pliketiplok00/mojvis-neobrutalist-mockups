@@ -4,11 +4,14 @@
  * A simple slide-in menu that overlays the screen.
  * Uses React Native's built-in Animated API - no native modules required.
  *
+ * Core menu items are hardcoded.
+ * Additional items (extras) are fetched from backend and appended after core items.
+ *
  * This replaces the DrawerNavigator approach which required
  * react-native-reanimated and caused native binary mismatch issues.
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -18,7 +21,10 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
+import { menuExtrasApi } from '../services/api';
+import type { MenuExtra } from '../types/menu-extras';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
@@ -30,12 +36,19 @@ interface MenuItem {
   route: string;
 }
 
-const MENU_ITEMS: MenuItem[] = [
-  { label: 'Pocetna', labelEn: 'Home', icon: '🏠', route: 'Home' },
-  { label: 'Vozni red', labelEn: 'Transport', icon: '🚌', route: 'TransportHub' },
-  { label: 'Dogadaji', labelEn: 'Events', icon: '📅', route: 'Events' },
-  { label: 'Pristiglo', labelEn: 'Inbox', icon: '📥', route: 'Inbox' },
-  { label: 'Postavke', labelEn: 'Settings', icon: '⚙️', route: 'Settings' },
+/**
+ * Core menu items - these are hardcoded and never change.
+ * DO NOT modify this array unless explicitly required.
+ */
+const CORE_MENU_ITEMS: MenuItem[] = [
+  { label: 'Početna', labelEn: 'Home', icon: '🏠', route: 'Home' },
+  { label: 'Događaji', labelEn: 'Events', icon: '📅', route: 'Events' },
+  { label: 'Vozni redovi', labelEn: 'Timetables', icon: '🚌', route: 'TransportHub' },
+  { label: 'Flora i fauna', labelEn: 'Flora & Fauna', icon: '🌿', route: 'StaticPage:flora-fauna' },
+  { label: 'Info za posjetitelje', labelEn: 'Visitor info', icon: 'ℹ️', route: 'StaticPage:visitor-info' },
+  { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: '🔧', route: 'ClickFixForm' },
+  { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: '💬', route: 'FeedbackForm' },
+  { label: 'Važni kontakti', labelEn: 'Important contacts', icon: '📞', route: 'StaticPage:important-contacts' },
 ];
 
 interface MenuOverlayProps {
@@ -53,6 +66,32 @@ export function MenuOverlay({
 }: MenuOverlayProps): React.JSX.Element | null {
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  // Server-driven menu extras (appended after core items)
+  const [extras, setExtras] = useState<MenuExtra[]>([]);
+  const [extrasFetched, setExtrasFetched] = useState(false);
+
+  // Fetch extras once on mount
+  const fetchExtras = useCallback(async () => {
+    if (extrasFetched) return;
+
+    try {
+      const response = await menuExtrasApi.getExtras();
+      setExtras(response.extras);
+    } catch (error) {
+      // Silently fail - core menu items will still work
+      console.warn('[MenuOverlay] Failed to fetch menu extras:', error);
+    } finally {
+      setExtrasFetched(true);
+    }
+  }, [extrasFetched]);
+
+  // Fetch extras when menu becomes visible for the first time
+  useEffect(() => {
+    if (visible && !extrasFetched) {
+      void fetchExtras();
+    }
+  }, [visible, extrasFetched, fetchExtras]);
 
   useEffect(() => {
     if (visible) {
@@ -98,6 +137,17 @@ export function MenuOverlay({
     return null;
   }
 
+  // Convert extras to menu items
+  const extraMenuItems: MenuItem[] = extras.map((extra) => ({
+    label: extra.labelHr,
+    labelEn: extra.labelEn,
+    icon: '📄', // Default icon for extras (static page)
+    route: extra.target,
+  }));
+
+  // Combined menu: core items + extras
+  const allMenuItems = [...CORE_MENU_ITEMS, ...extraMenuItems];
+
   return (
     <View style={styles.container}>
       {/* Backdrop */}
@@ -119,13 +169,15 @@ export function MenuOverlay({
             <Text style={styles.headerSubtitle}>Izbornik / Menu</Text>
           </View>
 
-          {/* Menu Items */}
-          <View style={styles.menuList}>
-            {MENU_ITEMS.map((item) => {
+          {/* Menu Items - Scrollable */}
+          <ScrollView style={styles.menuList} showsVerticalScrollIndicator={false}>
+            {allMenuItems.map((item, index) => {
               const isActive = currentRoute === item.route;
+              // Use index as part of key for extras that might have duplicate routes
+              const key = `${item.route}-${index}`;
               return (
                 <TouchableOpacity
-                  key={item.route}
+                  key={key}
                   style={[styles.menuItem, isActive && styles.menuItemActive]}
                   onPress={() => handleItemPress(item.route)}
                   accessibilityLabel={`${item.label} (${item.labelEn})`}
@@ -141,12 +193,8 @@ export function MenuOverlay({
                 </TouchableOpacity>
               );
             })}
-          </View>
-
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>MOJ VIS v1.0</Text>
-          </View>
+          </ScrollView>
+          {/* Footer removed per UI contract (2026-01-09) */}
         </SafeAreaView>
       </Animated.View>
     </View>
@@ -231,16 +279,7 @@ const styles = StyleSheet.create({
     color: '#999999',
     marginTop: 2,
   },
-  footer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#999999',
-  },
+  // Footer styles removed per UI contract (2026-01-09)
 });
 
 export default MenuOverlay;

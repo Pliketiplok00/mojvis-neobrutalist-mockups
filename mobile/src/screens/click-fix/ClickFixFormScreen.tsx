@@ -32,6 +32,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useUserContext } from '../../hooks/useUserContext';
 import { clickFixApi } from '../../services/api';
 import {
   validateClickFixForm,
@@ -56,9 +57,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
     location?: string;
   }>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  // TODO: Get from user context
-  const userContext = { userMode: 'visitor' as const, municipality: null };
+  const userContext = useUserContext();
 
   const handleGetLocation = useCallback(async () => {
     setIsGettingLocation(true);

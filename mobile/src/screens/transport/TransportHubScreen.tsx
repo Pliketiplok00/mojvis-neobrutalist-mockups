@@ -25,6 +25,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
+import { useUserContext } from '../../hooks/useUserContext';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
@@ -35,32 +36,17 @@ export function TransportHubScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { openMenu } = useMenu();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
+  const userContext = useUserContext();
 
-  // Fetch banners for transport (hitno applies to both, deduplicate)
+  // Fetch banners for transport (Phase 2: unified 'transport' context)
   const fetchBanners = useCallback(async () => {
     try {
-      const [roadBanners, seaBanners] = await Promise.all([
-        inboxApi.getActiveBanners(
-          { userMode: 'visitor', municipality: null },
-          'transport_road'
-        ),
-        inboxApi.getActiveBanners(
-          { userMode: 'visitor', municipality: null },
-          'transport_sea'
-        ),
-      ]);
-
-      // Deduplicate by ID
-      const allBanners = [...roadBanners.banners, ...seaBanners.banners];
-      const uniqueBanners = allBanners.filter(
-        (banner, index, self) =>
-          index === self.findIndex((b) => b.id === banner.id)
-      );
-      setBanners(uniqueBanners);
+      const response = await inboxApi.getActiveBanners(userContext, 'transport');
+      setBanners(response.banners);
     } catch (err) {
       console.error('[TransportHub] Error fetching banners:', err);
     }
-  }, []);
+  }, [userContext]);
 
   useEffect(() => {
     void fetchBanners();

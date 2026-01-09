@@ -27,6 +27,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { RouteProp, NavigationProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useUserContext } from '../../hooks/useUserContext';
 import { staticPagesApi } from '../../services/api';
 import type { MainStackParamList } from '../../navigation/types';
 import type {
@@ -49,12 +50,19 @@ export function StaticPageScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
   const { slug } = route.params;
 
+  // DEV LOGGING: Track StaticPageScreen renders
+  // NOTE: This screen uses CONTENT NOTICES (NoticeBlock), NOT system banners from the API
+  if (__DEV__) {
+    console.log('[STATICPAGE_RENDER]', {
+      slug,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   const [page, setPage] = useState<StaticPageResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // TODO: Get from user context
-  const userContext = { userMode: 'visitor' as const, municipality: null };
+  const userContext = useUserContext();
 
   const fetchPage = useCallback(async () => {
     setLoading(true);
@@ -69,7 +77,7 @@ export function StaticPageScreen(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [slug]);
+  }, [slug, userContext]);
 
   useEffect(() => {
     void fetchPage();
@@ -93,6 +101,11 @@ export function StaticPageScreen(): React.JSX.Element {
         break;
       case 'page':
         navigation.navigate('StaticPage', { slug: linkTarget });
+        break;
+      case 'screen':
+        // Navigate to internal app screens (e.g., TransportHub, RoadTransport)
+        // Use type assertion for dynamic screen navigation
+        (navigation.navigate as (screen: string) => void)(linkTarget);
         break;
       case 'external':
         void Linking.openURL(linkTarget);
@@ -361,6 +374,16 @@ function NoticeBlock({
   content: NoticeBlockContent;
   onPress: (noticeId: string) => void;
 }): React.JSX.Element {
+  // DEV LOGGING: NoticeBlock is a CONTENT NOTICE (from CMS), NOT a SYSTEM BANNER (from Inbox API)
+  if (__DEV__) {
+    console.log('[NOTICEBLOCK_RENDER]', {
+      noticeCount: content.notices.length,
+      noticeIds: content.notices.map(n => n.id.slice(0, 8)),
+      source: 'CMS_CONTENT_BLOCK',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   if (content.notices.length === 0) return <View />;
 
   return (

@@ -2,15 +2,22 @@
  * Admin Inbox Types
  *
  * Types for inbox message management in admin panel.
+ *
+ * Phase 2 Banner Rules:
+ * - Banners require "hitno" + exactly one context tag
+ * - active_from AND active_to required for hitno messages
  */
 
 /**
- * Fixed tag taxonomy (FINAL per spec)
- * Max 2 tags per message
+ * Fixed tag taxonomy (Phase 2)
+ *
+ * DEPRECATED: cestovni_promet, pomorski_promet (normalized to 'promet')
+ * ACTIVE: hitno, promet, kultura, opcenito, vis, komiza
  */
 export const INBOX_TAGS = [
-  'cestovni_promet',
-  'pomorski_promet',
+  'cestovni_promet', // DEPRECATED
+  'pomorski_promet', // DEPRECATED
+  'promet', // unified transport (new)
   'kultura',
   'opcenito',
   'hitno',
@@ -21,11 +28,25 @@ export const INBOX_TAGS = [
 export type InboxTag = (typeof INBOX_TAGS)[number];
 
 /**
+ * Tags that should be shown in admin UI for NEW messages
+ * (excludes deprecated tags)
+ */
+export const ACTIVE_INBOX_TAGS: readonly InboxTag[] = [
+  'hitno',
+  'promet',
+  'kultura',
+  'opcenito',
+  'vis',
+  'komiza',
+];
+
+/**
  * Tag labels for display (HR-only for admin)
  */
 export const TAG_LABELS: Record<InboxTag, string> = {
-  cestovni_promet: 'Cestovni promet',
-  pomorski_promet: 'Pomorski promet',
+  cestovni_promet: 'Cestovni promet (zastarjelo)',
+  pomorski_promet: 'Pomorski promet (zastarjelo)',
+  promet: 'Promet',
   kultura: 'Kultura',
   opcenito: 'Općenito',
   hitno: 'Hitno (urgentno)',
@@ -99,4 +120,68 @@ export function validateTags(tags: string[]): boolean {
 export function requiresEnglish(tags: InboxTag[]): boolean {
   // Municipal messages (vis/komiza) can be single-language
   return !tags.includes('vis') && !tags.includes('komiza');
+}
+
+/**
+ * Deprecated transport tags (kept for backward compatibility)
+ */
+export const DEPRECATED_TAGS: readonly InboxTag[] = ['cestovni_promet', 'pomorski_promet'];
+
+/**
+ * Context tags that can be paired with 'hitno' for banners
+ */
+export const BANNER_CONTEXT_TAGS: readonly InboxTag[] = ['promet', 'kultura', 'opcenito', 'vis', 'komiza'];
+
+/**
+ * Check if message has the hitno (urgent) tag
+ */
+export function isHitno(tags: InboxTag[]): boolean {
+  return tags.includes('hitno');
+}
+
+/**
+ * Validate hitno message rules:
+ * - hitno requires exactly one context tag
+ * - hitno requires active_from AND active_to
+ */
+export function validateHitnoRules(
+  tags: InboxTag[],
+  activeFrom: string | null,
+  activeTo: string | null
+): { valid: boolean; error?: string } {
+  if (!tags.includes('hitno')) {
+    return { valid: true };
+  }
+
+  // hitno requires exactly one context tag
+  const contextTags = tags.filter(t => BANNER_CONTEXT_TAGS.includes(t));
+  if (contextTags.length === 0) {
+    return {
+      valid: false,
+      error: 'Hitno poruke moraju imati točno jednu kontekst oznaku (promet, kultura, opcenito, vis ili komiza).',
+    };
+  }
+  if (contextTags.length > 1) {
+    return {
+      valid: false,
+      error: 'Hitno poruke mogu imati samo jednu kontekst oznaku.',
+    };
+  }
+
+  // hitno requires both active_from and active_to
+  if (!activeFrom || !activeTo) {
+    return {
+      valid: false,
+      error: 'Hitno poruke moraju imati definirani aktivni period (Od i Do datumi su obavezni).',
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Check if a tag is deprecated
+ */
+export function isDeprecatedTag(tag: InboxTag): boolean {
+  return DEPRECATED_TAGS.includes(tag);
 }

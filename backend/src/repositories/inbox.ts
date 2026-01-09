@@ -47,7 +47,7 @@ export async function getInboxMessages(
 
   // Get paginated messages (excluding soft-deleted)
   const result = await query<InboxMessageRow>(
-    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
@@ -72,7 +72,7 @@ export async function getInboxMessageById(
   id: string
 ): Promise<InboxMessage | null> {
   const result = await query<InboxMessageRow>(
-    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
@@ -96,7 +96,7 @@ export async function getInboxMessageByIdAdmin(
   id: string
 ): Promise<InboxMessage | null> {
   const result = await query<InboxMessageRow>(
-    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
@@ -119,7 +119,7 @@ export async function getInboxMessageByIdAdmin(
  */
 export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
   const result = await query<InboxMessageRow>(
-    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
@@ -141,7 +141,7 @@ export async function createInboxMessage(
     `INSERT INTO inbox_messages
        (title_hr, title_en, body_hr, body_en, tags, active_from, active_to, created_by)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
                is_locked, pushed_at, pushed_by`,
     [
@@ -212,7 +212,7 @@ export async function updateInboxMessage(
     `UPDATE inbox_messages
      SET ${fields.join(', ')}
      WHERE id = $${paramIndex} AND deleted_at IS NULL AND is_locked = false
-     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
                is_locked, pushed_at, pushed_by`,
     values
@@ -237,7 +237,7 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
     `UPDATE inbox_messages
      SET deleted_at = NOW()
      WHERE id = $1 AND deleted_at IS NULL
-     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
                is_locked, pushed_at, pushed_by`,
     [id]
@@ -267,7 +267,7 @@ export async function getInboxMessagesAdmin(
 
   // Get paginated messages (including soft-deleted)
   const result = await query<InboxMessageRow>(
-    `SELECT id, title_hr, title_en, body_hr, body_en, tags,
+    `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
@@ -290,7 +290,7 @@ export async function restoreInboxMessage(id: string): Promise<InboxMessage | nu
     `UPDATE inbox_messages
      SET deleted_at = NULL
      WHERE id = $1 AND deleted_at IS NOT NULL
-     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
                is_locked, pushed_at, pushed_by`,
     [id]
@@ -314,7 +314,7 @@ export async function markMessageAsLocked(
     `UPDATE inbox_messages
      SET is_locked = true, pushed_at = NOW(), pushed_by = $2
      WHERE id = $1 AND is_locked = false AND deleted_at IS NULL
-     RETURNING id, title_hr, title_en, body_hr, body_en, tags,
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
                is_locked, pushed_at, pushed_by`,
     [id, adminId]

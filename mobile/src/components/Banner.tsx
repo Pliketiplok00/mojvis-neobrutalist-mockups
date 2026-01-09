@@ -80,8 +80,21 @@ interface BannerListProps {
 /**
  * List of banners
  * Shows multiple banners stacked
+ *
+ * NOTE: This component renders SYSTEM BANNERS from the Inbox/Banners API.
+ * It should ONLY appear on allowed screens (Home, Transport, Events).
+ * It should NEVER appear on static content pages (Flora, Fauna, Important Contacts).
  */
 export function BannerList({ banners }: BannerListProps): React.JSX.Element | null {
+  // DEV LOGGING: Track where BannerList renders
+  if (__DEV__) {
+    console.log('[BANNERLIST_RENDER]', {
+      bannerCount: banners.length,
+      bannerIds: banners.map(b => b.id.slice(0, 8)),
+      timestamp: new Date().toISOString(),
+    });
+  }
+
   if (banners.length === 0) {
     return null;
   }

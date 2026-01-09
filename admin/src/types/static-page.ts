@@ -152,9 +152,7 @@ export interface LinkListBlockContent {
 }
 
 // Notice block content is empty - it's system-injected
-export interface NoticeBlockContent {
-  // Empty - content is injected at runtime
-}
+export type NoticeBlockContent = Record<string, never>;
 
 export type BlockContent =
   | TextBlockContent

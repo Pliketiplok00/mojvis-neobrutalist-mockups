@@ -4,20 +4,33 @@
  * Core types for the Inbox messaging system.
  * Inbox is the SINGLE source of truth for all user-facing communication.
  *
- * Rules (per spec):
+ * Rules (per spec - Phase 2):
  * - Max 2 tags per message
  * - Tags from fixed taxonomy only
- * - Banners are derived from Inbox messages (no separate notice entity)
- * - active_from/active_to define banner eligibility window
+ * - Banners require "hitno" tag + exactly one context tag
+ * - active_from AND active_to BOTH required for hitno messages
+ * - Banner placement determined by context tag
  */
 
 /**
- * Fixed tag taxonomy (FINAL per spec)
- * Do NOT add new tags without updating documentation.
+ * Fixed tag taxonomy (Phase 2)
+ *
+ * DEPRECATED TAGS (backward compatible, normalized to 'promet'):
+ * - 'cestovni_promet' → normalized to 'promet'
+ * - 'pomorski_promet' → normalized to 'promet'
+ *
+ * ACTIVE TAGS:
+ * - 'hitno'   - emergency/urgent (required for banners)
+ * - 'promet'  - unified transport (road + sea)
+ * - 'kultura' - culture/events
+ * - 'opcenito' - general
+ * - 'vis'     - municipal - Vis
+ * - 'komiza'  - municipal - Komiža
  */
 export const INBOX_TAGS = [
-  'cestovni_promet', // road transport
-  'pomorski_promet', // sea transport
+  'cestovni_promet', // DEPRECATED: normalized to 'promet'
+  'pomorski_promet', // DEPRECATED: normalized to 'promet'
+  'promet', // unified transport (new)
   'kultura', // culture
   'opcenito', // general
   'hitno', // emergency/urgent
@@ -26,6 +39,44 @@ export const INBOX_TAGS = [
 ] as const;
 
 export type InboxTag = (typeof INBOX_TAGS)[number];
+
+/**
+ * Deprecated transport tags that get normalized to 'promet'
+ */
+export const DEPRECATED_TRANSPORT_TAGS: readonly InboxTag[] = ['cestovni_promet', 'pomorski_promet'];
+
+/**
+ * Context tags that can be paired with 'hitno' for banners
+ */
+export const BANNER_CONTEXT_TAGS: readonly InboxTag[] = ['promet', 'kultura', 'opcenito', 'vis', 'komiza'];
+
+/**
+ * Normalize tags: convert deprecated transport tags to 'promet'
+ * Used at runtime for eligibility checks (does not mutate DB)
+ */
+export function normalizeTags(tags: InboxTag[]): InboxTag[] {
+  const normalized: InboxTag[] = [];
+  let hasPromet = false;
+
+  for (const tag of tags) {
+    if (DEPRECATED_TRANSPORT_TAGS.includes(tag)) {
+      if (!hasPromet) {
+        normalized.push('promet');
+        hasPromet = true;
+      }
+      // Skip duplicate transport tags
+    } else if (tag === 'promet') {
+      if (!hasPromet) {
+        normalized.push('promet');
+        hasPromet = true;
+      }
+    } else {
+      normalized.push(tag);
+    }
+  }
+
+  return normalized;
+}
 
 /**
  * User mode for eligibility filtering
@@ -183,4 +234,49 @@ export function getMunicipalityFromTags(tags: InboxTag[]): Municipality {
   if (tags.includes('vis')) return 'vis';
   if (tags.includes('komiza')) return 'komiza';
   return null;
+}
+
+/**
+ * Validate hitno message rules (Phase 3):
+ * - hitno requires exactly one context tag
+ * - hitno requires active_from AND active_to
+ *
+ * Returns { valid: true } or { valid: false, error: string, code: string }
+ */
+export function validateHitnoRules(
+  tags: InboxTag[],
+  activeFrom: Date | null,
+  activeTo: Date | null
+): { valid: true } | { valid: false; error: string; code: string } {
+  if (!tags.includes('hitno')) {
+    return { valid: true };
+  }
+
+  // hitno requires exactly one context tag
+  const contextTags = tags.filter(t => BANNER_CONTEXT_TAGS.includes(t));
+  if (contextTags.length === 0) {
+    return {
+      valid: false,
+      error: 'Hitno messages require exactly one context tag (promet, kultura, opcenito, vis, or komiza).',
+      code: 'HITNO_MISSING_CONTEXT',
+    };
+  }
+  if (contextTags.length > 1) {
+    return {
+      valid: false,
+      error: 'Hitno messages can only have one context tag.',
+      code: 'HITNO_MULTIPLE_CONTEXT',
+    };
+  }
+
+  // hitno requires both active_from and active_to
+  if (!activeFrom || !activeTo) {
+    return {
+      valid: false,
+      error: 'Hitno messages require both active_from and active_to dates.',
+      code: 'HITNO_MISSING_DATES',
+    };
+  }
+
+  return { valid: true };
 }

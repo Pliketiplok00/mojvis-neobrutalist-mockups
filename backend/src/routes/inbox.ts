@@ -1,5 +1,5 @@
 /**
- * Inbox Routes
+ * Inbox Routes (Phase 2)
  *
  * API endpoints for inbox messages and banners.
  *
@@ -12,6 +12,11 @@
  * - X-Device-ID: anonymous device identifier
  * - X-User-Mode: 'visitor' | 'local'
  * - X-Municipality: 'vis' | 'komiza' | null (for locals only)
+ *
+ * Phase 2 Screen Contexts:
+ * - home: all banner types
+ * - events: hitno + kultura
+ * - transport: hitno + promet
  */
 
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
@@ -24,6 +29,7 @@ import {
   filterEligibleMessages,
   filterBannerEligibleMessages,
   filterBannersByScreen,
+  getUtcNow,
   type ScreenContext,
 } from '../lib/eligibility.js';
 import type {
@@ -196,18 +202,21 @@ export async function inboxRoutes(
   });
 
   /**
-   * GET /banners/active
+   * GET /banners/active (Phase 2)
    *
    * Returns currently active banners for the user.
-   * Only messages within their active window are returned.
+   * Only messages with hitno + context tag within their active window are returned.
    *
    * Query params:
-   * - screen: 'home' | 'transport_road' | 'transport_sea' (required for filtering)
+   * - screen: 'home' | 'events' | 'transport' (required for filtering)
    *
-   * Banner placement rules (per spec):
-   * - Home: hitno, opcenito, vis/komiza (for matching locals)
-   * - Road Transport: cestovni_promet OR hitno ONLY
-   * - Sea Transport: pomorski_promet OR hitno ONLY
+   * Phase 2 Banner placement rules:
+   * - home: hitno + (promet | kultura | opcenito | vis | komiza)
+   * - events: hitno + kultura ONLY
+   * - transport: hitno + promet ONLY
+   *
+   * Cap: Max 3 banners per screen
+   * Order: active_from DESC, then created_at DESC
    */
   fastify.get<{
     Querystring: { screen?: string };
@@ -217,26 +226,27 @@ export async function inboxRoutes(
     const language = getLanguage(request);
     const screenParam = request.query.screen;
 
-    // Validate screen context
-    const validScreens: ScreenContext[] = ['home', 'transport_road', 'transport_sea'];
+    // Validate screen context (Phase 2: home, events, transport)
+    const validScreens: ScreenContext[] = ['home', 'events', 'transport'];
     const screenContext: ScreenContext | undefined = validScreens.includes(screenParam as ScreenContext)
       ? (screenParam as ScreenContext)
       : undefined;
 
-    console.info(`[Banners] GET /banners/active user=${userContext.deviceId} screen=${screenContext ?? 'all'}`);
+    console.info(`[Banners] GET /banners/active user=${userContext.deviceId} screen=${screenContext ?? 'none'}`);
 
     try {
       const potentialBanners = await getPotentialBannerMessages();
-      const now = new Date();
+      const now = getUtcNow();
 
-      // Filter by user eligibility and active window
+      // Filter by user eligibility, hitno tag, and active window
+      // Then sort by active_from DESC, created_at DESC
       let activeBanners = filterBannerEligibleMessages(
         potentialBanners,
         userContext,
         now
       );
 
-      // Apply screen context filtering if specified
+      // Apply screen context filtering and cap if specified
       if (screenContext) {
         activeBanners = filterBannersByScreen(activeBanners, screenContext);
       }

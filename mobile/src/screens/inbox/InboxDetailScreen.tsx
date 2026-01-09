@@ -24,6 +24,7 @@ import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUnread } from '../../contexts/UnreadContext';
+import { useUserContext } from '../../hooks/useUserContext';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
@@ -38,9 +39,7 @@ export function InboxDetailScreen(): React.JSX.Element {
   const [message, setMessage] = useState<InboxMessage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // TODO: Get from user context
-  const userContext = { userMode: 'visitor' as const, municipality: null };
+  const userContext = useUserContext();
 
   const fetchMessage = useCallback(async () => {
     setLoading(true);
@@ -56,7 +55,7 @@ export function InboxDetailScreen(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [messageId, markAsRead]);
+  }, [messageId, markAsRead, userContext]);
 
   useEffect(() => {
     void fetchMessage();

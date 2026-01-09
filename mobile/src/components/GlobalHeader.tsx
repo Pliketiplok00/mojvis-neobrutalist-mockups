@@ -3,18 +3,13 @@
  *
  * Implements MOJ VIS header rules (NON-NEGOTIABLE):
  *
- * Root screens:
- * - Left: Hamburger menu
+ * ALL SCREENS:
+ * - Left: Hamburger menu (ALWAYS - back navigation is via iOS swipe gesture only)
  * - Center: App name "MOJ VIS"
- * - Right: Inbox icon
+ * - Right: Inbox icon (hidden on inbox screens)
  *
- * Child/detail screens:
- * - Left: Back button
- * - Center: App name "MOJ VIS"
- * - Right: Inbox icon
- *
- * Inbox screens:
- * - Inbox icon is NOT shown
+ * IMPORTANT: No screen should ever show a back arrow.
+ * Back navigation relies on iOS swipe gesture.
  *
  * Title is ALWAYS "MOJ VIS" - never context-specific.
  */
@@ -22,25 +17,29 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useMenu } from '../contexts/MenuContext';
 
 // Placeholder icons - will be replaced with proper icons later
 const HamburgerIcon = () => <Text style={styles.iconText}>☰</Text>;
-const BackIcon = () => <Text style={styles.iconText}>←</Text>;
 const InboxIcon = () => <Text style={styles.iconText}>📥</Text>;
 
 export type HeaderType = 'root' | 'child' | 'inbox';
 
 interface GlobalHeaderProps {
   /**
-   * Type of screen determines header layout:
-   * - 'root': Hamburger menu on left
-   * - 'child': Back button on left
-   * - 'inbox': No inbox icon on right
+   * Type of screen determines inbox icon visibility:
+   * - 'root': Shows inbox icon
+   * - 'child': Shows inbox icon
+   * - 'inbox': Hides inbox icon (we're already on inbox)
+   *
+   * NOTE: Left side ALWAYS shows hamburger menu.
+   * Back navigation is via iOS swipe gesture only.
    */
   type: HeaderType;
 
   /**
-   * Callback when menu button is pressed (root screens)
+   * @deprecated No longer used - menu is opened via MenuContext
+   * Kept for backwards compatibility, will be removed in future.
    */
   onMenuPress?: () => void;
 
@@ -52,17 +51,14 @@ interface GlobalHeaderProps {
 
 export function GlobalHeader({
   type,
-  onMenuPress,
   unreadCount = 0,
 }: GlobalHeaderProps): React.JSX.Element {
   const navigation = useNavigation();
+  const { openMenu } = useMenu();
 
+  // ALWAYS open menu - no back button behavior
   const handleLeftPress = (): void => {
-    if (type === 'root' && onMenuPress) {
-      onMenuPress();
-    } else if (type === 'child' || type === 'inbox') {
-      navigation.goBack();
-    }
+    openMenu();
   };
 
   const handleInboxPress = (): void => {
@@ -75,13 +71,13 @@ export function GlobalHeader({
 
   return (
     <View style={styles.container}>
-      {/* Left: Menu or Back */}
+      {/* Left: ALWAYS Hamburger Menu (back navigation via iOS swipe) */}
       <TouchableOpacity
         style={styles.leftButton}
         onPress={handleLeftPress}
-        accessibilityLabel={type === 'root' ? 'Open menu' : 'Go back'}
+        accessibilityLabel="Open menu"
       >
-        {type === 'root' ? <HamburgerIcon /> : <BackIcon />}
+        <HamburgerIcon />
       </TouchableOpacity>
 
       {/* Center: Always "MOJ VIS" */}
