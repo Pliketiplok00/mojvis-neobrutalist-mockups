@@ -2,7 +2,7 @@
  * App Header V2
  * 
  * Alternative header with inverted colors and geometric accent.
- * More aggressive neobrutalist treatment.
+ * Uses original Mediterranean color palette.
  */
 
 import { Menu, Mail } from "lucide-react";
@@ -24,20 +24,20 @@ export function AppHeaderV2({
   const isInboxPage = location.pathname.includes("/v2/inbox");
 
   return (
-    <header className="sticky top-0 z-50 bg-[hsl(220,30%,8%)] border-b-[5px] border-[hsl(38,95%,50%)]">
+    <header className="sticky top-0 z-50 bg-[hsl(220,20%,10%)] border-b-[5px] border-[hsl(45,92%,55%)]">
       <div className="flex items-center justify-between h-16 px-4">
         {/* Menu Button */}
         <button
           onClick={onMenuClick}
-          className="w-12 h-12 bg-[hsl(38,95%,50%)] border-[4px] border-[hsl(40,25%,92%)] flex items-center justify-center transition-transform hover:rotate-3 hover:scale-105 active:scale-95"
+          className="w-12 h-12 bg-[hsl(45,92%,55%)] border-[4px] border-[hsl(45,30%,96%)] flex items-center justify-center transition-transform hover:rotate-3 hover:scale-105 active:scale-95"
           aria-label="Open menu"
         >
-          <Menu className="w-6 h-6 text-[hsl(220,30%,8%)]" strokeWidth={3} />
+          <Menu className="w-6 h-6 text-[hsl(220,20%,10%)]" strokeWidth={3} />
         </button>
 
         {/* Title */}
         <div className="flex-1 flex justify-center">
-          <h1 className="font-display text-2xl font-black uppercase tracking-tighter text-[hsl(40,25%,92%)]">
+          <h1 className="font-display text-2xl font-black uppercase tracking-tighter text-[hsl(45,30%,96%)]">
             {title}
           </h1>
         </div>
@@ -46,12 +46,12 @@ export function AppHeaderV2({
         {showInbox && !isInboxPage ? (
           <button
             onClick={() => navigate("/v2/inbox")}
-            className="w-12 h-12 bg-[hsl(220,85%,35%)] border-[4px] border-[hsl(40,25%,92%)] flex items-center justify-center transition-transform hover:-rotate-3 hover:scale-105 active:scale-95 relative"
+            className="w-12 h-12 bg-[hsl(210,80%,45%)] border-[4px] border-[hsl(45,30%,96%)] flex items-center justify-center transition-transform hover:-rotate-3 hover:scale-105 active:scale-95 relative"
             aria-label="Open inbox"
           >
-            <Mail className="w-6 h-6 text-[hsl(0,0%,100%)]" strokeWidth={2.5} />
+            <Mail className="w-6 h-6 text-white" strokeWidth={2.5} />
             {/* Notification dot */}
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[hsl(8,65%,42%)] border-2 border-[hsl(220,30%,8%)]" />
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[hsl(12,55%,50%)] border-2 border-[hsl(220,20%,10%)]" />
           </button>
         ) : (
           <div className="w-12" />
@@ -60,10 +60,10 @@ export function AppHeaderV2({
       
       {/* Geometric accent bar */}
       <div className="h-2 flex">
-        <div className="flex-1 bg-[hsl(220,85%,35%)]" />
-        <div className="flex-1 bg-[hsl(150,55%,28%)]" />
-        <div className="flex-1 bg-[hsl(38,95%,50%)]" />
-        <div className="flex-1 bg-[hsl(8,65%,42%)]" />
+        <div className="flex-1 bg-[hsl(210,80%,45%)]" />
+        <div className="flex-1 bg-[hsl(160,45%,38%)]" />
+        <div className="flex-1 bg-[hsl(45,92%,55%)]" />
+        <div className="flex-1 bg-[hsl(12,55%,50%)]" />
       </div>
     </header>
   );
