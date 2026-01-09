@@ -2,14 +2,21 @@
  * Inbox Types
  *
  * Types for inbox messages and banners in the mobile app.
+ *
+ * Phase 2 Banner Rules:
+ * - Banners require "hitno" + exactly one context tag
+ * - Screen context determines banner placement
  */
 
 /**
- * Tag types from fixed taxonomy
+ * Tag types from fixed taxonomy (Phase 2)
+ *
+ * DEPRECATED: cestovni_promet, pomorski_promet (normalized to 'promet' server-side)
  */
 export type InboxTag =
-  | 'cestovni_promet'
-  | 'pomorski_promet'
+  | 'cestovni_promet' // DEPRECATED
+  | 'pomorski_promet' // DEPRECATED
+  | 'promet' // unified transport (new)
   | 'kultura'
   | 'opcenito'
   | 'hitno'
@@ -59,11 +66,11 @@ export type UserMode = 'visitor' | 'local';
 export type Municipality = 'vis' | 'komiza' | null;
 
 /**
- * Screen context for banner filtering
+ * Screen context for banner filtering (Phase 2)
  *
- * Banner placement rules (per spec):
- * - home: hitno, opcenito, vis/komiza (for matching locals)
- * - transport_road: cestovni_promet OR hitno ONLY
- * - transport_sea: pomorski_promet OR hitno ONLY
+ * Banner placement rules:
+ * - home: hitno + opcenito, hitno + promet, hitno + vis/komiza
+ * - events: hitno + kultura
+ * - transport: hitno + promet (unified for all transport screens)
  */
-export type ScreenContext = 'home' | 'transport_road' | 'transport_sea';
+export type ScreenContext = 'home' | 'events' | 'transport';

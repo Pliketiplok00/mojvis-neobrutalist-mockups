@@ -263,6 +263,83 @@ describe('Inbox Routes', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(body.messages[0].title).toBe('English title');
     });
+
+    /**
+     * REGRESSION TEST: Tags must always be a JSON array, never a string.
+     *
+     * This test guards against the PostgreSQL enum array serialization bug
+     * where tags were returned as "{promet,hitno}" instead of ["promet","hitno"].
+     *
+     * Fix: SQL queries now use `tags::text[] AS tags` to ensure proper array format.
+     */
+    it('should return tags as a proper array, not a string (regression)', async () => {
+      mockedGetInboxMessages.mockResolvedValueOnce({
+        messages: [
+          {
+            id: 'tags-test',
+            title_hr: 'Test',
+            title_en: 'Test',
+            body_hr: 'Body',
+            body_en: 'Body',
+            tags: ['promet', 'hitno'],
+            active_from: null,
+            active_to: null,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: null,
+            deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
+          },
+          {
+            id: 'empty-tags-test',
+            title_hr: 'Empty Tags',
+            title_en: 'Empty Tags',
+            body_hr: 'Body',
+            body_en: 'Body',
+            tags: [],
+            active_from: null,
+            active_to: null,
+            created_at: new Date(),
+            updated_at: new Date(),
+            created_by: null,
+            deleted_at: null,
+            is_locked: false,
+            pushed_at: null,
+            pushed_by: null,
+          },
+        ],
+        total: 2,
+      });
+
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/inbox',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'visitor',
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body = response.json();
+
+      // Tags MUST be an array, never a string like "{promet,hitno}"
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(Array.isArray(body.messages[0].tags)).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(typeof body.messages[0].tags).not.toBe('string');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(body.messages[0].tags).toEqual(['promet', 'hitno']);
+
+      // Empty tags should be an empty array, not null or undefined
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(Array.isArray(body.messages[1].tags)).toBe(true);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(body.messages[1].tags).toEqual([]);
+    });
   });
 
   describe('GET /inbox/:id', () => {
@@ -360,7 +437,7 @@ describe('Inbox Routes', () => {
           title_en: 'Active Banner',
           body_hr: 'Body',
           body_en: 'Body',
-          tags: ['hitno'],
+          tags: ['hitno', 'opcenito'],  // Phase 2: hitno + context tag required
           active_from: yesterday,
           active_to: tomorrow,
           created_at: new Date(),

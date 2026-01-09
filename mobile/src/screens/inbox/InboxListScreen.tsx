@@ -10,6 +10,8 @@
  * - Messages are navigational list items
  * - Tapping opens message detail
  * - Unread state is local-only
+ *
+ * REFACTORED: Now uses UI primitives from src/ui/
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -25,13 +27,25 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUnread } from '../../contexts/UnreadContext';
+import { useUserContext } from '../../hooks/useUserContext';
 import { inboxApi, feedbackApi, clickFixApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { SentItemResponse } from '../../types/feedback';
 import type { ClickFixSentItemResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
+
+// UI Primitives
+import {
+  skin,
+  Header,
+  Button,
+  Badge,
+  ListRow,
+  H2,
+  Body,
+  Meta,
+} from '../../ui';
 
 // Combined sent item type
 interface CombinedSentItem {
@@ -49,12 +63,12 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 // Tab options
 type TabType = 'received' | 'sent';
 
-// Status colors
+// Status colors - maps to skin badge variants
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },
-  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },
-  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },
-  odbijeno: { bg: '#FFEBEE', text: '#C62828' },
+  zaprimljeno: { bg: skin.colors.infoBackground, text: skin.colors.infoText },
+  u_razmatranju: { bg: skin.colors.pendingBackground, text: skin.colors.pendingText },
+  prihvaceno: { bg: skin.colors.successBackground, text: skin.colors.successText },
+  odbijeno: { bg: skin.colors.errorBackground, text: skin.colors.errorText },
 };
 
 export function InboxListScreen(): React.JSX.Element {
@@ -69,9 +83,7 @@ export function InboxListScreen(): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sentError, setSentError] = useState<string | null>(null);
-
-  // TODO: Get from user context
-  const userContext = { userMode: 'visitor' as const, municipality: null };
+  const userContext = useUserContext();
 
   const fetchMessages = useCallback(async (showRefresh = false) => {
     if (showRefresh) {
@@ -87,12 +99,12 @@ export function InboxListScreen(): React.JSX.Element {
       registerMessages(response.messages.map((m) => m.id));
     } catch (err) {
       console.error('[Inbox] Error fetching messages:', err);
-      setError('Greška pri učitavanju poruka. Pokušajte ponovo.');
+      setError('Greska pri ucitavanju poruka. Pokusajte ponovo.');
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [registerMessages]);
+  }, [registerMessages, userContext]);
 
   const fetchSentItems = useCallback(async (showRefresh = false) => {
     if (showRefresh) {
@@ -133,7 +145,7 @@ export function InboxListScreen(): React.JSX.Element {
       setSentItems(combinedItems);
     } catch (err) {
       console.error('[Inbox] Error fetching sent items:', err);
-      setSentError('Greška pri učitavanju poslanih poruka.');
+      setSentError('Greska pri ucitavanju poslanih poruka.');
     } finally {
       setSentLoading(false);
       setRefreshing(false);
@@ -183,67 +195,57 @@ export function InboxListScreen(): React.JSX.Element {
     const unread = isUnread(item.id);
 
     return (
-      <TouchableOpacity
-        style={[styles.messageItem, unread && styles.messageItemUnread]}
+      <ListRow
         onPress={() => handleMessagePress(item)}
-        accessibilityLabel={`${item.title}${unread ? ', nepročitano' : ''}`}
-        accessibilityHint="Dodirnite za otvaranje poruke"
+        highlighted={unread}
+        rightAccessory={
+          <>
+            {unread && <View style={styles.unreadDot} />}
+            <Text style={styles.chevron}>{'>'}</Text>
+          </>
+        }
       >
-        <View style={styles.messageContent}>
-          {/* Urgent indicator */}
-          {item.is_urgent && (
-            <View style={styles.urgentBadge}>
-              <Text style={styles.urgentText}>HITNO</Text>
-            </View>
-          )}
+        {/* Urgent indicator */}
+        {item.is_urgent && (
+          <Badge variant="urgent" style={styles.badgeMargin}>HITNO</Badge>
+        )}
 
-          {/* Title */}
-          <Text
-            style={[styles.messageTitle, unread && styles.messageTitleUnread]}
-            numberOfLines={1}
-          >
-            {item.title}
-          </Text>
+        {/* Title */}
+        <Body
+          style={unread ? [styles.messageTitle, styles.messageTitleUnread] : styles.messageTitle}
+          numberOfLines={1}
+        >
+          {item.title}
+        </Body>
 
-          {/* Preview of body */}
-          <Text style={styles.messagePreview} numberOfLines={2}>
-            {item.body}
-          </Text>
+        {/* Preview of body */}
+        <Body color={skin.colors.textMuted} numberOfLines={2} style={styles.messagePreview}>
+          {item.body}
+        </Body>
 
-          {/* Date */}
-          <Text style={styles.messageDate}>
-            {formatDate(item.created_at)}
-          </Text>
-        </View>
-
-        {/* Unread indicator */}
-        {unread && <View style={styles.unreadDot} />}
-
-        {/* Navigation chevron */}
-        <Text style={styles.chevron}>›</Text>
-      </TouchableOpacity>
+        {/* Date */}
+        <Meta>{formatDate(item.created_at)}</Meta>
+      </ListRow>
     );
   };
 
   const renderEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyIcon}>📭</Text>
-      <Text style={styles.emptyTitle}>Nema poruka</Text>
-      <Text style={styles.emptySubtitle}>
+      <H2 style={styles.emptyTitle}>Nema poruka</H2>
+      <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
         {activeTab === 'received'
-          ? 'Vaš sandučić je prazan'
+          ? 'Vas sanducic je prazan'
           : 'Niste poslali nijednu poruku'}
-      </Text>
+      </Body>
     </View>
   );
 
   const renderErrorState = (): React.JSX.Element => (
     <View style={styles.errorState}>
       <Text style={styles.errorIcon}>⚠️</Text>
-      <Text style={styles.errorTitle}>{error}</Text>
-      <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
-        <Text style={styles.retryText}>Pokušaj ponovo</Text>
-      </TouchableOpacity>
+      <Body style={styles.errorTitle}>{error}</Body>
+      <Button onPress={handleRefresh}>Pokusaj ponovo</Button>
     </View>
   );
 
@@ -252,72 +254,57 @@ export function InboxListScreen(): React.JSX.Element {
     const isClickFix = item.type === 'click_fix';
 
     return (
-      <TouchableOpacity
-        style={styles.messageItem}
-        onPress={() => handleSentItemPress(item)}
-        accessibilityLabel={item.subject}
-        accessibilityHint="Dodirnite za otvaranje poruke"
-      >
-        <View style={styles.messageContent}>
-          {/* Type and Status badges */}
-          <View style={styles.badgeRow}>
-            {isClickFix && (
-              <View style={styles.typeBadge}>
-                <Text style={styles.typeBadgeText}>PRIJAVA</Text>
-              </View>
-            )}
-            <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
-              <Text style={[styles.statusText, { color: statusColor.text }]}>
-                {item.status_label}
-              </Text>
-            </View>
-          </View>
-
-          {/* Subject */}
-          <Text style={styles.messageTitle} numberOfLines={1}>
-            {item.subject}
-          </Text>
-
-          {/* Photo count for Click & Fix */}
-          {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
-            <Text style={styles.photoCount}>{item.photo_count} slika</Text>
+      <ListRow onPress={() => handleSentItemPress(item)}>
+        {/* Type and Status badges */}
+        <View style={styles.badgeRow}>
+          {isClickFix && (
+            <Badge variant="type" style={styles.badgeMargin}>PRIJAVA</Badge>
           )}
-
-          {/* Date */}
-          <Text style={styles.messageDate}>
-            {formatDate(item.created_at)}
-          </Text>
+          <Badge
+            backgroundColor={statusColor.bg}
+            textColor={statusColor.text}
+          >
+            {item.status_label}
+          </Badge>
         </View>
 
-        {/* Navigation chevron */}
-        <Text style={styles.chevron}>›</Text>
-      </TouchableOpacity>
+        {/* Subject */}
+        <Body style={styles.messageTitle} numberOfLines={1}>
+          {item.subject}
+        </Body>
+
+        {/* Photo count for Click & Fix */}
+        {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
+          <Meta style={styles.photoCount}>{item.photo_count} slika</Meta>
+        )}
+
+        {/* Date */}
+        <Meta>{formatDate(item.created_at)}</Meta>
+      </ListRow>
     );
   };
 
   const renderSentEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyIcon}>📤</Text>
-      <Text style={styles.emptyTitle}>Nema poslanih poruka</Text>
-      <Text style={styles.emptySubtitle}>
-        Pošaljite prvu poruku putem gumba ispod
-      </Text>
+      <H2 style={styles.emptyTitle}>Nema poslanih poruka</H2>
+      <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
+        Posaljite prvu poruku putem gumba ispod
+      </Body>
     </View>
   );
 
   const renderSentErrorState = (): React.JSX.Element => (
     <View style={styles.errorState}>
       <Text style={styles.errorIcon}>⚠️</Text>
-      <Text style={styles.errorTitle}>{sentError}</Text>
-      <TouchableOpacity style={styles.retryButton} onPress={handleRefresh}>
-        <Text style={styles.retryText}>Pokušaj ponovo</Text>
-      </TouchableOpacity>
+      <Body style={styles.errorTitle}>{sentError}</Body>
+      <Button onPress={handleRefresh}>Pokusaj ponovo</Button>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <GlobalHeader type="inbox" />
+      <Header type="inbox" />
 
       {/* Tabs */}
       <View style={styles.tabBar}>
@@ -353,8 +340,8 @@ export function InboxListScreen(): React.JSX.Element {
       {activeTab === 'received' ? (
         loading ? (
           <View style={styles.loadingState}>
-            <ActivityIndicator size="large" color="#000000" />
-            <Text style={styles.loadingText}>Učitavanje...</Text>
+            <ActivityIndicator size="large" color={skin.colors.textPrimary} />
+            <Meta style={styles.loadingText}>Ucitavanje...</Meta>
           </View>
         ) : error ? (
           renderErrorState()
@@ -374,8 +361,8 @@ export function InboxListScreen(): React.JSX.Element {
         <View style={styles.sentContainer}>
           {sentLoading ? (
             <View style={styles.loadingState}>
-              <ActivityIndicator size="large" color="#000000" />
-              <Text style={styles.loadingText}>Učitavanje...</Text>
+              <ActivityIndicator size="large" color={skin.colors.textPrimary} />
+              <Meta style={styles.loadingText}>Ucitavanje...</Meta>
             </View>
           ) : sentError ? (
             renderSentErrorState()
@@ -394,20 +381,12 @@ export function InboxListScreen(): React.JSX.Element {
 
           {/* New submission buttons */}
           <View style={styles.newFeedbackContainer}>
-            <TouchableOpacity
-              style={styles.newFeedbackButton}
-              onPress={handleNewFeedback}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.newFeedbackButtonText}>Nova poruka</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.newClickFixButton}
-              onPress={handleNewClickFix}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.newClickFixButtonText}>Prijavi problem</Text>
-            </TouchableOpacity>
+            <Button onPress={handleNewFeedback} style={styles.primaryButton}>
+              Nova poruka
+            </Button>
+            <Button variant="secondary" onPress={handleNewClickFix}>
+              Prijavi problem
+            </Button>
           </View>
         </View>
       )}
@@ -429,29 +408,29 @@ function formatDate(isoString: string): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   tabBar: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomWidth: skin.borders.widthThin,
+    borderBottomColor: skin.colors.border,
   },
   tab: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: skin.components.tab.paddingVertical,
     alignItems: 'center',
   },
   tabActive: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#000000',
+    borderBottomWidth: skin.components.tab.borderBottomWidth,
+    borderBottomColor: skin.components.tab.borderBottomColor,
   },
   tabText: {
-    fontSize: 16,
-    color: '#666666',
+    fontSize: skin.components.tab.fontSize,
+    color: skin.components.tab.inactiveColor,
   },
   tabTextActive: {
-    color: '#000000',
-    fontWeight: '600',
+    color: skin.components.tab.activeColor,
+    fontWeight: skin.components.tab.activeWeight,
   },
   loadingState: {
     flex: 1,
@@ -459,183 +438,85 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: skin.spacing.md,
   },
   errorState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   errorIcon: {
     fontSize: 48,
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   errorTitle: {
-    fontSize: 16,
-    color: '#333333',
     textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: '#000000',
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    marginBottom: skin.spacing.lg,
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   emptyIcon: {
     fontSize: 48,
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   emptySubtitle: {
-    fontSize: 14,
-    color: '#666666',
     textAlign: 'center',
   },
   listEmpty: {
     flexGrow: 1,
   },
-  messageItem: {
+  badgeRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    gap: 6,
+    marginBottom: skin.spacing.xs,
   },
-  messageItemUnread: {
-    backgroundColor: '#F8F9FA',
-  },
-  messageContent: {
-    flex: 1,
-  },
-  urgentBadge: {
-    backgroundColor: '#DC3545',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginBottom: 4,
-  },
-  urgentText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: 'bold',
+  badgeMargin: {
+    marginBottom: skin.spacing.xs,
   },
   messageTitle: {
-    fontSize: 16,
-    color: '#333333',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   messageTitleUnread: {
-    fontWeight: '600',
-    color: '#000000',
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
   },
   messagePreview: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 4,
-  },
-  messageDate: {
-    fontSize: 12,
-    color: '#999999',
+    marginBottom: skin.spacing.xs,
   },
   unreadDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#007AFF',
-    marginRight: 8,
+    backgroundColor: skin.colors.unreadIndicator,
+    marginRight: skin.spacing.sm,
   },
   chevron: {
-    fontSize: 24,
-    color: '#CCCCCC',
-    marginLeft: 8,
+    fontSize: skin.components.listRow.chevronSize,
+    color: skin.components.listRow.chevronColor,
+    marginLeft: skin.spacing.sm,
   },
   sentContainer: {
     flex: 1,
   },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginBottom: 4,
-  },
-  statusText: {
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
+  photoCount: {
+    marginBottom: 2,
   },
   newFeedbackContainer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    backgroundColor: '#FFFFFF',
+    padding: skin.spacing.lg,
+    borderTopWidth: skin.borders.widthThin,
+    borderTopColor: skin.colors.border,
+    backgroundColor: skin.colors.background,
   },
-  newFeedbackButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  newFeedbackButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  newClickFixButton: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  newClickFixButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    gap: 6,
-    marginBottom: 4,
-  },
-  typeBadge: {
-    backgroundColor: '#6B46C1',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  typeBadgeText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  photoCount: {
-    fontSize: 12,
-    color: '#666666',
-    marginBottom: 2,
+  primaryButton: {
+    marginBottom: skin.spacing.sm,
   },
 });
 

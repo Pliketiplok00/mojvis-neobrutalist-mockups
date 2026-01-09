@@ -36,7 +36,7 @@ import type {
   AdminInboxListResponse,
   InboxTag,
 } from '../types/inbox.js';
-import { validateTags, isUrgent } from '../types/inbox.js';
+import { validateTags, isUrgent, validateHitnoRules } from '../types/inbox.js';
 import { shouldTriggerPush } from '../types/push.js';
 import { getEligibleDevicesForPush, createPushLog } from '../repositories/push.js';
 import { PushService, type PushContent } from '../lib/push/index.js';
@@ -275,9 +275,18 @@ export async function adminInboxRoutes(
       }
     }
 
+    // Phase 3: Validate hitno rules
+    const activeFrom = body.active_from ? new Date(body.active_from) : null;
+    const activeTo = body.active_to ? new Date(body.active_to) : null;
+    const hitnoValidation = validateHitnoRules(tags, activeFrom, activeTo);
+    if (!hitnoValidation.valid) {
+      return reply.status(400).send({
+        error: hitnoValidation.error,
+        code: hitnoValidation.code,
+      });
+    }
+
     try {
-      const activeFrom = body.active_from ? new Date(body.active_from) : null;
-      const activeTo = body.active_to ? new Date(body.active_to) : null;
 
       const message = await createInboxMessage({
         title_hr: body.title_hr.trim(),
@@ -358,6 +367,30 @@ export async function adminInboxRoutes(
           });
         }
       }
+    }
+
+    // Phase 3: Validate hitno rules (need to check merged state)
+    // Fetch existing message to merge with updates for validation
+    const existingMessage = await getInboxMessageByIdAdmin(id);
+    if (!existingMessage) {
+      return reply.status(404).send({ error: 'Message not found' });
+    }
+
+    // Merge updates with existing values for validation
+    const mergedTags = body.tags !== undefined ? body.tags : existingMessage.tags;
+    const mergedActiveFrom = body.active_from !== undefined
+      ? (body.active_from ? new Date(body.active_from) : null)
+      : existingMessage.active_from;
+    const mergedActiveTo = body.active_to !== undefined
+      ? (body.active_to ? new Date(body.active_to) : null)
+      : existingMessage.active_to;
+
+    const hitnoValidation = validateHitnoRules(mergedTags, mergedActiveFrom, mergedActiveTo);
+    if (!hitnoValidation.valid) {
+      return reply.status(400).send({
+        error: hitnoValidation.error,
+        code: hitnoValidation.code,
+      });
     }
 
     try {

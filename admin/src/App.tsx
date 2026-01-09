@@ -23,6 +23,7 @@ import { FeedbackListPage } from './pages/feedback/FeedbackListPage';
 import { FeedbackDetailPage } from './pages/feedback/FeedbackDetailPage';
 import { ClickFixListPage } from './pages/click-fix/ClickFixListPage';
 import { ClickFixDetailPage } from './pages/click-fix/ClickFixDetailPage';
+import { MenuExtrasPage } from './pages/menu-extras/MenuExtrasPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="/click-fix" element={<ClickFixListPage />} />
         <Route path="/click-fix/:id" element={<ClickFixDetailPage />} />
         <Route path="/transport" element={<PlaceholderPage title="Promet" />} />
+        <Route path="/menu-extras" element={<MenuExtrasPage />} />
 
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />

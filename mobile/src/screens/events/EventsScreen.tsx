@@ -24,9 +24,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
-import { eventsApi } from '../../services/api';
+import { useUserContext } from '../../hooks/useUserContext';
+import { eventsApi, inboxApi } from '../../services/api';
 import type { Event } from '../../types/event';
+import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
@@ -197,12 +200,24 @@ export function EventsScreen(): React.JSX.Element {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [eventDates, setEventDates] = useState<Set<string>>(new Set());
+  const [banners, setBanners] = useState<InboxMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const userContext = useUserContext();
 
   const handleMenuPress = (): void => {
     openMenu();
   };
+
+  // Fetch banners for events (Phase 2: hitno + kultura)
+  const fetchBanners = useCallback(async () => {
+    try {
+      const response = await inboxApi.getActiveBanners(userContext, 'events');
+      setBanners(response.banners);
+    } catch (err) {
+      console.error('[Events] Error fetching banners:', err);
+    }
+  }, [userContext]);
 
   // Fetch event dates for calendar
   const fetchEventDates = useCallback(async (year: number, month: number) => {
@@ -235,7 +250,8 @@ export function EventsScreen(): React.JSX.Element {
     const now = new Date();
     void fetchEventDates(now.getFullYear(), now.getMonth() + 1);
     void fetchEvents(now);
-  }, [fetchEventDates, fetchEvents]);
+    void fetchBanners();
+  }, [fetchEventDates, fetchEvents, fetchBanners]);
 
   // Handle date selection
   const handleSelectDate = (date: Date) => {
@@ -255,6 +271,13 @@ export function EventsScreen(): React.JSX.Element {
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView}>
+        {/* Banners */}
+        {banners.length > 0 && (
+          <View style={styles.bannerSection}>
+            <BannerList banners={banners} />
+          </View>
+        )}
+
         {/* Section title */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Dogadaji</Text>
@@ -311,6 +334,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  bannerSection: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   section: {
     padding: 16,

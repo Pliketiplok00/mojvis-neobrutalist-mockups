@@ -14,11 +14,8 @@ import {
   getPublishedPages,
   getPublishedPageBySlug,
 } from '../repositories/static-page.js';
-import { getPotentialBannerMessages } from '../repositories/inbox.js';
-import {
-  filterBannerEligibleMessages,
-  filterBannersByScreen,
-} from '../lib/eligibility.js';
+// NOTE: InboxMessage injection removed from static pages (2026-01-09)
+// InboxMessage placement restricted to: Home, Events, Transport screens only
 import type {
   StaticPagePublicResponse,
   StaticPageListResponse,
@@ -219,49 +216,15 @@ export async function staticPageRoutes(fastify: FastifyInstance): Promise<void> 
         }
 
         // Localize blocks
+        // NOTE: Static pages do NOT show InboxMessages (per product owner confirmation 2026-01-09)
+        // InboxMessage placement is restricted to: Home, Events, Transport screens only
         const localizedBlocks = page.published_blocks
-          .filter((b) => b.type !== 'notice') // Filter out notice blocks (will be injected)
+          .filter((b) => b.type !== 'notice') // Filter out notice blocks (not used on static pages)
           .map((block) => ({
             id: block.id,
             type: block.type,
             content: localizeBlockContent(block, lang),
           }));
-
-        // Inject notice block if there are active notices
-        // Get device context from headers
-        const deviceId = request.headers['x-device-id'] as string | undefined;
-        const userMode = (request.headers['x-user-mode'] as string) || 'visitor';
-        const municipality = request.headers['x-municipality'] as string | undefined;
-
-        if (deviceId) {
-          const userContext = {
-            deviceId,
-            userMode: userMode as 'visitor' | 'local',
-            municipality: municipality as 'vis' | 'komiza' | null,
-          };
-
-          // Get potential banner messages and filter for eligibility
-          const potentialBanners = await getPotentialBannerMessages();
-          const now = new Date();
-          const eligibleBanners = filterBannerEligibleMessages(potentialBanners, userContext, now);
-          // Use 'home' screen context for static pages (general notices)
-          const activeNotices = filterBannersByScreen(eligibleBanners, 'home');
-
-          if (activeNotices.length > 0) {
-            // Add notice block at the beginning
-            localizedBlocks.unshift({
-              id: 'system-notice',
-              type: 'notice',
-              content: {
-                notices: activeNotices.map((notice) => ({
-                  id: notice.id,
-                  title: lang === 'en' ? notice.title_en || '' : notice.title_hr,
-                  is_urgent: notice.tags.includes('hitno'),
-                })),
-              },
-            });
-          }
-        }
 
         const response: StaticPagePublicResponse = {
           id: page.id,

@@ -35,6 +35,12 @@ import type {
   ClickFixStatus,
   ReplyInput as ClickFixReplyInput,
 } from '../types/click-fix';
+import type {
+  MenuExtra,
+  MenuExtraCreateInput,
+  MenuExtraUpdateInput,
+  MenuExtrasListResponse,
+} from '../types/menu-extras';
 
 // TODO: Move to environment config
 const API_BASE_URL = import.meta.env.DEV
@@ -502,6 +508,47 @@ export const adminClickFixApi = {
       method: 'POST',
       headers,
       body: JSON.stringify(input),
+    });
+  },
+};
+
+/**
+ * Admin Menu Extras API
+ */
+export const adminMenuExtrasApi = {
+  /**
+   * Get all menu extras
+   */
+  async getExtras(): Promise<MenuExtrasListResponse> {
+    return apiRequest<MenuExtrasListResponse>('/admin/menu/extras');
+  },
+
+  /**
+   * Create a new menu extra
+   */
+  async createExtra(input: MenuExtraCreateInput): Promise<MenuExtra> {
+    return apiRequest<MenuExtra>('/admin/menu/extras', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
+  },
+
+  /**
+   * Update an existing menu extra
+   */
+  async updateExtra(id: string, input: MenuExtraUpdateInput): Promise<MenuExtra> {
+    return apiRequest<MenuExtra>(`/admin/menu/extras/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    });
+  },
+
+  /**
+   * Delete a menu extra
+   */
+  async deleteExtra(id: string): Promise<void> {
+    await apiRequest(`/admin/menu/extras/${id}`, {
+      method: 'DELETE',
     });
   },
 };

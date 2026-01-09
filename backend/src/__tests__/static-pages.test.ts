@@ -904,3 +904,38 @@ describe('Admin Static Pages Routes', () => {
     });
   });
 });
+
+// ============================================================
+// Regression Test: InboxMessage Placement
+// ============================================================
+
+describe('InboxMessage Placement (REGRESSION)', () => {
+  /**
+   * REGRESSION TEST: Static pages must NOT include InboxMessage data
+   *
+   * Per product owner confirmation (2026-01-09):
+   * - InboxMessage is allowed ONLY on: Home, Events, Transport screens
+   * - InboxMessage is FORBIDDEN on: All static pages (Flora, Fauna, Contacts, etc.)
+   *
+   * The backend must NOT inject notice blocks into static page responses.
+   */
+  it('static pages route should NOT inject InboxMessage (notice blocks)', async () => {
+    // Read the static-pages.ts route file
+    const fs = await import('fs');
+    const path = await import('path');
+    const routeFile = fs.readFileSync(
+      path.join(__dirname, '../routes/static-pages.ts'),
+      'utf-8'
+    );
+
+    // Verify notice injection code is NOT present
+    expect(routeFile).not.toMatch(/getPotentialBannerMessages/);
+    expect(routeFile).not.toMatch(/filterBannerEligibleMessages/);
+    expect(routeFile).not.toMatch(/filterBannersByScreen/);
+    expect(routeFile).not.toMatch(/activeNotices\s*=/);
+    expect(routeFile).not.toMatch(/type:\s*['"]notice['"]/);
+
+    // Verify the comment explaining why (for documentation)
+    expect(routeFile).toMatch(/InboxMessage placement.*restricted/i);
+  });
+});

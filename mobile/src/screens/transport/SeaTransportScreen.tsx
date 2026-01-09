@@ -29,6 +29,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { useUserContext } from '../../hooks/useUserContext';
 import { inboxApi, transportApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
@@ -57,15 +58,13 @@ export function SeaTransportScreen(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // TODO: Get from user context
-  const userContext = { userMode: 'visitor' as const, municipality: null };
+  const userContext = useUserContext();
 
   const fetchData = useCallback(async () => {
     setError(null);
     try {
       const [bannersRes, linesRes, todayRes] = await Promise.all([
-        inboxApi.getActiveBanners(userContext, 'transport_sea'),
+        inboxApi.getActiveBanners(userContext, 'transport'),
         transportApi.getLines('sea'),
         transportApi.getTodaysDepartures('sea'),
       ]);
@@ -82,7 +81,7 @@ export function SeaTransportScreen(): React.JSX.Element {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [userContext]);
 
   useEffect(() => {
     void fetchData();

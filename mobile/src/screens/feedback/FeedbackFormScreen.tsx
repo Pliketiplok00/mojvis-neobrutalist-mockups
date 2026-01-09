@@ -27,6 +27,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useUserContext } from '../../hooks/useUserContext';
 import { feedbackApi } from '../../services/api';
 import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
@@ -40,9 +41,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ subject?: string; body?: string }>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  // TODO: Get from user context
-  const userContext = { userMode: 'visitor' as const, municipality: null };
+  const userContext = useUserContext();
 
   const handleSubmit = useCallback(async () => {
     // Validate

@@ -48,6 +48,9 @@ import type {
   PushOptInResponse,
   PushStatusResponse,
 } from '../types/push';
+import type {
+  MenuExtrasResponse,
+} from '../types/menu-extras';
 
 // TODO: Move to config/environment
 const API_BASE_URL = __DEV__
@@ -158,12 +161,15 @@ export const inboxApi = {
   },
 
   /**
-   * Get active banners for a specific screen context
+   * Get active banners for a specific screen context (Phase 2)
    *
-   * Banner placement rules (per spec):
-   * - Home: hitno, opcenito, vis/komiza (for matching locals)
-   * - Road Transport: cestovni_promet OR hitno ONLY
-   * - Sea Transport: pomorski_promet OR hitno ONLY
+   * Banner placement rules:
+   * - home: hitno + (promet | kultura | opcenito | vis | komiza)
+   * - events: hitno + kultura ONLY
+   * - transport: hitno + promet ONLY
+   *
+   * Cap: Max 3 banners per screen
+   * Order: active_from DESC, then created_at DESC
    */
   async getActiveBanners(
     context: UserContext,
@@ -748,6 +754,34 @@ export const pushApi = {
     }
 
     return response.json() as Promise<PushStatusResponse>;
+  },
+};
+
+/**
+ * Menu Extras API
+ *
+ * Server-driven menu items appended after core menu items.
+ * Extras link ONLY to static pages via StaticPage:<slug>.
+ */
+export const menuExtrasApi = {
+  /**
+   * Get enabled menu extras
+   * Returns extras ordered by display_order ASC, created_at ASC
+   */
+  async getExtras(): Promise<MenuExtrasResponse> {
+    const url = `${API_BASE_URL}/menu/extras`;
+
+    const response = await fetch(url, {
+      headers: {
+        'Accept-Language': getLanguage(),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json() as Promise<MenuExtrasResponse>;
   },
 };
 

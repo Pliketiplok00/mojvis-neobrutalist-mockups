@@ -72,7 +72,18 @@ function AppContent(): React.JSX.Element {
   }, [lastNotificationData, isComplete, clearLastNotification]);
 
   const handleNavigate = useCallback((route: string) => {
-    navigate(route as keyof MainStackParamList);
+    // Handle StaticPage routes with slug (format: "StaticPage:slug")
+    if (route.startsWith('StaticPage:')) {
+      const slug = route.substring('StaticPage:'.length);
+      navigationRef.current?.dispatch(
+        CommonActions.navigate({
+          name: 'StaticPage',
+          params: { slug },
+        })
+      );
+    } else {
+      navigate(route as keyof MainStackParamList);
+    }
   }, []);
 
   return (

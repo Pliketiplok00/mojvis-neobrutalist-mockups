@@ -32,6 +32,8 @@ import { adminFeedbackRoutes } from './routes/admin-feedback.js';
 import { clickFixRoutes } from './routes/click-fix.js';
 import { adminClickFixRoutes } from './routes/admin-click-fix.js';
 import { deviceRoutes } from './routes/device.js';
+import { menuExtrasRoutes } from './routes/menu-extras.js';
+import { adminMenuExtrasRoutes } from './routes/admin-menu-extras.js';
 
 // Create Fastify instance with logging
 const fastify: FastifyInstance = Fastify({
@@ -108,6 +110,12 @@ async function registerPlugins(): Promise<void> {
 
   // Device routes (Phase 7) - push token registration
   await fastify.register(deviceRoutes);
+
+  // Menu extras routes (Server-driven menu)
+  await fastify.register(menuExtrasRoutes);
+
+  // Admin menu extras routes
+  await fastify.register(adminMenuExtrasRoutes);
 }
 
 /**
@@ -180,6 +188,8 @@ async function start(): Promise<void> {
     console.info(`[Server] Click & Fix: http://${env.HOST}:${env.PORT}/click-fix`);
     console.info(`[Server] Admin Click & Fix: http://${env.HOST}:${env.PORT}/admin/click-fix`);
     console.info(`[Server] Device (Push): http://${env.HOST}:${env.PORT}/device/push-token`);
+    console.info(`[Server] Menu Extras: http://${env.HOST}:${env.PORT}/menu/extras`);
+    console.info(`[Server] Admin Menu Extras: http://${env.HOST}:${env.PORT}/admin/menu/extras`);
     console.info('='.repeat(50));
   } catch (error) {
     console.error('[Server] Failed to start:', error);

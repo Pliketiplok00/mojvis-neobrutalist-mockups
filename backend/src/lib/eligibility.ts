@@ -1,15 +1,27 @@
 /**
- * Eligibility Logic
+ * Eligibility Logic (Phase 2)
  *
  * Server-side logic for determining which Inbox messages
- * are visible to which users.
+ * are visible to which users and eligible for banners.
  *
- * Rules (per spec):
- * - Municipal messages (vis/komiza tags) only visible to matching users
- * - Visitors see general content only (no municipal)
- * - Locals see content for their municipality
- * - Active window determines banner eligibility
- * - hitno (emergency) messages are always eligible for banners
+ * BANNER RULES (Phase 2):
+ * - ONLY messages with "hitno" tag can be banners
+ * - "hitno" must be paired with exactly one context tag
+ * - "hitno" alone is INVALID
+ * - active_from AND active_to are BOTH REQUIRED for hitno messages
+ * - Banner visible when: active_from <= now <= active_to (inclusive)
+ * - Time comparisons use UTC
+ *
+ * BANNER PLACEMENT BY CONTEXT TAG:
+ * - hitno + kultura → home, events
+ * - hitno + promet → home, transport
+ * - hitno + opcenito → home only
+ * - hitno + vis → home only (with municipality check)
+ * - hitno + komiza → home only (with municipality check)
+ *
+ * CAP & ORDERING:
+ * - Max 3 banners per screen
+ * - Order: active_from DESC, then created_at DESC
  */
 
 import type {
@@ -17,10 +29,34 @@ import type {
   UserContext,
   InboxTag,
 } from '../types/inbox.js';
-import { isMunicipal, getMunicipalityFromTags, isUrgent } from '../types/inbox.js';
+import {
+  isMunicipal,
+  getMunicipalityFromTags,
+  normalizeTags,
+  BANNER_CONTEXT_TAGS,
+} from '../types/inbox.js';
+
+/**
+ * Screen context for banner filtering (Phase 2)
+ */
+export type ScreenContext = 'home' | 'events' | 'transport';
+
+/**
+ * Maximum banners per screen
+ */
+export const BANNER_CAP = 3;
+
+/**
+ * Get current time in UTC
+ * This ensures consistent time handling regardless of server timezone
+ */
+export function getUtcNow(): Date {
+  return new Date();
+}
 
 /**
  * Check if a message is eligible for a given user context
+ * (for general inbox viewing, not banners)
  *
  * @param message - The inbox message to check
  * @param context - User context (mode, municipality)
@@ -30,7 +66,8 @@ export function isMessageEligible(
   message: InboxMessage,
   context: UserContext
 ): boolean {
-  const tags = message.tags;
+  // Normalize tags for comparison (handles deprecated transport tags)
+  const tags = normalizeTags(message.tags);
 
   // Municipal messages require matching municipality
   if (isMunicipal(tags)) {
@@ -53,26 +90,101 @@ export function isMessageEligible(
 }
 
 /**
- * Check if a message is eligible to appear as a banner right now
+ * Validate banner tag combination (Phase 2)
+ *
+ * Rules:
+ * - Must have "hitno" tag
+ * - Must have exactly one context tag (promet, kultura, opcenito, vis, komiza)
+ * - "hitno" alone is INVALID
+ *
+ * @param tags - Normalized tags array
+ * @returns true if valid banner tag combination
+ */
+export function isValidBannerTagCombination(tags: InboxTag[]): boolean {
+  // Must have hitno
+  if (!tags.includes('hitno')) {
+    return false;
+  }
+
+  // Must have exactly one context tag
+  const contextTags = tags.filter(tag => BANNER_CONTEXT_TAGS.includes(tag));
+  if (contextTags.length !== 1) {
+    return false;
+  }
+
+  // Must have exactly 2 tags total (hitno + context)
+  if (tags.length !== 2) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Check if message has valid active window for banners (Phase 2)
+ *
+ * Rules:
+ * - BOTH active_from AND active_to must be set
+ * - Banner visible when: active_from <= now <= active_to (inclusive)
+ *
+ * @param message - The inbox message to check
+ * @param now - Current UTC timestamp
+ * @returns true if within valid active window
+ */
+export function isWithinActiveWindow(
+  message: InboxMessage,
+  now: Date = getUtcNow()
+): boolean {
+  const { active_from, active_to } = message;
+
+  // Phase 2: BOTH boundaries required for hitno/banner messages
+  if (active_from === null || active_to === null) {
+    return false;
+  }
+
+  // Inclusive boundaries: active_from <= now <= active_to
+  const nowMs = now.getTime();
+  const fromMs = active_from.getTime();
+  const toMs = active_to.getTime();
+
+  return nowMs >= fromMs && nowMs <= toMs;
+}
+
+/**
+ * Check if a message is eligible to appear as a banner (Phase 2)
+ *
+ * Requirements:
+ * 1. Valid banner tag combination (hitno + context tag)
+ * 2. Within active window (both boundaries required)
+ * 3. User eligibility (municipal filtering)
  *
  * @param message - The inbox message to check
  * @param context - User context (mode, municipality)
- * @param now - Current timestamp (for testing)
+ * @param now - Current UTC timestamp
  * @returns true if the message should appear as a banner
  */
 export function isBannerEligible(
   message: InboxMessage,
   context: UserContext,
-  now: Date = new Date()
+  now: Date = getUtcNow()
 ): boolean {
-  // First check basic eligibility
-  if (!isMessageEligible(message, context)) {
+  // Normalize tags (handles deprecated transport tags)
+  const normalizedTags = normalizeTags(message.tags);
+
+  // Must have valid banner tag combination
+  if (!isValidBannerTagCombination(normalizedTags)) {
+    logEligibilityDecision(message.id, context, false, 'invalid banner tag combination');
     return false;
   }
 
-  // Check active window
+  // Must be within active window
   if (!isWithinActiveWindow(message, now)) {
     logEligibilityDecision(message.id, context, false, 'outside active window');
+    return false;
+  }
+
+  // Check user eligibility (municipal filtering)
+  if (!isMessageEligible(message, context)) {
     return false;
   }
 
@@ -81,35 +193,62 @@ export function isBannerEligible(
 }
 
 /**
- * Check if message is within its active window
+ * Get the context tag from a banner message (Phase 2)
+ *
+ * @param message - The inbox message
+ * @returns The context tag or null if not a valid banner
+ */
+export function getBannerContextTag(message: InboxMessage): InboxTag | null {
+  const normalizedTags = normalizeTags(message.tags);
+
+  if (!normalizedTags.includes('hitno')) {
+    return null;
+  }
+
+  const contextTag = normalizedTags.find(tag => BANNER_CONTEXT_TAGS.includes(tag));
+  return contextTag ?? null;
+}
+
+/**
+ * Check if a banner should appear on a specific screen (Phase 2)
+ *
+ * Placement rules:
+ * - hitno + kultura → home, events
+ * - hitno + promet → home, transport
+ * - hitno + opcenito → home only
+ * - hitno + vis → home only
+ * - hitno + komiza → home only
  *
  * @param message - The inbox message to check
- * @param now - Current timestamp
- * @returns true if within active window (or no window defined)
+ * @param screenContext - The screen where banner would appear
+ * @returns true if banner should appear on this screen
  */
-export function isWithinActiveWindow(
+export function isBannerForScreen(
   message: InboxMessage,
-  now: Date = new Date()
+  screenContext: ScreenContext
 ): boolean {
-  const { active_from, active_to } = message;
+  const contextTag = getBannerContextTag(message);
 
-  // No active window means no banner eligibility
-  // Per spec: "No active window → no banner"
-  if (active_from === null && active_to === null) {
+  if (!contextTag) {
     return false;
   }
 
-  // Check from boundary
-  if (active_from !== null && now < active_from) {
-    return false;
-  }
+  switch (screenContext) {
+    case 'home':
+      // Home shows ALL banner types
+      return ['promet', 'kultura', 'opcenito', 'vis', 'komiza'].includes(contextTag);
 
-  // Check to boundary
-  if (active_to !== null && now > active_to) {
-    return false;
-  }
+    case 'events':
+      // Events shows ONLY kultura
+      return contextTag === 'kultura';
 
-  return true;
+    case 'transport':
+      // Transport shows ONLY promet
+      return contextTag === 'promet';
+
+    default:
+      return false;
+  }
 }
 
 /**
@@ -127,119 +266,88 @@ export function filterEligibleMessages(
 }
 
 /**
- * Filter messages eligible for banner display
+ * Filter and sort banner-eligible messages (Phase 2)
+ *
+ * Applies:
+ * - Banner eligibility check
+ * - Ordering: active_from DESC, then created_at DESC
+ * - NO cap applied here (cap applied per-screen)
  *
  * @param messages - Array of inbox messages
  * @param context - User context
- * @param now - Current timestamp
- * @returns Filtered array of banner-eligible messages
+ * @param now - Current UTC timestamp
+ * @returns Filtered and sorted array of banner-eligible messages
  */
 export function filterBannerEligibleMessages(
   messages: InboxMessage[],
   context: UserContext,
-  now: Date = new Date()
+  now: Date = getUtcNow()
 ): InboxMessage[] {
-  return messages.filter((message) => isBannerEligible(message, context, now));
+  const eligible = messages.filter((message) => isBannerEligible(message, context, now));
+
+  // Sort by active_from DESC, then created_at DESC
+  eligible.sort((a, b) => {
+    // active_from DESC (newer urgency first)
+    const aFrom = a.active_from?.getTime() ?? 0;
+    const bFrom = b.active_from?.getTime() ?? 0;
+    if (bFrom !== aFrom) {
+      return bFrom - aFrom;
+    }
+
+    // created_at DESC (fallback)
+    const aCreated = a.created_at.getTime();
+    const bCreated = b.created_at.getTime();
+    return bCreated - aCreated;
+  });
+
+  return eligible;
 }
 
 /**
- * Screen context for banner filtering
- */
-export type ScreenContext = 'home' | 'transport_road' | 'transport_sea';
-
-/**
- * Check if a message should appear as a banner on a specific screen
+ * Filter banner-eligible messages by screen context (Phase 2)
  *
- * Banner placement rules (per spec):
- * - Home: hitno, opcenito, vis/komiza (for matching locals)
- * - Road Transport: cestovni_promet OR hitno ONLY
- * - Sea Transport: pomorski_promet OR hitno ONLY
+ * Applies:
+ * - Screen-specific filtering
+ * - Cap of 3 banners per screen
  *
- * @param message - The inbox message to check
- * @param screenContext - The screen where banner would appear
- * @returns true if message should appear as banner on this screen
- */
-export function isBannerForScreen(
-  message: InboxMessage,
-  screenContext: ScreenContext
-): boolean {
-  const tags = message.tags;
-
-  switch (screenContext) {
-    case 'home':
-      // Home shows: hitno, opcenito, vis, komiza
-      // kultura is NOT shown on home per spec
-      return isUrgent(tags) ||
-        tags.includes('opcenito') ||
-        tags.includes('vis') ||
-        tags.includes('komiza');
-
-    case 'transport_road':
-      // Road transport shows ONLY: cestovni_promet OR hitno
-      return tags.includes('cestovni_promet') || isUrgent(tags);
-
-    case 'transport_sea':
-      // Sea transport shows ONLY: pomorski_promet OR hitno
-      return tags.includes('pomorski_promet') || isUrgent(tags);
-
-    default:
-      return false;
-  }
-}
-
-/**
- * Filter banner-eligible messages by screen context
- *
- * @param messages - Array of already banner-eligible messages
+ * @param messages - Array of already banner-eligible messages (sorted)
  * @param screenContext - The screen where banners would appear
- * @returns Filtered array for the specific screen
+ * @returns Filtered and capped array for the specific screen
  */
 export function filterBannersByScreen(
   messages: InboxMessage[],
   screenContext: ScreenContext
 ): InboxMessage[] {
-  return messages.filter((message) => isBannerForScreen(message, screenContext));
+  const filtered = messages.filter((message) => isBannerForScreen(message, screenContext));
+
+  // Apply cap
+  return filtered.slice(0, BANNER_CAP);
 }
 
 /**
- * Get the banner context (where banners should appear)
- * Based on message tags
+ * Get banners for a specific screen (Phase 2 convenience function)
  *
- * @deprecated Use isBannerForScreen instead
+ * Combines all filtering, sorting, and capping in one call.
+ *
+ * @param messages - Array of inbox messages
+ * @param context - User context
+ * @param screenContext - The screen where banners would appear
+ * @param now - Current UTC timestamp
+ * @returns Final array of banners for the screen (max 3, sorted)
  */
-export function getBannerContext(tags: InboxTag[]): string[] {
-  const contexts: string[] = [];
-
-  // Emergency messages appear everywhere
-  if (isUrgent(tags)) {
-    contexts.push('home', 'transport_road', 'transport_sea');
-  }
-
-  // Transport-specific
-  if (tags.includes('cestovni_promet')) {
-    contexts.push('transport_road');
-  }
-  if (tags.includes('pomorski_promet')) {
-    contexts.push('transport_sea');
-  }
-
-  // General/cultural appear on home
-  if (tags.includes('opcenito') || tags.includes('kultura')) {
-    contexts.push('home');
-  }
-
-  // Municipal appear on home for matching users
-  if (tags.includes('vis') || tags.includes('komiza')) {
-    contexts.push('home');
-  }
-
-  // Deduplicate
-  return [...new Set(contexts)];
+export function getBannersForScreen(
+  messages: InboxMessage[],
+  context: UserContext,
+  screenContext: ScreenContext,
+  now: Date = getUtcNow()
+): InboxMessage[] {
+  const eligible = filterBannerEligibleMessages(messages, context, now);
+  return filterBannersByScreen(eligible, screenContext);
 }
 
 /**
  * Log eligibility decision for debugging
- * Only logs at debug level
+ * Only logs in development
  */
 function logEligibilityDecision(
   messageId: string,
