@@ -5,10 +5,12 @@
  */
 
 import { neobrutalistMediterranean, type Theme } from './neobrutalist-mediterranean';
+import { neobrutalistBold } from './neobrutalist-bold';
 
 // Registry of all available themes
 export const themes: Record<string, Theme> = {
   'neobrutalist-mediterranean': neobrutalistMediterranean,
+  'neobrutalist-bold': neobrutalistBold as unknown as Theme,
 };
 
 // Default theme
