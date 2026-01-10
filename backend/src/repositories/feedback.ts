@@ -332,8 +332,9 @@ export async function getFeedbackListAdmin(
     params.push(adminMunicipality);
   }
 
-  // Get total count
-  const countSql = `SELECT COUNT(*) as count FROM feedback ${whereClause}`;
+  // Get total count (uses $1 for municipality since it's a separate query)
+  const countWhereClause = adminMunicipality ? `WHERE (municipality = $1 OR municipality IS NULL)` : '';
+  const countSql = `SELECT COUNT(*) as count FROM feedback ${countWhereClause}`;
   const countResult = await query<{ count: string }>(
     countSql,
     adminMunicipality ? [adminMunicipality] : []
