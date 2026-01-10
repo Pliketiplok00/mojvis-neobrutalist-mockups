@@ -1,16 +1,18 @@
 /**
  * MOJ VIS Admin App
  *
- * Root component with routing.
+ * Root component with routing and authentication.
  *
  * Phase 1: Added Inbox CRUD routes.
  * Phase 2: Added Events CRUD routes.
  * Phase 3: Added Static Pages CMS routes.
  * Phase 5: Added Feedback routes.
  * Phase 6: Added Click & Fix routes.
+ * Phase 2.5: Added cookie-session authentication.
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, AuthGuard } from './services/AuthContext';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { InboxListPage } from './pages/inbox/InboxListPage';
@@ -28,32 +30,34 @@ import { MenuExtrasPage } from './pages/menu-extras/MenuExtrasPage';
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/login" element={<LoginPage />} />
+      <AuthProvider>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<LoginPage />} />
 
-        {/* Protected routes (TODO: Add auth guard) */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/messages" element={<InboxListPage />} />
-        <Route path="/messages/new" element={<InboxEditPage />} />
-        <Route path="/messages/:id" element={<InboxEditPage />} />
-        <Route path="/events" element={<EventsListPage />} />
-        <Route path="/events/new" element={<EventEditPage />} />
-        <Route path="/events/:id" element={<EventEditPage />} />
-        <Route path="/pages" element={<PagesListPage />} />
-        <Route path="/pages/new" element={<PageEditPage />} />
-        <Route path="/pages/:id" element={<PageEditPage />} />
-        <Route path="/feedback" element={<FeedbackListPage />} />
-        <Route path="/feedback/:id" element={<FeedbackDetailPage />} />
-        <Route path="/click-fix" element={<ClickFixListPage />} />
-        <Route path="/click-fix/:id" element={<ClickFixDetailPage />} />
-        <Route path="/transport" element={<PlaceholderPage title="Promet" />} />
-        <Route path="/menu-extras" element={<MenuExtrasPage />} />
+          {/* Protected routes - wrapped with AuthGuard */}
+          <Route path="/dashboard" element={<AuthGuard><DashboardPage /></AuthGuard>} />
+          <Route path="/messages" element={<AuthGuard><InboxListPage /></AuthGuard>} />
+          <Route path="/messages/new" element={<AuthGuard><InboxEditPage /></AuthGuard>} />
+          <Route path="/messages/:id" element={<AuthGuard><InboxEditPage /></AuthGuard>} />
+          <Route path="/events" element={<AuthGuard><EventsListPage /></AuthGuard>} />
+          <Route path="/events/new" element={<AuthGuard><EventEditPage /></AuthGuard>} />
+          <Route path="/events/:id" element={<AuthGuard><EventEditPage /></AuthGuard>} />
+          <Route path="/pages" element={<AuthGuard><PagesListPage /></AuthGuard>} />
+          <Route path="/pages/new" element={<AuthGuard><PageEditPage /></AuthGuard>} />
+          <Route path="/pages/:id" element={<AuthGuard><PageEditPage /></AuthGuard>} />
+          <Route path="/feedback" element={<AuthGuard><FeedbackListPage /></AuthGuard>} />
+          <Route path="/feedback/:id" element={<AuthGuard><FeedbackDetailPage /></AuthGuard>} />
+          <Route path="/click-fix" element={<AuthGuard><ClickFixListPage /></AuthGuard>} />
+          <Route path="/click-fix/:id" element={<AuthGuard><ClickFixDetailPage /></AuthGuard>} />
+          <Route path="/transport" element={<AuthGuard><PlaceholderPage title="Promet" /></AuthGuard>} />
+          <Route path="/menu-extras" element={<AuthGuard><MenuExtrasPage /></AuthGuard>} />
 
-        {/* Default redirect */}
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+          {/* Default redirect */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

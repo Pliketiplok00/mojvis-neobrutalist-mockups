@@ -36,9 +36,6 @@ export function ClickFixDetailPage() {
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
 
-  // TODO: Get from auth context
-  const adminMunicipality: string | undefined = undefined;
-
   const fetchClickFix = useCallback(async () => {
     if (!id) return;
 
@@ -46,7 +43,7 @@ export function ClickFixDetailPage() {
     setError(null);
 
     try {
-      const data = await adminClickFixApi.getClickFixDetail(id, adminMunicipality);
+      const data = await adminClickFixApi.getClickFixDetail(id);
       setClickFix(data);
     } catch (err) {
       console.error('[Admin] Error fetching click fix:', err);
@@ -54,7 +51,7 @@ export function ClickFixDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [id, adminMunicipality]);
+  }, [id]);
 
   useEffect(() => {
     void fetchClickFix();
@@ -65,7 +62,7 @@ export function ClickFixDetailPage() {
 
     setStatusUpdating(true);
     try {
-      const updated = await adminClickFixApi.updateStatus(id, newStatus, adminMunicipality);
+      const updated = await adminClickFixApi.updateStatus(id, newStatus);
       setClickFix(updated);
     } catch (err) {
       console.error('[Admin] Error updating status:', err);
@@ -80,13 +77,9 @@ export function ClickFixDetailPage() {
 
     setSubmitting(true);
     try {
-      await adminClickFixApi.addReply(
-        id,
-        { body: replyBody.trim() },
-        adminMunicipality
-      );
+      await adminClickFixApi.addReply(id, { body: replyBody.trim() });
       // Refetch to get updated click-fix with new reply
-      const updated = await adminClickFixApi.getClickFixDetail(id, adminMunicipality);
+      const updated = await adminClickFixApi.getClickFixDetail(id);
       setClickFix(updated);
       setReplyBody('');
     } catch (err) {

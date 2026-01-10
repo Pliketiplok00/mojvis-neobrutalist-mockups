@@ -399,6 +399,7 @@ describe('Admin Static Pages Routes', () => {
 
   beforeEach(() => {
     // Reset mocks but keep the implementations from vi.mock factory
+    // NOTE: Do NOT recreate fastify here - it's created once in beforeAll
     vi.resetAllMocks();
     // Re-apply default implementations (cast to any to handle null returns)
     mockedGetPageById.mockResolvedValue(null as unknown as StaticPage);
@@ -451,6 +452,20 @@ describe('Admin Static Pages Routes', () => {
 
   beforeAll(async () => {
     fastify = Fastify({ logger: false });
+    // Strategy A: Inject admin session via test-only preHandler hook (DB-less)
+    // This MUST be registered BEFORE admin routes so it runs first
+    // eslint-disable-next-line @typescript-eslint/require-await
+    fastify.addHook('preHandler', async (request) => {
+      // Inject test admin session for all /admin/* routes
+      if (request.url.startsWith('/admin/')) {
+        request.adminSession = {
+          adminId: 'test-admin-id',
+          username: 'testadmin',
+          municipality: 'vis',
+        };
+      }
+    });
+    // Register static page routes (no auth routes needed - session injected above)
     await fastify.register(adminStaticPageRoutes);
     await fastify.ready();
   });
@@ -460,125 +475,8 @@ describe('Admin Static Pages Routes', () => {
     vi.restoreAllMocks();
   });
 
-  describe('Permission checks: admin vs supervisor', () => {
-    it('should reject page creation without supervisor role', async () => {
-      const response = await fastify.inject({
-        method: 'POST',
-        url: '/admin/pages',
-        headers: {
-          'x-admin-role': 'admin', // Not supervisor
-        },
-        payload: {
-          slug: 'new-page',
-          header: {
-            type: 'simple',
-            title_hr: 'Naslov',
-            title_en: 'Title',
-            subtitle_hr: null,
-            subtitle_en: null,
-            icon: null,
-          },
-        },
-      });
-
-      expect(response.statusCode).toBe(403);
-      const body = response.json();
-      expect(body.message).toContain('supervisor');
-    });
-
-    it('should allow page creation for supervisor', async () => {
-      mockedSlugExists.mockResolvedValueOnce(false);
-      mockedCreatePage.mockResolvedValueOnce(createMockPage());
-
-      const response = await fastify.inject({
-        method: 'POST',
-        url: '/admin/pages',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
-        payload: {
-          slug: 'new-page',
-          header: {
-            type: 'simple',
-            title_hr: 'Naslov',
-            title_en: 'Title',
-            subtitle_hr: null,
-            subtitle_en: null,
-            icon: null,
-          },
-        },
-      });
-
-      expect(response.statusCode).toBe(201);
-    });
-
-    it('should reject publish without supervisor role', async () => {
-      mockedGetPageById.mockResolvedValueOnce(createMockPage());
-
-      const response = await fastify.inject({
-        method: 'POST',
-        url: '/admin/pages/page-1/publish',
-        headers: {
-          'x-admin-role': 'admin', // Not supervisor
-        },
-      });
-
-      expect(response.statusCode).toBe(403);
-      const body = response.json();
-      expect(body.message).toContain('supervisor');
-    });
-
-    it('should reject unpublish without supervisor role', async () => {
-      mockedGetPageById.mockResolvedValueOnce(
-        createMockPage({ published_at: new Date() })
-      );
-
-      const response = await fastify.inject({
-        method: 'POST',
-        url: '/admin/pages/page-1/unpublish',
-        headers: {
-          'x-admin-role': 'admin', // Not supervisor
-        },
-      });
-
-      expect(response.statusCode).toBe(403);
-    });
-
-    it('should reject block addition without supervisor role', async () => {
-      mockedGetPageById.mockResolvedValueOnce(createMockPage());
-
-      const response = await fastify.inject({
-        method: 'POST',
-        url: '/admin/pages/page-1/blocks',
-        headers: {
-          'x-admin-role': 'admin', // Not supervisor
-        },
-        payload: {
-          type: 'text',
-          content: {
-            body_hr: 'Text',
-            body_en: 'Text',
-          },
-        },
-      });
-
-      expect(response.statusCode).toBe(403);
-    });
-
-    it('should reject block deletion without supervisor role', async () => {
-      mockedGetPageById.mockResolvedValueOnce(createMockPage());
-
-      const response = await fastify.inject({
-        method: 'DELETE',
-        url: '/admin/pages/page-1/blocks/block-1',
-        headers: {
-          'x-admin-role': 'admin', // Not supervisor
-        },
-      });
-
-      expect(response.statusCode).toBe(403);
-    });
-  });
+  // NOTE: Supervisor role tests removed - all authenticated admins have equal privileges now.
+  // Auth is enforced via cookie-session (adminAuthHook), not headers.
 
   describe('Notice block editing prevention', () => {
     it('should reject adding notice block (system-controlled)', async () => {
@@ -587,9 +485,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/blocks',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           type: 'notice', // Trying to add notice block
           content: {},
@@ -620,9 +516,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'PATCH',
         url: '/admin/pages/page-1/blocks/notice-1',
-        headers: {
-          'x-admin-role': 'admin',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           content: { some: 'data' },
         },
@@ -641,9 +535,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/blocks',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           type: 'custom_html', // Invalid type
           content: {},
@@ -675,9 +567,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/blocks',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           type: 'map', // Trying to add second map
           content: { pins: [] },
@@ -714,9 +604,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'PATCH',
         url: '/admin/pages/page-1/blocks/block-1',
-        headers: {
-          'x-admin-role': 'admin',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           content: {
             title_hr: 'Novi naslov',
@@ -750,9 +638,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/publish',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
       });
 
       expect(response.statusCode).toBe(400);
@@ -771,9 +657,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/publish',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
       });
 
       expect(response.statusCode).toBe(400);
@@ -815,9 +699,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/publish',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
       });
 
       expect(response.statusCode).toBe(400);
@@ -839,9 +721,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages/page-1/publish',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
       });
 
       expect(response.statusCode).toBe(200);
@@ -855,9 +735,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           slug: 'Invalid Slug!', // Invalid format
           header: {
@@ -882,9 +760,7 @@ describe('Admin Static Pages Routes', () => {
       const response = await fastify.inject({
         method: 'POST',
         url: '/admin/pages',
-        headers: {
-          'x-admin-role': 'supervisor',
-        },
+        // Session injected by test hook - no cookie needed
         payload: {
           slug: 'existing-page',
           header: {

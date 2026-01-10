@@ -29,6 +29,18 @@ export interface EnvConfig {
 
   // Push mock mode (auto-enabled in dev/test, explicit in production)
   PUSH_MOCK_MODE: boolean;
+
+  // Admin Authentication (Phase 1b)
+  ADMIN_COOKIE_NAME: string;
+  ADMIN_COOKIE_DOMAIN: string; // Empty for localhost (host-only cookie), ".mojvis.hr" for prod
+  ADMIN_COOKIE_SECURE: boolean;
+  ADMIN_SESSION_TTL_HOURS: number;
+  ADMIN_ALLOWED_ORIGIN: string; // http://localhost:5173 for dev, https://admin.mojvis.hr for prod
+
+  // Break-glass admin (emergency recovery)
+  BREAKGLASS_USERNAME: string | null;
+  BREAKGLASS_PASSWORD: string | null;
+  BREAKGLASS_MUNICIPALITY: 'vis' | 'komiza' | null;
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -79,7 +91,35 @@ export function loadEnvConfig(): EnvConfig {
     // Push mock mode - auto-enabled in dev/test (no real Expo calls), can override
     PUSH_MOCK_MODE: process.env['PUSH_MOCK_MODE'] === 'true' ||
       (process.env['PUSH_MOCK_MODE'] !== 'false' && (nodeEnv === 'development' || nodeEnv === 'test')),
+
+    // Admin Authentication (Phase 1b)
+    ADMIN_COOKIE_NAME: getEnvVar('ADMIN_COOKIE_NAME', 'mojvis_admin_session'),
+    // Empty string = host-only cookie (correct for localhost); ".mojvis.hr" for production
+    ADMIN_COOKIE_DOMAIN: process.env['ADMIN_COOKIE_DOMAIN'] ?? '',
+    ADMIN_COOKIE_SECURE: process.env['ADMIN_COOKIE_SECURE'] === 'true' ||
+      (process.env['ADMIN_COOKIE_SECURE'] !== 'false' && nodeEnv === 'production'),
+    ADMIN_SESSION_TTL_HOURS: getEnvVarAsInt('ADMIN_SESSION_TTL_HOURS', 24),
+    // CORS origin: explicit allowlist, NOT wildcard with credentials
+    ADMIN_ALLOWED_ORIGIN: getEnvVar(
+      'ADMIN_ALLOWED_ORIGIN',
+      useDefaults ? 'http://localhost:5173' : 'https://admin.mojvis.hr'
+    ),
+
+    // Break-glass admin (emergency recovery) - all optional
+    BREAKGLASS_USERNAME: process.env['BREAKGLASS_USERNAME'] ?? null,
+    BREAKGLASS_PASSWORD: process.env['BREAKGLASS_PASSWORD'] ?? null,
+    BREAKGLASS_MUNICIPALITY: parseBreakglassMunicipality(process.env['BREAKGLASS_MUNICIPALITY']),
   };
+}
+
+/**
+ * Parse break-glass municipality from env var
+ */
+function parseBreakglassMunicipality(value: string | undefined): 'vis' | 'komiza' | null {
+  if (value === 'vis' || value === 'komiza') {
+    return value;
+  }
+  return null;
 }
 
 function buildDatabaseUrl(useDefaults: boolean): string {
