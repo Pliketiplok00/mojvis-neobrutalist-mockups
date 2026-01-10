@@ -180,6 +180,8 @@ export async function adminAuthRoutes(fastify: FastifyInstance): Promise<void> {
           id: session.adminId,
           username: session.username,
           municipality: session.municipality,
+          notice_municipality_scope: session.noticeMunicipalityScope,
+          is_breakglass: session.isBreakglass,
         },
       });
     }

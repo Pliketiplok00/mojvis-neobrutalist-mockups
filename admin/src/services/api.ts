@@ -122,14 +122,21 @@ function normalizeInboxMessage(message: InboxMessage): InboxMessage {
  */
 export const adminInboxApi = {
   /**
-   * Get paginated list of all inbox messages (admin view)
+   * Get paginated list of inbox messages (admin view)
+   *
+   * @param page - Page number (1-indexed)
+   * @param pageSize - Number of items per page
+   * @param archived - Filter by archived status:
+   *   - false (default): active messages only
+   *   - true: archived messages only
    */
   async getMessages(
     page: number = 1,
-    pageSize: number = 20
+    pageSize: number = 20,
+    archived: boolean = false
   ): Promise<InboxListResponse> {
     const response = await apiRequest<InboxListResponse>(
-      `/admin/inbox?page=${page}&page_size=${pageSize}`
+      `/admin/inbox?page=${page}&page_size=${pageSize}&archived=${archived}`
     );
     return {
       ...response,
@@ -169,12 +176,22 @@ export const adminInboxApi = {
   },
 
   /**
-   * Delete inbox message
+   * Archive (soft delete) inbox message
    */
   async deleteMessage(id: string): Promise<void> {
     await apiRequest(`/admin/inbox/${id}`, {
       method: 'DELETE',
     });
+  },
+
+  /**
+   * Restore archived message
+   */
+  async restoreMessage(id: string): Promise<InboxMessage> {
+    const message = await apiRequest<InboxMessage>(`/admin/inbox/${id}/restore`, {
+      method: 'POST',
+    });
+    return normalizeInboxMessage(message);
   },
 };
 
@@ -517,6 +534,8 @@ export interface AdminUser {
   id: string;
   username: string;
   municipality: 'vis' | 'komiza';
+  notice_municipality_scope: 'vis' | 'komiza' | null; // Phase 3: which municipal notices admin can edit
+  is_breakglass: boolean; // Breakglass admin bypasses municipal restrictions
 }
 
 export const adminAuthApi = {

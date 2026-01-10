@@ -20,6 +20,7 @@ import type { FormEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
 import { adminInboxApi } from '../../services/api';
+import { useAuth } from '../../services/AuthContext';
 import type { InboxTag, InboxMessageInput } from '../../types/inbox';
 import {
   ACTIVE_INBOX_TAGS,
@@ -30,11 +31,14 @@ import {
   validateHitnoRules,
   isDeprecatedTag,
   DEPRECATED_TAGS,
+  isMunicipalTag,
+  getMunicipalityFromTags,
 } from '../../types/inbox';
 
 export function InboxEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const isNew = !id || id === 'new';
 
   const [loading, setLoading] = useState(!isNew);
@@ -53,6 +57,10 @@ export function InboxEditPage() {
   // Phase 7: Locked state
   const [isLocked, setIsLocked] = useState(false);
   const [pushedAt, setPushedAt] = useState<string | null>(null);
+
+  // Phase 3: Authorization state
+  const [isForbidden, setIsForbidden] = useState(false);
+  const adminNoticeScope = user?.notice_municipality_scope ?? null;
 
   // Load existing message
   useEffect(() => {
@@ -74,12 +82,34 @@ export function InboxEditPage() {
       // Phase 7: Load locked state
       setIsLocked(message.is_locked);
       setPushedAt(message.pushed_at);
+
+      // Phase 3: Check if admin can edit this message
+      // Breakglass admins bypass municipal restrictions
+      if (!user?.is_breakglass) {
+        const messageMunicipality = getMunicipalityFromTags(message.tags);
+        if (messageMunicipality !== null) {
+          // It's a municipal notice - check if admin has permission
+          if (adminNoticeScope === null || adminNoticeScope !== messageMunicipality) {
+            setIsForbidden(true);
+          }
+        }
+      }
     } catch (err) {
       console.error('[Admin] Error loading message:', err);
       setError('Greška pri učitavanju poruke.');
     } finally {
       setLoading(false);
     }
+  };
+
+  /**
+   * Phase 3: Check if admin can select/use a municipal tag
+   */
+  const canUseMunicipalTag = (tag: InboxTag): boolean => {
+    if (!isMunicipalTag(tag)) return true; // Non-municipal tags are always allowed
+    if (user?.is_breakglass) return true; // Breakglass can use any municipal tag
+    if (adminNoticeScope === null) return false; // No scope = can't use municipal tags
+    return tag === adminNoticeScope; // Can only use tag matching scope
   };
 
   const handleTagToggle = (tag: InboxTag) => {
@@ -194,8 +224,19 @@ export function InboxEditPage() {
           </button>
         </div>
 
+        {/* Phase 3: Forbidden message warning */}
+        {isForbidden && (
+          <div style={styles.forbiddenBanner} data-testid="inbox-forbidden-badge">
+            🚫 Nemate ovlasti uređivati obavijesti za ovu općinu.
+            <br />
+            <span style={styles.forbiddenNote}>
+              Vaš korisnički račun može uređivati samo {adminNoticeScope === 'vis' ? 'Vis' : adminNoticeScope === 'komiza' ? 'Komiža' : 'općinske'} obavijesti.
+            </span>
+          </div>
+        )}
+
         {/* Phase 7: Locked message warning */}
-        {isLocked && (
+        {isLocked && !isForbidden && (
           <div style={styles.lockedBanner} data-testid="inbox-locked-badge">
             🔒 Ova poruka je zaključana jer je poslana push obavijest.
             {pushedAt && (
@@ -220,8 +261,8 @@ export function InboxEditPage() {
 
         {/* Form */}
         <form onSubmit={(e) => void handleSubmit(e)} style={styles.form}>
-          {/* Phase 7: Disable entire form if locked */}
-          <fieldset disabled={isLocked} style={styles.fieldset}>
+          {/* Phase 7: Disable entire form if locked or forbidden */}
+          <fieldset disabled={isLocked || isForbidden} style={styles.fieldset}>
           {/* Croatian content */}
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>Sadržaj (Hrvatski) *</h2>
@@ -308,24 +349,38 @@ export function InboxEditPage() {
             </p>
             <div style={styles.tagsGrid}>
               {/* Show active tags for selection */}
-              {ACTIVE_INBOX_TAGS.map((tag) => (
-                <label key={tag} style={styles.tagLabel}>
-                  <input
-                    type="checkbox"
-                    checked={selectedTags.includes(tag)}
-                    onChange={() => handleTagToggle(tag)}
-                    style={styles.checkbox}
-                  />
-                  <span
+              {ACTIVE_INBOX_TAGS.map((tag) => {
+                const isAllowed = canUseMunicipalTag(tag);
+                const isDisabled = !isAllowed && isMunicipalTag(tag);
+                return (
+                  <label
+                    key={tag}
                     style={{
-                      ...styles.tagText,
-                      ...(selectedTags.includes(tag) ? styles.tagTextSelected : {}),
+                      ...styles.tagLabel,
+                      ...(isDisabled ? styles.disabledTagLabel : {}),
                     }}
+                    title={isDisabled ? `Nemate ovlasti za ${TAG_LABELS[tag]} obavijesti` : undefined}
                   >
-                    {TAG_LABELS[tag]}
-                  </span>
-                </label>
-              ))}
+                    <input
+                      type="checkbox"
+                      checked={selectedTags.includes(tag)}
+                      onChange={() => handleTagToggle(tag)}
+                      style={styles.checkbox}
+                      disabled={isDisabled}
+                    />
+                    <span
+                      style={{
+                        ...styles.tagText,
+                        ...(selectedTags.includes(tag) ? styles.tagTextSelected : {}),
+                        ...(isDisabled ? styles.disabledTagText : {}),
+                      }}
+                    >
+                      {TAG_LABELS[tag]}
+                      {isDisabled && ' 🔒'}
+                    </span>
+                  </label>
+                );
+              })}
               {/* Show deprecated tags as read-only if message has them */}
               {DEPRECATED_TAGS.filter(tag => selectedTags.includes(tag)).map((tag) => (
                 <label key={tag} style={{ ...styles.tagLabel, ...styles.deprecatedTagLabel }}>
@@ -394,9 +449,9 @@ export function InboxEditPage() {
               onClick={() => navigate('/messages')}
               data-testid="inbox-cancel"
             >
-              {isLocked ? 'Natrag' : 'Odustani'}
+              {(isLocked || isForbidden) ? 'Natrag' : 'Odustani'}
             </button>
-            {!isLocked && (
+            {!isLocked && !isForbidden && (
               <button
                 type="submit"
                 style={styles.saveButton}
@@ -461,6 +516,31 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#6b7280',
     fontSize: '13px',
     fontStyle: 'italic',
+  },
+  // Phase 3: Forbidden message styles
+  forbiddenBanner: {
+    padding: '16px',
+    backgroundColor: '#fef2f2',
+    color: '#991b1b',
+    borderRadius: '4px',
+    marginBottom: '24px',
+    fontSize: '14px',
+    border: '2px solid #fca5a5',
+  },
+  forbiddenNote: {
+    color: '#b91c1c',
+    fontSize: '13px',
+    fontStyle: 'italic',
+  },
+  // Phase 3: Disabled tag styles
+  disabledTagLabel: {
+    backgroundColor: '#f3f4f6',
+    borderColor: '#d1d5db',
+    cursor: 'not-allowed',
+    opacity: 0.6,
+  },
+  disabledTagText: {
+    color: '#9ca3af',
   },
   fieldset: {
     border: 'none',
