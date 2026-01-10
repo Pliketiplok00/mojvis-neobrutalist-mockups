@@ -185,7 +185,7 @@ export async function clickFixRoutes(
           if (!photoValidation.valid) {
             photoErrors.push(photoValidation.error || 'Invalid photo');
             // Consume the stream to avoid hanging
-            for await (const _ of part.file) {
+            for await (const _chunk of part.file) {
               // drain
             }
             continue;
@@ -193,7 +193,7 @@ export async function clickFixRoutes(
 
           if (photos.length >= CLICK_FIX_VALIDATION.MAX_PHOTOS) {
             photoErrors.push(`Maximum ${CLICK_FIX_VALIDATION.MAX_PHOTOS} photos allowed`);
-            for await (const _ of part.file) {
+            for await (const _chunk of part.file) {
               // drain
             }
             continue;

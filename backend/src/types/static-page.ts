@@ -489,7 +489,7 @@ export function validateForPublish(page: StaticPage): ValidationResult {
     }
     // Validate media header images
     if (header.type === 'media') {
-      const mediaHeader = header as MediaHeader;
+      const mediaHeader = header;
       if (!mediaHeader.images || mediaHeader.images.length === 0) {
         errors.push({
           field: 'header.images',

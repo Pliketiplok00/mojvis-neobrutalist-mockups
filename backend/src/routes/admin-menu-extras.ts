@@ -49,6 +49,7 @@ function toAdminResponse(extra: MenuExtra): MenuExtraAdmin {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugin contract requires async
 export async function adminMenuExtrasRoutes(fastify: FastifyInstance): Promise<void> {
   /**
    * GET /admin/menu/extras

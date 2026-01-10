@@ -64,7 +64,7 @@ export function setSessionCookie(reply: FastifyReply, sessionToken: string): voi
     parts.push(`Domain=${env.ADMIN_COOKIE_DOMAIN}`);
   }
 
-  reply.header('Set-Cookie', parts.join('; '));
+  void reply.header('Set-Cookie', parts.join('; '));
 }
 
 /**
@@ -84,7 +84,7 @@ export function clearSessionCookie(reply: FastifyReply): void {
     parts.push(`Domain=${env.ADMIN_COOKIE_DOMAIN}`);
   }
 
-  reply.header('Set-Cookie', parts.join('; '));
+  void reply.header('Set-Cookie', parts.join('; '));
 }
 
 /**

@@ -14,7 +14,7 @@ import type {
   DeviceLocale,
   PushSendResult,
 } from '../types/push.js';
-import { getMunicipalityFromTags } from '../types/inbox.js';
+import { getMunicipalityFromTags, type InboxTag } from '../types/inbox.js';
 
 // In-memory storage (mock database)
 const deviceTokens = new Map<string, DevicePushToken>();
@@ -23,12 +23,12 @@ const pushLogs: PushNotificationLog[] = [];
 /**
  * Register or update a device push token
  */
-export async function upsertDevicePushToken(
+export function upsertDevicePushToken(
   deviceId: string,
   expoPushToken: string,
   platform: DevicePlatform,
   locale: DeviceLocale
-): Promise<DevicePushToken> {
+): DevicePushToken {
   const existing = deviceTokens.get(deviceId);
   const now = new Date();
 
@@ -56,10 +56,10 @@ export async function upsertDevicePushToken(
 /**
  * Update push opt-in status for a device
  */
-export async function updatePushOptIn(
+export function updatePushOptIn(
   deviceId: string,
   optIn: boolean
-): Promise<DevicePushToken | null> {
+): DevicePushToken | null {
   const existing = deviceTokens.get(deviceId);
   if (!existing) {
     return null;
@@ -76,18 +76,18 @@ export async function updatePushOptIn(
 /**
  * Get device push token by device ID
  */
-export async function getDevicePushToken(
+export function getDevicePushToken(
   deviceId: string
-): Promise<DevicePushToken | null> {
+): DevicePushToken | null {
   return deviceTokens.get(deviceId) ?? null;
 }
 
 /**
  * Get all opted-in devices for a given locale
  */
-export async function getOptedInDevicesByLocale(
+export function getOptedInDevicesByLocale(
   locale: DeviceLocale
-): Promise<DevicePushToken[]> {
+): DevicePushToken[] {
   const results: DevicePushToken[] = [];
   for (const token of deviceTokens.values()) {
     if (token.push_opt_in && token.locale === locale) {
@@ -100,7 +100,7 @@ export async function getOptedInDevicesByLocale(
 /**
  * Get all opted-in devices (both locales)
  */
-export async function getAllOptedInDevices(): Promise<DevicePushToken[]> {
+export function getAllOptedInDevices(): DevicePushToken[] {
   const results: DevicePushToken[] = [];
   for (const token of deviceTokens.values()) {
     if (token.push_opt_in) {
@@ -120,11 +120,11 @@ export async function getAllOptedInDevices(): Promise<DevicePushToken[]> {
  * This simplified version returns all opted-in devices.
  * TODO: Add device municipality to token table for proper filtering.
  */
-export async function getEligibleDevicesForPush(
+export function getEligibleDevicesForPush(
   messageTags: string[],
   hasEnglishContent: boolean
-): Promise<DevicePushToken[]> {
-  const allOptedIn = await getAllOptedInDevices();
+): DevicePushToken[] {
+  const allOptedIn = getAllOptedInDevices();
 
   // Filter by language availability
   // If no English content, exclude English-locale devices
@@ -137,7 +137,7 @@ export async function getEligibleDevicesForPush(
 
   // For MVP, we don't filter by municipality as we don't store it on device
   // In production, add municipality to device_push_tokens and filter here
-  const messageMunicipality = getMunicipalityFromTags(messageTags as any);
+  const messageMunicipality = getMunicipalityFromTags(messageTags as InboxTag[]);
   if (messageMunicipality) {
     console.info('[Push] Message has municipality tag:', messageMunicipality);
     console.info('[Push] TODO: Filter devices by municipality when implemented');
@@ -149,12 +149,12 @@ export async function getEligibleDevicesForPush(
 /**
  * Create a push notification log entry
  */
-export async function createPushLog(
+export function createPushLog(
   inboxMessageId: string,
   adminId: string | null,
   result: PushSendResult,
   provider: string = 'expo'
-): Promise<PushNotificationLog> {
+): PushNotificationLog {
   const log: PushNotificationLog = {
     id: crypto.randomUUID(),
     inbox_message_id: inboxMessageId,
@@ -183,18 +183,18 @@ export async function createPushLog(
 /**
  * Get push logs for an inbox message
  */
-export async function getPushLogsForMessage(
+export function getPushLogsForMessage(
   inboxMessageId: string
-): Promise<PushNotificationLog[]> {
+): PushNotificationLog[] {
   return pushLogs.filter((log) => log.inbox_message_id === inboxMessageId);
 }
 
 /**
  * Get recent push logs (for admin dashboard)
  */
-export async function getRecentPushLogs(
+export function getRecentPushLogs(
   limit: number = 50
-): Promise<PushNotificationLog[]> {
+): PushNotificationLog[] {
   return pushLogs
     .sort((a, b) => b.sent_at.getTime() - a.sent_at.getTime())
     .slice(0, limit);
@@ -221,7 +221,7 @@ export function getPushStats(): { tokenCount: number; logCount: number } {
 /**
  * Get the latest push log (global - most recent across all messages)
  */
-export async function getLatestPushLog(): Promise<PushNotificationLog | null> {
+export function getLatestPushLog(): PushNotificationLog | null {
   if (pushLogs.length === 0) {
     return null;
   }

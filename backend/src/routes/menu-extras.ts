@@ -28,6 +28,7 @@ function toPublicResponse(extra: MenuExtra): MenuExtraPublic {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugin contract requires async
 export async function menuExtrasRoutes(fastify: FastifyInstance): Promise<void> {
   /**
    * GET /menu/extras

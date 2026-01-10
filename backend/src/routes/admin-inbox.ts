@@ -126,7 +126,7 @@ async function sendPushForMessage(
   const hasEnglishContent = message.title_en !== null && message.body_en !== null;
 
   // Get eligible devices
-  const eligibleDevices = await getEligibleDevicesForPush(
+  const eligibleDevices = getEligibleDevicesForPush(
     message.tags,
     hasEnglishContent
   );
@@ -162,7 +162,7 @@ async function sendPushForMessage(
   const result = await pushService.sendPush(targets, contentHr, contentEn);
 
   // Log push
-  await createPushLog(message.id, adminId, result, pushService.getProviderName());
+  createPushLog(message.id, adminId, result, pushService.getProviderName());
 
   // Mark message as locked
   await markMessageAsLocked(message.id, adminId);
