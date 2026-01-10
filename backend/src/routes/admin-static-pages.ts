@@ -1,18 +1,19 @@
 /**
  * Admin Static Pages Routes
  *
- * Admin and Supervisor endpoints for static pages CMS.
+ * Admin endpoints for static pages CMS.
  * Phase 3: Static Content Pages
  *
- * Admin Routes:
+ * All endpoints require authentication (enforced by adminAuthHook).
+ * All authenticated admins have equal privileges (no supervisor role).
+ *
+ * Endpoints:
  * - GET /admin/pages - List all pages
  * - GET /admin/pages/:id - Get page detail
- * - PATCH /admin/pages/:id/draft - Update draft content
- * - PATCH /admin/pages/:id/blocks/:blockId - Update block content
- *
- * Supervisor Routes:
  * - POST /admin/pages - Create new page
  * - DELETE /admin/pages/:id - Delete page
+ * - PATCH /admin/pages/:id/draft - Update draft content
+ * - PATCH /admin/pages/:id/blocks/:blockId - Update block content
  * - POST /admin/pages/:id/publish - Publish page
  * - POST /admin/pages/:id/unpublish - Unpublish page
  * - POST /admin/pages/:id/blocks - Add block
@@ -51,29 +52,14 @@ import type {
   BlockStructureUpdateInput,
   StaticPage,
 } from '../types/static-page.js';
+import { getAdminId } from '../middleware/auth.js';
 
 // ============================================================
-// Role Checking (placeholder)
+// NOTE: Supervisor role has been removed.
+// All authenticated admins have equal privileges.
+// Admin identity is derived from session, NOT headers.
+// X-Admin-Role, X-Admin-User headers are NOT trusted.
 // ============================================================
-
-/**
- * Check if request is from supervisor
- * TODO: Implement proper role checking when auth is added
- */
-function isSupervisor(request: FastifyRequest): boolean {
-  // For now, check header for role
-  // In production, this would verify JWT token claims
-  const role = request.headers['x-admin-role'] as string | undefined;
-  return role === 'supervisor';
-}
-
-/**
- * Get admin user ID from request
- * TODO: Implement proper auth when added
- */
-function getAdminUserId(request: FastifyRequest): string | null {
-  return (request.headers['x-admin-user'] as string) || null;
-}
 
 // ============================================================
 // Helpers
@@ -172,7 +158,7 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
     ) => {
       const { id } = request.params;
       const input = request.body;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const existingPage = await getPageById(id);
@@ -240,7 +226,7 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
     ) => {
       const { id, blockId } = request.params;
       const { content } = request.body;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -300,15 +286,8 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       request: FastifyRequest<{ Body: StaticPageCreateInput }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can create pages',
-        });
-      }
-
       const input = request.body;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         // Validate slug format
@@ -381,15 +360,8 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       request: FastifyRequest<{ Params: { id: string } }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can delete pages',
-        });
-      }
-
       const { id } = request.params;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -428,15 +400,8 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       request: FastifyRequest<{ Params: { id: string } }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can publish pages',
-        });
-      }
-
       const { id } = request.params;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -478,15 +443,8 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       request: FastifyRequest<{ Params: { id: string } }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can unpublish pages',
-        });
-      }
-
       const { id } = request.params;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -525,16 +483,9 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can add blocks',
-        });
-      }
-
       const { id } = request.params;
       const input = request.body;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -592,15 +543,8 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can remove blocks',
-        });
-      }
-
       const { id, blockId } = request.params;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -648,16 +592,9 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can update block structure',
-        });
-      }
-
       const { id, blockId } = request.params;
       const body = request.body;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);
@@ -702,16 +639,9 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
       }>,
       reply: FastifyReply
     ) => {
-      if (!isSupervisor(request)) {
-        return reply.status(403).send({
-          error: true,
-          message: 'Only supervisors can reorder blocks',
-        });
-      }
-
       const { id } = request.params;
       const { block_ids } = request.body;
-      const userId = getAdminUserId(request);
+      const userId = getAdminId(request);
 
       try {
         const page = await getPageById(id);

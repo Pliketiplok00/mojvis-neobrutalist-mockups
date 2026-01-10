@@ -181,6 +181,19 @@ describe('Admin Feedback Routes (Unit)', () => {
 
   beforeAll(async () => {
     fastify = Fastify({ logger: false });
+    // Strategy A: Inject admin session via test-only preHandler hook (DB-less)
+    // This MUST be registered BEFORE admin routes so it runs first
+    // eslint-disable-next-line @typescript-eslint/require-await
+    fastify.addHook('preHandler', async (request) => {
+      // Inject test admin session for all /admin/* routes
+      if (request.url.startsWith('/admin/')) {
+        request.adminSession = {
+          adminId: 'test-admin-id',
+          username: 'testadmin',
+          municipality: 'vis',
+        };
+      }
+    });
     await fastify.register(adminFeedbackRoutes);
     await fastify.ready();
   });

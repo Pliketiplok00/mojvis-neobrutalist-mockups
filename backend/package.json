@@ -28,6 +28,7 @@
     "@fastify/env": "^4.3.0",
     "@fastify/multipart": "^8.3.1",
     "@fastify/static": "^6.12.0",
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.4.1",
     "fastify": "^4.26.0",
     "form-data-encoder": "^4.1.0",
@@ -35,6 +36,7 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^20.11.0",
     "@types/pg": "^8.10.9",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
