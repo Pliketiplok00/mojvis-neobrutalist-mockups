@@ -49,6 +49,7 @@ const CORE_MENU_ITEMS: MenuItem[] = [
   { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: '🔧', route: 'ClickFixForm' },
   { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: '💬', route: 'FeedbackForm' },
   { label: 'Važni kontakti', labelEn: 'Important contacts', icon: '📞', route: 'StaticPage:important-contacts' },
+  { label: 'Postavke', labelEn: 'Settings', icon: '⚙️', route: 'Settings' },
 ];
 
 interface MenuOverlayProps {
