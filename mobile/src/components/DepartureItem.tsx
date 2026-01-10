@@ -22,6 +22,7 @@ import {
   UIManager,
 } from 'react-native';
 import type { DepartureResponse } from '../types/transport';
+import { skin } from '../ui/skin';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -115,9 +116,9 @@ export function DepartureItem({ departure }: DepartureItemProps): React.JSX.Elem
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.backgroundTertiary,
     borderWidth: 2,
-    borderColor: '#000000',
+    borderColor: skin.colors.border,
     borderRadius: 8,
     padding: 12,
     marginBottom: 8,
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
   departureTime: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000000',
+    color: skin.colors.textPrimary,
     width: 70,
   },
   headerInfo: {
@@ -139,24 +140,24 @@ const styles = StyleSheet.create({
   destination: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#000000',
+    color: skin.colors.textPrimary,
   },
   duration: {
     fontSize: 12,
-    color: '#666666',
+    color: skin.colors.textMuted,
     marginTop: 2,
   },
   expandIcon: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#000000',
+    color: skin.colors.textPrimary,
     width: 24,
     textAlign: 'center',
   },
   notes: {
     fontSize: 12,
-    color: '#856404',
-    backgroundColor: '#FFF3CD',
+    color: skin.colors.warningText,
+    backgroundColor: skin.colors.warningBackground,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
@@ -178,16 +179,16 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#666666',
+    backgroundColor: skin.colors.textMuted,
   },
   timelineDotFirst: {
-    backgroundColor: '#000000',
+    backgroundColor: skin.colors.textPrimary,
     width: 12,
     height: 12,
     borderRadius: 6,
   },
   timelineDotLast: {
-    backgroundColor: '#000000',
+    backgroundColor: skin.colors.textPrimary,
     width: 12,
     height: 12,
     borderRadius: 6,
@@ -195,7 +196,7 @@ const styles = StyleSheet.create({
   timelineLine: {
     width: 2,
     flex: 1,
-    backgroundColor: '#CCCCCC',
+    backgroundColor: skin.colors.borderLight,
     marginTop: 4,
   },
   stopInfo: {
@@ -208,13 +209,13 @@ const styles = StyleSheet.create({
   stopTime: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#000000',
+    color: skin.colors.textPrimary,
     width: 50,
   },
   stopName: {
     flex: 1,
     fontSize: 14,
-    color: '#333333',
+    color: skin.colors.textSecondary,
     marginLeft: 8,
   },
 });

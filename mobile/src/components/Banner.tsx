@@ -17,6 +17,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslations } from '../i18n';
 import type { InboxMessage } from '../types/inbox';
 import type { MainStackParamList } from '../navigation/types';
+import { skin } from '../ui/skin';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -116,27 +117,27 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   container: {
-    backgroundColor: '#FFF3CD',
+    backgroundColor: skin.colors.warningBackground,
     borderRadius: 8,
     padding: 12,
     flexDirection: 'row',
     alignItems: 'center',
     borderLeftWidth: 4,
-    borderLeftColor: '#FFC107',
+    borderLeftColor: skin.colors.warningAccent,
   },
   containerUrgent: {
-    backgroundColor: '#F8D7DA',
-    borderLeftColor: '#DC3545',
+    backgroundColor: skin.colors.errorBackground,
+    borderLeftColor: skin.colors.urgent,
   },
   urgentBadge: {
-    backgroundColor: '#DC3545',
+    backgroundColor: skin.colors.urgent,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
     marginRight: 8,
   },
   urgentText: {
-    color: '#FFFFFF',
+    color: skin.colors.urgentText,
     fontSize: 10,
     fontWeight: 'bold',
   },
@@ -144,20 +145,20 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     fontWeight: '600',
-    color: '#856404',
+    color: skin.colors.warningText,
   },
   titleUrgent: {
-    color: '#721C24',
+    color: skin.colors.errorText,
   },
   preview: {
     flex: 2,
     fontSize: 12,
-    color: '#666666',
+    color: skin.colors.textMuted,
     marginLeft: 8,
   },
   arrow: {
     fontSize: 20,
-    color: '#999999',
+    color: skin.colors.chevron,
     marginLeft: 8,
   },
 });
