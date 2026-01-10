@@ -28,15 +28,12 @@ export function ClickFixListPage() {
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
 
-  // TODO: Get from auth context
-  const adminMunicipality: string | undefined = undefined;
-
   const fetchClickFixes = async (pageNum: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await adminClickFixApi.getClickFixes(pageNum, 20, adminMunicipality);
+      const response = await adminClickFixApi.getClickFixes(pageNum, 20);
       setClickFixes(response.items);
       setHasMore(response.has_more);
       setTotal(response.total);

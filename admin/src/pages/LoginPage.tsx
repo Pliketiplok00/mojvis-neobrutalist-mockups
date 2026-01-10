@@ -1,37 +1,50 @@
 /**
  * Login Page
  *
- * Admin/Supervisor authentication entry point.
+ * Admin authentication entry point.
+ * Uses cookie-session based auth via /admin/auth/login.
  *
  * Rules (per spec):
- * - Web login required for Admin/Supervisor access
+ * - Web login required for Admin access
  * - HR-only UI for MVP (no English needed)
- *
- * Phase 0: UI skeleton only, no auth logic.
  */
 
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { adminAuthApi } from '../services/api';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // TODO: Implement actual authentication
-    console.info('Login attempt:', { email });
+    if (!username || !password) {
+      setError('Unesite korisničko ime i lozinku');
+      return;
+    }
 
-    // Phase 0: Just navigate to dashboard
-    if (email && password) {
-      setError(null);
-      navigate('/dashboard');
-    } else {
-      setError('Unesite email i lozinku');
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await adminAuthApi.login(username, password);
+
+      if (result.ok) {
+        navigate('/dashboard');
+      } else {
+        setError(result.error || 'Pogrešno korisničko ime ili lozinka');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Greška pri prijavi. Pokušajte ponovo.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,16 +56,18 @@ export function LoginPage() {
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.field}>
-            <label htmlFor="email" style={styles.label}>
-              Email
+            <label htmlFor="username" style={styles.label}>
+              Korisničko ime
             </label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               style={styles.input}
-              placeholder="admin@mojvis.hr"
+              placeholder="admin"
+              autoComplete="username"
+              disabled={loading}
             />
           </div>
 
@@ -67,13 +82,15 @@ export function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               style={styles.input}
               placeholder="••••••••"
+              autoComplete="current-password"
+              disabled={loading}
             />
           </div>
 
           {error && <p style={styles.error}>{error}</p>}
 
-          <button type="submit" style={styles.button}>
-            Prijava
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? 'Prijava...' : 'Prijava'}
           </button>
         </form>
       </div>

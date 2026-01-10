@@ -7,11 +7,12 @@
  * - Sidebar with navigation
  * - Main content area
  *
- * Phase 0: Basic structure, no auth check.
+ * Uses AuthContext for user info and logout.
  */
 
 import type { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../services/AuthContext';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -30,11 +31,10 @@ const navItems = [
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const location = useLocation();
+  const { user, logout } = useAuth();
 
-  const handleLogout = () => {
-    // TODO: Implement logout
-    console.info('Logout clicked');
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
@@ -74,8 +74,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <main style={styles.main}>
         <header style={styles.header}>
           <div style={styles.headerContent}>
-            {/* TODO: Add user info, notifications */}
-            <span style={styles.headerUser}>Admin</span>
+            <span style={styles.headerUser}>
+              {user?.username || 'Admin'} ({user?.municipality || '—'})
+            </span>
           </div>
         </header>
 

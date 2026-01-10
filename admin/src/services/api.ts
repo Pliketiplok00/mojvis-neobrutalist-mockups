@@ -50,8 +50,8 @@ const API_BASE_URL = import.meta.env.DEV
 /**
  * Make API request to admin endpoints
  *
- * NOTE: Admin panel will have supervisor login in future phases.
- * Currently no authentication is implemented.
+ * Uses cookie-based session auth (credentials: 'include').
+ * Redirects to /login on 401 responses.
  */
 async function apiRequest<T>(
   endpoint: string,
@@ -59,17 +59,25 @@ async function apiRequest<T>(
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  // TODO: Add supervisor session token when implemented
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    // 'Authorization': `Bearer ${getToken()}`,
     ...options.headers as Record<string, string>,
   };
 
   const response = await fetch(url, {
     ...options,
     headers,
+    credentials: 'include', // Send cookies with requests
   });
+
+  // Handle auth errors - redirect to login
+  if (response.status === 401 || response.status === 403) {
+    // Avoid redirect loop if already on login page
+    if (!window.location.pathname.startsWith('/login')) {
+      window.location.href = '/login';
+    }
+    throw new Error('Not authenticated');
+  }
 
   if (!response.ok) {
     const error = await response.text();
@@ -105,7 +113,7 @@ function normalizeTags(tags: unknown): string[] {
 function normalizeInboxMessage(message: InboxMessage): InboxMessage {
   return {
     ...message,
-    tags: normalizeTags(message.tags),
+    tags: normalizeTags(message.tags) as InboxMessage['tags'],
   };
 }
 
@@ -228,91 +236,83 @@ export const adminEventsApi = {
 
 /**
  * Admin Static Pages API
+ *
+ * NOTE: Role/permission checks are now enforced by session on the backend.
+ * All admins have equal privileges (supervisor role removed).
  */
 export const adminStaticPagesApi = {
   /**
    * Get all pages (admin view)
    */
-  async getPages(role: 'admin' | 'supervisor' = 'admin'): Promise<StaticPageListResponse> {
-    return apiRequest<StaticPageListResponse>('/admin/pages', {
-      headers: { 'x-admin-role': role },
-    });
+  async getPages(): Promise<StaticPageListResponse> {
+    return apiRequest<StaticPageListResponse>('/admin/pages');
   },
 
   /**
    * Get single page by ID
    */
-  async getPage(id: string, role: 'admin' | 'supervisor' = 'admin'): Promise<StaticPageAdmin> {
-    return apiRequest<StaticPageAdmin>(`/admin/pages/${id}`, {
-      headers: { 'x-admin-role': role },
-    });
+  async getPage(id: string): Promise<StaticPageAdmin> {
+    return apiRequest<StaticPageAdmin>(`/admin/pages/${id}`);
   },
 
   /**
-   * Create new page (supervisor only)
+   * Create new page
    */
   async createPage(input: StaticPageCreateInput): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>('/admin/pages', {
       method: 'POST',
-      headers: { 'x-admin-role': 'supervisor' },
       body: JSON.stringify(input),
     });
   },
 
   /**
-   * Update draft content (admin)
+   * Update draft content
    */
   async updateDraft(
     id: string,
-    input: StaticPageDraftUpdateInput,
-    role: 'admin' | 'supervisor' = 'admin'
+    input: StaticPageDraftUpdateInput
   ): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${id}/draft`, {
       method: 'PATCH',
-      headers: { 'x-admin-role': role },
       body: JSON.stringify(input),
     });
   },
 
   /**
-   * Update single block content (admin - respects lock)
+   * Update single block content (respects lock)
    */
   async updateBlockContent(
     pageId: string,
     blockId: string,
-    content: BlockContent,
-    role: 'admin' | 'supervisor' = 'admin'
+    content: BlockContent
   ): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${pageId}/blocks/${blockId}`, {
       method: 'PATCH',
-      headers: { 'x-admin-role': role },
       body: JSON.stringify({ content }),
     });
   },
 
   /**
-   * Add block to page (supervisor only)
+   * Add block to page
    */
   async addBlock(pageId: string, input: AddBlockInput): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${pageId}/blocks`, {
       method: 'POST',
-      headers: { 'x-admin-role': 'supervisor' },
       body: JSON.stringify(input),
     });
   },
 
   /**
-   * Remove block from page (supervisor only)
+   * Remove block from page
    */
   async removeBlock(pageId: string, blockId: string): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${pageId}/blocks/${blockId}`, {
       method: 'DELETE',
-      headers: { 'x-admin-role': 'supervisor' },
     });
   },
 
   /**
-   * Update block structure/locks (supervisor only)
+   * Update block structure/locks
    */
   async updateBlockStructure(
     pageId: string,
@@ -321,84 +321,71 @@ export const adminStaticPagesApi = {
   ): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${pageId}/blocks/${blockId}/structure`, {
       method: 'PATCH',
-      headers: { 'x-admin-role': 'supervisor' },
       body: JSON.stringify(input),
     });
   },
 
   /**
-   * Reorder blocks (supervisor only)
+   * Reorder blocks
    */
   async reorderBlocks(pageId: string, blockIds: string[]): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${pageId}/blocks/reorder`, {
       method: 'PUT',
-      headers: { 'x-admin-role': 'supervisor' },
       body: JSON.stringify({ block_ids: blockIds }),
     });
   },
 
   /**
-   * Publish page (supervisor only)
+   * Publish page
    */
   async publishPage(id: string): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${id}/publish`, {
       method: 'POST',
-      headers: { 'x-admin-role': 'supervisor' },
     });
   },
 
   /**
-   * Unpublish page (supervisor only)
+   * Unpublish page
    */
   async unpublishPage(id: string): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${id}/unpublish`, {
       method: 'POST',
-      headers: { 'x-admin-role': 'supervisor' },
     });
   },
 
   /**
-   * Delete page (supervisor only)
+   * Delete page
    */
   async deletePage(id: string): Promise<void> {
     await apiRequest(`/admin/pages/${id}`, {
       method: 'DELETE',
-      headers: { 'x-admin-role': 'supervisor' },
     });
   },
 };
 
 /**
  * Admin Feedback API
+ *
+ * NOTE: Municipality scoping is now enforced by session on the backend.
  */
 export const adminFeedbackApi = {
   /**
-   * Get paginated list of feedback (scoped by municipality)
+   * Get paginated list of feedback (scoped by admin's municipality via session)
    */
   async getFeedback(
     page: number = 1,
-    pageSize: number = 20,
-    municipality?: string
+    pageSize: number = 20
   ): Promise<FeedbackListResponse> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
     return apiRequest<FeedbackListResponse>(
-      `/admin/feedback?page=${page}&page_size=${pageSize}`,
-      { headers }
+      `/admin/feedback?page=${page}&page_size=${pageSize}`
     );
   },
 
   /**
    * Get single feedback detail by ID
    */
-  async getFeedbackDetail(id: string, municipality?: string): Promise<FeedbackDetail> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
-    return apiRequest<FeedbackDetail>(`/admin/feedback/${id}`, { headers });
+  async getFeedbackDetail(id: string): Promise<FeedbackDetail> {
+    return apiRequest<FeedbackDetail>(`/admin/feedback/${id}`);
   },
 
   /**
@@ -406,16 +393,10 @@ export const adminFeedbackApi = {
    */
   async updateStatus(
     id: string,
-    status: FeedbackStatus,
-    municipality?: string
+    status: FeedbackStatus
   ): Promise<FeedbackDetail> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
     return apiRequest<FeedbackDetail>(`/admin/feedback/${id}/status`, {
       method: 'PATCH',
-      headers,
       body: JSON.stringify({ status }),
     });
   },
@@ -425,16 +406,10 @@ export const adminFeedbackApi = {
    */
   async addReply(
     id: string,
-    input: ReplyInput,
-    municipality?: string
+    input: ReplyInput
   ): Promise<FeedbackDetail> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
     return apiRequest<FeedbackDetail>(`/admin/feedback/${id}/reply`, {
       method: 'POST',
-      headers,
       body: JSON.stringify(input),
     });
   },
@@ -442,35 +417,27 @@ export const adminFeedbackApi = {
 
 /**
  * Admin Click & Fix API
+ *
+ * NOTE: Municipality scoping is now enforced by session on the backend.
  */
 export const adminClickFixApi = {
   /**
-   * Get paginated list of click fix issues (scoped by municipality)
+   * Get paginated list of click fix issues (scoped by admin's municipality via session)
    */
   async getClickFixes(
     page: number = 1,
-    pageSize: number = 20,
-    municipality?: string
+    pageSize: number = 20
   ): Promise<ClickFixListResponse> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
     return apiRequest<ClickFixListResponse>(
-      `/admin/click-fix?page=${page}&page_size=${pageSize}`,
-      { headers }
+      `/admin/click-fix?page=${page}&page_size=${pageSize}`
     );
   },
 
   /**
    * Get single click fix detail by ID
    */
-  async getClickFixDetail(id: string, municipality?: string): Promise<ClickFixDetail> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
-    return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}`, { headers });
+  async getClickFixDetail(id: string): Promise<ClickFixDetail> {
+    return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}`);
   },
 
   /**
@@ -478,16 +445,10 @@ export const adminClickFixApi = {
    */
   async updateStatus(
     id: string,
-    status: ClickFixStatus,
-    municipality?: string
+    status: ClickFixStatus
   ): Promise<ClickFixDetail> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
     return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}/status`, {
       method: 'PATCH',
-      headers,
       body: JSON.stringify({ status }),
     });
   },
@@ -497,16 +458,10 @@ export const adminClickFixApi = {
    */
   async addReply(
     id: string,
-    input: ClickFixReplyInput,
-    municipality?: string
+    input: ClickFixReplyInput
   ): Promise<ClickFixDetail> {
-    const headers: Record<string, string> = {};
-    if (municipality) {
-      headers['X-Admin-Municipality'] = municipality;
-    }
     return apiRequest<ClickFixDetail>(`/admin/click-fix/${id}/reply`, {
       method: 'POST',
-      headers,
       body: JSON.stringify(input),
     });
   },
@@ -550,6 +505,71 @@ export const adminMenuExtrasApi = {
     await apiRequest(`/admin/menu/extras/${id}`, {
       method: 'DELETE',
     });
+  },
+};
+
+/**
+ * Admin Auth API
+ *
+ * Cookie-session based authentication.
+ */
+export interface AdminUser {
+  id: string;
+  username: string;
+  municipality: 'vis' | 'komiza';
+}
+
+export const adminAuthApi = {
+  /**
+   * Login with username and password
+   * Sets session cookie on success
+   */
+  async login(username: string, password: string): Promise<{ ok: boolean; admin?: AdminUser; error?: string }> {
+    const response = await fetch(`${API_BASE_URL}/admin/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ username, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { ok: false, error: data.error || 'Login failed' };
+    }
+
+    return { ok: true, admin: data.admin };
+  },
+
+  /**
+   * Logout - clears session cookie
+   */
+  async logout(): Promise<void> {
+    await fetch(`${API_BASE_URL}/admin/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+  },
+
+  /**
+   * Check current auth status
+   * Returns admin info if authenticated, null otherwise
+   */
+  async checkAuth(): Promise<AdminUser | null> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/auth/me`, {
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data.admin || null;
+    } catch {
+      return null;
+    }
   },
 };
 

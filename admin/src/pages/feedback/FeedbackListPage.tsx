@@ -26,15 +26,12 @@ export function FeedbackListPage() {
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
 
-  // TODO: Get from auth context
-  const adminMunicipality: string | undefined = undefined;
-
   const fetchFeedback = async (pageNum: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await adminFeedbackApi.getFeedback(pageNum, 20, adminMunicipality);
+      const response = await adminFeedbackApi.getFeedback(pageNum, 20);
       setFeedback(response.feedback);
       setHasMore(response.has_more);
       setTotal(response.total);

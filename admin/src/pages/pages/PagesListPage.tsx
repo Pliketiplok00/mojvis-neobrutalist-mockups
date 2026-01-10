@@ -21,7 +21,6 @@ export function PagesListPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pages, setPages] = useState<StaticPageAdmin[]>([]);
-  const [isSupervisor] = useState(true); // TODO: Get from auth context
 
   useEffect(() => {
     void loadPages();
@@ -29,7 +28,7 @@ export function PagesListPage() {
 
   const loadPages = async () => {
     try {
-      const response = await adminStaticPagesApi.getPages(isSupervisor ? 'supervisor' : 'admin');
+      const response = await adminStaticPagesApi.getPages();
       setPages(response.pages);
     } catch (err) {
       console.error('[Admin] Error loading pages:', err);
@@ -67,14 +66,12 @@ export function PagesListPage() {
         {/* Header */}
         <div style={styles.header}>
           <h1 style={styles.title}>Staticne stranice</h1>
-          {isSupervisor && (
-            <button
-              style={styles.createButton}
-              onClick={() => navigate('/pages/new')}
-            >
-              + Nova stranica
-            </button>
-          )}
+          <button
+            style={styles.createButton}
+            onClick={() => navigate('/pages/new')}
+          >
+            + Nova stranica
+          </button>
         </div>
 
         {/* Info */}
@@ -134,18 +131,16 @@ export function PagesListPage() {
                       >
                         Uredi
                       </button>
-                      {isSupervisor && (
-                        <button
-                          style={styles.deleteButton}
-                          data-testid={`pages-delete-${page.id}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void handleDelete(page);
-                          }}
-                        >
-                          Obrisi
-                        </button>
-                      )}
+                      <button
+                        style={styles.deleteButton}
+                        data-testid={`pages-delete-${page.id}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void handleDelete(page);
+                        }}
+                      >
+                        Obrisi
+                      </button>
                     </div>
                   </td>
                 </tr>

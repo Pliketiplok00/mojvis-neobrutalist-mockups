@@ -52,7 +52,6 @@ export function PageEditPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [isSupervisor] = useState(true); // TODO: Get from auth context
 
   // Page data
   const [page, setPage] = useState<StaticPageAdmin | null>(null);
@@ -78,7 +77,7 @@ export function PageEditPage() {
 
   const loadPage = async (pageId: string) => {
     try {
-      const loadedPage = await adminStaticPagesApi.getPage(pageId, isSupervisor ? 'supervisor' : 'admin');
+      const loadedPage = await adminStaticPagesApi.getPage(pageId);
       setPage(loadedPage);
       setSlug(loadedPage.slug);
       setHeader(loadedPage.draft_header);
@@ -122,7 +121,7 @@ export function PageEditPage() {
         // Navigate to edit mode
         navigate(`/pages/${created.id}`, { replace: true });
       } else if (id) {
-        const updated = await adminStaticPagesApi.updateDraft(id, { header, blocks }, isSupervisor ? 'supervisor' : 'admin');
+        const updated = await adminStaticPagesApi.updateDraft(id, { header, blocks });
         setPage(updated);
         setBlocks(updated.draft_blocks);
         setSuccessMessage('Draft spremljen.');
@@ -300,7 +299,7 @@ export function PageEditPage() {
             >
               Natrag
             </button>
-            {!isNew && isSupervisor && page?.published_at && (
+            {!isNew && true && page?.published_at && (
               <button
                 style={styles.unpublishButton}
                 onClick={() => void handleUnpublish()}
@@ -308,7 +307,7 @@ export function PageEditPage() {
                 Povuci iz objave
               </button>
             )}
-            {!isNew && isSupervisor && (
+            {!isNew && true && (
               <button
                 style={styles.publishButton}
                 onClick={() => void handlePublish()}
@@ -427,7 +426,7 @@ export function PageEditPage() {
           <div style={styles.section}>
             <div style={styles.sectionHeader}>
               <h2 style={styles.sectionTitle}>Blokovi sadrzaja</h2>
-              {isSupervisor && !isNew && (
+              {!isNew && (
                 <BlockTypeSelector
                   onSelect={(type) => void handleAddBlock(type)}
                   blocks={blocks}
@@ -437,7 +436,7 @@ export function PageEditPage() {
 
             {blocks.length === 0 && (
               <div style={styles.emptyBlocks}>
-                Nema blokova. {isSupervisor ? 'Dodajte blokove koristeci izbornik.' : 'Supervisor mora dodati blokove.'}
+                Nema blokova. Dodajte blokove koristeci izbornik.
               </div>
             )}
 
@@ -447,7 +446,6 @@ export function PageEditPage() {
                 block={block}
                 index={index}
                 totalBlocks={sortedBlocks.length}
-                isSupervisor={isSupervisor}
                 onContentChange={(content) => handleBlockContentChange(block.id, content)}
                 onRemove={() => void handleRemoveBlock(block.id)}
                 onMoveUp={() => handleMoveBlock(block.id, 'up')}
@@ -534,7 +532,6 @@ function BlockEditor({
   block,
   index,
   totalBlocks,
-  isSupervisor,
   onContentChange,
   onRemove,
   onMoveUp,
@@ -545,7 +542,6 @@ function BlockEditor({
   block: ContentBlock;
   index: number;
   totalBlocks: number;
-  isSupervisor: boolean;
   onContentChange: (content: ContentBlock['content']) => void;
   onRemove: () => void;
   onMoveUp: () => void;
@@ -553,49 +549,36 @@ function BlockEditor({
   onToggleStructureLock: () => void;
   onToggleContentLock: () => void;
 }) {
-  const canEdit = canEditBlockContent(block, isSupervisor);
-  // Reordering is a structure change - only supervisor can reorder, and block must not be structure_locked
-  const canReorder = isSupervisor && !block.structure_locked;
+  // All admins have full edit capabilities (supervisor role removed)
+  const canEdit = canEditBlockContent(block, true);
+  const canReorder = !block.structure_locked;
 
   return (
     <div style={styles.blockCard}>
       <div style={styles.blockHeader}>
         <span style={styles.blockIndex}>#{index + 1}</span>
         <span style={styles.blockType}>{BLOCK_TYPE_LABELS[block.type]}</span>
-        {/* Supervisor-only lock toggles */}
-        {isSupervisor && (
-          <div style={styles.lockToggles}>
-            <label style={styles.lockToggle} title="Zaključaj strukturu (onemogući brisanje/premještanje)">
-              <input
-                type="checkbox"
-                checked={block.structure_locked}
-                onChange={onToggleStructureLock}
-                style={styles.lockCheckbox}
-              />
-              <span style={styles.lockToggleLabel}>Zaključaj strukturu</span>
-            </label>
-            <label style={styles.lockToggle} title="Zaključaj sadržaj (onemogući uređivanje)">
-              <input
-                type="checkbox"
-                checked={block.content_locked}
-                onChange={onToggleContentLock}
-                style={styles.lockCheckbox}
-              />
-              <span style={styles.lockToggleLabel}>Zaključaj sadržaj</span>
-            </label>
-          </div>
-        )}
-        {/* Lock badges for non-supervisor view */}
-        {!isSupervisor && (
-          <div style={styles.blockLocks}>
-            {block.structure_locked && (
-              <span style={styles.lockBadge} title="Struktura zakljucana">S</span>
-            )}
-            {block.content_locked && (
-              <span style={styles.lockBadge} title="Sadrzaj zakljucan">C</span>
-            )}
-          </div>
-        )}
+        {/* Lock toggles - all admins can manage locks */}
+        <div style={styles.lockToggles}>
+          <label style={styles.lockToggle} title="Zaključaj strukturu (onemogući brisanje/premještanje)">
+            <input
+              type="checkbox"
+              checked={block.structure_locked}
+              onChange={onToggleStructureLock}
+              style={styles.lockCheckbox}
+            />
+            <span style={styles.lockToggleLabel}>Zaključaj strukturu</span>
+          </label>
+          <label style={styles.lockToggle} title="Zaključaj sadržaj (onemogući uređivanje)">
+            <input
+              type="checkbox"
+              checked={block.content_locked}
+              onChange={onToggleContentLock}
+              style={styles.lockCheckbox}
+            />
+            <span style={styles.lockToggleLabel}>Zaključaj sadržaj</span>
+          </label>
+        </div>
         {/* Reorder buttons - supervisor only, respects structure lock */}
         {canReorder && (
           <div style={styles.reorderButtons}>
@@ -619,7 +602,7 @@ function BlockEditor({
             </button>
           </div>
         )}
-        {isSupervisor && !block.structure_locked && (
+        {!block.structure_locked && (
           <button
             type="button"
             style={styles.removeBlockButton}

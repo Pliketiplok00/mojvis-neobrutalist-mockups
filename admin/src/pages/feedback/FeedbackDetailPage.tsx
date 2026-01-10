@@ -27,9 +27,6 @@ export function FeedbackDetailPage() {
   const [submitting, setSubmitting] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
-  // TODO: Get from auth context
-  const adminMunicipality: string | undefined = undefined;
-
   const fetchFeedback = useCallback(async () => {
     if (!id) return;
 
@@ -37,7 +34,7 @@ export function FeedbackDetailPage() {
     setError(null);
 
     try {
-      const data = await adminFeedbackApi.getFeedbackDetail(id, adminMunicipality);
+      const data = await adminFeedbackApi.getFeedbackDetail(id);
       setFeedback(data);
     } catch (err) {
       console.error('[Admin] Error fetching feedback:', err);
@@ -45,7 +42,7 @@ export function FeedbackDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [id, adminMunicipality]);
+  }, [id]);
 
   useEffect(() => {
     void fetchFeedback();
@@ -56,7 +53,7 @@ export function FeedbackDetailPage() {
 
     setStatusUpdating(true);
     try {
-      const updated = await adminFeedbackApi.updateStatus(id, newStatus, adminMunicipality);
+      const updated = await adminFeedbackApi.updateStatus(id, newStatus);
       setFeedback(updated);
     } catch (err) {
       console.error('[Admin] Error updating status:', err);
@@ -71,13 +68,9 @@ export function FeedbackDetailPage() {
 
     setSubmitting(true);
     try {
-      await adminFeedbackApi.addReply(
-        id,
-        { body: replyBody.trim() },
-        adminMunicipality
-      );
+      await adminFeedbackApi.addReply(id, { body: replyBody.trim() });
       // Refetch to get updated feedback with new reply
-      const updated = await adminFeedbackApi.getFeedbackDetail(id, adminMunicipality);
+      const updated = await adminFeedbackApi.getFeedbackDetail(id);
       setFeedback(updated);
       setReplyBody('');
     } catch (err) {
