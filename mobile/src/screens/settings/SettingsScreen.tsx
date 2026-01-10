@@ -20,6 +20,7 @@ import {
   TouchableOpacity,
   Alert,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
@@ -77,7 +78,7 @@ export function SettingsScreen(): React.JSX.Element {
     : t('common.empty');
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.content}>
@@ -160,7 +161,7 @@ export function SettingsScreen(): React.JSX.Element {
           <Text style={styles.versionText}>Phase 7 - Push Notifications</Text>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
