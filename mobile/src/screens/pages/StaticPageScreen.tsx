@@ -27,6 +27,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { RouteProp, NavigationProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useTranslations } from '../../i18n';
 import { useUserContext } from '../../hooks/useUserContext';
 import { staticPagesApi } from '../../services/api';
 import type { MainStackParamList } from '../../navigation/types';
@@ -48,6 +49,7 @@ type PageRouteProp = RouteProp<MainStackParamList, 'StaticPage'>;
 export function StaticPageScreen(): React.JSX.Element {
   const route = useRoute<PageRouteProp>();
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
+  const { t } = useTranslations();
   const { slug } = route.params;
 
   // DEV LOGGING: Track StaticPageScreen renders
@@ -73,7 +75,7 @@ export function StaticPageScreen(): React.JSX.Element {
       setPage(data);
     } catch (err) {
       console.error('[StaticPage] Error fetching page:', err);
-      setError('Stranica nije pronadena ili nije objavljena.');
+      setError(t('staticPage.notFound'));
     } finally {
       setLoading(false);
     }
@@ -119,7 +121,7 @@ export function StaticPageScreen(): React.JSX.Element {
         <GlobalHeader type="child" />
         <View style={styles.loadingState}>
           <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Ucitavanje...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -132,10 +134,10 @@ export function StaticPageScreen(): React.JSX.Element {
         <View style={styles.errorState}>
           <Text style={styles.errorIcon}>!</Text>
           <Text style={styles.errorTitle}>
-            {error || 'Stranica nije pronadena'}
+            {error || t('staticPage.notFound')}
           </Text>
           <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-            <Text style={styles.retryText}>Pokusaj ponovo</Text>
+            <Text style={styles.retryText}>{t('common.retry')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -299,12 +301,13 @@ function MediaBlock({ content }: { content: MediaBlockContent }): React.JSX.Elem
 }
 
 function MapBlock({ content }: { content: MapBlockContent }): React.JSX.Element {
+  const { t } = useTranslations();
   // Note: Full map implementation would use react-native-maps
   // For now, show a placeholder with pins list
   return (
     <View style={styles.block}>
       <View style={styles.mapPlaceholder}>
-        <Text style={styles.mapPlaceholderText}>Karta</Text>
+        <Text style={styles.mapPlaceholderText}>{t('staticPage.map')}</Text>
       </View>
       {content.pins.map((pin) => (
         <View key={pin.id} style={styles.mapPin}>
@@ -374,6 +377,7 @@ function NoticeBlock({
   content: NoticeBlockContent;
   onPress: (noticeId: string) => void;
 }): React.JSX.Element {
+  const { t } = useTranslations();
   // DEV LOGGING: NoticeBlock is a CONTENT NOTICE (from CMS), NOT a SYSTEM BANNER (from Inbox API)
   if (__DEV__) {
     console.log('[NOTICEBLOCK_RENDER]', {
@@ -394,7 +398,7 @@ function NoticeBlock({
           style={[styles.noticeItem, notice.is_urgent && styles.noticeItemUrgent]}
           onPress={() => onPress(notice.id)}
         >
-          {notice.is_urgent && <Text style={styles.noticeUrgentBadge}>HITNO</Text>}
+          {notice.is_urgent && <Text style={styles.noticeUrgentBadge}>{t('banner.urgent')}</Text>}
           <Text style={styles.noticeTitle}>{notice.title}</Text>
           <Text style={styles.noticeArrow}>-</Text>
         </TouchableOpacity>

@@ -462,6 +462,8 @@ describe('Admin Static Pages Routes', () => {
           adminId: 'test-admin-id',
           username: 'testadmin',
           municipality: 'vis',
+          noticeMunicipalityScope: 'vis',
+          isBreakglass: false,
         };
       }
     });

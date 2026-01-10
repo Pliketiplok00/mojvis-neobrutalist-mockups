@@ -191,6 +191,8 @@ describe('Admin Feedback Routes (Unit)', () => {
           adminId: 'test-admin-id',
           username: 'testadmin',
           municipality: 'vis',
+          noticeMunicipalityScope: 'vis',
+          isBreakglass: false,
         };
       }
     });

@@ -33,6 +33,7 @@ interface LoginBody {
 // Routes
 // ============================================================
 
+// eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugin contract requires async
 export async function adminAuthRoutes(fastify: FastifyInstance): Promise<void> {
   /**
    * POST /admin/auth/login

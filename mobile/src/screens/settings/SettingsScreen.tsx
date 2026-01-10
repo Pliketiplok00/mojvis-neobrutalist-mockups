@@ -24,10 +24,12 @@ import {
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
+import { useTranslations } from '../../i18n';
 
 export function SettingsScreen(): React.JSX.Element {
   const { data, resetOnboarding } = useOnboarding();
   const { isOptIn, isRegistered, isLoading, setOptIn } = usePush();
+  const { t } = useTranslations();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const language = data?.language ?? 'hr';
@@ -42,12 +44,7 @@ export function SettingsScreen(): React.JSX.Element {
     try {
       await setOptIn(value);
     } catch (error) {
-      Alert.alert(
-        language === 'en' ? 'Error' : 'Greška',
-        language === 'en'
-          ? 'Failed to update notification settings'
-          : 'Nije moguće ažurirati postavke obavijesti'
-      );
+      Alert.alert(t('common.error'), t('common.error'));
     } finally {
       setIsUpdating(false);
     }
@@ -55,17 +52,10 @@ export function SettingsScreen(): React.JSX.Element {
 
   // Handle reset onboarding
   const handleResetOnboarding = () => {
-    const title = language === 'en' ? 'Reset Settings' : 'Resetiraj postavke';
-    const message = language === 'en'
-      ? 'This will reset all your preferences. You will need to complete the setup again.'
-      : 'Ovo će resetirati sve vaše postavke. Morat ćete ponovno proći postavke.';
-    const cancel = language === 'en' ? 'Cancel' : 'Odustani';
-    const confirm = language === 'en' ? 'Reset' : 'Resetiraj';
-
-    Alert.alert(title, message, [
-      { text: cancel, style: 'cancel' },
+    Alert.alert(t('settings.reset.title'), t('settings.reset.confirmMessage'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: confirm,
+        text: t('settings.reset.button'),
         style: 'destructive',
         onPress: async () => {
           try {
@@ -81,12 +71,10 @@ export function SettingsScreen(): React.JSX.Element {
 
   // Get display labels
   const languageLabel = language === 'en' ? 'English' : 'Hrvatski';
-  const userModeLabel = language === 'en'
-    ? (userMode === 'local' ? 'Local Resident' : 'Visitor')
-    : (userMode === 'local' ? 'Lokalni stanovnik' : 'Posjetitelj');
+  const userModeLabel = userMode === 'local' ? t('settings.profile.local') : t('settings.profile.visitor');
   const municipalityLabel = municipality
     ? (municipality === 'vis' ? 'Vis' : 'Komiža')
-    : (language === 'en' ? 'Not set' : 'Nije postavljeno');
+    : t('common.empty');
 
   return (
     <View style={styles.container}>
@@ -96,18 +84,16 @@ export function SettingsScreen(): React.JSX.Element {
         {/* Notifications Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            {language === 'en' ? 'Notifications' : 'Obavijesti'}
+            {t('settings.pushNotifications.title')}
           </Text>
 
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
               <Text style={styles.settingLabel}>
-                {language === 'en' ? 'Emergency Notifications' : 'Hitne obavijesti (push)'}
+                {t('settings.pushNotifications.title')}
               </Text>
               <Text style={styles.settingDescription}>
-                {language === 'en'
-                  ? 'Receive push notifications for emergency (hitno) messages'
-                  : 'Primaj push obavijesti za hitne poruke'}
+                {t('settings.pushNotifications.description')}
               </Text>
             </View>
             <Switch
@@ -118,25 +104,17 @@ export function SettingsScreen(): React.JSX.Element {
               thumbColor={Platform.OS === 'ios' ? undefined : '#FFFFFF'}
             />
           </View>
-
-          {!isRegistered && (
-            <Text style={styles.warningText}>
-              {language === 'en'
-                ? 'Push notifications require a physical device and permission.'
-                : 'Push obavijesti zahtijevaju fizički uređaj i dopuštenje.'}
-            </Text>
-          )}
         </View>
 
         {/* Profile Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            {language === 'en' ? 'Your Profile' : 'Vaš profil'}
+            {t('settings.profile.title')}
           </Text>
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>
-              {language === 'en' ? 'Language' : 'Jezik'}
+              {t('settings.profile.language')}
             </Text>
             <Text style={styles.infoValue}>{languageLabel}</Text>
           </View>
@@ -145,7 +123,7 @@ export function SettingsScreen(): React.JSX.Element {
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>
-              {language === 'en' ? 'Mode' : 'Način'}
+              {t('settings.profile.userMode')}
             </Text>
             <Text style={styles.infoValue}>{userModeLabel}</Text>
           </View>
@@ -155,7 +133,7 @@ export function SettingsScreen(): React.JSX.Element {
               <View style={styles.separator} />
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>
-                  {language === 'en' ? 'Municipality' : 'Općina'}
+                  {t('settings.profile.municipality')}
                 </Text>
                 <Text style={styles.infoValue}>{municipalityLabel}</Text>
               </View>
@@ -171,7 +149,7 @@ export function SettingsScreen(): React.JSX.Element {
             activeOpacity={0.7}
           >
             <Text style={styles.dangerButtonText}>
-              {language === 'en' ? 'Reset All Settings' : 'Resetiraj sve postavke'}
+              {t('settings.reset.button')}
             </Text>
           </TouchableOpacity>
         </View>

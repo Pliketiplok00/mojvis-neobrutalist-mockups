@@ -62,6 +62,7 @@ function getLocaleFromHeader(request: FastifyRequest): DeviceLocale {
   return 'hr'; // Default to Croatian
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugin contract requires async
 export async function deviceRoutes(fastify: FastifyInstance): Promise<void> {
   /**
    * POST /device/push-token
@@ -111,7 +112,7 @@ export async function deviceRoutes(fastify: FastifyInstance): Promise<void> {
       });
 
       try {
-        const token = await upsertDevicePushToken(
+        const token = upsertDevicePushToken(
           deviceId,
           expoPushToken,
           platform as DevicePlatform,
@@ -167,7 +168,7 @@ export async function deviceRoutes(fastify: FastifyInstance): Promise<void> {
       });
 
       try {
-        const token = await updatePushOptIn(deviceId, optIn);
+        const token = updatePushOptIn(deviceId, optIn);
 
         if (!token) {
           return reply.status(404).send({
@@ -209,7 +210,7 @@ export async function deviceRoutes(fastify: FastifyInstance): Promise<void> {
       console.info('[Device] GET /device/push-status', { device_id: deviceId });
 
       try {
-        const token = await getDevicePushToken(deviceId);
+        const token = getDevicePushToken(deviceId);
 
         if (!token) {
           return reply.status(200).send({
@@ -259,8 +260,8 @@ export async function deviceRoutes(fastify: FastifyInstance): Promise<void> {
       console.info('[Device] GET /device/push-debug', { device_id: deviceId });
 
       try {
-        const token = await getDevicePushToken(deviceId);
-        const latestPushLog = await getLatestPushLog();
+        const token = getDevicePushToken(deviceId);
+        const latestPushLog = getLatestPushLog();
 
         if (!token) {
           return reply.status(200).send({

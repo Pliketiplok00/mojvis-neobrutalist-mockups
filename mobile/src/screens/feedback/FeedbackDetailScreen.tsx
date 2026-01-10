@@ -22,6 +22,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import type { FeedbackDetailResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
@@ -39,6 +40,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 export function FeedbackDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
   const { feedbackId } = route.params;
+  const { t } = useTranslations();
 
   const [feedback, setFeedback] = useState<FeedbackDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -52,7 +54,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
       setFeedback(data);
     } catch (err) {
       console.error('[FeedbackDetail] Error fetching:', err);
-      setError('Greska pri ucitavanju poruke');
+      setError(t('feedback.detail.error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -84,7 +86,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Ucitavanje...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -95,7 +97,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || 'Poruka nije pronadena'}</Text>
+          <Text style={styles.errorText}>{error || t('feedback.detail.error')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -132,12 +134,12 @@ export function FeedbackDetailScreen(): React.JSX.Element {
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <Text style={styles.sectionTitle}>Odgovori</Text>
+          <Text style={styles.sectionTitle}>{t('feedback.detail.replies')}</Text>
 
           {feedback.replies.length === 0 ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyText}>
-                Još nema odgovora na vašu poruku.
+                {t('feedback.detail.noReplies')}
               </Text>
             </View>
           ) : (

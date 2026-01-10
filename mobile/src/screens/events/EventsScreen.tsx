@@ -27,6 +27,7 @@ import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { eventsApi, inboxApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { InboxMessage } from '../../types/inbox';
@@ -37,10 +38,10 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 /**
  * Format date for display (DD/MM/YYYY, HH:mm)
  */
-function formatDateTime(dateStr: string, isAllDay: boolean): string {
+function formatDateTime(dateStr: string, isAllDay: boolean, allDayText: string): string {
   const date = new Date(dateStr);
   if (isAllDay) {
-    return 'Cijeli dan';
+    return allDayText;
   }
   return date.toLocaleTimeString('hr-HR', {
     hour: '2-digit',
@@ -63,10 +64,14 @@ function Calendar({
   selectedDate,
   onSelectDate,
   eventDates,
+  monthNames,
+  dayNames,
 }: {
   selectedDate: Date;
   onSelectDate: (date: Date) => void;
   eventDates: Set<string>;
+  monthNames: string[];
+  dayNames: string[];
 }): React.JSX.Element {
   const [viewDate, setViewDate] = useState(new Date(selectedDate));
 
@@ -77,13 +82,6 @@ function Calendar({
   const lastDayOfMonth = new Date(year, month + 1, 0);
   const daysInMonth = lastDayOfMonth.getDate();
   const startDay = firstDayOfMonth.getDay(); // 0 = Sunday
-
-  const monthNames = [
-    'Sijecanj', 'Veljaca', 'Ozujak', 'Travanj', 'Svibanj', 'Lipanj',
-    'Srpanj', 'Kolovoz', 'Rujan', 'Listopad', 'Studeni', 'Prosinac',
-  ];
-
-  const dayNames = ['Ned', 'Pon', 'Uto', 'Sri', 'Cet', 'Pet', 'Sub'];
 
   const prevMonth = () => {
     setViewDate(new Date(year, month - 1, 1));
@@ -167,7 +165,7 @@ function Calendar({
 /**
  * Event list item
  */
-function EventItem({ event }: { event: Event }): React.JSX.Element {
+function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
 
   return (
@@ -177,7 +175,7 @@ function EventItem({ event }: { event: Event }): React.JSX.Element {
     >
       <View style={styles.eventTime}>
         <Text style={styles.eventTimeText}>
-          {formatDateTime(event.start_datetime, event.is_all_day)}
+          {formatDateTime(event.start_datetime, event.is_all_day, allDayText)}
         </Text>
       </View>
       <View style={styles.eventContent}>
@@ -197,6 +195,7 @@ function EventItem({ event }: { event: Event }): React.JSX.Element {
 
 export function EventsScreen(): React.JSX.Element {
   const { openMenu } = useMenu();
+  const { t } = useTranslations();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [eventDates, setEventDates] = useState<Set<string>>(new Set());
@@ -204,6 +203,32 @@ export function EventsScreen(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userContext = useUserContext();
+
+  // Get translated month and day names
+  const monthNames = [
+    t('events.calendar.months.january'),
+    t('events.calendar.months.february'),
+    t('events.calendar.months.march'),
+    t('events.calendar.months.april'),
+    t('events.calendar.months.may'),
+    t('events.calendar.months.june'),
+    t('events.calendar.months.july'),
+    t('events.calendar.months.august'),
+    t('events.calendar.months.september'),
+    t('events.calendar.months.october'),
+    t('events.calendar.months.november'),
+    t('events.calendar.months.december'),
+  ];
+
+  const dayNames = [
+    t('events.calendar.days.sun'),
+    t('events.calendar.days.mon'),
+    t('events.calendar.days.tue'),
+    t('events.calendar.days.wed'),
+    t('events.calendar.days.thu'),
+    t('events.calendar.days.fri'),
+    t('events.calendar.days.sat'),
+  ];
 
   const handleMenuPress = (): void => {
     openMenu();
@@ -239,7 +264,7 @@ export function EventsScreen(): React.JSX.Element {
       setEvents(response.events);
     } catch (err) {
       console.error('[Events] Error fetching events:', err);
-      setError('Greska pri ucitavanju dogadaja');
+      setError(t('events.error'));
     } finally {
       setLoading(false);
     }
@@ -280,10 +305,7 @@ export function EventsScreen(): React.JSX.Element {
 
         {/* Section title */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Dogadaji</Text>
-          <Text style={styles.sectionSubtitle}>
-            Pregledajte dogadanja na otoku
-          </Text>
+          <Text style={styles.sectionTitle}>{t('events.title')}</Text>
         </View>
 
         {/* Calendar */}
@@ -291,6 +313,8 @@ export function EventsScreen(): React.JSX.Element {
           selectedDate={selectedDate}
           onSelectDate={handleSelectDate}
           eventDates={eventDates}
+          monthNames={monthNames}
+          dayNames={dayNames}
         />
 
         {/* Selected day events */}
@@ -313,13 +337,13 @@ export function EventsScreen(): React.JSX.Element {
           {!loading && !error && events.length === 0 && (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateText}>
-                Nema dogadaja za ovaj dan
+                {t('events.noEvents')}
               </Text>
             </View>
           )}
 
           {!loading && events.map((event) => (
-            <EventItem key={event.id} event={event} />
+            <EventItem key={event.id} event={event} allDayText={t('events.allDay')} />
           ))}
         </View>
       </ScrollView>

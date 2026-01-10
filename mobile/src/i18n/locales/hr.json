@@ -1,0 +1,339 @@
+{
+  "app": {
+    "name": "MOJ VIS"
+  },
+  "common": {
+    "loading": "Ucitavanje...",
+    "error": "Doslo je do greske",
+    "retry": "Pokusaj ponovo",
+    "empty": "Nema podataka",
+    "back": "Natrag",
+    "send": "Posalji",
+    "cancel": "Odustani",
+    "save": "Spremi",
+    "delete": "Obrisi",
+    "confirm": "Potvrdi",
+    "yes": "Da",
+    "no": "Ne",
+    "ok": "U redu",
+    "close": "Zatvori"
+  },
+  "navigation": {
+    "back": "Natrag",
+    "menu": "Izbornik",
+    "inbox": "Pristiglo"
+  },
+  "onboarding": {
+    "languageSelection": {
+      "title": "Dobrodosli",
+      "subtitle": "Odaberite jezik"
+    },
+    "userMode": {
+      "title": "Kako koristite aplikaciju?",
+      "visitor": "Posjetitelj",
+      "visitorDescription": "Turisticka posjeta otoku",
+      "local": "Lokalac",
+      "localDescription": "Zivim ili radim na otoku",
+      "hint": "Mozete promijeniti kasnije u postavkama."
+    },
+    "municipality": {
+      "title": "Odaberite opcinu",
+      "hint": "Ovo odreduje koje opcinske obavijesti primate."
+    }
+  },
+  "home": {
+    "greeting": "Dobrodosli na Vis!",
+    "subtitle": "Vas vodic za zivot i posjetu otoku",
+    "categories": "Kategorije",
+    "upcomingEvents": "Nadolazeci dogadaji",
+    "eventsPlaceholder": "[Ovdje ce se prikazati dogadaji]",
+    "feedback": {
+      "title": "Imate prijedlog?",
+      "subtitle": "Posaljite nam povratnu informaciju"
+    },
+    "categoryLabels": {
+      "events": "Dogadaji",
+      "transport": "Promet",
+      "info": "Info",
+      "contacts": "Kontakti"
+    }
+  },
+  "inbox": {
+    "title": "Pristiglo",
+    "tabs": {
+      "received": "Primljeno",
+      "sent": "Poslano"
+    },
+    "empty": {
+      "title": "Nema poruka",
+      "received": "Vas sanducic je prazan",
+      "sent": "Niste poslali nijednu poruku",
+      "sentHint": "Posaljite prvu poruku putem gumba ispod"
+    },
+    "error": {
+      "loading": "Greska pri ucitavanju poruka. Pokusajte ponovo.",
+      "loadingSent": "Greska pri ucitavanju poslanih poruka."
+    },
+    "actions": {
+      "newMessage": "Nova poruka",
+      "reportProblem": "Prijavi problem"
+    },
+    "badges": {
+      "urgent": "HITNO",
+      "report": "PRIJAVA"
+    },
+    "photoCount": "slika"
+  },
+  "inboxDetail": {
+    "notFound": "Poruka nije pronadena",
+    "error": "Greska pri ucitavanju poruke"
+  },
+  "events": {
+    "title": "Dogadaji",
+    "allDay": "Cijeli dan",
+    "noEvents": "Nema dogadaja za ovaj dan",
+    "error": "Greska pri ucitavanju dogadaja",
+    "loading": "Ucitavanje dogadaja...",
+    "calendar": {
+      "months": {
+        "january": "Sijecanj",
+        "february": "Veljaca",
+        "march": "Ozujak",
+        "april": "Travanj",
+        "may": "Svibanj",
+        "june": "Lipanj",
+        "july": "Srpanj",
+        "august": "Kolovoz",
+        "september": "Rujan",
+        "october": "Listopad",
+        "november": "Studeni",
+        "december": "Prosinac"
+      },
+      "days": {
+        "sun": "Ned",
+        "mon": "Pon",
+        "tue": "Uto",
+        "wed": "Sri",
+        "thu": "Cet",
+        "fri": "Pet",
+        "sat": "Sub"
+      }
+    }
+  },
+  "eventDetail": {
+    "notFound": "Dogadaj nije pronaden",
+    "error": "Greska pri ucitavanju dogadaja",
+    "reminder": {
+      "set": "Postavi podsjetnik",
+      "remove": "Ukloni podsjetnik",
+      "active": "Podsjetnik aktivan"
+    },
+    "location": "Lokacija",
+    "time": "Vrijeme",
+    "description": "Opis"
+  },
+  "transport": {
+    "hub": {
+      "title": "Vozni red",
+      "road": "Cestovni promet",
+      "roadDescription": "Autobusne linije",
+      "sea": "Pomorski promet",
+      "seaDescription": "Trajekti i katamarani"
+    },
+    "road": {
+      "title": "Cestovni promet"
+    },
+    "sea": {
+      "title": "Pomorski promet"
+    },
+    "lines": "Linije",
+    "todaysDepartures": "Polasci danas",
+    "noLines": "Nema dostupnih linija",
+    "noDepartures": "Nema polazaka danas",
+    "loading": "Ucitavanje...",
+    "error": "Greska pri ucitavanju podataka",
+    "stations": "stanica",
+    "holiday": "blagdan",
+    "dayTypes": {
+      "MON": "Ponedjeljak",
+      "TUE": "Utorak",
+      "WED": "Srijeda",
+      "THU": "Cetvrtak",
+      "FRI": "Petak",
+      "SAT": "Subota",
+      "SUN": "Nedjelja",
+      "PRAZNIK": "Praznik"
+    },
+    "lineDetail": {
+      "departures": "Polasci",
+      "route": "Ruta",
+      "duration": "Trajanje",
+      "contacts": "Kontakt",
+      "phone": "Telefon",
+      "email": "Email",
+      "website": "Web stranica",
+      "noContactInfo": "Nema kontakt informacija",
+      "selectDate": "Odaberite datum",
+      "direction": "Smjer",
+      "noDeparturesForDate": "Nema polazaka za odabrani datum",
+      "stopTimes": "Vremena zaustavljanja",
+      "error": "Greska pri ucitavanju linije",
+      "notFound": "Linija nije pronadena"
+    }
+  },
+  "feedback": {
+    "title": "Posalji poruku",
+    "subject": "Tema",
+    "subjectPlaceholder": "Ukratko opisite temu",
+    "message": "Poruka",
+    "messagePlaceholder": "Napisite svoju poruku ovdje...",
+    "send": "Posalji",
+    "sending": "Slanje...",
+    "error": {
+      "submit": "Greska pri slanju poruke. Pokusajte ponovo.",
+      "rateLimit": "Previse poruka. Pokusajte ponovno sutra."
+    },
+    "validation": {
+      "subjectRequired": "Tema je obavezna",
+      "subjectMaxLength": "Tema ne smije biti duza od 120 znakova",
+      "bodyRequired": "Poruka je obavezna",
+      "bodyMaxLength": "Poruka ne smije biti duza od 4000 znakova"
+    },
+    "confirmation": {
+      "title": "Poruka poslana!",
+      "message": "Hvala na povratnoj informaciji. Odgovorit cemo vam u najkracem mogucen roku.",
+      "backToInbox": "Povratak na pristiglo"
+    },
+    "detail": {
+      "title": "Detalji poruke",
+      "status": "Status",
+      "sentAt": "Poslano",
+      "replies": "Odgovori",
+      "noReplies": "Nema odgovora",
+      "error": "Greska pri ucitavanju detalja"
+    }
+  },
+  "clickFix": {
+    "title": "Prijavi problem",
+    "titleField": "Naslov",
+    "titlePlaceholder": "Kratki opis problema",
+    "description": "Opis",
+    "descriptionPlaceholder": "Detaljno opisite problem...",
+    "location": "Lokacija",
+    "locationHint": "Dodirnite za odabir lokacije na karti",
+    "locationSelected": "Lokacija odabrana",
+    "photos": "Fotografije",
+    "photosHint": "Dodajte do 3 fotografije (opcionalno)",
+    "addPhoto": "Dodaj fotografiju",
+    "removePhoto": "Ukloni",
+    "locationActions": {
+      "change": "Promijeni",
+      "getLocation": "Dohvati trenutnu lokaciju"
+    },
+    "photoActions": {
+      "maxTitle": "Maksimalan broj slika",
+      "maxMessage": "Mozete dodati najvise 3 slike.",
+      "pickFromGallery": "Odaberi iz galerije",
+      "takePhoto": "Slikaj"
+    },
+    "send": "Posalji prijavu",
+    "sending": "Slanje...",
+    "error": {
+      "submit": "Greska pri slanju prijave. Pokusajte ponovo.",
+      "rateLimit": "Previse prijava. Pokusajte ponovno sutra.",
+      "location": "Nije moguce dobiti trenutnu lokaciju",
+      "photo": "Greska pri dodavanju fotografije"
+    },
+    "validation": {
+      "titleRequired": "Naslov je obavezan",
+      "titleMaxLength": "Naslov ne smije biti duzi od 120 znakova",
+      "descriptionRequired": "Opis je obavezan",
+      "descriptionMaxLength": "Opis ne smije biti duzi od 4000 znakova",
+      "locationRequired": "Lokacija je obavezna",
+      "photoInvalidFormat": "Neispravan format slike. Dozvoljeno: JPEG, PNG, WebP",
+      "photoTooLarge": "Slika prevelika. Maksimalno: 5MB"
+    },
+    "permissions": {
+      "title": "Dozvola",
+      "locationTitle": "Lokacija",
+      "locationMessage": "Potrebna je dozvola za pristup lokaciji kako bismo mogli odrediti mjesto problema.",
+      "locationDenied": "Pristup lokaciji je odbijen. Molimo omogucite u postavkama.",
+      "cameraTitle": "Kamera",
+      "cameraMessage": "Potrebna je dozvola za pristup kameri kako biste mogli dodati fotografije.",
+      "cameraDenied": "Pristup kameri je odbijen. Molimo omogucite u postavkama.",
+      "galleryTitle": "Galerija",
+      "galleryMessage": "Potrebna je dozvola za pristup galeriji kako biste mogli odabrati fotografije.",
+      "galleryDenied": "Pristup galeriji je odbijen. Molimo omogucite u postavkama.",
+      "openSettings": "Otvori postavke"
+    },
+    "confirmation": {
+      "title": "Prijava poslana!",
+      "message": "Vasa prijava je uspjesno zaprimljena. Mozete pratiti status u odjeljku Poslano.",
+      "viewReport": "Pogledaj prijavu",
+      "backToInbox": "Povratak na pristiglo"
+    },
+    "detail": {
+      "title": "Detalji prijave",
+      "status": "Status",
+      "sentAt": "Poslano",
+      "location": "Lokacija",
+      "photos": "Fotografije",
+      "replies": "Odgovori",
+      "reply": "Odgovor",
+      "noReplies": "Jos nema odgovora na vasu prijavu.",
+      "notFound": "Prijava nije pronadena",
+      "error": "Greska pri ucitavanju prijave"
+    }
+  },
+  "staticPage": {
+    "loading": "Ucitavanje...",
+    "notFound": "Stranica nije pronadena ili nije objavljena.",
+    "error": "Greska pri ucitavanju stranice",
+    "map": "Karta"
+  },
+  "settings": {
+    "title": "Postavke",
+    "pushNotifications": {
+      "title": "Hitne obavijesti (push)",
+      "description": "Primajte obavijesti o hitnim dogadajima"
+    },
+    "profile": {
+      "title": "Profil",
+      "language": "Jezik",
+      "userMode": "Nacin koristenja",
+      "municipality": "Opcina",
+      "visitor": "Posjetitelj",
+      "local": "Lokalac"
+    },
+    "reset": {
+      "title": "Resetiraj aplikaciju",
+      "description": "Brise sve postavke i vraca na pocetno stanje",
+      "button": "Resetiraj",
+      "confirm": "Jeste li sigurni da zelite resetirati aplikaciju?",
+      "confirmMessage": "Sve postavke ce biti obrisane."
+    }
+  },
+  "banner": {
+    "urgent": "HITNO",
+    "accessibilityHint": "Dodirnite za vise informacija"
+  },
+  "menu": {
+    "title": "Izbornik",
+    "items": {
+      "home": "Pocetna",
+      "events": "Dogadaji",
+      "timetables": "Vozni redovi",
+      "flora": "Flora i fauna",
+      "visitorInfo": "Info za posjetitelje",
+      "clickFix": "Prijavi problem",
+      "feedback": "Posalji prijedlog",
+      "contacts": "Vazni kontakti"
+    }
+  },
+  "status": {
+    "zaprimljeno": "Zaprimljeno",
+    "u_razmatranju": "U razmatranju",
+    "prihvaceno": "Prihvaceno",
+    "odbijeno": "Odbijeno"
+  }
+}

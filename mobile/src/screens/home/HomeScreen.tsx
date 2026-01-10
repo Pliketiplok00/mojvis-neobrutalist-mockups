@@ -21,6 +21,7 @@ import { SafeAreaView } from 'react-native';
 import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 
@@ -38,6 +39,7 @@ import {
 
 export function HomeScreen(): React.JSX.Element {
   const { openMenu } = useMenu();
+  const { t } = useTranslations();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
   const userContext = useUserContext();
 
@@ -71,28 +73,33 @@ export function HomeScreen(): React.JSX.Element {
 
           {/* Section 2: Greeting Block */}
           <Section>
-            <H1 style={styles.greetingTitle}>Dobrodosli na Vis!</H1>
+            <H1 style={styles.greetingTitle}>{t('home.greeting')}</H1>
             <Body color={skin.colors.textMuted}>
-              Vas vodic za zivot i posjetu otoku
+              {t('home.subtitle')}
             </Body>
           </Section>
 
           {/* Section 3: Category Grid */}
-          <Section title="Kategorije">
+          <Section title={t('home.categories')}>
             <View style={styles.categoryGrid}>
-              {['Dogadaji', 'Promet', 'Info', 'Kontakti'].map((category) => (
-                <Card key={category} variant="filled" style={styles.categoryCard}>
-                  <Body style={styles.categoryText}>{category}</Body>
+              {[
+                { key: 'events', label: t('home.categoryLabels.events') },
+                { key: 'transport', label: t('home.categoryLabels.transport') },
+                { key: 'info', label: t('home.categoryLabels.info') },
+                { key: 'contacts', label: t('home.categoryLabels.contacts') },
+              ].map((category) => (
+                <Card key={category.key} variant="filled" style={styles.categoryCard}>
+                  <Body style={styles.categoryText}>{category.label}</Body>
                 </Card>
               ))}
             </View>
           </Section>
 
           {/* Section 4: Upcoming Events (placeholder) */}
-          <Section title="Nadolazeci dogadaji">
+          <Section title={t('home.upcomingEvents')}>
             <View style={styles.placeholder}>
               <Meta style={styles.placeholderText}>
-                [Events list will appear here]
+                {t('home.eventsPlaceholder')}
               </Meta>
             </View>
           </Section>
@@ -104,9 +111,9 @@ export function HomeScreen(): React.JSX.Element {
               backgroundColor={skin.colors.successBackground}
               style={styles.feedbackCard}
             >
-              <H2 color={skin.colors.successText}>Imate prijedlog?</H2>
+              <H2 color={skin.colors.successText}>{t('home.feedback.title')}</H2>
               <Body color={skin.colors.successAccent} style={styles.feedbackSubtitle}>
-                Posaljite nam povratnu informaciju
+                {t('home.feedback.subtitle')}
               </Body>
             </Card>
           </Section>

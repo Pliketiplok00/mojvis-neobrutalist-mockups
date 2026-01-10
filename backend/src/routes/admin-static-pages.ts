@@ -91,6 +91,7 @@ function toAdminResponse(page: StaticPage): StaticPageAdminResponse {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugin contract requires async
 export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<void> {
   // ============================================================
   // Admin Routes (read + edit unlocked content)
@@ -173,7 +174,7 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
             if (!isValidBlockType(block.type)) {
               return reply.status(400).send({
                 error: true,
-                message: `Invalid block type: ${block.type}`,
+                message: `Invalid block type: ${block.type as string}`,
               });
             }
             // Reject notice blocks from being edited
@@ -320,7 +321,7 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
             if (!isValidBlockType(block.type)) {
               return reply.status(400).send({
                 error: true,
-                message: `Invalid block type: ${block.type}`,
+                message: `Invalid block type: ${block.type as string}`,
               });
             }
           }
@@ -497,7 +498,7 @@ export async function adminStaticPageRoutes(fastify: FastifyInstance): Promise<v
         if (!isValidBlockType(input.type)) {
           return reply.status(400).send({
             error: true,
-            message: `Invalid block type: ${input.type}`,
+            message: `Invalid block type: ${input.type as string}`,
           });
         }
 

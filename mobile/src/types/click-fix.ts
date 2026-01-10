@@ -165,6 +165,7 @@ export const VALIDATION_LIMITS = {
 
 /**
  * Validate Click & Fix form
+ * Returns translation keys for errors - components should translate these using t()
  */
 export function validateClickFixForm(
   subject: string,
@@ -177,19 +178,19 @@ export function validateClickFixForm(
   const errors: { subject?: string; description?: string; location?: string } = {};
 
   if (!subject || subject.trim().length === 0) {
-    errors.subject = 'Naslov je obavezan';
+    errors.subject = 'clickFix.validation.titleRequired';
   } else if (subject.length > VALIDATION_LIMITS.SUBJECT_MAX_LENGTH) {
-    errors.subject = `Maksimalno ${VALIDATION_LIMITS.SUBJECT_MAX_LENGTH} znakova`;
+    errors.subject = 'clickFix.validation.titleMaxLength';
   }
 
   if (!description || description.trim().length === 0) {
-    errors.description = 'Opis je obavezan';
+    errors.description = 'clickFix.validation.descriptionRequired';
   } else if (description.length > VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH) {
-    errors.description = `Maksimalno ${VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH} znakova`;
+    errors.description = 'clickFix.validation.descriptionMaxLength';
   }
 
   if (!location) {
-    errors.location = 'Lokacija je obavezna';
+    errors.location = 'clickFix.validation.locationRequired';
   }
 
   return {
@@ -200,6 +201,7 @@ export function validateClickFixForm(
 
 /**
  * Validate photo before upload
+ * Returns translation keys for errors - components should translate these using t()
  */
 export function validatePhoto(
   mimeType: string,
@@ -210,14 +212,14 @@ export function validatePhoto(
   )) {
     return {
       valid: false,
-      error: 'Neispravan format slike. Dozvoljeno: JPEG, PNG, WebP',
+      error: 'clickFix.validation.photoInvalidFormat',
     };
   }
 
   if (fileSize > VALIDATION_LIMITS.MAX_PHOTO_SIZE_BYTES) {
     return {
       valid: false,
-      error: `Slika prevelika. Maksimalno: ${VALIDATION_LIMITS.MAX_PHOTO_SIZE_BYTES / (1024 * 1024)}MB`,
+      error: 'clickFix.validation.photoTooLarge',
     };
   }
 

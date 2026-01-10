@@ -29,6 +29,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useUnread } from '../../contexts/UnreadContext';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { inboxApi, feedbackApi, clickFixApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { SentItemResponse } from '../../types/feedback';
@@ -73,6 +74,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
 
 export function InboxListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslations();
   const { isUnread, markAsRead, registerMessages } = useUnread();
 
   const [activeTab, setActiveTab] = useState<TabType>('received');
@@ -99,7 +101,7 @@ export function InboxListScreen(): React.JSX.Element {
       registerMessages(response.messages.map((m) => m.id));
     } catch (err) {
       console.error('[Inbox] Error fetching messages:', err);
-      setError('Greska pri ucitavanju poruka. Pokusajte ponovo.');
+      setError(t('inbox.error.loading'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -145,7 +147,7 @@ export function InboxListScreen(): React.JSX.Element {
       setSentItems(combinedItems);
     } catch (err) {
       console.error('[Inbox] Error fetching sent items:', err);
-      setSentError('Greska pri ucitavanju poslanih poruka.');
+      setSentError(t('inbox.error.loadingSent'));
     } finally {
       setSentLoading(false);
       setRefreshing(false);
@@ -207,7 +209,7 @@ export function InboxListScreen(): React.JSX.Element {
       >
         {/* Urgent indicator */}
         {item.is_urgent && (
-          <Badge variant="urgent" style={styles.badgeMargin}>HITNO</Badge>
+          <Badge variant="urgent" style={styles.badgeMargin}>{t('inbox.badges.urgent')}</Badge>
         )}
 
         {/* Title */}
@@ -232,11 +234,11 @@ export function InboxListScreen(): React.JSX.Element {
   const renderEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyIcon}>📭</Text>
-      <H2 style={styles.emptyTitle}>Nema poruka</H2>
+      <H2 style={styles.emptyTitle}>{t('inbox.empty.title')}</H2>
       <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
         {activeTab === 'received'
-          ? 'Vas sanducic je prazan'
-          : 'Niste poslali nijednu poruku'}
+          ? t('inbox.empty.received')
+          : t('inbox.empty.sent')}
       </Body>
     </View>
   );
@@ -245,7 +247,7 @@ export function InboxListScreen(): React.JSX.Element {
     <View style={styles.errorState}>
       <Text style={styles.errorIcon}>⚠️</Text>
       <Body style={styles.errorTitle}>{error}</Body>
-      <Button onPress={handleRefresh}>Pokusaj ponovo</Button>
+      <Button onPress={handleRefresh}>{t('common.retry')}</Button>
     </View>
   );
 
@@ -258,7 +260,7 @@ export function InboxListScreen(): React.JSX.Element {
         {/* Type and Status badges */}
         <View style={styles.badgeRow}>
           {isClickFix && (
-            <Badge variant="type" style={styles.badgeMargin}>PRIJAVA</Badge>
+            <Badge variant="type" style={styles.badgeMargin}>{t('inbox.badges.report')}</Badge>
           )}
           <Badge
             backgroundColor={statusColor.bg}
@@ -275,7 +277,7 @@ export function InboxListScreen(): React.JSX.Element {
 
         {/* Photo count for Click & Fix */}
         {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
-          <Meta style={styles.photoCount}>{item.photo_count} slika</Meta>
+          <Meta style={styles.photoCount}>{item.photo_count} {t('inbox.photoCount')}</Meta>
         )}
 
         {/* Date */}
@@ -287,9 +289,9 @@ export function InboxListScreen(): React.JSX.Element {
   const renderSentEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
       <Text style={styles.emptyIcon}>📤</Text>
-      <H2 style={styles.emptyTitle}>Nema poslanih poruka</H2>
+      <H2 style={styles.emptyTitle}>{t('inbox.empty.title')}</H2>
       <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
-        Posaljite prvu poruku putem gumba ispod
+        {t('inbox.empty.sentHint')}
       </Body>
     </View>
   );
@@ -298,7 +300,7 @@ export function InboxListScreen(): React.JSX.Element {
     <View style={styles.errorState}>
       <Text style={styles.errorIcon}>⚠️</Text>
       <Body style={styles.errorTitle}>{sentError}</Body>
-      <Button onPress={handleRefresh}>Pokusaj ponovo</Button>
+      <Button onPress={handleRefresh}>{t('common.retry')}</Button>
     </View>
   );
 
@@ -318,7 +320,7 @@ export function InboxListScreen(): React.JSX.Element {
               activeTab === 'received' && styles.tabTextActive,
             ]}
           >
-            Primljeno
+            {t('inbox.tabs.received')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -331,7 +333,7 @@ export function InboxListScreen(): React.JSX.Element {
               activeTab === 'sent' && styles.tabTextActive,
             ]}
           >
-            Poslano
+            {t('inbox.tabs.sent')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -341,7 +343,7 @@ export function InboxListScreen(): React.JSX.Element {
         loading ? (
           <View style={styles.loadingState}>
             <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-            <Meta style={styles.loadingText}>Ucitavanje...</Meta>
+            <Meta style={styles.loadingText}>{t('common.loading')}</Meta>
           </View>
         ) : error ? (
           renderErrorState()
@@ -362,7 +364,7 @@ export function InboxListScreen(): React.JSX.Element {
           {sentLoading ? (
             <View style={styles.loadingState}>
               <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-              <Meta style={styles.loadingText}>Ucitavanje...</Meta>
+              <Meta style={styles.loadingText}>{t('common.loading')}</Meta>
             </View>
           ) : sentError ? (
             renderSentErrorState()
@@ -382,10 +384,10 @@ export function InboxListScreen(): React.JSX.Element {
           {/* New submission buttons */}
           <View style={styles.newFeedbackContainer}>
             <Button onPress={handleNewFeedback} style={styles.primaryButton}>
-              Nova poruka
+              {t('inbox.actions.newMessage')}
             </Button>
             <Button variant="secondary" onPress={handleNewClickFix}>
-              Prijavi problem
+              {t('inbox.actions.reportProblem')}
             </Button>
           </View>
         </View>

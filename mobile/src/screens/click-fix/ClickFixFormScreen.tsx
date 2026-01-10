@@ -33,6 +33,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { clickFixApi } from '../../services/api';
 import {
   validateClickFixForm,
@@ -45,6 +46,7 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 export function ClickFixFormScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslations();
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState<LocationType | null>(null);
@@ -65,8 +67,8 @@ export function ClickFixFormScreen(): React.JSX.Element {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert(
-          'Lokacija',
-          'Potrebna je dozvola za pristup lokaciji da biste prijavili problem.'
+          t('clickFix.permissions.locationTitle'),
+          t('clickFix.permissions.locationDenied')
         );
         return;
       }
@@ -82,7 +84,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
       setErrors((prev) => ({ ...prev, location: undefined }));
     } catch (err) {
       console.error('[ClickFixForm] Error getting location:', err);
-      Alert.alert('Greska', 'Nije moguce dobiti trenutnu lokaciju.');
+      Alert.alert(t('common.error'), t('clickFix.error.location'));
     } finally {
       setIsGettingLocation(false);
     }
@@ -91,8 +93,8 @@ export function ClickFixFormScreen(): React.JSX.Element {
   const handlePickPhotos = useCallback(async () => {
     if (photos.length >= VALIDATION_LIMITS.MAX_PHOTOS) {
       Alert.alert(
-        'Maksimalan broj slika',
-        `Mozete dodati najvise ${VALIDATION_LIMITS.MAX_PHOTOS} slike.`
+        t('clickFix.photoActions.maxTitle'),
+        t('clickFix.photoActions.maxMessage')
       );
       return;
     }
@@ -100,8 +102,8 @@ export function ClickFixFormScreen(): React.JSX.Element {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
-        'Dozvola',
-        'Potrebna je dozvola za pristup galeriji slika.'
+        t('clickFix.permissions.title'),
+        t('clickFix.permissions.galleryDenied')
       );
       return;
     }
@@ -126,8 +128,8 @@ export function ClickFixFormScreen(): React.JSX.Element {
   const handleTakePhoto = useCallback(async () => {
     if (photos.length >= VALIDATION_LIMITS.MAX_PHOTOS) {
       Alert.alert(
-        'Maksimalan broj slika',
-        `Mozete dodati najvise ${VALIDATION_LIMITS.MAX_PHOTOS} slike.`
+        t('clickFix.photoActions.maxTitle'),
+        t('clickFix.photoActions.maxMessage')
       );
       return;
     }
@@ -135,8 +137,8 @@ export function ClickFixFormScreen(): React.JSX.Element {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
       Alert.alert(
-        'Dozvola',
-        'Potrebna je dozvola za pristup kameri.'
+        t('clickFix.permissions.title'),
+        t('clickFix.permissions.cameraDenied')
       );
       return;
     }
@@ -189,7 +191,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
       navigation.replace('ClickFixConfirmation', { clickFixId: response.id });
     } catch (err) {
       console.error('[ClickFixForm] Error submitting:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Greska pri slanju prijave';
+      const errorMessage = err instanceof Error ? err.message : t('clickFix.error.submit');
       setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -211,10 +213,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
         >
           {/* Title */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>Prijavi problem</Text>
-            <Text style={styles.subtitle}>
-              Prijavite problem na lokaciji otoka Visa.
-            </Text>
+            <Text style={styles.title}>{t('clickFix.title')}</Text>
           </View>
 
           {/* Submit Error */}
@@ -227,20 +226,20 @@ export function ClickFixFormScreen(): React.JSX.Element {
           {/* Subject Field */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Naslov <Text style={styles.required}>*</Text>
+              {t('clickFix.titleField')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={[styles.input, errors.subject && styles.inputError]}
               value={subject}
               onChangeText={setSubject}
-              placeholder="Kratki opis problema"
+              placeholder={t('clickFix.titlePlaceholder')}
               placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
               editable={!isSubmitting}
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
-                <Text style={styles.fieldError}>{errors.subject}</Text>
+                <Text style={styles.fieldError}>{t(errors.subject)}</Text>
               )}
               <Text style={styles.charCount}>
                 {subject.length}/{VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
@@ -251,7 +250,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
           {/* Description Field */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Opis <Text style={styles.required}>*</Text>
+              {t('clickFix.description')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={[
@@ -261,7 +260,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
               ]}
               value={description}
               onChangeText={setDescription}
-              placeholder="Detaljniji opis problema"
+              placeholder={t('clickFix.descriptionPlaceholder')}
               placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
               multiline
@@ -271,7 +270,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
             />
             <View style={styles.fieldFooter}>
               {errors.description && (
-                <Text style={styles.fieldError}>{errors.description}</Text>
+                <Text style={styles.fieldError}>{t(errors.description)}</Text>
               )}
               <Text style={styles.charCount}>
                 {description.length}/{VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
@@ -282,7 +281,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
           {/* Location Section */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Lokacija <Text style={styles.required}>*</Text>
+              {t('clickFix.location')} <Text style={styles.required}>*</Text>
             </Text>
             {location ? (
               <View style={styles.locationDisplay}>
@@ -294,7 +293,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
                   onPress={handleGetLocation}
                   disabled={isGettingLocation}
                 >
-                  <Text style={styles.changeLocationText}>Promijeni</Text>
+                  <Text style={styles.changeLocationText}>{t('clickFix.locationActions.change')}</Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -310,20 +309,20 @@ export function ClickFixFormScreen(): React.JSX.Element {
                   <ActivityIndicator color="#000000" />
                 ) : (
                   <Text style={styles.locationButtonText}>
-                    Dohvati trenutnu lokaciju
+                    {t('clickFix.locationActions.getLocation')}
                   </Text>
                 )}
               </TouchableOpacity>
             )}
             {errors.location && (
-              <Text style={styles.fieldError}>{errors.location}</Text>
+              <Text style={styles.fieldError}>{t(errors.location)}</Text>
             )}
           </View>
 
           {/* Photos Section */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Slike ({photos.length}/{VALIDATION_LIMITS.MAX_PHOTOS})
+              {t('clickFix.photos')} ({photos.length}/{VALIDATION_LIMITS.MAX_PHOTOS})
             </Text>
 
             {/* Photo Thumbnails */}
@@ -351,14 +350,14 @@ export function ClickFixFormScreen(): React.JSX.Element {
                   onPress={handlePickPhotos}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.addPhotoText}>Odaberi iz galerije</Text>
+                  <Text style={styles.addPhotoText}>{t('clickFix.photoActions.pickFromGallery')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.addPhotoButton}
                   onPress={handleTakePhoto}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.addPhotoText}>Slikaj</Text>
+                  <Text style={styles.addPhotoText}>{t('clickFix.photoActions.takePhoto')}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -374,7 +373,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
             {isSubmitting ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text style={styles.submitButtonText}>Pošalji prijavu</Text>
+              <Text style={styles.submitButtonText}>{t('clickFix.send')}</Text>
             )}
           </TouchableOpacity>
         </ScrollView>

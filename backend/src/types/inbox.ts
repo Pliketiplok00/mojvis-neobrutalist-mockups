@@ -280,3 +280,26 @@ export function validateHitnoRules(
 
   return { valid: true };
 }
+
+/**
+ * Validate that tags do not contain BOTH municipal tags (vis and komiza).
+ * A message can only belong to one municipality at a time.
+ *
+ * Returns { valid: true } or { valid: false, error: string, code: string }
+ */
+export function validateDualMunicipalTags(
+  tags: InboxTag[]
+): { valid: true } | { valid: false; error: string; code: string } {
+  const hasVis = tags.includes('vis');
+  const hasKomiza = tags.includes('komiza');
+
+  if (hasVis && hasKomiza) {
+    return {
+      valid: false,
+      error: 'Poruka ne smije imati obje općinske oznake (vis i komiza).',
+      code: 'DUAL_MUNICIPAL_TAGS',
+    };
+  }
+
+  return { valid: true };
+}

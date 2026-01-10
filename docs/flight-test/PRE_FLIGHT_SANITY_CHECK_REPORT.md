@@ -1,0 +1,162 @@
+# Pre-Flight Sanity Check Report
+
+**Date:** 2026-01-10
+**Verdict:** PASS
+
+---
+
+## Part A — Git Reality Check
+
+### Git Cleanup Performed
+
+All uncommitted changes were organized and committed in three phase-specific commits:
+
+```bash
+$ git log -5 --oneline --decorate
+5e5d574 (HEAD -> feat/phase3-municipality-notice-scope) phase5: CI + build reproducibility + known limitations
+d143262 phase4: mobile i18n integration
+620c2a3 phase3: municipal notice scope + archive/restore lock
+9352e34 (tag: admin-archive-restore-locked-2026-01-10, origin/feat/phase3-municipality-notice-scope) fix(admin): breakglass parity for inbox archive/restore permissions
+daa9b2d (main) feat(admin-auth): wire admin UI to cookie session
+
+$ git status -sb
+## feat/phase3-municipality-notice-scope...origin/feat/phase3-municipality-notice-scope [ahead 3]
+```
+
+### Commits Created
+
+| Commit | SHA | Files Changed | Description |
+|--------|-----|---------------|-------------|
+| phase3 | 620c2a3 | 15 files | Municipal notice scope, archive/restore, migration 012 |
+| phase4 | d143262 | 25 files | Mobile i18n integration, locale files |
+| phase5 | 5e5d574 | 11 files | CI workflows, build docs, known limitations |
+
+### Git State
+
+- **Branch:** `feat/phase3-municipality-notice-scope`
+- **Status:** Clean (no uncommitted changes)
+- **Ahead of origin:** 3 commits
+
+---
+
+## Part B — Real Postgres Migration Smoke
+
+### Step B1 — Start Postgres
+
+```bash
+$ docker run -d --name mojvis_smoke_pg \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_DB=mojvis_smoke \
+    -p 5432:5432 \
+    postgres:15
+
+Container ID: e8ac8c4df6b2
+Status: Started successfully
+```
+
+### Step B2 — Apply Migrations
+
+```bash
+$ for f in $(ls *.sql | sort); do
+    cat "$f" | docker exec -i mojvis_smoke_pg psql -U postgres -d mojvis_smoke
+  done
+```
+
+**Result:** All 12 migrations applied successfully
+
+| Migration | Status |
+|-----------|--------|
+| 001_inbox_messages.sql | OK |
+| 002_inbox_soft_delete.sql | OK |
+| 003_events.sql | OK |
+| 004_reminder_subscriptions.sql | OK |
+| 005_static_pages.sql | OK |
+| 006_transport.sql | OK |
+| 007_feedback.sql | OK |
+| 008_click_fix.sql | OK |
+| 009_push_notifications.sql | OK |
+| 010_menu_extras.sql | OK |
+| 011_admin_auth.sql | OK |
+| 012_admin_notice_scope.sql | OK |
+
+### Step B3 — Boot Backend
+
+```bash
+$ DB_HOST=localhost DB_PORT=5432 DB_NAME=mojvis_smoke \
+  DB_USER=postgres DB_PASSWORD=postgres PORT=3001 \
+  BREAKGLASS_USERNAME=breakglass BREAKGLASS_PASSWORD=smoketest123 \
+  BREAKGLASS_MUNICIPALITY=vis \
+  npm run dev
+
+[DB] Connection successful. Server time: Sat Jan 10 2026 17:40:10 GMT+0100
+[Server] MOJ VIS API running at http://0.0.0.0:3001
+```
+
+### Step B4 — API Smoke Tests
+
+| # | Endpoint | Method | Expected | Actual | Pass/Fail |
+|---|----------|--------|----------|--------|-----------|
+| 1 | `/health` | GET | 200, database:true | 200, `{"status":"ok","checks":{"server":true,"database":true}}` | PASS |
+| 2 | `/admin/auth/login` | POST | 200 + cookie | 200, `{"ok":true,"admin":{"username":"breakglass"}}` | PASS |
+| 3 | `/admin/inbox?archived=false` | GET | 200, empty | 200, `{"messages":[],"total":0}` | PASS |
+| 4 | `/admin/inbox` (create) | POST | 201 | 201, message ID returned | PASS |
+| 5 | `/admin/inbox` (dual tags) | POST | 400, DUAL_MUNICIPAL_TAGS | 400, `{"code":"DUAL_MUNICIPAL_TAGS"}` | PASS |
+| 6 | `/admin/inbox/:id` | DELETE | 204 | 204 (archived) | PASS |
+| 7 | `/admin/inbox?archived=true` | GET | 200, 1 item | 200, `{"messages":[...],"total":1}` | PASS |
+| 8 | `/admin/inbox/:id/restore` | POST | 200 | 200, deleted_at:null | PASS |
+| 9 | `/admin/inbox?archived=false` | GET | 200, 1 item | 200, `{"messages":[...],"total":1}` | PASS |
+
+**All 9 API smoke tests passed.**
+
+### Step B5 — Teardown
+
+```bash
+$ pkill -f "tsx watch src/index.ts"
+$ docker stop mojvis_smoke_pg && docker rm mojvis_smoke_pg
+Teardown complete
+```
+
+---
+
+## API Smoke Results Summary
+
+| Test | Status |
+|------|--------|
+| Health check (database connected) | PASS |
+| Admin login (breakglass) | PASS |
+| List inbox (active) | PASS |
+| Create message | PASS |
+| Dual municipal tags validation | PASS |
+| Archive message | PASS |
+| List archived | PASS |
+| Restore message | PASS |
+| Verify restored in active | PASS |
+
+---
+
+## Verdict
+
+**PASS**
+
+All pre-flight checks completed successfully:
+
+1. **Git state clean** — 3 organized commits created (phase3, phase4, phase5)
+2. **Docker running** — Verified
+3. **Migrations apply cleanly** — All 12 migrations on fresh Postgres 15
+4. **Backend boots** — Connected to real PostgreSQL
+5. **API smoke tests** — All 9 tests passed including:
+   - DUAL_MUNICIPAL_TAGS validation works
+   - Archive/restore flow works
+   - Admin auth with cookies works
+
+### Next Steps
+
+1. Push commits to origin: `git push origin feat/phase3-municipality-notice-scope`
+2. Create PR to merge into main
+3. Proceed with flight test execution
+
+---
+
+*Report updated: 2026-01-10 17:42 UTC*
+*Generated by Claude Code pre-flight sanity check*

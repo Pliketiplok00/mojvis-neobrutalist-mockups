@@ -68,6 +68,7 @@ function formatDate(date: Date): string {
  * Create transport routes for a specific type
  */
 function createTransportRoutes(transportType: TransportType) {
+  // eslint-disable-next-line @typescript-eslint/require-await -- Fastify plugin contract requires async
   return async function transportRoutes(
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions

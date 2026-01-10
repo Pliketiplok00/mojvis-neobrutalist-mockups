@@ -14,6 +14,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTranslations } from '../i18n';
 import type { InboxMessage } from '../types/inbox';
 import type { MainStackParamList } from '../navigation/types';
 
@@ -32,6 +33,7 @@ interface BannerProps {
  */
 export function Banner({ message }: BannerProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslations();
 
   const handlePress = (): void => {
     // Per spec: "Clicking a banner ALWAYS opens Inbox message detail"
@@ -44,13 +46,13 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
     <TouchableOpacity
       style={[styles.container, isUrgent && styles.containerUrgent]}
       onPress={handlePress}
-      accessibilityLabel={`${isUrgent ? 'Hitno: ' : ''}${message.title}`}
-      accessibilityHint="Dodirnite za više informacija"
+      accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
+      accessibilityHint={t('banner.accessibilityHint')}
     >
       {/* Urgent indicator */}
       {isUrgent && (
         <View style={styles.urgentBadge}>
-          <Text style={styles.urgentText}>HITNO</Text>
+          <Text style={styles.urgentText}>{t('banner.urgent')}</Text>
         </View>
       )}
 

@@ -4,16 +4,19 @@
  * CRUD endpoints for inbox messages (admin panel).
  *
  * Endpoints:
- * - GET /admin/inbox - list all messages (admin view, includes soft-deleted)
+ * - GET /admin/inbox - list messages (admin view)
+ *   - ?archived=false (default): active messages only
+ *   - ?archived=true: archived messages only
  * - GET /admin/inbox/:id - single message (includes soft-deleted)
  * - POST /admin/inbox - create message (triggers push if hitno + active window)
  * - PATCH /admin/inbox/:id - update message (409 if locked)
- * - DELETE /admin/inbox/:id - SOFT delete message (sets deleted_at)
- * - POST /admin/inbox/:id/restore - restore soft-deleted message
+ * - DELETE /admin/inbox/:id - SOFT delete (archive) message (sets deleted_at)
+ * - POST /admin/inbox/:id/restore - restore archived message (sets deleted_at = NULL)
  *
  * Note: Per spec, messages are LIVE ON SAVE (no draft workflow).
  * IMPORTANT: Hard delete is NOT allowed. All deletes are soft deletes.
  *
+ * Phase 3: Municipal notice authorization applies to create, update, delete, restore.
  * Phase 7: Push notifications for hitno messages.
  * - On save, if message has hitno tag + active window + now is within window => send push
  * - After push, message is LOCKED (no edits allowed)
@@ -36,12 +39,13 @@ import type {
   AdminInboxListResponse,
   InboxTag,
 } from '../types/inbox.js';
-import { validateTags, isUrgent, validateHitnoRules } from '../types/inbox.js';
+import { validateTags, isUrgent, validateHitnoRules, validateDualMunicipalTags } from '../types/inbox.js';
 import { shouldTriggerPush } from '../types/push.js';
 import { getEligibleDevicesForPush, createPushLog } from '../repositories/push.js';
 import { PushService, type PushContent } from '../lib/push/index.js';
 import { defaultPushProvider, MockExpoPushProvider } from '../lib/push/expo.js';
 import { env } from '../config/env.js';
+import { checkMunicipalNoticeAuthFromRequest } from '../middleware/auth.js';
 
 interface CreateMessageBody {
   title_hr: string;
@@ -122,7 +126,7 @@ async function sendPushForMessage(
   const hasEnglishContent = message.title_en !== null && message.body_en !== null;
 
   // Get eligible devices
-  const eligibleDevices = await getEligibleDevicesForPush(
+  const eligibleDevices = getEligibleDevicesForPush(
     message.tags,
     hasEnglishContent
   );
@@ -158,7 +162,7 @@ async function sendPushForMessage(
   const result = await pushService.sendPush(targets, contentHr, contentEn);
 
   // Log push
-  await createPushLog(message.id, adminId, result, pushService.getProviderName());
+  createPushLog(message.id, adminId, result, pushService.getProviderName());
 
   // Mark message as locked
   await markMessageAsLocked(message.id, adminId);
@@ -181,18 +185,29 @@ export async function adminInboxRoutes(
   /**
    * GET /admin/inbox
    *
-   * List all inbox messages (admin view, includes soft-deleted).
+   * List inbox messages (admin view).
+   * - ?archived=false (default): active messages only (deleted_at IS NULL)
+   * - ?archived=true: archived messages only (deleted_at IS NOT NULL)
    */
   fastify.get<{
-    Querystring: { page?: string; page_size?: string };
+    Querystring: { page?: string; page_size?: string; archived?: string };
   }>('/admin/inbox', async (request, reply) => {
     const page = Math.max(1, parseInt(request.query.page ?? '1', 10));
     const pageSize = Math.min(50, Math.max(1, parseInt(request.query.page_size ?? '20', 10)));
 
-    console.info(`[Admin] GET /admin/inbox page=${page} pageSize=${pageSize}`);
+    // Parse archived filter: default to false (active messages)
+    let archived: boolean | undefined;
+    if (request.query.archived === 'true') {
+      archived = true;
+    } else if (request.query.archived === 'false' || request.query.archived === undefined) {
+      archived = false; // Default: show active messages only
+    }
+    // Note: archived=undefined would show ALL messages (not used in normal UI)
+
+    console.info(`[Admin] GET /admin/inbox page=${page} pageSize=${pageSize} archived=${archived}`);
 
     try {
-      const { messages, total } = await getInboxMessagesAdmin(page, pageSize);
+      const { messages, total } = await getInboxMessagesAdmin(page, pageSize, archived);
 
       const response: AdminInboxListResponse = {
         messages: messages.map(toAdminResponse),
@@ -264,6 +279,15 @@ export async function adminInboxRoutes(
       });
     }
 
+    // Validate dual municipal tags (cannot have both vis and komiza)
+    const dualTagValidation = validateDualMunicipalTags(tags);
+    if (!dualTagValidation.valid) {
+      return reply.status(400).send({
+        error: dualTagValidation.error,
+        code: dualTagValidation.code,
+      });
+    }
+
     // Validate date range
     if (body.active_from && body.active_to) {
       const from = new Date(body.active_from);
@@ -283,6 +307,15 @@ export async function adminInboxRoutes(
       return reply.status(400).send({
         error: hitnoValidation.error,
         code: hitnoValidation.code,
+      });
+    }
+
+    // Phase 3: Check municipal notice authorization
+    const authCheck = checkMunicipalNoticeAuthFromRequest(request, tags);
+    if (!authCheck.allowed) {
+      return reply.status(403).send({
+        error: authCheck.reason,
+        code: authCheck.code,
       });
     }
 
@@ -393,6 +426,32 @@ export async function adminInboxRoutes(
       });
     }
 
+    // Validate dual municipal tags (cannot have both vis and komiza)
+    const dualTagValidation = validateDualMunicipalTags(mergedTags);
+    if (!dualTagValidation.valid) {
+      return reply.status(400).send({
+        error: dualTagValidation.error,
+        code: dualTagValidation.code,
+      });
+    }
+
+    // Phase 3: Check municipal notice authorization
+    // Must check BOTH existing message tags (can admin edit this?) AND merged tags (can admin set new municipality?)
+    const existingAuthCheck = checkMunicipalNoticeAuthFromRequest(request, existingMessage.tags);
+    if (!existingAuthCheck.allowed) {
+      return reply.status(403).send({
+        error: existingAuthCheck.reason,
+        code: existingAuthCheck.code,
+      });
+    }
+    const mergedAuthCheck = checkMunicipalNoticeAuthFromRequest(request, mergedTags);
+    if (!mergedAuthCheck.allowed) {
+      return reply.status(403).send({
+        error: mergedAuthCheck.reason,
+        code: mergedAuthCheck.code,
+      });
+    }
+
     try {
       const updates: Parameters<typeof updateInboxMessage>[1] = {};
 
@@ -460,6 +519,21 @@ export async function adminInboxRoutes(
 
     console.info(`[Admin] DELETE /admin/inbox/${id}`);
 
+    // Fetch message first to check authorization
+    const existingMessage = await getInboxMessageByIdAdmin(id);
+    if (!existingMessage) {
+      return reply.status(404).send({ error: 'Message not found' });
+    }
+
+    // Phase 3: Check municipal notice authorization
+    const authCheck = checkMunicipalNoticeAuthFromRequest(request, existingMessage.tags);
+    if (!authCheck.allowed) {
+      return reply.status(403).send({
+        error: authCheck.reason,
+        code: authCheck.code,
+      });
+    }
+
     try {
       const deletedMessage = await softDeleteInboxMessage(id);
 
@@ -485,7 +559,9 @@ export async function adminInboxRoutes(
   /**
    * POST /admin/inbox/:id/restore
    *
-   * Restore a soft-deleted inbox message (sets deleted_at = NULL).
+   * Restore an archived (soft-deleted) inbox message.
+   * Sets deleted_at = NULL.
+   * Phase 3: Municipal authorization applies.
    */
   fastify.post<{
     Params: { id: string };
@@ -495,11 +571,34 @@ export async function adminInboxRoutes(
 
     console.info(`[Admin] POST /admin/inbox/${id}/restore`);
 
+    // Fetch message first to check authorization (includes archived)
+    const existingMessage = await getInboxMessageByIdAdmin(id);
+    if (!existingMessage) {
+      return reply.status(404).send({ error: 'Message not found' });
+    }
+
+    // Check if message is actually archived
+    if (!existingMessage.deleted_at) {
+      return reply.status(400).send({
+        error: 'Message is not archived',
+        code: 'NOT_ARCHIVED',
+      });
+    }
+
+    // Phase 3: Check municipal notice authorization
+    const authCheck = checkMunicipalNoticeAuthFromRequest(request, existingMessage.tags);
+    if (!authCheck.allowed) {
+      return reply.status(403).send({
+        error: authCheck.reason,
+        code: authCheck.code,
+      });
+    }
+
     try {
       const restoredMessage = await restoreInboxMessage(id);
 
       if (!restoredMessage) {
-        return reply.status(404).send({ error: 'Message not found or not deleted' });
+        return reply.status(404).send({ error: 'Message not found or not archived' });
       }
 
       // Log restore action at info level

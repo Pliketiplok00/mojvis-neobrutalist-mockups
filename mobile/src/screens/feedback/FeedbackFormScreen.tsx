@@ -28,6 +28,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
@@ -36,6 +37,7 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 export function FeedbackFormScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslations();
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +67,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
       navigation.replace('FeedbackConfirmation', { feedbackId: response.id });
     } catch (err) {
       console.error('[FeedbackForm] Error submitting:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Greska pri slanju poruke';
+      const errorMessage = err instanceof Error ? err.message : t('feedback.error.submit');
       setSubmitError(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -87,10 +89,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
         >
           {/* Title */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>Pošalji poruku</Text>
-            <Text style={styles.subtitle}>
-              Vaša poruka bit će poslana anonimno.
-            </Text>
+            <Text style={styles.title}>{t('feedback.title')}</Text>
           </View>
 
           {/* Submit Error */}
@@ -103,20 +102,20 @@ export function FeedbackFormScreen(): React.JSX.Element {
           {/* Subject Field */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Tema <Text style={styles.required}>*</Text>
+              {t('feedback.subject')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={[styles.input, errors.subject && styles.inputError]}
               value={subject}
               onChangeText={setSubject}
-              placeholder="Unesite temu poruke"
+              placeholder={t('feedback.subjectPlaceholder')}
               placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
               editable={!isSubmitting}
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
-                <Text style={styles.fieldError}>{errors.subject}</Text>
+                <Text style={styles.fieldError}>{t(errors.subject)}</Text>
               )}
               <Text style={styles.charCount}>
                 {subject.length}/{VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
@@ -127,7 +126,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
           {/* Body Field */}
           <View style={styles.field}>
             <Text style={styles.label}>
-              Poruka <Text style={styles.required}>*</Text>
+              {t('feedback.message')} <Text style={styles.required}>*</Text>
             </Text>
             <TextInput
               style={[
@@ -137,7 +136,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
               ]}
               value={body}
               onChangeText={setBody}
-              placeholder="Unesite tekst poruke"
+              placeholder={t('feedback.messagePlaceholder')}
               placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.BODY_MAX_LENGTH}
               multiline
@@ -147,7 +146,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
             />
             <View style={styles.fieldFooter}>
               {errors.body && (
-                <Text style={styles.fieldError}>{errors.body}</Text>
+                <Text style={styles.fieldError}>{t(errors.body)}</Text>
               )}
               <Text style={styles.charCount}>
                 {body.length}/{VALIDATION_LIMITS.BODY_MAX_LENGTH}
@@ -165,7 +164,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
             {isSubmitting ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text style={styles.submitButtonText}>Pošalji</Text>
+              <Text style={styles.submitButtonText}>{t('feedback.send')}</Text>
             )}
           </TouchableOpacity>
         </ScrollView>

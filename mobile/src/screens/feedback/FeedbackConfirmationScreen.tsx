@@ -16,6 +16,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useTranslations } from '../../i18n';
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
@@ -24,6 +25,7 @@ type ConfirmationRouteProp = RouteProp<MainStackParamList, 'FeedbackConfirmation
 export function FeedbackConfirmationScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ConfirmationRouteProp>();
+  const { t } = useTranslations();
   const { feedbackId } = route.params;
 
   const handleGoHome = () => {
@@ -45,10 +47,9 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
         </View>
 
         {/* Success Message */}
-        <Text style={styles.title}>Poruka poslana</Text>
+        <Text style={styles.title}>{t('feedback.confirmation.title')}</Text>
         <Text style={styles.message}>
-          Vaša poruka je uspješno zaprimljena. Možete pratiti status u odjeljku
-          "Poslano".
+          {t('feedback.confirmation.message')}
         </Text>
 
         {/* Actions */}
@@ -58,7 +59,7 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
             onPress={handleViewFeedback}
             activeOpacity={0.7}
           >
-            <Text style={styles.primaryButtonText}>Pogledaj poruku</Text>
+            <Text style={styles.primaryButtonText}>{t('feedback.confirmation.backToInbox')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -66,7 +67,7 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
             onPress={handleGoHome}
             activeOpacity={0.7}
           >
-            <Text style={styles.secondaryButtonText}>Natrag na početnu</Text>
+            <Text style={styles.secondaryButtonText}>{t('navigation.back')}</Text>
           </TouchableOpacity>
         </View>
       </View>
