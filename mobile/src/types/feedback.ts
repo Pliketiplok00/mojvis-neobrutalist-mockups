@@ -121,6 +121,7 @@ export const VALIDATION_LIMITS = {
 
 /**
  * Validate feedback form
+ * Returns translation keys for errors - components should translate these using t()
  */
 export function validateFeedbackForm(
   subject: string,
@@ -129,15 +130,15 @@ export function validateFeedbackForm(
   const errors: { subject?: string; body?: string } = {};
 
   if (!subject || subject.trim().length === 0) {
-    errors.subject = 'Tema je obavezna';
+    errors.subject = 'feedback.validation.subjectRequired';
   } else if (subject.length > VALIDATION_LIMITS.SUBJECT_MAX_LENGTH) {
-    errors.subject = `Maksimalno ${VALIDATION_LIMITS.SUBJECT_MAX_LENGTH} znakova`;
+    errors.subject = 'feedback.validation.subjectMaxLength';
   }
 
   if (!body || body.trim().length === 0) {
-    errors.body = 'Poruka je obavezna';
+    errors.body = 'feedback.validation.bodyRequired';
   } else if (body.length > VALIDATION_LIMITS.BODY_MAX_LENGTH) {
-    errors.body = `Maksimalno ${VALIDATION_LIMITS.BODY_MAX_LENGTH} znakova`;
+    errors.body = 'feedback.validation.bodyMaxLength';
   }
 
   return {

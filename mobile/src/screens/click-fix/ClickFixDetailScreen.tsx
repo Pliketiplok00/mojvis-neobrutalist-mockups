@@ -29,6 +29,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useTranslations } from '../../i18n';
 import { clickFixApi } from '../../services/api';
 import type { ClickFixDetailResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
@@ -47,6 +48,7 @@ const { width: screenWidth } = Dimensions.get('window');
 
 export function ClickFixDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
+  const { t } = useTranslations();
   const { clickFixId } = route.params;
 
   const [clickFix, setClickFix] = useState<ClickFixDetailResponse | null>(null);
@@ -62,7 +64,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
       setClickFix(data);
     } catch (err) {
       console.error('[ClickFixDetail] Error fetching:', err);
-      setError('Greska pri ucitavanju prijave');
+      setError(t('clickFix.detail.error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -94,7 +96,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Ucitavanje...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -105,7 +107,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || 'Prijava nije pronadena'}</Text>
+          <Text style={styles.errorText}>{error || t('clickFix.detail.notFound')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -141,7 +143,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
 
           {/* Location */}
           <View style={styles.locationSection}>
-            <Text style={styles.locationLabel}>Lokacija:</Text>
+            <Text style={styles.locationLabel}>{t('clickFix.detail.location')}:</Text>
             <Text style={styles.locationText}>
               {clickFix.location.lat.toFixed(6)}, {clickFix.location.lng.toFixed(6)}
             </Text>
@@ -151,7 +153,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
         {/* Photos Section */}
         {clickFix.photos.length > 0 && (
           <View style={styles.photosSection}>
-            <Text style={styles.sectionTitle}>Slike ({clickFix.photos.length})</Text>
+            <Text style={styles.sectionTitle}>{t('clickFix.detail.photos')} ({clickFix.photos.length})</Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -176,19 +178,19 @@ export function ClickFixDetailScreen(): React.JSX.Element {
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <Text style={styles.sectionTitle}>Odgovori</Text>
+          <Text style={styles.sectionTitle}>{t('clickFix.detail.replies')}</Text>
 
           {clickFix.replies.length === 0 ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyText}>
-                Još nema odgovora na vašu prijavu.
+                {t('clickFix.detail.noReplies')}
               </Text>
             </View>
           ) : (
             clickFix.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Text style={styles.replyLabel}>Odgovor</Text>
+                  <Text style={styles.replyLabel}>{t('clickFix.detail.reply')}</Text>
                   <Text style={styles.replyDate}>
                     {formatDate(reply.created_at)}
                   </Text>

@@ -26,6 +26,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { DepartureItem } from '../../components/DepartureItem';
+import { useTranslations } from '../../i18n';
 import { transportApi } from '../../services/api';
 import type {
   TransportType,
@@ -34,17 +35,6 @@ import type {
   RouteInfo,
   DayType,
 } from '../../types/transport';
-
-const DAY_TYPE_LABELS: Record<DayType, string> = {
-  MON: 'Ponedjeljak',
-  TUE: 'Utorak',
-  WED: 'Srijeda',
-  THU: 'Cetvrtak',
-  FRI: 'Petak',
-  SAT: 'Subota',
-  SUN: 'Nedjelja',
-  PRAZNIK: 'Praznik',
-};
 
 interface LineDetailScreenProps {
   lineId: string;
@@ -55,6 +45,19 @@ export function LineDetailScreen({
   lineId,
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
+  const { t } = useTranslations();
+
+  const DAY_TYPE_LABELS: Record<DayType, string> = {
+    MON: t('transport.dayTypes.MON'),
+    TUE: t('transport.dayTypes.TUE'),
+    WED: t('transport.dayTypes.WED'),
+    THU: t('transport.dayTypes.THU'),
+    FRI: t('transport.dayTypes.FRI'),
+    SAT: t('transport.dayTypes.SAT'),
+    SUN: t('transport.dayTypes.SUN'),
+    PRAZNIK: t('transport.dayTypes.PRAZNIK'),
+  };
+
   const [lineDetail, setLineDetail] = useState<LineDetailResponse | null>(null);
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
@@ -72,7 +75,7 @@ export function LineDetailScreen({
       setLineDetail(detail);
     } catch (err) {
       console.error('[LineDetail] Error fetching line:', err);
-      setError('Greska pri ucitavanju linije');
+      setError(t('transport.lineDetail.error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -143,7 +146,7 @@ export function LineDetailScreen({
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Ucitavanje...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -154,9 +157,9 @@ export function LineDetailScreen({
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || 'Linija nije pronadena'}</Text>
+          <Text style={styles.errorText}>{error || t('transport.lineDetail.notFound')}</Text>
           <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-            <Text style={styles.retryText}>Pokusaj ponovo</Text>
+            <Text style={styles.retryText}>{t('common.retry')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -197,7 +200,7 @@ export function LineDetailScreen({
             {departures && (
               <Text style={styles.dayTypeText}>
                 {DAY_TYPE_LABELS[departures.day_type]}
-                {departures.is_holiday && ' (blagdan)'}
+                {departures.is_holiday && ` (${t('transport.holiday')})`}
               </Text>
             )}
           </View>

@@ -1,0 +1,339 @@
+{
+  "app": {
+    "name": "MOJ VIS"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try again",
+    "empty": "No data",
+    "back": "Back",
+    "send": "Send",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "close": "Close"
+  },
+  "navigation": {
+    "back": "Back",
+    "menu": "Menu",
+    "inbox": "Inbox"
+  },
+  "onboarding": {
+    "languageSelection": {
+      "title": "Welcome",
+      "subtitle": "Select language"
+    },
+    "userMode": {
+      "title": "How do you use the app?",
+      "visitor": "Visitor",
+      "visitorDescription": "Visiting the island as a tourist",
+      "local": "Local",
+      "localDescription": "I live or work on the island",
+      "hint": "You can change this later in settings."
+    },
+    "municipality": {
+      "title": "Select your municipality",
+      "hint": "This determines which municipal notifications you receive."
+    }
+  },
+  "home": {
+    "greeting": "Welcome to Vis!",
+    "subtitle": "Your guide to life and visiting the island",
+    "categories": "Categories",
+    "upcomingEvents": "Upcoming Events",
+    "eventsPlaceholder": "[Events will appear here]",
+    "feedback": {
+      "title": "Have a suggestion?",
+      "subtitle": "Send us your feedback"
+    },
+    "categoryLabels": {
+      "events": "Events",
+      "transport": "Transport",
+      "info": "Info",
+      "contacts": "Contacts"
+    }
+  },
+  "inbox": {
+    "title": "Inbox",
+    "tabs": {
+      "received": "Received",
+      "sent": "Sent"
+    },
+    "empty": {
+      "title": "No messages",
+      "received": "Your inbox is empty",
+      "sent": "You haven't sent any messages",
+      "sentHint": "Send your first message using the button below"
+    },
+    "error": {
+      "loading": "Error loading messages. Please try again.",
+      "loadingSent": "Error loading sent messages."
+    },
+    "actions": {
+      "newMessage": "New message",
+      "reportProblem": "Report problem"
+    },
+    "badges": {
+      "urgent": "URGENT",
+      "report": "REPORT"
+    },
+    "photoCount": "photos"
+  },
+  "inboxDetail": {
+    "notFound": "Message not found",
+    "error": "Error loading message"
+  },
+  "events": {
+    "title": "Events",
+    "allDay": "All day",
+    "noEvents": "No events for this day",
+    "error": "Error loading events",
+    "loading": "Loading events...",
+    "calendar": {
+      "months": {
+        "january": "January",
+        "february": "February",
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "june": "June",
+        "july": "July",
+        "august": "August",
+        "september": "September",
+        "october": "October",
+        "november": "November",
+        "december": "December"
+      },
+      "days": {
+        "sun": "Sun",
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat"
+      }
+    }
+  },
+  "eventDetail": {
+    "notFound": "Event not found",
+    "error": "Error loading event",
+    "reminder": {
+      "set": "Set reminder",
+      "remove": "Remove reminder",
+      "active": "Reminder active"
+    },
+    "location": "Location",
+    "time": "Time",
+    "description": "Description"
+  },
+  "transport": {
+    "hub": {
+      "title": "Timetables",
+      "road": "Road Transport",
+      "roadDescription": "Bus lines",
+      "sea": "Sea Transport",
+      "seaDescription": "Ferries and catamarans"
+    },
+    "road": {
+      "title": "Road Transport"
+    },
+    "sea": {
+      "title": "Sea Transport"
+    },
+    "lines": "Lines",
+    "todaysDepartures": "Today's departures",
+    "noLines": "No lines available",
+    "noDepartures": "No departures today",
+    "loading": "Loading...",
+    "error": "Error loading data",
+    "stations": "stations",
+    "holiday": "holiday",
+    "dayTypes": {
+      "MON": "Monday",
+      "TUE": "Tuesday",
+      "WED": "Wednesday",
+      "THU": "Thursday",
+      "FRI": "Friday",
+      "SAT": "Saturday",
+      "SUN": "Sunday",
+      "PRAZNIK": "Holiday"
+    },
+    "lineDetail": {
+      "departures": "Departures",
+      "route": "Route",
+      "duration": "Duration",
+      "contacts": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "website": "Website",
+      "noContactInfo": "No contact information",
+      "selectDate": "Select date",
+      "direction": "Direction",
+      "noDeparturesForDate": "No departures for selected date",
+      "stopTimes": "Stop times",
+      "error": "Error loading line",
+      "notFound": "Line not found"
+    }
+  },
+  "feedback": {
+    "title": "Send message",
+    "subject": "Subject",
+    "subjectPlaceholder": "Briefly describe the topic",
+    "message": "Message",
+    "messagePlaceholder": "Write your message here...",
+    "send": "Send",
+    "sending": "Sending...",
+    "error": {
+      "submit": "Error sending message. Please try again.",
+      "rateLimit": "Too many messages. Please try again tomorrow."
+    },
+    "validation": {
+      "subjectRequired": "Subject is required",
+      "subjectMaxLength": "Subject must not exceed 120 characters",
+      "bodyRequired": "Message is required",
+      "bodyMaxLength": "Message must not exceed 4000 characters"
+    },
+    "confirmation": {
+      "title": "Message sent!",
+      "message": "Thank you for your feedback. We will respond as soon as possible.",
+      "backToInbox": "Back to inbox"
+    },
+    "detail": {
+      "title": "Message details",
+      "status": "Status",
+      "sentAt": "Sent",
+      "replies": "Replies",
+      "noReplies": "No replies yet",
+      "error": "Error loading details"
+    }
+  },
+  "clickFix": {
+    "title": "Report problem",
+    "titleField": "Title",
+    "titlePlaceholder": "Brief description of the problem",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the problem in detail...",
+    "location": "Location",
+    "locationHint": "Tap to select location on map",
+    "locationSelected": "Location selected",
+    "photos": "Photos",
+    "photosHint": "Add up to 3 photos (optional)",
+    "addPhoto": "Add photo",
+    "removePhoto": "Remove",
+    "locationActions": {
+      "change": "Change",
+      "getLocation": "Get current location"
+    },
+    "photoActions": {
+      "maxTitle": "Maximum photos reached",
+      "maxMessage": "You can add up to 3 photos.",
+      "pickFromGallery": "Choose from gallery",
+      "takePhoto": "Take photo"
+    },
+    "send": "Submit report",
+    "sending": "Sending...",
+    "error": {
+      "submit": "Error submitting report. Please try again.",
+      "rateLimit": "Too many reports. Please try again tomorrow.",
+      "location": "Unable to get current location",
+      "photo": "Error adding photo"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "titleMaxLength": "Title must not exceed 120 characters",
+      "descriptionRequired": "Description is required",
+      "descriptionMaxLength": "Description must not exceed 4000 characters",
+      "locationRequired": "Location is required",
+      "photoInvalidFormat": "Invalid image format. Allowed: JPEG, PNG, WebP",
+      "photoTooLarge": "Image too large. Maximum: 5MB"
+    },
+    "permissions": {
+      "title": "Permission",
+      "locationTitle": "Location",
+      "locationMessage": "Location access is required to determine the problem location.",
+      "locationDenied": "Location access denied. Please enable in settings.",
+      "cameraTitle": "Camera",
+      "cameraMessage": "Camera access is required to add photos.",
+      "cameraDenied": "Camera access denied. Please enable in settings.",
+      "galleryTitle": "Gallery",
+      "galleryMessage": "Gallery access is required to select photos.",
+      "galleryDenied": "Gallery access denied. Please enable in settings.",
+      "openSettings": "Open Settings"
+    },
+    "confirmation": {
+      "title": "Report submitted!",
+      "message": "Your report has been successfully submitted. You can track the status in the Sent section.",
+      "viewReport": "View report",
+      "backToInbox": "Back to inbox"
+    },
+    "detail": {
+      "title": "Report details",
+      "status": "Status",
+      "sentAt": "Sent",
+      "location": "Location",
+      "photos": "Photos",
+      "replies": "Replies",
+      "reply": "Reply",
+      "noReplies": "No replies to your report yet.",
+      "notFound": "Report not found",
+      "error": "Error loading report"
+    }
+  },
+  "staticPage": {
+    "loading": "Loading...",
+    "notFound": "Page not found or not published.",
+    "error": "Error loading page",
+    "map": "Map"
+  },
+  "settings": {
+    "title": "Settings",
+    "pushNotifications": {
+      "title": "Emergency notifications (push)",
+      "description": "Receive notifications about urgent events"
+    },
+    "profile": {
+      "title": "Profile",
+      "language": "Language",
+      "userMode": "Usage mode",
+      "municipality": "Municipality",
+      "visitor": "Visitor",
+      "local": "Local"
+    },
+    "reset": {
+      "title": "Reset app",
+      "description": "Deletes all settings and returns to initial state",
+      "button": "Reset",
+      "confirm": "Are you sure you want to reset the app?",
+      "confirmMessage": "All settings will be deleted."
+    }
+  },
+  "banner": {
+    "urgent": "URGENT",
+    "accessibilityHint": "Tap for more information"
+  },
+  "menu": {
+    "title": "Menu",
+    "items": {
+      "home": "Home",
+      "events": "Events",
+      "timetables": "Timetables",
+      "flora": "Flora & Fauna",
+      "visitorInfo": "Visitor Info",
+      "clickFix": "Report Problem",
+      "feedback": "Send Feedback",
+      "contacts": "Important Contacts"
+    }
+  },
+  "status": {
+    "zaprimljeno": "Received",
+    "u_razmatranju": "Under review",
+    "prihvaceno": "Accepted",
+    "odbijeno": "Rejected"
+  }
+}

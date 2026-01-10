@@ -25,6 +25,7 @@ import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUnread } from '../../contexts/UnreadContext';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
@@ -35,6 +36,7 @@ export function InboxDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
   const { messageId } = route.params;
   const { markAsRead } = useUnread();
+  const { t } = useTranslations();
 
   const [message, setMessage] = useState<InboxMessage | null>(null);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ export function InboxDetailScreen(): React.JSX.Element {
       markAsRead(messageId);
     } catch (err) {
       console.error('[Inbox] Error fetching message:', err);
-      setError('Greška pri učitavanju poruke. Pokušajte ponovo.');
+      setError(t('inboxDetail.error'));
     } finally {
       setLoading(false);
     }
@@ -71,7 +73,7 @@ export function InboxDetailScreen(): React.JSX.Element {
         <GlobalHeader type="inbox" />
         <View style={styles.loadingState}>
           <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Učitavanje...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -84,10 +86,10 @@ export function InboxDetailScreen(): React.JSX.Element {
         <View style={styles.errorState}>
           <Text style={styles.errorIcon}>⚠️</Text>
           <Text style={styles.errorTitle}>
-            {error || 'Poruka nije pronađena'}
+            {error || t('inboxDetail.notFound')}
           </Text>
           <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-            <Text style={styles.retryText}>Pokušaj ponovo</Text>
+            <Text style={styles.retryText}>{t('common.retry')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -102,7 +104,7 @@ export function InboxDetailScreen(): React.JSX.Element {
         {/* Urgent badge */}
         {message.is_urgent && (
           <View style={styles.urgentBadge}>
-            <Text style={styles.urgentText}>HITNO</Text>
+            <Text style={styles.urgentText}>{t('banner.urgent')}</Text>
           </View>
         )}
 

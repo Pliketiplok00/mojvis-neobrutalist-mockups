@@ -30,6 +30,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
@@ -37,19 +38,9 @@ import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
-const DAY_TYPE_LABELS: Record<DayType, string> = {
-  MON: 'Ponedjeljak',
-  TUE: 'Utorak',
-  WED: 'Srijeda',
-  THU: 'Cetvrtak',
-  FRI: 'Petak',
-  SAT: 'Subota',
-  SUN: 'Nedjelja',
-  PRAZNIK: 'Praznik',
-};
-
 export function RoadTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
+  const { t } = useTranslations();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
   const [lines, setLines] = useState<LineListItem[]>([]);
   const [todaysDepartures, setTodaysDepartures] = useState<TodayDepartureItem[]>([]);
@@ -59,6 +50,17 @@ export function RoadTransportScreen(): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const userContext = useUserContext();
+
+  const DAY_TYPE_LABELS: Record<DayType, string> = {
+    MON: t('transport.dayTypes.MON'),
+    TUE: t('transport.dayTypes.TUE'),
+    WED: t('transport.dayTypes.WED'),
+    THU: t('transport.dayTypes.THU'),
+    FRI: t('transport.dayTypes.FRI'),
+    SAT: t('transport.dayTypes.SAT'),
+    SUN: t('transport.dayTypes.SUN'),
+    PRAZNIK: t('transport.dayTypes.PRAZNIK'),
+  };
 
   const fetchData = useCallback(async () => {
     setError(null);
@@ -76,7 +78,7 @@ export function RoadTransportScreen(): React.JSX.Element {
       setIsHoliday(todayRes.is_holiday);
     } catch (err) {
       console.error('[RoadTransport] Error fetching data:', err);
-      setError('Greska pri ucitavanju podataka');
+      setError(t('transport.error'));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -110,7 +112,7 @@ export function RoadTransportScreen(): React.JSX.Element {
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>Ucitavanje...</Text>
+          <Text style={styles.loadingText}>{t('transport.loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -136,11 +138,11 @@ export function RoadTransportScreen(): React.JSX.Element {
 
         {/* Title */}
         <View style={styles.titleSection}>
-          <Text style={styles.title}>Cestovni promet</Text>
+          <Text style={styles.title}>{t('transport.road.title')}</Text>
           {dayType && (
             <Text style={styles.dayInfo}>
               {DAY_TYPE_LABELS[dayType]}
-              {isHoliday && ' (blagdan)'}
+              {isHoliday && ` (${t('transport.holiday')})`}
             </Text>
           )}
         </View>
@@ -149,17 +151,17 @@ export function RoadTransportScreen(): React.JSX.Element {
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>{error}</Text>
             <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-              <Text style={styles.retryText}>Pokusaj ponovo</Text>
+              <Text style={styles.retryText}>{t('common.retry')}</Text>
             </TouchableOpacity>
           </View>
         )}
 
         {/* Section A: Lines List */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Linije</Text>
+          <Text style={styles.sectionTitle}>{t('transport.lines')}</Text>
           {lines.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>Nema dostupnih linija</Text>
+              <Text style={styles.emptyText}>{t('transport.noLines')}</Text>
             </View>
           ) : (
             lines.map((line) => (
@@ -184,7 +186,7 @@ export function RoadTransportScreen(): React.JSX.Element {
                 </Text>
                 <View style={styles.lineFooter}>
                   <Text style={styles.lineInfo}>
-                    {line.stops_count} stanica
+                    {line.stops_count} {t('transport.stations')}
                     {line.typical_duration_minutes
                       ? ` • ${formatDuration(line.typical_duration_minutes)}`
                       : ''}
@@ -198,10 +200,10 @@ export function RoadTransportScreen(): React.JSX.Element {
 
         {/* Section B: Today's Departures */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Polasci danas</Text>
+          <Text style={styles.sectionTitle}>{t('transport.todaysDepartures')}</Text>
           {todaysDepartures.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>Nema polazaka danas</Text>
+              <Text style={styles.emptyText}>{t('transport.noDepartures')}</Text>
             </View>
           ) : (
             todaysDepartures.slice(0, 10).map((dep, index) => (

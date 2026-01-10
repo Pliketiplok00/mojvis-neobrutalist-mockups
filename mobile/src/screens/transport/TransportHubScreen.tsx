@@ -26,6 +26,7 @@ import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useTranslations } from '../../i18n';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
@@ -35,6 +36,7 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 export function TransportHubScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { openMenu } = useMenu();
+  const { t } = useTranslations();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
   const userContext = useUserContext();
 
@@ -70,8 +72,7 @@ export function TransportHubScreen(): React.JSX.Element {
 
         {/* Title */}
         <View style={styles.section}>
-          <Text style={styles.title}>Vozni red</Text>
-          <Text style={styles.subtitle}>Odaberite vrstu prijevoza</Text>
+          <Text style={styles.title}>{t('transport.hub.title')}</Text>
         </View>
 
         {/* Transport Type Selection */}
@@ -83,8 +84,8 @@ export function TransportHubScreen(): React.JSX.Element {
           >
             <Text style={styles.optionIcon}>🚌</Text>
             <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Cestovni promet</Text>
-              <Text style={styles.optionSubtitle}>Autobusne linije</Text>
+              <Text style={styles.optionTitle}>{t('transport.hub.road')}</Text>
+              <Text style={styles.optionSubtitle}>{t('transport.hub.roadDescription')}</Text>
             </View>
             <Text style={styles.chevron}>{'>'}</Text>
           </TouchableOpacity>
@@ -96,8 +97,8 @@ export function TransportHubScreen(): React.JSX.Element {
           >
             <Text style={styles.optionIcon}>⛴️</Text>
             <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>Pomorski promet</Text>
-              <Text style={styles.optionSubtitle}>Trajekti i katamarani</Text>
+              <Text style={styles.optionTitle}>{t('transport.hub.sea')}</Text>
+              <Text style={styles.optionSubtitle}>{t('transport.hub.seaDescription')}</Text>
             </View>
             <Text style={styles.chevron}>{'>'}</Text>
           </TouchableOpacity>

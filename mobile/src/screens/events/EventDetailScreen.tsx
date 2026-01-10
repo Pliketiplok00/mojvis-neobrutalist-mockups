@@ -25,6 +25,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { useTranslations } from '../../i18n';
 import { eventsApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
@@ -58,6 +59,7 @@ function formatTime(dateStr: string): string {
 
 export function EventDetailScreen({ route }: Props): React.JSX.Element {
   const { eventId } = route.params;
+  const { t } = useTranslations();
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,7 +76,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       setEvent(eventData);
     } catch (err) {
       console.error('[EventDetail] Error fetching event:', err);
-      setError('Greska pri ucitavanju dogadaja');
+      setError(t('eventDetail.error'));
     } finally {
       setLoading(false);
     }
@@ -108,7 +110,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       }
     } catch (err) {
       console.error('[EventDetail] Error toggling reminder:', err);
-      Alert.alert('Greska', 'Nije moguce promijeniti podsjetnik');
+      Alert.alert(t('common.error'), t('eventDetail.error'));
     } finally {
       setSubscribing(false);
     }
@@ -146,7 +148,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || 'Dogadaj nije pronaden'}</Text>
+          <Text style={styles.errorText}>{error || t('eventDetail.notFound')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -164,10 +166,10 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
 
         {/* Date & Time */}
         <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>Datum i vrijeme</Text>
+          <Text style={styles.infoLabel}>{t('eventDetail.time')}</Text>
           <Text style={styles.infoValue}>{formatDate(event.start_datetime)}</Text>
           {event.is_all_day ? (
-            <Text style={styles.infoValueSecondary}>Cijeli dan</Text>
+            <Text style={styles.infoValueSecondary}>{t('events.allDay')}</Text>
           ) : (
             <Text style={styles.infoValueSecondary}>
               {formatTime(event.start_datetime)}
@@ -179,7 +181,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         {/* Location */}
         {event.location && (
           <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>Lokacija</Text>
+            <Text style={styles.infoLabel}>{t('eventDetail.location')}</Text>
             <Text style={styles.infoValue}>{event.location}</Text>
           </View>
         )}
@@ -187,7 +189,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         {/* Description */}
         {event.description && (
           <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>Opis</Text>
+            <Text style={styles.infoLabel}>{t('eventDetail.description')}</Text>
             <Text style={styles.description}>{event.description}</Text>
           </View>
         )}
@@ -195,9 +197,9 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         {/* Reminder Toggle */}
         <View style={styles.reminderSection}>
           <View style={styles.reminderInfo}>
-            <Text style={styles.reminderLabel}>Podsjeti me</Text>
+            <Text style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</Text>
             <Text style={styles.reminderHint}>
-              Primit cete podsjetnik na dan dogadaja
+              {t('eventDetail.reminder.active')}
             </Text>
           </View>
           <Switch

@@ -19,6 +19,7 @@ import { UnreadProvider } from './src/contexts/UnreadContext';
 import { OnboardingProvider, useOnboarding } from './src/contexts/OnboardingContext';
 import { MenuProvider, useMenu } from './src/contexts/MenuContext';
 import { PushProvider, usePush } from './src/contexts/PushContext';
+import { LanguageProvider } from './src/i18n';
 import { MenuOverlay } from './src/components/MenuOverlay';
 import type { MainStackParamList } from './src/navigation/types';
 
@@ -104,14 +105,16 @@ export default function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
       <OnboardingProvider>
-        <PushProvider>
-          <MenuProvider>
-            <UnreadProvider>
-              <StatusBar style="dark" />
-              <AppContent />
-            </UnreadProvider>
-          </MenuProvider>
-        </PushProvider>
+        <LanguageProvider>
+          <PushProvider>
+            <MenuProvider>
+              <UnreadProvider>
+                <StatusBar style="dark" />
+                <AppContent />
+              </UnreadProvider>
+            </MenuProvider>
+          </PushProvider>
+        </LanguageProvider>
       </OnboardingProvider>
     </SafeAreaProvider>
   );
