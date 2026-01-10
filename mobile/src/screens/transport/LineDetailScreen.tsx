@@ -10,12 +10,13 @@
  * - Direction toggle: 0 or 1 (resolved via route)
  * - Departures list: Expandable with stop times
  * - Contacts: BY LINE
+ *
+ * Phase 3D: Migrated to skin primitives (100% skin-adopted).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -26,6 +27,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { DepartureItem } from '../../components/DepartureItem';
+import { Card } from '../../ui/Card';
+import { Badge } from '../../ui/Badge';
+import { Button } from '../../ui/Button';
+import { H1, H2, Label, Meta } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { skin } from '../../ui/skin';
 import { useTranslations } from '../../i18n';
 import { transportApi } from '../../services/api';
 import type {
@@ -40,6 +47,8 @@ interface LineDetailScreenProps {
   lineId: string;
   transportType: TransportType;
 }
+
+const { colors, spacing, typography, borders } = skin;
 
 export function LineDetailScreen({
   lineId,
@@ -145,8 +154,8 @@ export function LineDetailScreen({
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
+          <ActivityIndicator size="large" color={colors.textPrimary} />
+          <Label style={styles.loadingText}>{t('common.loading')}</Label>
         </View>
       </SafeAreaView>
     );
@@ -157,10 +166,10 @@ export function LineDetailScreen({
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('transport.lineDetail.notFound')}</Text>
-          <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-            <Text style={styles.retryText}>{t('common.retry')}</Text>
-          </TouchableOpacity>
+          <Label style={styles.errorText}>{error || t('transport.lineDetail.notFound')}</Label>
+          <Button onPress={handleRefresh} style={styles.retryButton}>
+            {t('common.retry')}
+          </Button>
         </View>
       </SafeAreaView>
     );
@@ -179,11 +188,9 @@ export function LineDetailScreen({
       >
         {/* Line Header */}
         <View style={styles.headerSection}>
-          <Text style={styles.lineName}>{lineDetail.name}</Text>
+          <H1 style={styles.lineName}>{lineDetail.name}</H1>
           {lineDetail.subtype && (
-            <View style={styles.subtypeBadge}>
-              <Text style={styles.subtypeText}>{lineDetail.subtype}</Text>
-            </View>
+            <Badge variant="default" style={styles.subtypeBadge}>{lineDetail.subtype}</Badge>
           )}
         </View>
 
@@ -193,22 +200,22 @@ export function LineDetailScreen({
             style={styles.dateArrow}
             onPress={() => adjustDate(-1)}
           >
-            <Text style={styles.dateArrowText}>{'<'}</Text>
+            <Icon name="chevron-left" size="md" colorToken="textPrimary" />
           </TouchableOpacity>
           <View style={styles.dateInfo}>
-            <Text style={styles.dateText}>{formatDisplayDate(selectedDate)}</Text>
+            <Label style={styles.dateText}>{formatDisplayDate(selectedDate)}</Label>
             {departures && (
-              <Text style={styles.dayTypeText}>
+              <Meta>
                 {DAY_TYPE_LABELS[departures.day_type]}
                 {departures.is_holiday && ` (${t('transport.holiday')})`}
-              </Text>
+              </Meta>
             )}
           </View>
           <TouchableOpacity
             style={styles.dateArrow}
             onPress={() => adjustDate(1)}
           >
-            <Text style={styles.dateArrowText}>{'>'}</Text>
+            <Icon name="chevron-right" size="md" colorToken="textPrimary" />
           </TouchableOpacity>
         </View>
 
@@ -224,7 +231,7 @@ export function LineDetailScreen({
                 ]}
                 onPress={() => setSelectedDirection(route.direction)}
               >
-                <Text
+                <Label
                   style={[
                     styles.directionText,
                     selectedDirection === route.direction && styles.directionTextActive,
@@ -232,7 +239,7 @@ export function LineDetailScreen({
                   numberOfLines={1}
                 >
                   {route.direction_label}
-                </Text>
+                </Label>
               </TouchableOpacity>
             ))}
           </View>
@@ -241,23 +248,23 @@ export function LineDetailScreen({
         {/* Route Info */}
         {currentRoute && (
           <View style={styles.routeInfo}>
-            <Text style={styles.routeLabel}>
+            <Label style={styles.routeLabel}>
               {currentRoute.origin} → {currentRoute.destination}
-            </Text>
+            </Label>
             {currentRoute.typical_duration_minutes && (
-              <Text style={styles.routeDuration}>
+              <Meta>
                 Trajanje: {formatDuration(currentRoute.typical_duration_minutes)}
-              </Text>
+              </Meta>
             )}
           </View>
         )}
 
         {/* Departures */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Polasci</Text>
+          <H2 style={styles.sectionTitle}>Polasci</H2>
           {departuresLoading ? (
             <View style={styles.departuresLoading}>
-              <ActivityIndicator size="small" color="#666666" />
+              <ActivityIndicator size="small" color={colors.textSecondary} />
             </View>
           ) : departures && departures.departures.length > 0 ? (
             departures.departures.map((dep) => (
@@ -265,9 +272,7 @@ export function LineDetailScreen({
             ))
           ) : (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
-                Nema polazaka za odabrani dan
-              </Text>
+              <Label>Nema polazaka za odabrani dan</Label>
             </View>
           )}
         </View>
@@ -275,17 +280,19 @@ export function LineDetailScreen({
         {/* Contacts */}
         {lineDetail.contacts.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Kontakt</Text>
+            <H2 style={styles.sectionTitle}>Kontakt</H2>
             {lineDetail.contacts.map((contact, index) => (
-              <View key={`${contact.operator}-${index}`} style={styles.contactCard}>
-                <Text style={styles.contactOperator}>{contact.operator}</Text>
+              <Card key={`${contact.operator}-${index}`} style={styles.contactCard}>
+                <Label style={styles.contactOperator}>{contact.operator}</Label>
                 {contact.phone && (
                   <TouchableOpacity
                     style={styles.contactRow}
                     onPress={() => handlePhonePress(contact.phone!)}
                   >
-                    <Text style={styles.contactLabel}>Tel:</Text>
-                    <Text style={styles.contactLink}>{contact.phone}</Text>
+                    <View style={styles.contactIconContainer}>
+                      <Icon name="phone" size="sm" colorToken="textSecondary" />
+                    </View>
+                    <Label style={styles.contactLink}>{contact.phone}</Label>
                   </TouchableOpacity>
                 )}
                 {contact.email && (
@@ -293,8 +300,10 @@ export function LineDetailScreen({
                     style={styles.contactRow}
                     onPress={() => handleEmailPress(contact.email!)}
                   >
-                    <Text style={styles.contactLabel}>Email:</Text>
-                    <Text style={styles.contactLink}>{contact.email}</Text>
+                    <View style={styles.contactIconContainer}>
+                      <Icon name="mail" size="sm" colorToken="textSecondary" />
+                    </View>
+                    <Label style={styles.contactLink}>{contact.email}</Label>
                   </TouchableOpacity>
                 )}
                 {contact.website && (
@@ -302,11 +311,13 @@ export function LineDetailScreen({
                     style={styles.contactRow}
                     onPress={() => handleWebsitePress(contact.website!)}
                   >
-                    <Text style={styles.contactLabel}>Web:</Text>
-                    <Text style={styles.contactLink}>{contact.website}</Text>
+                    <View style={styles.contactIconContainer}>
+                      <Icon name="globe" size="sm" colorToken="textSecondary" />
+                    </View>
+                    <Label style={styles.contactLink}>{contact.website}</Label>
                   </TouchableOpacity>
                 )}
-              </View>
+              </Card>
             ))}
           </View>
         )}
@@ -346,13 +357,13 @@ function formatDuration(minutes: number): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: spacing.xxxl,
   },
   loadingContainer: {
     flex: 1,
@@ -360,64 +371,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: spacing.md,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: spacing.xxl,
   },
   errorText: {
-    fontSize: 16,
-    color: '#856404',
     textAlign: 'center',
-    marginBottom: 16,
+    color: colors.textPrimary,
+    marginBottom: spacing.lg,
   },
   retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: '#000000',
-    borderRadius: 8,
-  },
-  retryText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '500',
+    marginTop: spacing.md,
   },
   headerSection: {
-    padding: 16,
-    paddingBottom: 8,
+    padding: spacing.lg,
+    paddingBottom: spacing.sm,
   },
   lineName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   subtypeBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  subtypeText: {
-    fontSize: 12,
-    color: '#666666',
-    fontWeight: '500',
   },
   dateSection: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#F5F5F5',
-    marginHorizontal: 16,
-    borderRadius: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.backgroundSecondary,
+    marginHorizontal: spacing.lg,
+    borderRadius: spacing.sm,
   },
   dateArrow: {
     width: 40,
@@ -425,119 +413,90 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  dateArrowText: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-  },
   dateInfo: {
     flex: 1,
     alignItems: 'center',
   },
   dateText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-  },
-  dayTypeText: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
+    fontSize: typography.fontSize.xl,
+    fontFamily: typography.fontFamily.body.bold,
+    color: colors.textPrimary,
   },
   directionSection: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    gap: 8,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    gap: spacing.sm,
   },
   directionButton: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    borderWidth: 2,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: spacing.sm,
+    borderWidth: borders.widthThin,
     borderColor: 'transparent',
   },
   directionButtonActive: {
-    backgroundColor: '#000000',
-    borderColor: '#000000',
+    backgroundColor: colors.textPrimary,
+    borderColor: colors.textPrimary,
   },
   directionText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666666',
+    fontSize: typography.fontSize.md,
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   directionTextActive: {
-    color: '#FFFFFF',
+    color: colors.primaryText,
   },
   routeInfo: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
   },
   routeLabel: {
-    fontSize: 14,
-    color: '#333333',
-    fontWeight: '500',
-  },
-  routeDuration: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 4,
+    fontSize: typography.fontSize.md,
+    color: colors.textPrimary,
+    fontFamily: typography.fontFamily.body.bold,
   },
   section: {
-    padding: 16,
-    paddingTop: 24,
+    padding: spacing.lg,
+    paddingTop: spacing.xxl,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   departuresLoading: {
-    padding: 24,
+    padding: spacing.xxl,
     alignItems: 'center',
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: spacing.xxl,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: spacing.sm,
     alignItems: 'center',
   },
-  emptyText: {
-    fontSize: 14,
-    color: '#666666',
-  },
   contactCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   contactOperator: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    fontSize: typography.fontSize.lg,
+    fontFamily: typography.fontFamily.body.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
   },
   contactRow: {
     flexDirection: 'row',
-    marginBottom: 8,
+    alignItems: 'center',
+    marginBottom: spacing.sm,
   },
-  contactLabel: {
-    fontSize: 14,
-    color: '#666666',
-    width: 50,
+  contactIconContainer: {
+    width: 24,
+    marginRight: spacing.sm,
   },
   contactLink: {
     flex: 1,
-    fontSize: 14,
-    color: '#0066CC',
-    textDecorationLine: 'underline',
+    fontSize: typography.fontSize.md,
+    color: colors.link,
   },
 });
 

@@ -9,13 +9,13 @@
  * - Two choices: Road / Sea
  * - Active notices show as banners
  * - No deep linking bypasses this hub
+ *
+ * Phase 3C: Migrated to skin primitives (100% skin-adopted).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
 } from 'react-native';
@@ -24,6 +24,10 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { Card } from '../../ui/Card';
+import { H1, Label, Meta } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { skin } from '../../ui/skin';
 import { useMenu } from '../../contexts/MenuContext';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
@@ -32,6 +36,8 @@ import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
+
+const { colors, spacing, typography } = skin;
 
 export function TransportHubScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -72,36 +78,42 @@ export function TransportHubScreen(): React.JSX.Element {
 
         {/* Title */}
         <View style={styles.section}>
-          <Text style={styles.title}>{t('transport.hub.title')}</Text>
+          <H1>{t('transport.hub.title')}</H1>
         </View>
 
         {/* Transport Type Selection */}
         <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.optionCard}
+          <Card
             onPress={() => navigation.navigate('RoadTransport')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.optionIcon}>🚌</Text>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>{t('transport.hub.road')}</Text>
-              <Text style={styles.optionSubtitle}>{t('transport.hub.roadDescription')}</Text>
-            </View>
-            <Text style={styles.chevron}>{'>'}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
             style={styles.optionCard}
-            onPress={() => navigation.navigate('SeaTransport')}
-            activeOpacity={0.7}
           >
-            <Text style={styles.optionIcon}>⛴️</Text>
-            <View style={styles.optionTextContainer}>
-              <Text style={styles.optionTitle}>{t('transport.hub.sea')}</Text>
-              <Text style={styles.optionSubtitle}>{t('transport.hub.seaDescription')}</Text>
+            <View style={styles.optionContent}>
+              <View style={styles.optionIconContainer}>
+                <Icon name="bus" size="lg" colorToken="textPrimary" />
+              </View>
+              <View style={styles.optionTextContainer}>
+                <Label style={styles.optionTitle}>{t('transport.hub.road')}</Label>
+                <Meta>{t('transport.hub.roadDescription')}</Meta>
+              </View>
+              <Icon name="chevron-right" size="md" colorToken="chevron" />
             </View>
-            <Text style={styles.chevron}>{'>'}</Text>
-          </TouchableOpacity>
+          </Card>
+
+          <Card
+            onPress={() => navigation.navigate('SeaTransport')}
+            style={styles.optionCard}
+          >
+            <View style={styles.optionContent}>
+              <View style={styles.optionIconContainer}>
+                <Icon name="ship" size="lg" colorToken="textPrimary" />
+              </View>
+              <View style={styles.optionTextContainer}>
+                <Label style={styles.optionTitle}>{t('transport.hub.sea')}</Label>
+                <Meta>{t('transport.hub.seaDescription')}</Meta>
+              </View>
+              <Icon name="chevron-right" size="md" colorToken="chevron" />
+            </View>
+          </Card>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -111,62 +123,40 @@ export function TransportHubScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   bannerSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
   },
   section: {
-    padding: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666666',
+    padding: spacing.lg,
   },
   optionsContainer: {
-    padding: 16,
-    gap: 12,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   optionCard: {
+    padding: spacing.lg,
+  },
+  optionContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
   },
-  optionIcon: {
-    fontSize: 32,
-    marginRight: 16,
+  optionIconContainer: {
+    marginRight: spacing.lg,
   },
   optionTextContainer: {
     flex: 1,
   },
   optionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 2,
-  },
-  optionSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-  },
-  chevron: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: typography.fontSize.xl,
+    fontFamily: typography.fontFamily.body.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xs,
   },
 });
 
