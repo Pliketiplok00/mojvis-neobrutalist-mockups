@@ -32,6 +32,8 @@ import { adminFeedbackRoutes } from './routes/admin-feedback.js';
 import { clickFixRoutes } from './routes/click-fix.js';
 import { adminClickFixRoutes } from './routes/admin-click-fix.js';
 import { deviceRoutes } from './routes/device.js';
+import { adminAuthRoutes } from './routes/admin-auth.js';
+import { adminAuthHook } from './middleware/auth.js';
 
 // Create Fastify instance with logging
 const fastify: FastifyInstance = Fastify({
@@ -54,9 +56,15 @@ const fastify: FastifyInstance = Fastify({
  * Register plugins and routes
  */
 async function registerPlugins(): Promise<void> {
-  // CORS - allow all origins in development
+  // CORS - explicit origin allowlist with credentials support
+  // DEV: http://localhost:5173 (admin dev server)
+  // PROD: ADMIN_ALLOWED_ORIGIN env var (default: https://admin.mojvis.hr)
+  // NEVER use origin:true with credentials:true
   await fastify.register(cors, {
-    origin: env.NODE_ENV === 'development' ? true : false, // TODO: Configure for production
+    origin: env.ADMIN_ALLOWED_ORIGIN, // Explicit origin, NOT wildcard
+    credentials: true, // Required for cookie-based auth
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'X-Device-ID'],
   });
 
   // Static file serving for uploads (Phase 6: Click & Fix photos)
@@ -66,8 +74,14 @@ async function registerPlugins(): Promise<void> {
     decorateReply: false,
   });
 
+  // Admin authentication hook - protects all /admin/* routes except /admin/auth/*
+  fastify.addHook('preHandler', adminAuthHook);
+
   // Health routes
   await fastify.register(healthRoutes);
+
+  // Admin auth routes (Phase 1b) - must be registered before other admin routes
+  await fastify.register(adminAuthRoutes);
 
   // Inbox routes (Phase 1)
   await fastify.register(inboxRoutes);
@@ -165,7 +179,9 @@ async function start(): Promise<void> {
 
     console.info('='.repeat(50));
     console.info(`[Server] MOJ VIS API running at http://${env.HOST}:${env.PORT}`);
+    console.info(`[Server] CORS Origin: ${env.ADMIN_ALLOWED_ORIGIN}`);
     console.info(`[Server] Health: http://${env.HOST}:${env.PORT}/health`);
+    console.info(`[Server] Admin Auth: http://${env.HOST}:${env.PORT}/admin/auth/login`);
     console.info(`[Server] Inbox: http://${env.HOST}:${env.PORT}/inbox`);
     console.info(`[Server] Banners: http://${env.HOST}:${env.PORT}/banners/active`);
     console.info(`[Server] Events: http://${env.HOST}:${env.PORT}/events`);

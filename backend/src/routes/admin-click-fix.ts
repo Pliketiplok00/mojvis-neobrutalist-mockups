@@ -3,6 +3,9 @@
  *
  * Phase 6: Admin management of Click & Fix issue reports.
  *
+ * All endpoints require authentication (enforced by adminAuthHook).
+ * Admin identity and municipality derived from session, NOT headers.
+ *
  * Endpoints:
  * - GET /admin/click-fix - list issues (filtered by municipality scope)
  * - GET /admin/click-fix/:id - get issue detail
@@ -10,10 +13,8 @@
  * - POST /admin/click-fix/:id/reply - add reply
  *
  * Admin context:
- * - Municipality scope restricts visibility
+ * - Municipality scope restricts visibility (from session)
  * - Reply language must match original submission language
- *
- * TODO: Add proper admin authentication when implemented.
  */
 
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
@@ -38,28 +39,24 @@ import {
   updateClickFixStatus,
   createClickFixReply,
 } from '../repositories/click-fix.js';
+import { getAdminId, getAdminMunicipality } from '../middleware/auth.js';
+
+// ============================================================
+// NOTE: Admin identity derived from session, NOT headers.
+// X-Admin-Municipality, X-Admin-Id headers are NOT trusted.
+// ============================================================
 
 /**
- * Get admin municipality scope from headers
- * TODO: Replace with proper admin auth when implemented
+ * Get admin context from session (NOT headers)
  */
 function getAdminContext(request: FastifyRequest): {
   adminMunicipality: Municipality;
-  adminId: string | null;
+  adminId: string;
 } {
-  const headers = request.headers;
-
-  // For now, use X-Admin-Municipality header
-  // TODO: Get from authenticated admin session
-  const municipalityHeader = headers['x-admin-municipality'] as string | undefined;
-  let adminMunicipality: Municipality = null;
-  if (municipalityHeader === 'vis' || municipalityHeader === 'komiza') {
-    adminMunicipality = municipalityHeader;
-  }
-
-  const adminId = (headers['x-admin-id'] as string) || null;
-
-  return { adminMunicipality, adminId };
+  return {
+    adminMunicipality: getAdminMunicipality(request),
+    adminId: getAdminId(request),
+  };
 }
 
 /**
