@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "generatedAt": "2026-01-10T22:54:31.602Z",
+  "scope": [
+    "mobile/src/components",
+    "mobile/src/screens/transport",
+    "mobile/src/screens/inbox"
+  ],
+  "violations": [
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 119,
+      "match": "#FFF3CD",
+      "lineText": "    backgroundColor: '#FFF3CD',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#FFF3CD::    backgroundColor: '#FFF3CD',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 125,
+      "match": "#FFC107",
+      "lineText": "    borderLeftColor: '#FFC107',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#FFC107::    borderLeftColor: '#FFC107',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 128,
+      "match": "#F8D7DA",
+      "lineText": "    backgroundColor: '#F8D7DA',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#F8D7DA::    backgroundColor: '#F8D7DA',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 129,
+      "match": "#DC3545",
+      "lineText": "    borderLeftColor: '#DC3545',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#DC3545::    borderLeftColor: '#DC3545',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 132,
+      "match": "#DC3545",
+      "lineText": "    backgroundColor: '#DC3545',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#DC3545::    backgroundColor: '#DC3545',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 139,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 147,
+      "match": "#856404",
+      "lineText": "    color: '#856404',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#856404::    color: '#856404',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 150,
+      "match": "#721C24",
+      "lineText": "    color: '#721C24',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#721C24::    color: '#721C24',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 155,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/Banner.tsx",
+      "line": 160,
+      "match": "#999999",
+      "lineText": "    color: '#999999',",
+      "fingerprint": "mobile/src/components/Banner.tsx::#999999::    color: '#999999',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 118,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 120,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 132,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 142,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 146,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 152,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 158,
+      "match": "#856404",
+      "lineText": "    color: '#856404',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#856404::    color: '#856404',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 159,
+      "match": "#FFF3CD",
+      "lineText": "    backgroundColor: '#FFF3CD',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#FFF3CD::    backgroundColor: '#FFF3CD',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 181,
+      "match": "#666666",
+      "lineText": "    backgroundColor: '#666666',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#666666::    backgroundColor: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 184,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 190,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 198,
+      "match": "#CCCCCC",
+      "lineText": "    backgroundColor: '#CCCCCC',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#CCCCCC::    backgroundColor: '#CCCCCC',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 211,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/components/DepartureItem.tsx",
+      "line": 217,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/components/DepartureItem.tsx::#333333::    color: '#333333',"
+    }
+  ]
+}
