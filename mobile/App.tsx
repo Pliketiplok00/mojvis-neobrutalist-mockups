@@ -7,12 +7,13 @@
  * Phase 5.1: Added OnboardingProvider for onboarding persistence.
  * Phase 5.2: Added MenuProvider and MenuOverlay for hamburger menu.
  * Phase 7: Added PushProvider for push notification management.
+ * Phase 2a: Added font loading with useAppFonts hook.
  */
 
-import React, { useRef, useCallback, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { NavigationContainerRef, CommonActions } from '@react-navigation/native';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { UnreadProvider } from './src/contexts/UnreadContext';
@@ -21,6 +22,8 @@ import { MenuProvider, useMenu } from './src/contexts/MenuContext';
 import { PushProvider, usePush } from './src/contexts/PushContext';
 import { LanguageProvider } from './src/i18n';
 import { MenuOverlay } from './src/components/MenuOverlay';
+import { useAppFonts } from './src/ui/fonts';
+import { skin } from './src/ui/skin';
 import type { MainStackParamList } from './src/navigation/types';
 
 // Navigation ref for menu to navigate
@@ -101,7 +104,55 @@ function AppContent(): React.JSX.Element {
   );
 }
 
+/**
+ * Font loading screen - shown while fonts are loading.
+ * Uses skin tokens for styling (no hardcoded hex colors).
+ */
+function FontLoadingScreen(): React.JSX.Element {
+  return (
+    <SafeAreaView style={styles.loadingContainer}>
+      <ActivityIndicator size="large" color={skin.colors.primary} />
+      <Text style={styles.loadingText}>MOJ VIS</Text>
+    </SafeAreaView>
+  );
+}
+
+/**
+ * Font error screen - shown if fonts fail to load.
+ * Uses skin tokens for styling (no hardcoded hex colors).
+ */
+function FontErrorScreen(): React.JSX.Element {
+  return (
+    <SafeAreaView style={styles.loadingContainer}>
+      <Text style={styles.errorText}>Font loading failed</Text>
+      <Text style={styles.errorSubtext}>Please restart the app</Text>
+    </SafeAreaView>
+  );
+}
+
 export default function App(): React.JSX.Element {
+  const [fontsLoaded, fontError] = useAppFonts();
+
+  // Show loading screen while fonts are loading
+  if (!fontsLoaded && !fontError) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <FontLoadingScreen />
+      </SafeAreaProvider>
+    );
+  }
+
+  // Show error screen if fonts failed to load
+  if (fontError) {
+    return (
+      <SafeAreaProvider>
+        <StatusBar style="dark" />
+        <FontErrorScreen />
+      </SafeAreaProvider>
+    );
+  }
+
   return (
     <SafeAreaProvider>
       <OnboardingProvider>
@@ -123,5 +174,27 @@ export default function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: skin.colors.background,
+  },
+  loadingText: {
+    marginTop: skin.spacing.lg,
+    fontSize: skin.typography.fontSize.xxl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
+  },
+  errorText: {
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.errorText,
+    marginBottom: skin.spacing.sm,
+  },
+  errorSubtext: {
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
   },
 });

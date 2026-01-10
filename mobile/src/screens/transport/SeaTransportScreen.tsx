@@ -12,12 +12,13 @@
  * - A: Lines list
  * - B: Today's departures (aggregated)
  * - C: (Contacts shown in line detail)
+ *
+ * Phase 3A: Migrated to skin primitives (100% skin-adopted).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -29,6 +30,12 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { Card } from '../../ui/Card';
+import { Badge } from '../../ui/Badge';
+import { Button } from '../../ui/Button';
+import { H1, H2, Label, Meta } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
@@ -37,6 +44,8 @@ import type { LineListItem, TodayDepartureItem, DayType } from '../../types/tran
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
+
+const { colors, spacing, typography, borders } = skin;
 
 export function SeaTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -111,8 +120,8 @@ export function SeaTransportScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('transport.loading')}</Text>
+          <ActivityIndicator size="large" color={colors.textPrimary} />
+          <Label style={styles.loadingText}>{t('transport.loading')}</Label>
         </View>
       </SafeAreaView>
     );
@@ -138,72 +147,69 @@ export function SeaTransportScreen(): React.JSX.Element {
 
         {/* Title */}
         <View style={styles.titleSection}>
-          <Text style={styles.title}>{t('transport.sea.title')}</Text>
+          <H1>{t('transport.sea.title')}</H1>
           {dayType && (
-            <Text style={styles.dayInfo}>
+            <Meta style={styles.dayInfo}>
               {DAY_TYPE_LABELS[dayType]}
               {isHoliday && ` (${t('transport.holiday')})`}
-            </Text>
+            </Meta>
           )}
         </View>
 
         {error && (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-            <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-              <Text style={styles.retryText}>{t('common.retry')}</Text>
-            </TouchableOpacity>
+            <Label style={styles.errorText}>{error}</Label>
+            <Button onPress={handleRefresh} style={styles.retryButton}>
+              {t('common.retry')}
+            </Button>
           </View>
         )}
 
         {/* Section A: Lines List */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('transport.lines')}</Text>
+          <H2 style={styles.sectionTitle}>{t('transport.lines')}</H2>
           {lines.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>{t('transport.noLines')}</Text>
+              <Label>{t('transport.noLines')}</Label>
             </View>
           ) : (
             lines.map((line) => (
-              <TouchableOpacity
+              <Card
                 key={line.id}
-                style={styles.lineCard}
                 onPress={() => handleLinePress(line.id)}
-                activeOpacity={0.7}
+                style={styles.lineCard}
               >
                 <View style={styles.lineHeader}>
-                  <Text style={styles.lineName} numberOfLines={2}>
+                  <Label style={styles.lineName} numberOfLines={2}>
                     {line.name}
-                  </Text>
+                  </Label>
                   {line.subtype && (
-                    <View style={styles.subtypeBadge}>
-                      <Text style={styles.subtypeText}>{line.subtype}</Text>
-                    </View>
+                    <Badge variant="default">{line.subtype}</Badge>
                   )}
                 </View>
-                <Text style={styles.lineStops} numberOfLines={1}>
+                <Meta numberOfLines={1} style={styles.lineStops}>
                   {line.stops_summary}
-                </Text>
+                </Meta>
                 <View style={styles.lineFooter}>
-                  <Text style={styles.lineInfo}>
+                  <Meta>
                     {line.stops_count} {t('transport.stations')}
                     {line.typical_duration_minutes
                       ? ` • ${formatDuration(line.typical_duration_minutes)}`
                       : ''}
-                  </Text>
-                  <Text style={styles.chevron}>{'>'}</Text>
+                  </Meta>
+                  <Icon name="chevron-right" size="sm" stroke="regular" colorToken="chevron" />
                 </View>
-              </TouchableOpacity>
+              </Card>
             ))
           )}
         </View>
 
         {/* Section B: Today's Departures */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('transport.todaysDepartures')}</Text>
+          <H2 style={styles.sectionTitle}>{t('transport.todaysDepartures')}</H2>
           {todaysDepartures.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>{t('transport.noDepartures')}</Text>
+              <Label>{t('transport.noDepartures')}</Label>
             </View>
           ) : (
             todaysDepartures.slice(0, 10).map((dep, index) => (
@@ -213,14 +219,14 @@ export function SeaTransportScreen(): React.JSX.Element {
                 onPress={() => handleLinePress(dep.line_id)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.departureTime}>{dep.departure_time}</Text>
+                <Label style={styles.departureTime}>{dep.departure_time}</Label>
                 <View style={styles.departureInfo}>
-                  <Text style={styles.departureLine} numberOfLines={1}>
+                  <Label style={styles.departureLine} numberOfLines={1}>
                     {dep.line_name}
-                  </Text>
-                  <Text style={styles.departureDirection} numberOfLines={1}>
+                  </Label>
+                  <Meta numberOfLines={1}>
                     {dep.direction_label}
-                  </Text>
+                  </Meta>
                 </View>
               </TouchableOpacity>
             ))
@@ -234,13 +240,13 @@ export function SeaTransportScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: spacing.xxxl,
   },
   loadingContainer: {
     flex: 1,
@@ -248,150 +254,90 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: spacing.md,
   },
   bannerSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
   },
   titleSection: {
-    padding: 16,
-    paddingBottom: 8,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
+    padding: spacing.lg,
+    paddingBottom: spacing.sm,
   },
   dayInfo: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 4,
+    marginTop: spacing.xs,
   },
   section: {
-    padding: 16,
-    paddingTop: 8,
+    padding: spacing.lg,
+    paddingTop: spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   errorContainer: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
+    margin: spacing.lg,
+    padding: spacing.lg,
+    backgroundColor: colors.warningBackground,
+    borderRadius: spacing.sm,
     alignItems: 'center',
   },
   errorText: {
-    fontSize: 14,
-    color: '#856404',
     textAlign: 'center',
+    color: colors.textPrimary,
   },
   retryButton: {
-    marginTop: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#000000',
-    borderRadius: 4,
-  },
-  retryText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '500',
+    marginTop: spacing.md,
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: spacing.xxl,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: spacing.sm,
     alignItems: 'center',
   },
-  emptyText: {
-    fontSize: 14,
-    color: '#666666',
-  },
   lineCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   lineHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   lineName: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginRight: 8,
-  },
-  subtypeBadge: {
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  subtypeText: {
-    fontSize: 12,
-    color: '#666666',
-    fontWeight: '500',
+    fontSize: typography.fontSize.lg,
+    fontFamily: typography.fontFamily.body.bold,
+    color: colors.textPrimary,
+    marginRight: spacing.sm,
   },
   lineStops: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   lineFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  lineInfo: {
-    fontSize: 12,
-    color: '#888888',
-  },
-  chevron: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-  },
   departureCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
+    backgroundColor: colors.backgroundSecondary,
+    borderRadius: spacing.sm,
+    padding: spacing.md,
+    marginBottom: spacing.sm,
   },
   departureTime: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000000',
+    fontSize: typography.fontSize.xl,
+    fontFamily: typography.fontFamily.body.bold,
+    color: colors.textPrimary,
     width: 60,
   },
   departureInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: spacing.md,
   },
   departureLine: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000000',
-  },
-  departureDirection: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
+    color: colors.textPrimary,
   },
 });
 

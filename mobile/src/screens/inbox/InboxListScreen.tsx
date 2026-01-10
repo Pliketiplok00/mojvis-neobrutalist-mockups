@@ -46,6 +46,7 @@ import {
   H2,
   Body,
   Meta,
+  Icon,
 } from '../../ui';
 
 // Combined sent item type
@@ -203,7 +204,7 @@ export function InboxListScreen(): React.JSX.Element {
         rightAccessory={
           <>
             {unread && <View style={styles.unreadDot} />}
-            <Text style={styles.chevron}>{'>'}</Text>
+            <Icon name="chevron-right" size="sm" colorToken="chevron" />
           </>
         }
       >
@@ -233,7 +234,9 @@ export function InboxListScreen(): React.JSX.Element {
 
   const renderEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyIcon}>📭</Text>
+      <View style={styles.emptyIconContainer}>
+        <Icon name="inbox" size="xl" colorToken="textMuted" />
+      </View>
       <H2 style={styles.emptyTitle}>{t('inbox.empty.title')}</H2>
       <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
         {activeTab === 'received'
@@ -245,7 +248,9 @@ export function InboxListScreen(): React.JSX.Element {
 
   const renderErrorState = (): React.JSX.Element => (
     <View style={styles.errorState}>
-      <Text style={styles.errorIcon}>⚠️</Text>
+      <View style={styles.errorIconContainer}>
+        <Icon name="alert-triangle" size="xl" colorToken="errorText" />
+      </View>
       <Body style={styles.errorTitle}>{error}</Body>
       <Button onPress={handleRefresh}>{t('common.retry')}</Button>
     </View>
@@ -288,7 +293,9 @@ export function InboxListScreen(): React.JSX.Element {
 
   const renderSentEmptyState = (): React.JSX.Element => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyIcon}>📤</Text>
+      <View style={styles.emptyIconContainer}>
+        <Icon name="send" size="xl" colorToken="textMuted" />
+      </View>
       <H2 style={styles.emptyTitle}>{t('inbox.empty.title')}</H2>
       <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
         {t('inbox.empty.sentHint')}
@@ -298,7 +305,9 @@ export function InboxListScreen(): React.JSX.Element {
 
   const renderSentErrorState = (): React.JSX.Element => (
     <View style={styles.errorState}>
-      <Text style={styles.errorIcon}>⚠️</Text>
+      <View style={styles.errorIconContainer}>
+        <Icon name="alert-triangle" size="xl" colorToken="errorText" />
+      </View>
       <Body style={styles.errorTitle}>{sentError}</Body>
       <Button onPress={handleRefresh}>{t('common.retry')}</Button>
     </View>
@@ -448,8 +457,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: skin.spacing.xxl,
   },
-  errorIcon: {
-    fontSize: 48,
+  errorIconContainer: {
     marginBottom: skin.spacing.lg,
   },
   errorTitle: {
@@ -462,8 +470,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: skin.spacing.xxl,
   },
-  emptyIcon: {
-    fontSize: 48,
+  emptyIconContainer: {
     marginBottom: skin.spacing.lg,
   },
   emptyTitle: {
@@ -477,7 +484,7 @@ const styles = StyleSheet.create({
   },
   badgeRow: {
     flexDirection: 'row',
-    gap: 6,
+    gap: skin.spacing.sm,
     marginBottom: skin.spacing.xs,
   },
   badgeMargin: {
@@ -500,16 +507,11 @@ const styles = StyleSheet.create({
     backgroundColor: skin.colors.unreadIndicator,
     marginRight: skin.spacing.sm,
   },
-  chevron: {
-    fontSize: skin.components.listRow.chevronSize,
-    color: skin.components.listRow.chevronColor,
-    marginLeft: skin.spacing.sm,
-  },
   sentContainer: {
     flex: 1,
   },
   photoCount: {
-    marginBottom: 2,
+    marginBottom: skin.spacing.xs,
   },
   newFeedbackContainer: {
     padding: skin.spacing.lg,
