@@ -21,6 +21,7 @@ export interface AdminUser {
   username: string;
   password_hash: string; // INTERNAL ONLY - never expose in API responses
   municipality: 'vis' | 'komiza';
+  notice_municipality_scope: 'vis' | 'komiza' | null; // Phase 3: which municipal notices admin can edit
   is_breakglass: boolean;
   created_at: Date;
   updated_at: Date;
@@ -45,6 +46,7 @@ interface AdminUserRow {
   username: string;
   password_hash: string;
   municipality: 'vis' | 'komiza';
+  notice_municipality_scope: 'vis' | 'komiza' | null;
   is_breakglass: boolean;
   created_at: Date;
   updated_at: Date;
@@ -64,6 +66,7 @@ interface AdminSessionWithUserRow extends AdminSessionRow {
   admin_username: string;
   admin_password_hash: string;
   admin_municipality: 'vis' | 'komiza';
+  admin_notice_municipality_scope: 'vis' | 'komiza' | null;
   admin_is_breakglass: boolean;
   admin_created_at: Date;
   admin_updated_at: Date;
@@ -87,6 +90,7 @@ function rowToAdminUser(row: AdminUserRow): AdminUser {
     username: row.username,
     password_hash: row.password_hash,
     municipality: row.municipality,
+    notice_municipality_scope: row.notice_municipality_scope,
     is_breakglass: row.is_breakglass,
     created_at: row.created_at,
     updated_at: row.updated_at,
@@ -119,6 +123,7 @@ function rowToAdminSessionWithUser(row: AdminSessionWithUserRow): AdminSessionWi
       username: row.admin_username,
       password_hash: row.admin_password_hash,
       municipality: row.admin_municipality,
+      notice_municipality_scope: row.admin_notice_municipality_scope,
       is_breakglass: row.admin_is_breakglass,
       created_at: row.admin_created_at,
       updated_at: row.admin_updated_at,
@@ -135,7 +140,7 @@ function rowToAdminSessionWithUser(row: AdminSessionWithUserRow): AdminSessionWi
  */
 export async function findAdminByUsername(username: string): Promise<AdminUser | null> {
   const result = await query<AdminUserRow>(
-    `SELECT id, username, password_hash, municipality, is_breakglass, created_at, updated_at
+    `SELECT id, username, password_hash, municipality, notice_municipality_scope, is_breakglass, created_at, updated_at
      FROM admin_users
      WHERE username = $1`,
     [username]
@@ -153,7 +158,7 @@ export async function findAdminByUsername(username: string): Promise<AdminUser |
  */
 export async function findAdminById(id: string): Promise<AdminUser | null> {
   const result = await query<AdminUserRow>(
-    `SELECT id, username, password_hash, municipality, is_breakglass, created_at, updated_at
+    `SELECT id, username, password_hash, municipality, notice_municipality_scope, is_breakglass, created_at, updated_at
      FROM admin_users
      WHERE id = $1`,
     [id]
@@ -174,17 +179,19 @@ export async function upsertBreakglassAdmin(data: {
   username: string;
   passwordHash: string;
   municipality: 'vis' | 'komiza';
+  noticeMunicipalityScope?: 'vis' | 'komiza' | null;
 }): Promise<AdminUser> {
   const result = await query<AdminUserRow>(
-    `INSERT INTO admin_users (username, password_hash, municipality, is_breakglass)
-     VALUES ($1, $2, $3, true)
+    `INSERT INTO admin_users (username, password_hash, municipality, notice_municipality_scope, is_breakglass)
+     VALUES ($1, $2, $3, $4, true)
      ON CONFLICT (username) DO UPDATE SET
        password_hash = EXCLUDED.password_hash,
        municipality = EXCLUDED.municipality,
+       notice_municipality_scope = EXCLUDED.notice_municipality_scope,
        is_breakglass = true,
        updated_at = NOW()
-     RETURNING id, username, password_hash, municipality, is_breakglass, created_at, updated_at`,
-    [data.username, data.passwordHash, data.municipality]
+     RETURNING id, username, password_hash, municipality, notice_municipality_scope, is_breakglass, created_at, updated_at`,
+    [data.username, data.passwordHash, data.municipality, data.noticeMunicipalityScope ?? null]
   );
 
   return rowToAdminUser(result.rows[0]);
@@ -227,7 +234,8 @@ export async function findSessionByToken(rawToken: string): Promise<AdminSession
        s.id, s.admin_user_id, s.session_token_hash, s.created_at, s.expires_at,
        s.revoked_at, s.last_seen_at,
        u.username as admin_username, u.password_hash as admin_password_hash,
-       u.municipality as admin_municipality, u.is_breakglass as admin_is_breakglass,
+       u.municipality as admin_municipality, u.notice_municipality_scope as admin_notice_municipality_scope,
+       u.is_breakglass as admin_is_breakglass,
        u.created_at as admin_created_at, u.updated_at as admin_updated_at
      FROM admin_sessions s
      JOIN admin_users u ON u.id = s.admin_user_id

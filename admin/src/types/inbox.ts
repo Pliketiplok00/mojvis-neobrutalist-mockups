@@ -185,3 +185,31 @@ export function validateHitnoRules(
 export function isDeprecatedTag(tag: InboxTag): boolean {
   return DEPRECATED_TAGS.includes(tag);
 }
+
+/**
+ * Municipal tags (Phase 3)
+ */
+export const MUNICIPAL_TAGS: readonly InboxTag[] = ['vis', 'komiza'];
+
+/**
+ * Check if a tag is a municipal tag (vis or komiza)
+ */
+export function isMunicipalTag(tag: InboxTag): boolean {
+  return MUNICIPAL_TAGS.includes(tag);
+}
+
+/**
+ * Get municipality from tags (Phase 3)
+ */
+export function getMunicipalityFromTags(tags: InboxTag[]): 'vis' | 'komiza' | null {
+  if (tags.includes('vis')) return 'vis';
+  if (tags.includes('komiza')) return 'komiza';
+  return null;
+}
+
+/**
+ * Check if tags represent a municipal notice (Phase 3)
+ */
+export function isMunicipalNotice(tags: InboxTag[]): boolean {
+  return tags.includes('vis') || tags.includes('komiza');
+}

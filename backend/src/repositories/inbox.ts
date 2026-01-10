@@ -251,26 +251,44 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
 }
 
 /**
- * Get paginated list of ALL inbox messages (admin view, includes soft-deleted)
+ * Get paginated list of inbox messages (admin view)
+ *
+ * @param page - Page number (1-indexed)
+ * @param pageSize - Number of items per page
+ * @param archived - Filter by archived status:
+ *   - true: only archived (deleted_at IS NOT NULL)
+ *   - false: only active (deleted_at IS NULL)
+ *   - undefined: all messages
  */
 export async function getInboxMessagesAdmin(
   page: number = 1,
-  pageSize: number = 20
+  pageSize: number = 20,
+  archived?: boolean
 ): Promise<{ messages: InboxMessage[]; total: number }> {
   const offset = (page - 1) * pageSize;
 
-  // Get total count (including soft-deleted)
+  // Build WHERE clause based on archived filter
+  let whereClause = '';
+  if (archived === true) {
+    whereClause = 'WHERE deleted_at IS NOT NULL';
+  } else if (archived === false) {
+    whereClause = 'WHERE deleted_at IS NULL';
+  }
+  // If undefined, no WHERE clause (returns all)
+
+  // Get total count
   const countResult = await query<{ count: string }>(
-    'SELECT COUNT(*) as count FROM inbox_messages'
+    `SELECT COUNT(*) as count FROM inbox_messages ${whereClause}`
   );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-  // Get paginated messages (including soft-deleted)
+  // Get paginated messages
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
+     ${whereClause}
      ORDER BY created_at DESC
      LIMIT $1 OFFSET $2`,
     [pageSize, offset]

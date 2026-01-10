@@ -42,6 +42,7 @@ export interface AdminInfo {
   id: string;
   username: string;
   municipality: 'vis' | 'komiza';
+  notice_municipality_scope: 'vis' | 'komiza' | null; // Phase 3: which municipal notices admin can edit
 }
 
 /**
@@ -51,6 +52,8 @@ export interface SessionData {
   adminId: string;
   username: string;
   municipality: 'vis' | 'komiza';
+  noticeMunicipalityScope: 'vis' | 'komiza' | null; // Phase 3: which municipal notices admin can edit
+  isBreakglass: boolean; // Phase 3: true breakglass bypasses municipal scope
 }
 
 /**
@@ -153,10 +156,12 @@ export async function authenticateAdmin(
 
       // Upsert break-glass admin into DB (creates or updates the record)
       // This ensures we have a real admin_users row to reference in sessions
+      // Break-glass admin gets notice scope matching their municipality
       admin = await upsertBreakglassAdmin({
         username: env.BREAKGLASS_USERNAME,
         passwordHash,
         municipality: env.BREAKGLASS_MUNICIPALITY,
+        noticeMunicipalityScope: env.BREAKGLASS_MUNICIPALITY,
       });
 
       authMethod = 'break_glass';
@@ -201,6 +206,7 @@ export async function authenticateAdmin(
       id: admin.id,
       username: admin.username,
       municipality: admin.municipality,
+      notice_municipality_scope: admin.notice_municipality_scope,
     },
     authMethod,
   };
@@ -232,6 +238,8 @@ export async function validateSession(
     adminId: session.admin.id,
     username: session.admin.username,
     municipality: session.admin.municipality,
+    noticeMunicipalityScope: session.admin.notice_municipality_scope,
+    isBreakglass: session.admin.is_breakglass,
   };
 }
 

@@ -231,3 +231,108 @@ export function getAdminMunicipality(request: FastifyRequest): 'vis' | 'komiza' 
 export function getAdminId(request: FastifyRequest): string {
   return getAdminSession(request).adminId;
 }
+
+/**
+ * Get admin notice municipality scope from session
+ *
+ * Phase 3: Returns which municipal notices this admin can create/edit.
+ * - null: cannot edit any municipal notices ('vis' or 'komiza' tagged)
+ * - 'vis': can edit 'vis' notices only
+ * - 'komiza': can edit 'komiza' notices only
+ *
+ * Non-municipal inbox messages are always editable by all admins.
+ */
+export function getAdminNoticeMunicipalityScope(request: FastifyRequest): 'vis' | 'komiza' | null {
+  return getAdminSession(request).noticeMunicipalityScope;
+}
+
+// ============================================================
+// Municipal Notice Authorization Guard (Phase 3)
+// ============================================================
+
+/**
+ * Result of municipal notice authorization check
+ */
+export interface MunicipalNoticeAuthResult {
+  allowed: boolean;
+  reason?: string;
+  code?: string;
+}
+
+/**
+ * Check if admin can create/edit a municipal notice with given tags
+ *
+ * Phase 3 rules:
+ * - If admin is breakglass, ALWAYS ALLOW (true breakglass bypasses all restrictions)
+ * - If message is NOT a municipal notice (no 'vis' or 'komiza' tag), ALLOW
+ * - If message IS a municipal notice:
+ *   - If admin has noticeMunicipalityScope = null, DENY
+ *   - If admin has noticeMunicipalityScope = 'vis' and notice is 'komiza', DENY
+ *   - If admin has noticeMunicipalityScope = 'komiza' and notice is 'vis', DENY
+ *   - Otherwise, ALLOW
+ *
+ * @param adminScope - Admin's notice_municipality_scope from session
+ * @param messageTags - Tags of the inbox message being created/edited
+ * @param isBreakglass - Whether admin is a breakglass account (bypasses restrictions)
+ * @returns Authorization result with allowed flag and optional reason
+ */
+export function checkMunicipalNoticeAuth(
+  adminScope: 'vis' | 'komiza' | null,
+  messageTags: string[],
+  isBreakglass: boolean = false
+): MunicipalNoticeAuthResult {
+  // True breakglass bypasses all municipal notice restrictions
+  if (isBreakglass) {
+    return { allowed: true };
+  }
+
+  // Determine if message is a municipal notice
+  const hasVis = messageTags.includes('vis');
+  const hasKomiza = messageTags.includes('komiza');
+  const isMunicipalNotice = hasVis || hasKomiza;
+
+  // Non-municipal messages are always editable by all admins
+  if (!isMunicipalNotice) {
+    return { allowed: true };
+  }
+
+  // Municipal notice: check admin scope
+  if (adminScope === null) {
+    return {
+      allowed: false,
+      reason: 'Nemate ovlasti za uređivanje općinskih obavijesti.',
+      code: 'NO_MUNICIPAL_NOTICE_SCOPE',
+    };
+  }
+
+  // Check specific municipality match
+  const noticeMunicipality = hasVis ? 'vis' : 'komiza';
+
+  if (adminScope !== noticeMunicipality) {
+    const municipalityName = noticeMunicipality === 'vis' ? 'Vis' : 'Komiža';
+    return {
+      allowed: false,
+      reason: `Nemate ovlasti za uređivanje obavijesti za općinu ${municipalityName}.`,
+      code: 'MUNICIPALITY_SCOPE_MISMATCH',
+    };
+  }
+
+  return { allowed: true };
+}
+
+/**
+ * Check municipal notice authorization from request
+ *
+ * Convenience wrapper that extracts admin scope and breakglass status from request.
+ */
+export function checkMunicipalNoticeAuthFromRequest(
+  request: FastifyRequest,
+  messageTags: string[]
+): MunicipalNoticeAuthResult {
+  const session = getAdminSession(request);
+  return checkMunicipalNoticeAuth(
+    session.noticeMunicipalityScope,
+    messageTags,
+    session.isBreakglass
+  );
+}
