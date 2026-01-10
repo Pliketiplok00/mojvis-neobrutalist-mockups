@@ -12,16 +12,16 @@
  * Back navigation relies on iOS swipe gesture.
  *
  * Title is ALWAYS "MOJ VIS" - never context-specific.
+ *
+ * Skin-pure: Uses Icon primitive and skin tokens (no emoji, no hardcoded hex).
  */
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMenu } from '../contexts/MenuContext';
-
-// Placeholder icons - will be replaced with proper icons later
-const HamburgerIcon = () => <Text style={styles.iconText}>☰</Text>;
-const InboxIcon = () => <Text style={styles.iconText}>📥</Text>;
+import { Icon } from '../ui/Icon';
+import { skin } from '../ui/skin';
 
 export type HeaderType = 'root' | 'child' | 'inbox';
 
@@ -77,7 +77,7 @@ export function GlobalHeader({
         onPress={handleLeftPress}
         accessibilityLabel="Open menu"
       >
-        <HamburgerIcon />
+        <Icon name="menu" size="md" colorToken="textPrimary" />
       </TouchableOpacity>
 
       {/* Center: Always "MOJ VIS" */}
@@ -94,7 +94,7 @@ export function GlobalHeader({
       >
         {showInboxIcon && (
           <View>
-            <InboxIcon />
+            <Icon name="inbox" size="md" colorToken="textPrimary" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>
@@ -115,10 +115,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 56,
-    paddingHorizontal: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    paddingHorizontal: skin.spacing.lg,
+    backgroundColor: skin.colors.backgroundTertiary,
+    borderBottomWidth: skin.borders.widthThin,
+    borderBottomColor: skin.colors.borderLight,
   },
   leftButton: {
     width: 44,
@@ -131,9 +131,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.bold,
+    fontFamily: skin.typography.fontFamily.display.bold,
+    color: skin.colors.textPrimary,
   },
   rightButton: {
     width: 44,
@@ -144,25 +145,22 @@ const styles = StyleSheet.create({
   hidden: {
     opacity: 0,
   },
-  iconText: {
-    fontSize: 24,
-  },
   badge: {
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: '#FF0000',
-    borderRadius: 10,
+    backgroundColor: skin.colors.urgent,
+    borderRadius: skin.borders.radiusPill,
     minWidth: 20,
     height: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: skin.spacing.xs,
   },
   badgeText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
+    color: skin.colors.urgentText,
+    fontSize: skin.typography.fontSize.sm,
+    fontWeight: skin.typography.fontWeight.bold,
   },
 });
 
