@@ -146,9 +146,9 @@ const styles = StyleSheet.create({
   listContainer: {
     gap: 0,
   },
-  // V1 Poster: Edge-to-edge, warm yellow fill, only bottom border
+  // V1 Poster: Edge-to-edge, amber fill (midpoint yellow-orange), only bottom border
   container: {
-    backgroundColor: skin.colors.warningAccent, // Warm yellow/orange
+    backgroundColor: skin.colors.amber, // Midpoint between warningAccent and orange
     borderBottomWidth: skin.borders.widthHeavy,
     borderBottomColor: skin.colors.border,
     padding: skin.spacing.md,
