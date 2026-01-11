@@ -2,6 +2,8 @@
  * Click & Fix Confirmation Screen
  *
  * Phase 6: Simple "sent" confirmation after Click & Fix submission.
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React from 'react';
@@ -18,6 +20,8 @@ import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useTranslations } from '../../i18n';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 type ConfirmationRouteProp = RouteProp<MainStackParamList, 'ClickFixConfirmation'>;
@@ -43,7 +47,7 @@ export function ClickFixConfirmationScreen(): React.JSX.Element {
       <View style={styles.content}>
         {/* Success Icon */}
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>✓</Text>
+          <Icon name="check" size="xl" colorToken="background" />
         </View>
 
         {/* Success Message */}
@@ -78,68 +82,64 @@ export function ClickFixConfirmationScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: skin.spacing.xxxl,
   },
   iconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#000000',
+    backgroundColor: skin.colors.textPrimary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
-  },
-  icon: {
-    fontSize: 40,
-    color: '#FFFFFF',
+    marginBottom: skin.spacing.xxl,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 12,
+    fontSize: skin.typography.fontSize.xxl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.md,
     textAlign: 'center',
   },
   message: {
-    fontSize: 16,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textMuted,
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: 32,
+    marginBottom: skin.spacing.xxxl,
   },
   actions: {
     width: '100%',
-    gap: 12,
+    gap: skin.spacing.md,
   },
   primaryButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.lg,
     alignItems: 'center',
   },
   primaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.background,
   },
   secondaryButton: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.lg,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
   },
 });
 
