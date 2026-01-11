@@ -17,10 +17,8 @@ import React, { useState, useCallback } from 'react';
 import {
   View,
   TextInput,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -34,7 +32,8 @@ import { feedbackApi } from '../../services/api';
 import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
-import { H1, H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
+import { Button } from '../../ui/Button';
+import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -158,18 +157,15 @@ export function FeedbackFormScreen(): React.JSX.Element {
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          <Button
+            variant="primary"
             onPress={handleSubmit}
+            loading={isSubmitting}
             disabled={isSubmitting}
-            activeOpacity={0.7}
+            style={styles.submitButton}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color={skin.colors.background} />
-            ) : (
-              <ButtonText style={styles.submitButtonText}>{t('feedback.send')}</ButtonText>
-            )}
-          </TouchableOpacity>
+            {t('feedback.send')}
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -243,17 +239,7 @@ const styles = StyleSheet.create({
     color: skin.colors.textDisabled,
   },
   submitButton: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
     marginTop: skin.spacing.lg,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    color: skin.colors.background,
   },
 });
 

@@ -9,7 +9,6 @@
 import React from 'react';
 import {
   View,
-  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,7 +20,8 @@ import { useTranslations } from '../../i18n';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
-import { H1, Body, ButtonText } from '../../ui/Text';
+import { Button } from '../../ui/Button';
+import { H1, Body } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 type ConfirmationRouteProp = RouteProp<MainStackParamList, 'FeedbackConfirmation'>;
@@ -58,21 +58,13 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
 
         {/* Actions */}
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={handleViewFeedback}
-            activeOpacity={0.7}
-          >
-            <ButtonText style={styles.primaryButtonText}>{t('feedback.confirmation.backToInbox')}</ButtonText>
-          </TouchableOpacity>
+          <Button variant="primary" onPress={handleViewFeedback}>
+            {t('feedback.confirmation.backToInbox')}
+          </Button>
 
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={handleGoHome}
-            activeOpacity={0.7}
-          >
-            <ButtonText style={styles.secondaryButtonText}>{t('navigation.back')}</ButtonText>
-          </TouchableOpacity>
+          <Button variant="secondary" onPress={handleGoHome}>
+            {t('navigation.back')}
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -112,26 +104,6 @@ const styles = StyleSheet.create({
   actions: {
     width: '100%',
     gap: skin.spacing.md,
-  },
-  primaryButton: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    color: skin.colors.background,
-  },
-  secondaryButton: {
-    backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    color: skin.colors.textPrimary,
   },
 });
 

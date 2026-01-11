@@ -20,13 +20,15 @@ interface ButtonProps {
   /** Press handler */
   onPress: () => void;
   /** Button variant */
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'danger';
   /** Disabled state */
   disabled?: boolean;
   /** Loading state */
   loading?: boolean;
   /** Additional style */
   style?: ViewStyle;
+  /** Accessibility label for screen readers */
+  accessibilityLabel?: string;
 }
 
 export function Button({
@@ -36,25 +38,54 @@ export function Button({
   disabled = false,
   loading = false,
   style,
+  accessibilityLabel,
 }: ButtonProps): React.JSX.Element {
-  const isPrimary = variant === 'primary';
-  const buttonStyle = isPrimary ? styles.primary : styles.secondary;
-  const textStyle = isPrimary ? styles.primaryText : styles.secondaryText;
+  const getButtonStyle = () => {
+    switch (variant) {
+      case 'secondary':
+        return styles.secondary;
+      case 'danger':
+        return styles.danger;
+      default:
+        return styles.primary;
+    }
+  };
+
+  const getTextStyle = () => {
+    switch (variant) {
+      case 'secondary':
+        return styles.secondaryText;
+      case 'danger':
+        return styles.dangerText;
+      default:
+        return styles.primaryText;
+    }
+  };
+
+  const getLoadingColor = () => {
+    switch (variant) {
+      case 'secondary':
+        return skin.colors.textPrimary;
+      case 'danger':
+        return skin.colors.errorText;
+      default:
+        return skin.colors.primaryText;
+    }
+  };
 
   return (
     <TouchableOpacity
-      style={[styles.base, buttonStyle, disabled && styles.disabled, style]}
+      style={[styles.base, getButtonStyle(), disabled && styles.disabled, style]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={isPrimary ? skin.colors.primaryText : skin.colors.textPrimary}
-        />
+        <ActivityIndicator size="small" color={getLoadingColor()} />
       ) : (
-        <Text style={textStyle}>{children}</Text>
+        <Text style={getTextStyle()}>{children}</Text>
       )}
     </TouchableOpacity>
   );
@@ -78,6 +109,11 @@ const styles = StyleSheet.create({
     borderWidth: components.button.secondary.borderWidth,
     borderColor: components.button.secondary.borderColor,
   },
+  danger: {
+    backgroundColor: components.button.danger.backgroundColor,
+    borderWidth: components.button.danger.borderWidth,
+    borderColor: components.button.danger.borderColor,
+  },
   primaryText: {
     fontSize: components.button.fontSize,
     fontWeight: components.button.fontWeight,
@@ -87,6 +123,11 @@ const styles = StyleSheet.create({
     fontSize: components.button.fontSize,
     fontWeight: components.button.fontWeight,
     color: components.button.secondary.textColor,
+  },
+  dangerText: {
+    fontSize: components.button.fontSize,
+    fontWeight: components.button.fontWeight,
+    color: components.button.danger.textColor,
   },
   disabled: {
     opacity: 0.5,

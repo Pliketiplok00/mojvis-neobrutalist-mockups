@@ -12,11 +12,12 @@
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
-import { H1, H2, Body, ButtonText } from '../../ui/Text';
+import { Button } from '../../ui/Button';
+import { H1, H2, Body } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'LanguageSelection'>;
@@ -41,21 +42,21 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
         <Body style={styles.subtitle}>Odaberite jezik / Select language</Body>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.languageButton}
+          <Button
+            variant="primary"
             onPress={() => handleLanguageSelect('hr')}
             accessibilityLabel="Hrvatski"
           >
-            <ButtonText style={styles.languageButtonText}>Hrvatski</ButtonText>
-          </TouchableOpacity>
+            Hrvatski
+          </Button>
 
-          <TouchableOpacity
-            style={styles.languageButton}
+          <Button
+            variant="primary"
             onPress={() => handleLanguageSelect('en')}
             accessibilityLabel="English"
           >
-            <ButtonText style={styles.languageButtonText}>English</ButtonText>
-          </TouchableOpacity>
+            English
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -88,16 +89,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     gap: skin.spacing.lg,
-  },
-  languageButton: {
-    backgroundColor: skin.colors.textPrimary,
-    paddingVertical: skin.spacing.lg,
-    paddingHorizontal: skin.spacing.xxl,
-    borderRadius: skin.borders.radiusCard,
-    alignItems: 'center',
-  },
-  languageButtonText: {
-    color: skin.colors.background,
   },
 });
 

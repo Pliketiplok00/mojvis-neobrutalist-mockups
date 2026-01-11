@@ -18,7 +18,6 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
-  TouchableOpacity,
   Alert,
   Platform,
 } from 'react-native';
@@ -28,7 +27,8 @@ import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
 import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
-import { H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { Button } from '../../ui/Button';
+import { H2, Label, Body, Meta } from '../../ui/Text';
 
 export function SettingsScreen(): React.JSX.Element {
   const { data, resetOnboarding } = useOnboarding();
@@ -147,15 +147,9 @@ export function SettingsScreen(): React.JSX.Element {
 
         {/* Actions Section */}
         <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.dangerButton}
-            onPress={handleResetOnboarding}
-            activeOpacity={0.7}
-          >
-            <ButtonText style={styles.dangerButtonText}>
-              {t('settings.reset.button')}
-            </ButtonText>
-          </TouchableOpacity>
+          <Button variant="danger" onPress={handleResetOnboarding}>
+            {t('settings.reset.button')}
+          </Button>
         </View>
 
         {/* Version Info */}
@@ -224,17 +218,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: skin.colors.borderLight,
-  },
-  dangerButton: {
-    backgroundColor: skin.colors.errorBackground,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.urgent,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.md,
-    alignItems: 'center',
-  },
-  dangerButtonText: {
-    color: skin.colors.errorText,
   },
   versionContainer: {
     alignItems: 'center',

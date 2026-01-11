@@ -27,6 +27,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import { Button } from '../../ui/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -301,22 +302,15 @@ export function ClickFixFormScreen(): React.JSX.Element {
                 </TouchableOpacity>
               </View>
             ) : (
-              <TouchableOpacity
-                style={[
-                  styles.locationButton,
-                  errors.location && styles.locationButtonError,
-                ]}
+              <Button
+                variant="secondary"
                 onPress={handleGetLocation}
+                loading={isGettingLocation}
                 disabled={isGettingLocation || isSubmitting}
+                style={errors.location ? styles.locationButtonError : undefined}
               >
-                {isGettingLocation ? (
-                  <ActivityIndicator color={skin.colors.textPrimary} />
-                ) : (
-                  <ButtonText style={styles.locationButtonText}>
-                    {t('clickFix.locationActions.getLocation')}
-                  </ButtonText>
-                )}
-              </TouchableOpacity>
+                {t('clickFix.locationActions.getLocation')}
+              </Button>
             )}
             {errors.location && (
               <Label style={styles.fieldError}>{t(errors.location)}</Label>
@@ -368,18 +362,15 @@ export function ClickFixFormScreen(): React.JSX.Element {
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          <Button
+            variant="primary"
             onPress={handleSubmit}
+            loading={isSubmitting}
             disabled={isSubmitting}
-            activeOpacity={0.7}
+            style={styles.submitButton}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color={skin.colors.background} />
-            ) : (
-              <ButtonText style={styles.submitButtonText}>{t('clickFix.send')}</ButtonText>
-            )}
-          </TouchableOpacity>
+            {t('clickFix.send')}
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -452,19 +443,8 @@ const styles = StyleSheet.create({
   charCount: {
     color: skin.colors.textDisabled,
   },
-  locationButton: {
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
-    backgroundColor: skin.colors.backgroundSecondary,
-  },
   locationButtonError: {
     borderColor: skin.colors.errorText,
-  },
-  locationButtonText: {
-    color: skin.colors.textPrimary,
   },
   locationDisplay: {
     flexDirection: 'row',
@@ -534,17 +514,7 @@ const styles = StyleSheet.create({
     color: skin.colors.textPrimary,
   },
   submitButton: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
     marginTop: skin.spacing.lg,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    color: skin.colors.background,
   },
 });
 
