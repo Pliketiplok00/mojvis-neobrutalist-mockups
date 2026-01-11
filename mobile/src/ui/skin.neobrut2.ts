@@ -50,6 +50,7 @@ const palette = {
 
 const borders = {
   color: palette.foreground,
+  widthHairline: 1,
   widthThin: 2,
   widthCard: 3,
   widthHeavy: 4,
@@ -213,6 +214,7 @@ export const colors = {
 
 // ---- Borders ----
 export const bordersToken = {
+  widthHairline: borders.widthHairline,
   widthThin: borders.widthThin,
   widthCard: borders.widthCard,
   widthHeavy: borders.widthHeavy,
@@ -294,6 +296,7 @@ export const components = {
     paddingVertical: spacing.lg,
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semiBold,
+    disabledOpacity: 0.5,
   },
 
   listRow: {

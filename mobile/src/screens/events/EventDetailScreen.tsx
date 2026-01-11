@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   // Info sections
   infoSection: {
     padding: skin.spacing.lg,
-    borderBottomWidth: 1,
+    borderBottomWidth: skin.borders.widthHairline,
     borderBottomColor: skin.colors.borderLight,
   },
   infoLabel: {
