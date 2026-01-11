@@ -21,7 +21,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -47,6 +46,9 @@ import {
   Body,
   Meta,
   Icon,
+  LoadingState,
+  EmptyState,
+  ErrorState,
 } from '../../ui';
 import { STATUS_COLORS } from '../../ui/utils/statusColors';
 import { formatDateShort } from '../../utils/dateFormat';
@@ -227,27 +229,19 @@ export function InboxListScreen(): React.JSX.Element {
   };
 
   const renderEmptyState = (): React.JSX.Element => (
-    <View style={styles.emptyState}>
-      <View style={styles.emptyIconContainer}>
-        <Icon name="inbox" size="xl" colorToken="textMuted" />
-      </View>
-      <H2 style={styles.emptyTitle}>{t('inbox.empty.title')}</H2>
-      <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
-        {activeTab === 'received'
-          ? t('inbox.empty.received')
-          : t('inbox.empty.sent')}
-      </Body>
-    </View>
+    <EmptyState
+      icon="inbox"
+      title={t('inbox.empty.title')}
+      subtitle={activeTab === 'received' ? t('inbox.empty.received') : t('inbox.empty.sent')}
+    />
   );
 
   const renderErrorState = (): React.JSX.Element => (
-    <View style={styles.errorState}>
-      <View style={styles.errorIconContainer}>
-        <Icon name="alert-triangle" size="xl" colorToken="errorText" />
-      </View>
-      <Body style={styles.errorTitle}>{error}</Body>
-      <Button onPress={handleRefresh}>{t('common.retry')}</Button>
-    </View>
+    <ErrorState
+      message={error || t('inbox.error.loading')}
+      onRetry={handleRefresh}
+      retryLabel={t('common.retry')}
+    />
   );
 
   const renderSentItem = ({ item }: { item: CombinedSentItem }): React.JSX.Element => {
@@ -286,25 +280,19 @@ export function InboxListScreen(): React.JSX.Element {
   };
 
   const renderSentEmptyState = (): React.JSX.Element => (
-    <View style={styles.emptyState}>
-      <View style={styles.emptyIconContainer}>
-        <Icon name="send" size="xl" colorToken="textMuted" />
-      </View>
-      <H2 style={styles.emptyTitle}>{t('inbox.empty.title')}</H2>
-      <Body color={skin.colors.textMuted} style={styles.emptySubtitle}>
-        {t('inbox.empty.sentHint')}
-      </Body>
-    </View>
+    <EmptyState
+      icon="send"
+      title={t('inbox.empty.title')}
+      subtitle={t('inbox.empty.sentHint')}
+    />
   );
 
   const renderSentErrorState = (): React.JSX.Element => (
-    <View style={styles.errorState}>
-      <View style={styles.errorIconContainer}>
-        <Icon name="alert-triangle" size="xl" colorToken="errorText" />
-      </View>
-      <Body style={styles.errorTitle}>{sentError}</Body>
-      <Button onPress={handleRefresh}>{t('common.retry')}</Button>
-    </View>
+    <ErrorState
+      message={sentError || t('inbox.error.loadingSent')}
+      onRetry={handleRefresh}
+      retryLabel={t('common.retry')}
+    />
   );
 
   return (
@@ -344,10 +332,7 @@ export function InboxListScreen(): React.JSX.Element {
       {/* Content */}
       {activeTab === 'received' ? (
         loading ? (
-          <View style={styles.loadingState}>
-            <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-            <Meta style={styles.loadingText}>{t('common.loading')}</Meta>
-          </View>
+          <LoadingState message={t('common.loading')} />
         ) : error ? (
           renderErrorState()
         ) : (
@@ -365,10 +350,7 @@ export function InboxListScreen(): React.JSX.Element {
       ) : (
         <View style={styles.sentContainer}>
           {sentLoading ? (
-            <View style={styles.loadingState}>
-              <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-              <Meta style={styles.loadingText}>{t('common.loading')}</Meta>
-            </View>
+            <LoadingState message={t('common.loading')} />
           ) : sentError ? (
             renderSentErrorState()
           ) : (
@@ -423,42 +405,6 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: skin.components.tab.activeColor,
-  },
-  loadingState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: skin.spacing.md,
-  },
-  errorState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: skin.spacing.xxl,
-  },
-  errorIconContainer: {
-    marginBottom: skin.spacing.lg,
-  },
-  errorTitle: {
-    textAlign: 'center',
-    marginBottom: skin.spacing.lg,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: skin.spacing.xxl,
-  },
-  emptyIconContainer: {
-    marginBottom: skin.spacing.lg,
-  },
-  emptyTitle: {
-    marginBottom: skin.spacing.sm,
-  },
-  emptySubtitle: {
-    textAlign: 'center',
   },
   listEmpty: {
     flexGrow: 1,

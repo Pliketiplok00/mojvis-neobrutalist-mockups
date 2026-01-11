@@ -18,7 +18,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   RefreshControl,
   Image,
   TouchableOpacity,
@@ -38,6 +37,7 @@ import { skin } from '../../ui/skin';
 import { STATUS_COLORS } from '../../ui/utils/statusColors';
 import { Icon } from '../../ui/Icon';
 import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
+import { LoadingState, ErrorState } from '../../ui/States';
 import { formatDateTimeCroatian } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'ClickFixDetail'>;
@@ -82,10 +82,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-          <Body style={styles.loadingText}>{t('common.loading')}</Body>
-        </View>
+        <LoadingState message={t('common.loading')} />
       </SafeAreaView>
     );
   }
@@ -94,9 +91,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Body style={styles.errorText}>{error || t('clickFix.detail.notFound')}</Body>
-        </View>
+        <ErrorState message={error || t('clickFix.detail.notFound')} />
       </SafeAreaView>
     );
   }
@@ -228,25 +223,6 @@ const styles = StyleSheet.create({
   content: {
     padding: skin.spacing.lg,
     paddingBottom: skin.spacing.xxxl,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: skin.spacing.md,
-    color: skin.colors.textMuted,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: skin.spacing.xxl,
-  },
-  errorText: {
-    color: skin.colors.warningAccent,
-    textAlign: 'center',
   },
   statusBadge: {
     alignSelf: 'flex-start',

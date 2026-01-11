@@ -17,7 +17,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   Switch,
   Share,
   Alert,
@@ -32,6 +31,7 @@ import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { LoadingState, ErrorState } from '../../ui/States';
 import { formatDateLocaleFull, formatTimeHrHR } from '../../utils/dateFormat';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
@@ -115,9 +115,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-        </View>
+        <LoadingState />
       </SafeAreaView>
     );
   }
@@ -126,9 +124,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Label style={styles.errorText}>{error || t('eventDetail.notFound')}</Label>
-        </View>
+        <ErrorState message={error || t('eventDetail.notFound')} />
       </SafeAreaView>
     );
   }
@@ -206,21 +202,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: skin.spacing.xxl,
-  },
-  errorText: {
-    textAlign: 'center',
-    color: skin.colors.errorText,
   },
 
   // Header
