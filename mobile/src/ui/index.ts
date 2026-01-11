@@ -20,3 +20,4 @@ export { Badge } from './Badge';
 export { Icon } from './Icon';
 export type { IconName, IconSize, IconStroke, IconColorToken } from './Icon';
 export { LoadingState, EmptyState, ErrorState } from './States';
+export { NotificationBadge, Hairline, Dot, IconBox } from './MicroPrimitives';
