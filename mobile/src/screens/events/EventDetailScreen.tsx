@@ -32,33 +32,9 @@ import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { formatDateLocaleFull, formatTimeHrHR } from '../../utils/dateFormat';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
-
-/**
- * Format date for display (DD/MM/YYYY)
- */
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('hr-HR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-/**
- * Format time for display (HH:mm)
- */
-function formatTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleTimeString('hr-HR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-}
 
 export function EventDetailScreen({ route }: Props): React.JSX.Element {
   const { eventId } = route.params;
@@ -126,7 +102,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     try {
       await Share.share({
         title: event.title,
-        message: `${event.title}\n${formatDate(event.start_datetime)}${
+        message: `${event.title}\n${formatDateLocaleFull(event.start_datetime)}${
           event.location ? `\n${event.location}` : ''
         }`,
       });
@@ -170,13 +146,13 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         {/* Date & Time */}
         <View style={styles.infoSection}>
           <Meta style={styles.infoLabel}>{t('eventDetail.time')}</Meta>
-          <Body style={styles.infoValue}>{formatDate(event.start_datetime)}</Body>
+          <Body style={styles.infoValue}>{formatDateLocaleFull(event.start_datetime)}</Body>
           {event.is_all_day ? (
             <Label style={styles.infoValueSecondary}>{t('events.allDay')}</Label>
           ) : (
             <Label style={styles.infoValueSecondary}>
-              {formatTime(event.start_datetime)}
-              {event.end_datetime && ` - ${formatTime(event.end_datetime)}`}
+              {formatTimeHrHR(event.start_datetime)}
+              {event.end_datetime && ` - ${formatTimeHrHR(event.end_datetime)}`}
             </Label>
           )}
         </View>

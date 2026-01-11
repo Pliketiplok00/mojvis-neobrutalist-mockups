@@ -40,6 +40,7 @@ import {
   Meta,
   Icon,
 } from '../../ui';
+import { formatDateTimeSlash } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'InboxDetail'>;
 
@@ -143,7 +144,7 @@ export function InboxDetailScreen(): React.JSX.Element {
         <H1 style={styles.title}>{message.title}</H1>
 
         {/* Date */}
-        <Meta style={styles.date}>{formatDateTime(message.created_at)}</Meta>
+        <Meta style={styles.date}>{formatDateTimeSlash(message.created_at)}</Meta>
 
         {/* Body */}
         <Body style={styles.body}>{message.body}</Body>
@@ -165,19 +166,6 @@ function formatTag(tag: string): string {
     vis: 'Vis',
   };
   return tagLabels[tag] || tag;
-}
-
-/**
- * Format date and time for display
- */
-function formatDateTime(isoString: string): string {
-  const date = new Date(isoString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${day}/${month}/${year}, ${hours}:${minutes}`;
 }
 
 const styles = StyleSheet.create({

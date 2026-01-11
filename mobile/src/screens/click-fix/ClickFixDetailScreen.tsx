@@ -35,18 +35,12 @@ import { clickFixApi, getFullApiUrl } from '../../services/api';
 import type { ClickFixDetailResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
+import { STATUS_COLORS } from '../../ui/utils/statusColors';
 import { Icon } from '../../ui/Icon';
 import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
+import { formatDateTimeCroatian } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'ClickFixDetail'>;
-
-// Status colors using semantic skin tokens
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: skin.colors.infoBackground, text: skin.colors.infoText },
-  u_razmatranju: { bg: skin.colors.pendingBackground, text: skin.colors.pendingText },
-  prihvaceno: { bg: skin.colors.successBackground, text: skin.colors.successText },
-  odbijeno: { bg: skin.colors.errorBackground, text: skin.colors.errorText },
-};
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -83,16 +77,6 @@ export function ClickFixDetailScreen(): React.JSX.Element {
     setRefreshing(true);
     void fetchClickFix();
   }, [fetchClickFix]);
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day}.${month}.${year}. ${hours}:${minutes}`;
-  };
 
   if (loading) {
     return (
@@ -142,7 +126,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
         {/* Original Message */}
         <View style={styles.messageCard}>
           <H2 style={styles.subject}>{clickFix.subject}</H2>
-          <Meta style={styles.date}>{formatDate(clickFix.created_at)}</Meta>
+          <Meta style={styles.date}>{formatDateTimeCroatian(clickFix.created_at)}</Meta>
           <Body style={styles.description}>{clickFix.description}</Body>
 
           {/* Location */}
@@ -196,7 +180,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
                 <View style={styles.replyHeader}>
                   <Label style={styles.replyLabel}>{t('clickFix.detail.reply')}</Label>
                   <Meta style={styles.replyDate}>
-                    {formatDate(reply.created_at)}
+                    {formatDateTimeCroatian(reply.created_at)}
                   </Meta>
                 </View>
                 <Body style={styles.replyBody}>{reply.body}</Body>
