@@ -9,8 +9,6 @@
 import React from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +20,8 @@ import { useTranslations } from '../../i18n';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { Button } from '../../ui/Button';
+import { H1, Body } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 type ConfirmationRouteProp = RouteProp<MainStackParamList, 'FeedbackConfirmation'>;
@@ -51,28 +51,20 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
         </View>
 
         {/* Success Message */}
-        <Text style={styles.title}>{t('feedback.confirmation.title')}</Text>
-        <Text style={styles.message}>
+        <H1 style={styles.title}>{t('feedback.confirmation.title')}</H1>
+        <Body style={styles.message}>
           {t('feedback.confirmation.message')}
-        </Text>
+        </Body>
 
         {/* Actions */}
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={handleViewFeedback}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.primaryButtonText}>{t('feedback.confirmation.backToInbox')}</Text>
-          </TouchableOpacity>
+          <Button variant="primary" onPress={handleViewFeedback}>
+            {t('feedback.confirmation.backToInbox')}
+          </Button>
 
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={handleGoHome}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.secondaryButtonText}>{t('navigation.back')}</Text>
-          </TouchableOpacity>
+          <Button variant="secondary" onPress={handleGoHome}>
+            {t('navigation.back')}
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -100,14 +92,10 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   title: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.md,
     textAlign: 'center',
   },
   message: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
     textAlign: 'center',
     lineHeight: 24,
@@ -116,30 +104,6 @@ const styles = StyleSheet.create({
   actions: {
     width: '100%',
     gap: skin.spacing.md,
-  },
-  primaryButton: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.background,
-  },
-  secondaryButton: {
-    backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
   },
 });
 

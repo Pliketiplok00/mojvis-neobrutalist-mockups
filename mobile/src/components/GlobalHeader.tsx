@@ -17,11 +17,12 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMenu } from '../contexts/MenuContext';
 import { Icon } from '../ui/Icon';
 import { skin } from '../ui/skin';
+import { H2, Meta } from '../ui/Text';
 
 export type HeaderType = 'root' | 'child' | 'inbox';
 
@@ -82,7 +83,7 @@ export function GlobalHeader({
 
       {/* Center: Always "MOJ VIS" */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>MOJ VIS</Text>
+        <H2 style={styles.title}>MOJ VIS</H2>
       </View>
 
       {/* Right: Inbox (hidden on inbox screens) */}
@@ -97,9 +98,9 @@ export function GlobalHeader({
             <Icon name="inbox" size="md" colorToken="textPrimary" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
-                <Text style={styles.badgeText}>
+                <Meta style={styles.badgeText}>
                   {unreadCount > 99 ? '99+' : unreadCount}
-                </Text>
+                </Meta>
               </View>
             )}
           </View>
@@ -131,9 +132,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.bold,
-    fontFamily: skin.typography.fontFamily.display.bold,
     color: skin.colors.textPrimary,
   },
   rightButton: {
@@ -159,8 +157,6 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: skin.colors.urgentText,
-    fontSize: skin.typography.fontSize.sm,
-    fontWeight: skin.typography.fontWeight.bold,
   },
 });
 

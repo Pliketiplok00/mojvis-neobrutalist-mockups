@@ -15,9 +15,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text as RNText,
   ScrollView,
-  TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
   Switch,
@@ -32,6 +30,7 @@ import { eventsApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
@@ -216,9 +215,9 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         </View>
 
         {/* Share Button */}
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <ButtonText style={styles.shareButtonText}>{t('eventDetail.share')}</ButtonText>
-        </TouchableOpacity>
+        <Button variant="secondary" onPress={handleShare} style={styles.shareButton}>
+          {t('eventDetail.share')}
+        </Button>
       </ScrollView>
     </SafeAreaView>
   );
@@ -267,7 +266,6 @@ const styles = StyleSheet.create({
   infoLabel: {
     textTransform: 'uppercase',
     marginBottom: skin.spacing.xs,
-    fontFamily: skin.typography.fontFamily.body.bold,
   },
   infoValue: {
     textTransform: 'capitalize',
@@ -304,14 +302,7 @@ const styles = StyleSheet.create({
 
   // Share button
   shareButton: {
-    backgroundColor: skin.colors.textPrimary,
     margin: skin.spacing.lg,
-    padding: skin.spacing.lg,
-    borderRadius: skin.borders.radiusCard,
-    alignItems: 'center',
-  },
-  shareButtonText: {
-    color: skin.colors.background,
   },
 });
 

@@ -17,7 +17,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text as RNText,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -46,6 +45,7 @@ import type {
   NoticeBlockContent,
 } from '../../types/static-page';
 import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 
@@ -143,9 +143,9 @@ export function StaticPageScreen(): React.JSX.Element {
           <Label style={styles.errorTitle}>
             {error || t('staticPage.notFound')}
           </Label>
-          <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-            <ButtonText style={styles.retryText}>{t('common.retry')}</ButtonText>
-          </TouchableOpacity>
+          <Button variant="primary" onPress={handleRetry}>
+            {t('common.retry')}
+          </Button>
         </View>
       </SafeAreaView>
     );
@@ -448,16 +448,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.lg,
     color: skin.colors.textSecondary,
   },
-  retryButton: {
-    paddingHorizontal: skin.spacing.xxl,
-    paddingVertical: skin.spacing.md,
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-  },
-  retryText: {
-    color: skin.colors.background,
-  },
-
   // Page Header
   pageHeader: {
     padding: skin.spacing.lg,
@@ -636,7 +626,6 @@ const styles = StyleSheet.create({
   noticeUrgentBadge: {
     backgroundColor: skin.colors.urgent,
     color: skin.colors.urgentText,
-    fontFamily: skin.typography.fontFamily.body.bold,
     paddingHorizontal: skin.spacing.sm,
     paddingVertical: 2,
     borderRadius: skin.spacing.xs,

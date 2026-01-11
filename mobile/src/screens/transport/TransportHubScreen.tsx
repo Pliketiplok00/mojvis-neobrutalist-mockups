@@ -153,8 +153,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   optionTitle: {
-    fontSize: typography.fontSize.xl,
-    fontFamily: typography.fontFamily.body.bold,
     color: colors.textPrimary,
     marginBottom: spacing.xs,
   },

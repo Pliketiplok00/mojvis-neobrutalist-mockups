@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslations } from '../i18n';
@@ -21,6 +21,7 @@ import type { InboxMessage } from '../types/inbox';
 import type { MainStackParamList } from '../navigation/types';
 import { skin } from '../ui/skin';
 import { Icon } from '../ui/Icon';
+import { Label, Meta } from '../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -56,19 +57,19 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
       {/* Urgent indicator */}
       {isUrgent && (
         <View style={styles.urgentBadge}>
-          <Text style={styles.urgentText}>{t('banner.urgent')}</Text>
+          <Meta style={styles.urgentText}>{t('banner.urgent')}</Meta>
         </View>
       )}
 
       {/* Title */}
-      <Text style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
+      <Label style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
         {message.title}
-      </Text>
+      </Label>
 
       {/* Preview */}
-      <Text style={styles.preview} numberOfLines={1}>
+      <Meta style={styles.preview} numberOfLines={1}>
         {message.body}
-      </Text>
+      </Meta>
 
       {/* Arrow indicator - uses Icon primitive */}
       <View style={styles.arrowContainer}>
@@ -143,13 +144,9 @@ const styles = StyleSheet.create({
   },
   urgentText: {
     color: skin.colors.urgentText,
-    fontSize: skin.typography.fontSize.xs,
-    fontWeight: skin.typography.fontWeight.bold,
   },
   title: {
     flex: 1,
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.semiBold,
     color: skin.colors.textPrimary,
   },
   titleUrgent: {
@@ -157,8 +154,6 @@ const styles = StyleSheet.create({
   },
   preview: {
     flex: 2,
-    fontSize: skin.typography.fontSize.sm,
-    color: skin.colors.textMuted,
     marginLeft: skin.spacing.sm,
   },
   arrowContainer: {

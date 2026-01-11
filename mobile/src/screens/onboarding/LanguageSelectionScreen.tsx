@@ -12,10 +12,12 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { H1, H2, Body } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'LanguageSelection'>;
@@ -33,28 +35,28 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
       <View style={styles.content}>
         {/* Logo placeholder */}
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>MOJ VIS</Text>
+          <H1>MOJ VIS</H1>
         </View>
 
-        <Text style={styles.title}>Dobrodošli / Welcome</Text>
-        <Text style={styles.subtitle}>Odaberite jezik / Select language</Text>
+        <H2 style={styles.title}>Dobrodošli / Welcome</H2>
+        <Body style={styles.subtitle}>Odaberite jezik / Select language</Body>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.languageButton}
+          <Button
+            variant="primary"
             onPress={() => handleLanguageSelect('hr')}
             accessibilityLabel="Hrvatski"
           >
-            <Text style={styles.languageButtonText}>Hrvatski</Text>
-          </TouchableOpacity>
+            Hrvatski
+          </Button>
 
-          <TouchableOpacity
-            style={styles.languageButton}
+          <Button
+            variant="primary"
             onPress={() => handleLanguageSelect('en')}
             accessibilityLabel="English"
           >
-            <Text style={styles.languageButtonText}>English</Text>
-          </TouchableOpacity>
+            English
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -75,20 +77,11 @@ const styles = StyleSheet.create({
   logoContainer: {
     marginBottom: skin.spacing.xxxl,
   },
-  logoText: {
-    fontSize: skin.typography.fontSize.xxxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
-  },
   title: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
     marginBottom: skin.spacing.xxxl,
     textAlign: 'center',
@@ -96,18 +89,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: '100%',
     gap: skin.spacing.lg,
-  },
-  languageButton: {
-    backgroundColor: skin.colors.textPrimary,
-    paddingVertical: skin.spacing.lg,
-    paddingHorizontal: skin.spacing.xxl,
-    borderRadius: skin.borders.radiusCard,
-    alignItems: 'center',
-  },
-  languageButtonText: {
-    color: skin.colors.background,
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.semiBold,
   },
 });
 

@@ -15,11 +15,9 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   Switch,
-  TouchableOpacity,
   Alert,
   Platform,
 } from 'react-native';
@@ -29,6 +27,8 @@ import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
 import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { H2, Label, Body, Meta } from '../../ui/Text';
 
 export function SettingsScreen(): React.JSX.Element {
   const { data, resetOnboarding } = useOnboarding();
@@ -87,18 +87,18 @@ export function SettingsScreen(): React.JSX.Element {
       <ScrollView style={styles.content}>
         {/* Notifications Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <H2 style={styles.sectionTitle}>
             {t('settings.pushNotifications.title')}
-          </Text>
+          </H2>
 
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>
+              <Label style={styles.settingLabel}>
                 {t('settings.pushNotifications.title')}
-              </Text>
-              <Text style={styles.settingDescription}>
+              </Label>
+              <Body style={styles.settingDescription}>
                 {t('settings.pushNotifications.description')}
-              </Text>
+              </Body>
             </View>
             <Switch
               value={isOptIn}
@@ -112,34 +112,34 @@ export function SettingsScreen(): React.JSX.Element {
 
         {/* Profile Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <H2 style={styles.sectionTitle}>
             {t('settings.profile.title')}
-          </Text>
+          </H2>
 
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>
+            <Body style={styles.infoLabel}>
               {t('settings.profile.language')}
-            </Text>
-            <Text style={styles.infoValue}>{languageLabel}</Text>
+            </Body>
+            <Label style={styles.infoValue}>{languageLabel}</Label>
           </View>
 
           <View style={styles.separator} />
 
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>
+            <Body style={styles.infoLabel}>
               {t('settings.profile.userMode')}
-            </Text>
-            <Text style={styles.infoValue}>{userModeLabel}</Text>
+            </Body>
+            <Label style={styles.infoValue}>{userModeLabel}</Label>
           </View>
 
           {userMode === 'local' && (
             <>
               <View style={styles.separator} />
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>
+                <Body style={styles.infoLabel}>
                   {t('settings.profile.municipality')}
-                </Text>
-                <Text style={styles.infoValue}>{municipalityLabel}</Text>
+                </Body>
+                <Label style={styles.infoValue}>{municipalityLabel}</Label>
               </View>
             </>
           )}
@@ -147,21 +147,15 @@ export function SettingsScreen(): React.JSX.Element {
 
         {/* Actions Section */}
         <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.dangerButton}
-            onPress={handleResetOnboarding}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.dangerButtonText}>
-              {t('settings.reset.button')}
-            </Text>
-          </TouchableOpacity>
+          <Button variant="danger" onPress={handleResetOnboarding}>
+            {t('settings.reset.button')}
+          </Button>
         </View>
 
         {/* Version Info */}
         <View style={styles.versionContainer}>
-          <Text style={styles.versionText}>MOJ VIS v1.0.0</Text>
-          <Text style={styles.versionText}>Phase 7 - Push Notifications</Text>
+          <Meta style={styles.versionText}>MOJ VIS v1.0.0</Meta>
+          <Meta style={styles.versionText}>Phase 7 - Push Notifications</Meta>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -187,9 +181,6 @@ const styles = StyleSheet.create({
     ...skin.shadows.card,
   },
   sectionTitle: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.lg,
   },
   settingRow: {
@@ -202,17 +193,12 @@ const styles = StyleSheet.create({
     marginRight: skin.spacing.lg,
   },
   settingLabel: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.xs,
   },
   settingDescription: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
   },
   warningText: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.warningAccent,
     marginTop: skin.spacing.md,
     fontStyle: 'italic',
@@ -224,37 +210,20 @@ const styles = StyleSheet.create({
     paddingVertical: skin.spacing.md,
   },
   infoLabel: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
   },
   infoValue: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
+    // Typography handled by Label primitive
   },
   separator: {
     height: 1,
     backgroundColor: skin.colors.borderLight,
-  },
-  dangerButton: {
-    backgroundColor: skin.colors.errorBackground,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.urgent,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.md,
-    alignItems: 'center',
-  },
-  dangerButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.errorText,
   },
   versionContainer: {
     alignItems: 'center',
     paddingVertical: skin.spacing.xxl,
   },
   versionText: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.textDisabled,
   },
 });

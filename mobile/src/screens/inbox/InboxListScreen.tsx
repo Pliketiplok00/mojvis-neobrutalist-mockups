@@ -17,7 +17,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
@@ -44,6 +43,7 @@ import {
   Badge,
   ListRow,
   H2,
+  Label,
   Body,
   Meta,
   Icon,
@@ -323,27 +323,27 @@ export function InboxListScreen(): React.JSX.Element {
           style={[styles.tab, activeTab === 'received' && styles.tabActive]}
           onPress={() => setActiveTab('received')}
         >
-          <Text
+          <Label
             style={[
               styles.tabText,
               activeTab === 'received' && styles.tabTextActive,
             ]}
           >
             {t('inbox.tabs.received')}
-          </Text>
+          </Label>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'sent' && styles.tabActive]}
           onPress={() => setActiveTab('sent')}
         >
-          <Text
+          <Label
             style={[
               styles.tabText,
               activeTab === 'sent' && styles.tabTextActive,
             ]}
           >
             {t('inbox.tabs.sent')}
-          </Text>
+          </Label>
         </TouchableOpacity>
       </View>
 
@@ -436,12 +436,10 @@ const styles = StyleSheet.create({
     borderBottomColor: skin.components.tab.borderBottomColor,
   },
   tabText: {
-    fontSize: skin.components.tab.fontSize,
     color: skin.components.tab.inactiveColor,
   },
   tabTextActive: {
     color: skin.components.tab.activeColor,
-    fontWeight: skin.components.tab.activeWeight,
   },
   loadingState: {
     flex: 1,
@@ -494,7 +492,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xs,
   },
   messageTitleUnread: {
-    fontWeight: skin.typography.fontWeight.semiBold,
     color: skin.colors.textPrimary,
   },
   messagePreview: {

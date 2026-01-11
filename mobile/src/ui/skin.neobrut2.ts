@@ -281,6 +281,12 @@ export const components = {
       borderWidth: bordersToken.widthCard,
       borderColor: colors.border,
     },
+    danger: {
+      backgroundColor: colors.errorBackground,
+      textColor: colors.errorText,
+      borderWidth: bordersToken.widthThin,
+      borderColor: colors.urgent,
+    },
     borderRadius: bordersToken.radiusMedium,
     paddingVertical: spacing.lg,
     fontSize: typography.fontSize.lg,

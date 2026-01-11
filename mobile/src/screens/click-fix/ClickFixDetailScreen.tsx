@@ -16,7 +16,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   ActivityIndicator,
@@ -37,6 +36,7 @@ import type { ClickFixDetailResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'ClickFixDetail'>;
 
@@ -100,7 +100,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
+          <Body style={styles.loadingText}>{t('common.loading')}</Body>
         </View>
       </SafeAreaView>
     );
@@ -111,7 +111,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('clickFix.detail.notFound')}</Text>
+          <Body style={styles.errorText}>{error || t('clickFix.detail.notFound')}</Body>
         </View>
       </SafeAreaView>
     );
@@ -134,30 +134,30 @@ export function ClickFixDetailScreen(): React.JSX.Element {
         <View
           style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}
         >
-          <Text style={[styles.statusText, { color: statusColor.text }]}>
+          <ButtonText style={[styles.statusText, { color: statusColor.text }]}>
             {clickFix.status_label}
-          </Text>
+          </ButtonText>
         </View>
 
         {/* Original Message */}
         <View style={styles.messageCard}>
-          <Text style={styles.subject}>{clickFix.subject}</Text>
-          <Text style={styles.date}>{formatDate(clickFix.created_at)}</Text>
-          <Text style={styles.description}>{clickFix.description}</Text>
+          <H2 style={styles.subject}>{clickFix.subject}</H2>
+          <Meta style={styles.date}>{formatDate(clickFix.created_at)}</Meta>
+          <Body style={styles.description}>{clickFix.description}</Body>
 
           {/* Location */}
           <View style={styles.locationSection}>
-            <Text style={styles.locationLabel}>{t('clickFix.detail.location')}:</Text>
-            <Text style={styles.locationText}>
+            <ButtonText style={styles.locationLabel}>{t('clickFix.detail.location')}:</ButtonText>
+            <Body style={styles.locationText}>
               {clickFix.location.lat.toFixed(6)}, {clickFix.location.lng.toFixed(6)}
-            </Text>
+            </Body>
           </View>
         </View>
 
         {/* Photos Section */}
         {clickFix.photos.length > 0 && (
           <View style={styles.photosSection}>
-            <Text style={styles.sectionTitle}>{t('clickFix.detail.photos')} ({clickFix.photos.length})</Text>
+            <H2 style={styles.sectionTitle}>{t('clickFix.detail.photos')} ({clickFix.photos.length})</H2>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -182,24 +182,24 @@ export function ClickFixDetailScreen(): React.JSX.Element {
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <Text style={styles.sectionTitle}>{t('clickFix.detail.replies')}</Text>
+          <H2 style={styles.sectionTitle}>{t('clickFix.detail.replies')}</H2>
 
           {clickFix.replies.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
+              <Body style={styles.emptyText}>
                 {t('clickFix.detail.noReplies')}
-              </Text>
+              </Body>
             </View>
           ) : (
             clickFix.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Text style={styles.replyLabel}>{t('clickFix.detail.reply')}</Text>
-                  <Text style={styles.replyDate}>
+                  <Label style={styles.replyLabel}>{t('clickFix.detail.reply')}</Label>
+                  <Meta style={styles.replyDate}>
                     {formatDate(reply.created_at)}
-                  </Text>
+                  </Meta>
                 </View>
-                <Text style={styles.replyBody}>{reply.body}</Text>
+                <Body style={styles.replyBody}>{reply.body}</Body>
               </View>
             ))
           )}
@@ -252,7 +252,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: skin.spacing.md,
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
   },
   errorContainer: {
@@ -262,7 +261,6 @@ const styles = StyleSheet.create({
     padding: skin.spacing.xxl,
   },
   errorText: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.warningAccent,
     textAlign: 'center',
   },
@@ -274,8 +272,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.lg,
   },
   statusText: {
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.semiBold,
   },
   messageCard: {
     backgroundColor: skin.colors.backgroundSecondary,
@@ -284,18 +280,12 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   subject: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.xs,
   },
   date: {
-    fontSize: skin.typography.fontSize.sm,
-    color: skin.colors.textMuted,
     marginBottom: skin.spacing.lg,
   },
   description: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textSecondary,
     lineHeight: 24,
     marginBottom: skin.spacing.lg,
@@ -308,13 +298,10 @@ const styles = StyleSheet.create({
     borderTopColor: skin.colors.borderLight,
   },
   locationLabel: {
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.semiBold,
     color: skin.colors.textMuted,
     marginRight: skin.spacing.sm,
   },
   locationText: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.successText,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
@@ -322,9 +309,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   sectionTitle: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.md,
   },
   photosScroll: {
@@ -347,7 +331,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
     textAlign: 'center',
   },
@@ -366,17 +349,11 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    fontSize: skin.typography.fontSize.sm,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     textTransform: 'uppercase',
   },
   replyDate: {
-    fontSize: skin.typography.fontSize.sm,
-    color: skin.colors.textMuted,
   },
   replyBody: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textSecondary,
     lineHeight: 22,
   },

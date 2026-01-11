@@ -418,8 +418,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dateText: {
-    fontSize: typography.fontSize.xl,
-    fontFamily: typography.fontFamily.body.bold,
     color: colors.textPrimary,
   },
   directionSection: {
@@ -442,7 +440,6 @@ const styles = StyleSheet.create({
     borderColor: colors.textPrimary,
   },
   directionText: {
-    fontSize: typography.fontSize.md,
     color: colors.textSecondary,
     textAlign: 'center',
   },
@@ -454,9 +451,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md,
   },
   routeLabel: {
-    fontSize: typography.fontSize.md,
     color: colors.textPrimary,
-    fontFamily: typography.fontFamily.body.bold,
   },
   section: {
     padding: spacing.lg,
@@ -479,8 +474,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   contactOperator: {
-    fontSize: typography.fontSize.lg,
-    fontFamily: typography.fontFamily.body.bold,
     color: colors.textPrimary,
     marginBottom: spacing.md,
   },
@@ -495,7 +488,6 @@ const styles = StyleSheet.create({
   },
   contactLink: {
     flex: 1,
-    fontSize: typography.fontSize.md,
     color: colors.link,
   },
 });

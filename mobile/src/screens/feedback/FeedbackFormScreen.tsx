@@ -16,12 +16,9 @@
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  Text,
   TextInput,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -35,6 +32,8 @@ import { feedbackApi } from '../../services/api';
 import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -92,21 +91,21 @@ export function FeedbackFormScreen(): React.JSX.Element {
         >
           {/* Title */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>{t('feedback.title')}</Text>
+            <H1>{t('feedback.title')}</H1>
           </View>
 
           {/* Submit Error */}
           {submitError && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{submitError}</Text>
+              <Body style={styles.errorText}>{submitError}</Body>
             </View>
           )}
 
           {/* Subject Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('feedback.subject')} <Text style={styles.required}>*</Text>
-            </Text>
+            <H2 style={styles.label}>
+              {t('feedback.subject')} <Label style={styles.required}>*</Label>
+            </H2>
             <TextInput
               style={[styles.input, errors.subject && styles.inputError]}
               value={subject}
@@ -118,19 +117,19 @@ export function FeedbackFormScreen(): React.JSX.Element {
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
-                <Text style={styles.fieldError}>{t(errors.subject)}</Text>
+                <Label style={styles.fieldError}>{t(errors.subject)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {subject.length}/{VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Body Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('feedback.message')} <Text style={styles.required}>*</Text>
-            </Text>
+            <H2 style={styles.label}>
+              {t('feedback.message')} <Label style={styles.required}>*</Label>
+            </H2>
             <TextInput
               style={[
                 styles.input,
@@ -149,27 +148,24 @@ export function FeedbackFormScreen(): React.JSX.Element {
             />
             <View style={styles.fieldFooter}>
               {errors.body && (
-                <Text style={styles.fieldError}>{t(errors.body)}</Text>
+                <Label style={styles.fieldError}>{t(errors.body)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {body.length}/{VALIDATION_LIMITS.BODY_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          <Button
+            variant="primary"
             onPress={handleSubmit}
+            loading={isSubmitting}
             disabled={isSubmitting}
-            activeOpacity={0.7}
+            style={styles.submitButton}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color={skin.colors.background} />
-            ) : (
-              <Text style={styles.submitButtonText}>{t('feedback.send')}</Text>
-            )}
-          </TouchableOpacity>
+            {t('feedback.send')}
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -194,16 +190,6 @@ const styles = StyleSheet.create({
   titleSection: {
     marginBottom: skin.spacing.xxl,
   },
-  title: {
-    fontSize: skin.typography.fontSize.xxxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textMuted,
-    marginTop: skin.spacing.xs,
-  },
   errorContainer: {
     backgroundColor: skin.colors.warningBackground,
     borderRadius: skin.borders.radiusCard,
@@ -211,7 +197,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.lg,
   },
   errorText: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.warningAccent,
     textAlign: 'center',
   },
@@ -219,9 +204,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xl,
   },
   label: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.sm,
   },
   required: {
@@ -250,28 +232,14 @@ const styles = StyleSheet.create({
     marginTop: skin.spacing.xs,
   },
   fieldError: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.errorText,
     flex: 1,
   },
   charCount: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.textDisabled,
   },
   submitButton: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
     marginTop: skin.spacing.lg,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.background,
   },
 });
 

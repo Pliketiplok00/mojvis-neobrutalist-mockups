@@ -17,7 +17,6 @@
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
@@ -28,6 +27,7 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import { Button } from '../../ui/Button';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -45,6 +45,7 @@ import type { Location as LocationType, PhotoToUpload } from '../../types/click-
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { H1, H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -217,21 +218,21 @@ export function ClickFixFormScreen(): React.JSX.Element {
         >
           {/* Title */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>{t('clickFix.title')}</Text>
+            <H1>{t('clickFix.title')}</H1>
           </View>
 
           {/* Submit Error */}
           {submitError && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{submitError}</Text>
+              <Body style={styles.errorText}>{submitError}</Body>
             </View>
           )}
 
           {/* Subject Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('clickFix.titleField')} <Text style={styles.required}>*</Text>
-            </Text>
+            <H2 style={styles.label}>
+              {t('clickFix.titleField')} <Label style={styles.required}>*</Label>
+            </H2>
             <TextInput
               style={[styles.input, errors.subject && styles.inputError]}
               value={subject}
@@ -243,19 +244,19 @@ export function ClickFixFormScreen(): React.JSX.Element {
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
-                <Text style={styles.fieldError}>{t(errors.subject)}</Text>
+                <Label style={styles.fieldError}>{t(errors.subject)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {subject.length}/{VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Description Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('clickFix.description')} <Text style={styles.required}>*</Text>
-            </Text>
+            <H2 style={styles.label}>
+              {t('clickFix.description')} <Label style={styles.required}>*</Label>
+            </H2>
             <TextInput
               style={[
                 styles.input,
@@ -274,60 +275,53 @@ export function ClickFixFormScreen(): React.JSX.Element {
             />
             <View style={styles.fieldFooter}>
               {errors.description && (
-                <Text style={styles.fieldError}>{t(errors.description)}</Text>
+                <Label style={styles.fieldError}>{t(errors.description)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {description.length}/{VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Location Section */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('clickFix.location')} <Text style={styles.required}>*</Text>
-            </Text>
+            <H2 style={styles.label}>
+              {t('clickFix.location')} <Label style={styles.required}>*</Label>
+            </H2>
             {location ? (
               <View style={styles.locationDisplay}>
-                <Text style={styles.locationText}>
+                <Body style={styles.locationText}>
                   {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
-                </Text>
+                </Body>
                 <TouchableOpacity
                   style={styles.changeLocationButton}
                   onPress={handleGetLocation}
                   disabled={isGettingLocation}
                 >
-                  <Text style={styles.changeLocationText}>{t('clickFix.locationActions.change')}</Text>
+                  <ButtonText style={styles.changeLocationText}>{t('clickFix.locationActions.change')}</ButtonText>
                 </TouchableOpacity>
               </View>
             ) : (
-              <TouchableOpacity
-                style={[
-                  styles.locationButton,
-                  errors.location && styles.locationButtonError,
-                ]}
+              <Button
+                variant="secondary"
                 onPress={handleGetLocation}
+                loading={isGettingLocation}
                 disabled={isGettingLocation || isSubmitting}
+                style={errors.location ? styles.locationButtonError : undefined}
               >
-                {isGettingLocation ? (
-                  <ActivityIndicator color={skin.colors.textPrimary} />
-                ) : (
-                  <Text style={styles.locationButtonText}>
-                    {t('clickFix.locationActions.getLocation')}
-                  </Text>
-                )}
-              </TouchableOpacity>
+                {t('clickFix.locationActions.getLocation')}
+              </Button>
             )}
             {errors.location && (
-              <Text style={styles.fieldError}>{t(errors.location)}</Text>
+              <Label style={styles.fieldError}>{t(errors.location)}</Label>
             )}
           </View>
 
           {/* Photos Section */}
           <View style={styles.field}>
-            <Text style={styles.label}>
+            <H2 style={styles.label}>
               {t('clickFix.photos')} ({photos.length}/{VALIDATION_LIMITS.MAX_PHOTOS})
-            </Text>
+            </H2>
 
             {/* Photo Thumbnails */}
             {photos.length > 0 && (
@@ -354,32 +348,29 @@ export function ClickFixFormScreen(): React.JSX.Element {
                   onPress={handlePickPhotos}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.addPhotoText}>{t('clickFix.photoActions.pickFromGallery')}</Text>
+                  <ButtonText style={styles.addPhotoText}>{t('clickFix.photoActions.pickFromGallery')}</ButtonText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.addPhotoButton}
                   onPress={handleTakePhoto}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.addPhotoText}>{t('clickFix.photoActions.takePhoto')}</Text>
+                  <ButtonText style={styles.addPhotoText}>{t('clickFix.photoActions.takePhoto')}</ButtonText>
                 </TouchableOpacity>
               </View>
             )}
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          <Button
+            variant="primary"
             onPress={handleSubmit}
+            loading={isSubmitting}
             disabled={isSubmitting}
-            activeOpacity={0.7}
+            style={styles.submitButton}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color={skin.colors.background} />
-            ) : (
-              <Text style={styles.submitButtonText}>{t('clickFix.send')}</Text>
-            )}
-          </TouchableOpacity>
+            {t('clickFix.send')}
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -404,16 +395,6 @@ const styles = StyleSheet.create({
   titleSection: {
     marginBottom: skin.spacing.xxl,
   },
-  title: {
-    fontSize: skin.typography.fontSize.xxxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textMuted,
-    marginTop: skin.spacing.xs,
-  },
   errorContainer: {
     backgroundColor: skin.colors.warningBackground,
     borderRadius: skin.borders.radiusCard,
@@ -421,7 +402,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.lg,
   },
   errorText: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.warningAccent,
     textAlign: 'center',
   },
@@ -429,9 +409,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xl,
   },
   label: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.sm,
   },
   required: {
@@ -460,29 +437,14 @@ const styles = StyleSheet.create({
     marginTop: skin.spacing.xs,
   },
   fieldError: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.errorText,
     flex: 1,
   },
   charCount: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.textDisabled,
-  },
-  locationButton: {
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
-    backgroundColor: skin.colors.backgroundSecondary,
   },
   locationButtonError: {
     borderColor: skin.colors.errorText,
-  },
-  locationButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
   },
   locationDisplay: {
     flexDirection: 'row',
@@ -496,7 +458,6 @@ const styles = StyleSheet.create({
     backgroundColor: skin.colors.successBackground,
   },
   locationText: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.successText,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
@@ -507,9 +468,7 @@ const styles = StyleSheet.create({
     borderRadius: skin.borders.radiusSmall,
   },
   changeLocationText: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.background,
-    fontWeight: skin.typography.fontWeight.semiBold,
   },
   photoGrid: {
     flexDirection: 'row',
@@ -552,24 +511,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addPhotoText: {
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.semiBold,
     color: skin.colors.textPrimary,
   },
   submitButton: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.lg,
-    alignItems: 'center',
     marginTop: skin.spacing.lg,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.background,
   },
 });
 
