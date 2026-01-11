@@ -20,6 +20,7 @@ import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { Card } from '../../ui/Card';
 import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type Props = {
@@ -58,27 +59,29 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
         <Body style={styles.subtitle}>Select your municipality</Body>
 
         <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.municipalityCard}
+          <Card
+            variant="selection"
             onPress={() => void handleMunicipalitySelect('vis')}
             accessibilityLabel="Vis"
+            style={styles.municipalityCard}
           >
             <H1 style={styles.municipalityName}>Vis</H1>
             <Label style={styles.municipalityDescription}>
               Grad Vis i okolica
             </Label>
-          </TouchableOpacity>
+          </Card>
 
-          <TouchableOpacity
-            style={styles.municipalityCard}
+          <Card
+            variant="selection"
             onPress={() => void handleMunicipalitySelect('komiza')}
             accessibilityLabel="Komiza"
+            style={styles.municipalityCard}
           >
             <H1 style={styles.municipalityName}>Komiža</H1>
             <Label style={styles.municipalityDescription}>
               Grad Komiža i okolica
             </Label>
-          </TouchableOpacity>
+          </Card>
         </View>
 
         <Meta style={styles.hint}>
@@ -121,11 +124,7 @@ const styles = StyleSheet.create({
     gap: skin.spacing.lg,
   },
   municipalityCard: {
-    backgroundColor: skin.colors.backgroundSecondary,
     padding: skin.spacing.xxl,
-    borderRadius: skin.borders.radiusCard,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.borderLight,
   },
   municipalityName: {
     marginBottom: skin.spacing.sm,
