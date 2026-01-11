@@ -17,7 +17,6 @@
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
@@ -28,6 +27,7 @@ import {
   Alert,
 } from 'react-native';
 import { Button } from '../../ui/Button';
+import { Input } from '../../ui/Input';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -233,14 +233,14 @@ export function ClickFixFormScreen(): React.JSX.Element {
             <H2 style={styles.label}>
               {t('clickFix.titleField')} <Label style={styles.required}>*</Label>
             </H2>
-            <TextInput
-              style={[styles.input, errors.subject && styles.inputError]}
+            <Input
               value={subject}
               onChangeText={setSubject}
               placeholder={t('clickFix.titlePlaceholder')}
-              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              editable={!isSubmitting}
+              disabled={isSubmitting}
+              error={!!errors.subject}
+              accessibilityLabel={t('clickFix.titleField')}
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
@@ -257,21 +257,16 @@ export function ClickFixFormScreen(): React.JSX.Element {
             <H2 style={styles.label}>
               {t('clickFix.description')} <Label style={styles.required}>*</Label>
             </H2>
-            <TextInput
-              style={[
-                styles.input,
-                styles.textArea,
-                errors.description && styles.inputError,
-              ]}
+            <Input
               value={description}
               onChangeText={setDescription}
               placeholder={t('clickFix.descriptionPlaceholder')}
-              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
               multiline
-              numberOfLines={6}
-              textAlignVertical="top"
-              editable={!isSubmitting}
+              height={120}
+              disabled={isSubmitting}
+              error={!!errors.description}
+              accessibilityLabel={t('clickFix.description')}
             />
             <View style={styles.fieldFooter}>
               {errors.description && (
@@ -413,23 +408,6 @@ const styles = StyleSheet.create({
   },
   required: {
     color: skin.colors.errorText,
-  },
-  input: {
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    paddingHorizontal: skin.spacing.lg,
-    paddingVertical: skin.spacing.md,
-    fontSize: skin.typography.fontSize.lg,
-    color: skin.colors.textPrimary,
-    backgroundColor: skin.colors.background,
-  },
-  inputError: {
-    borderColor: skin.colors.errorText,
-  },
-  textArea: {
-    height: 120,
-    textAlignVertical: 'top',
   },
   fieldFooter: {
     flexDirection: 'row',

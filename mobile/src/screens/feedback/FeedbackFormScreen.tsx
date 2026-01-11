@@ -16,7 +16,6 @@
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  TextInput,
   ScrollView,
   StyleSheet,
   KeyboardAvoidingView,
@@ -33,6 +32,7 @@ import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
+import { Input } from '../../ui/Input';
 import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
@@ -106,14 +106,14 @@ export function FeedbackFormScreen(): React.JSX.Element {
             <H2 style={styles.label}>
               {t('feedback.subject')} <Label style={styles.required}>*</Label>
             </H2>
-            <TextInput
-              style={[styles.input, errors.subject && styles.inputError]}
+            <Input
               value={subject}
               onChangeText={setSubject}
               placeholder={t('feedback.subjectPlaceholder')}
-              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              editable={!isSubmitting}
+              disabled={isSubmitting}
+              error={!!errors.subject}
+              accessibilityLabel={t('feedback.subject')}
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
@@ -130,21 +130,16 @@ export function FeedbackFormScreen(): React.JSX.Element {
             <H2 style={styles.label}>
               {t('feedback.message')} <Label style={styles.required}>*</Label>
             </H2>
-            <TextInput
-              style={[
-                styles.input,
-                styles.textArea,
-                errors.body && styles.inputError,
-              ]}
+            <Input
               value={body}
               onChangeText={setBody}
               placeholder={t('feedback.messagePlaceholder')}
-              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.BODY_MAX_LENGTH}
               multiline
-              numberOfLines={8}
-              textAlignVertical="top"
-              editable={!isSubmitting}
+              height={160}
+              disabled={isSubmitting}
+              error={!!errors.body}
+              accessibilityLabel={t('feedback.message')}
             />
             <View style={styles.fieldFooter}>
               {errors.body && (
@@ -208,23 +203,6 @@ const styles = StyleSheet.create({
   },
   required: {
     color: skin.colors.errorText,
-  },
-  input: {
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    paddingHorizontal: skin.spacing.lg,
-    paddingVertical: skin.spacing.md,
-    fontSize: skin.typography.fontSize.lg,
-    color: skin.colors.textPrimary,
-    backgroundColor: skin.colors.background,
-  },
-  inputError: {
-    borderColor: skin.colors.errorText,
-  },
-  textArea: {
-    height: 160,
-    textAlignVertical: 'top',
   },
   fieldFooter: {
     flexDirection: 'row',

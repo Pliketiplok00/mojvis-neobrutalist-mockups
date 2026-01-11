@@ -191,6 +191,9 @@ export const colors = {
   infoBackground: hsla(210, 85, 40, 0.14),
   infoText: palette.primary,
 
+  // Input focus state
+  focusOutline: palette.primary,
+
   // Status - Pending (warm orange-ish)
   pendingBackground: hsla(25, 85, 55, 0.16),
   pendingText: hsl(25, 85, 40),
@@ -318,6 +321,21 @@ export const components = {
     activeWeight: typography.fontWeight.semiBold,
     borderBottomWidth: bordersToken.widthCard,
     borderBottomColor: colors.border,
+  },
+
+  input: {
+    backgroundColor: colors.background,
+    borderWidth: bordersToken.widthThin,
+    borderColor: colors.border,
+    borderColorFocus: colors.focusOutline,
+    borderColorError: colors.errorText,
+    borderRadius: bordersToken.radiusCard,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    fontSize: typography.fontSize.lg,
+    textColor: colors.textPrimary,
+    placeholderColor: colors.textDisabled,
+    disabledOpacity: 0.5,
   },
 } as const;
 
