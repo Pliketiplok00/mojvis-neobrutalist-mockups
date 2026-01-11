@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     color: components.button.danger.textColor,
   },
   disabled: {
-    opacity: 0.5,
+    opacity: components.button.disabledOpacity,
   },
 });
 

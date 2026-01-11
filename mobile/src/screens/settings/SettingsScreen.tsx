@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
     // Typography handled by Label primitive
   },
   separator: {
-    height: 1,
+    height: skin.borders.widthHairline,
     backgroundColor: skin.colors.borderLight,
   },
   versionContainer: {

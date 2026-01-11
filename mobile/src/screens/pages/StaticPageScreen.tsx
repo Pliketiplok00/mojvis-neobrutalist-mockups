@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   // Page Header
   pageHeader: {
     padding: skin.spacing.lg,
-    borderBottomWidth: 1,
+    borderBottomWidth: skin.borders.widthHairline,
     borderBottomColor: skin.colors.borderLight,
     marginBottom: skin.spacing.sm,
   },
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: skin.spacing.md,
-    borderBottomWidth: 1,
+    borderBottomWidth: skin.borders.widthHairline,
     borderBottomColor: skin.colors.borderLight,
   },
   linkText: {
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: skin.spacing.md,
-    borderBottomWidth: 1,
+    borderBottomWidth: skin.borders.widthHairline,
     borderBottomColor: skin.colors.warningAccent,
   },
   noticeItemUrgent: {
