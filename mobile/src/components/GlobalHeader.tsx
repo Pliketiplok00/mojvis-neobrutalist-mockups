@@ -127,12 +127,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-start',
   },
-  // Yellow icon box for menu (V1 poster style)
+  // Yellow icon box for menu (V1 poster style - squared tile with thick border)
   menuIconBox: {
     width: 44,
     height: 44,
     backgroundColor: skin.colors.warningAccent, // Yellow
-    borderWidth: skin.borders.widthThin,
+    borderWidth: skin.borders.widthCard, // Thick border per poster
     borderColor: skin.colors.border,
     justifyContent: 'center',
     alignItems: 'center',
@@ -148,12 +148,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
-  // Blue icon box for inbox (V1 poster style)
+  // Blue icon box for inbox (V1 poster style - squared tile with thick border)
   inboxIconBox: {
     width: 44,
     height: 44,
     backgroundColor: skin.colors.primary, // Blue
-    borderWidth: skin.borders.widthThin,
+    borderWidth: skin.borders.widthCard, // Thick border per poster
     borderColor: skin.colors.border,
     justifyContent: 'center',
     alignItems: 'center',

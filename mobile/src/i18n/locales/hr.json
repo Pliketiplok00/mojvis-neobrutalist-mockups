@@ -47,6 +47,7 @@
     "categories": "Kategorije",
     "upcomingEvents": "Nadolazeci dogadaji",
     "eventsPlaceholder": "[Ovdje ce se prikazati dogadaji]",
+    "viewAllEvents": "Pogledaj sve dogadaje",
     "feedback": {
       "title": "Imate prijedlog?",
       "subtitle": "Posaljite nam povratnu informaciju"
@@ -315,6 +316,7 @@
   },
   "banner": {
     "urgent": "HITNO",
+    "new": "NOVO",
     "accessibilityHint": "Dodirnite za vise informacija"
   },
   "menu": {

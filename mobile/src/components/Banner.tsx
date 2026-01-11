@@ -9,6 +9,14 @@
  * - Banners never open external links, filtered lists, or custom screens
  * - Banners are derived from Inbox messages (no separate content)
  *
+ * V1 Poster Style:
+ * - Edge-to-edge (no inset)
+ * - No gaps between banners, only bottom rule separation
+ * - Only bottom border, not full outline
+ * - No shadow
+ * - Warm yellow/orange fill
+ * - Red accents for icon box + tags
+ *
  * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
@@ -33,8 +41,8 @@ interface BannerProps {
 }
 
 /**
- * Single banner item - V1 Poster Slab Style
- * Full-width slab with strong fill, icon box, heavy border
+ * Single banner item - V1 Poster Style
+ * Edge-to-edge slab with warm yellow fill, red icon box, bottom border only
  * Clicking opens the inbox message detail
  */
 export function Banner({ message }: BannerProps): React.JSX.Element {
@@ -49,54 +57,49 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
   const isUrgent = message.is_urgent;
 
   return (
-    <View style={styles.bannerWrapper}>
-      {/* Shadow layer for neobrut offset effect */}
-      <View style={styles.bannerShadow} />
-      {/* Main banner slab */}
-      <TouchableOpacity
-        style={[styles.container, isUrgent && styles.containerUrgent]}
-        onPress={handlePress}
-        accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
-        accessibilityHint={t('banner.accessibilityHint')}
-        activeOpacity={0.8}
-      >
-        {/* Icon box on left */}
-        <View style={[styles.iconBox, isUrgent && styles.iconBoxUrgent]}>
-          <Icon
-            name="alert-triangle"
-            size="md"
-            color={isUrgent ? 'white' : skin.colors.textPrimary}
-            stroke="strong"
-          />
-        </View>
+    <TouchableOpacity
+      style={[styles.container, isUrgent && styles.containerUrgent]}
+      onPress={handlePress}
+      accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
+      accessibilityHint={t('banner.accessibilityHint')}
+      activeOpacity={0.8}
+    >
+      {/* Icon box on left - red accent */}
+      <View style={styles.iconBox}>
+        <Icon
+          name="alert-triangle"
+          size="md"
+          color="white"
+          stroke="strong"
+        />
+      </View>
 
-        {/* Text content */}
-        <View style={styles.textContent}>
-          <Label style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
-            {message.title}
-          </Label>
-          <Meta style={styles.preview} numberOfLines={1}>
-            {message.body}
-          </Meta>
-        </View>
+      {/* Text content */}
+      <View style={styles.textContent}>
+        <Label style={styles.title} numberOfLines={1}>
+          {message.title}
+        </Label>
+        <Meta style={styles.preview} numberOfLines={1}>
+          {message.body}
+        </Meta>
+      </View>
 
-        {/* NEW badge for urgent items */}
-        {isUrgent && (
-          <View style={styles.newBadge}>
-            <Meta style={styles.newBadgeText}>{t('banner.urgent')}</Meta>
-          </View>
-        )}
+      {/* Tag badge - red accent */}
+      <View style={styles.tagBadge}>
+        <Meta style={styles.tagBadgeText}>
+          {isUrgent ? t('banner.urgent') : t('banner.new')}
+        </Meta>
+      </View>
 
-        {/* Arrow indicator */}
-        <View style={styles.arrowContainer}>
-          <Icon
-            name="chevron-right"
-            size="md"
-            color={isUrgent ? 'white' : skin.colors.textPrimary}
-          />
-        </View>
-      </TouchableOpacity>
-    </View>
+      {/* Arrow indicator */}
+      <View style={styles.arrowContainer}>
+        <Icon
+          name="chevron-right"
+          size="md"
+          colorToken="textPrimary"
+        />
+      </View>
+    </TouchableOpacity>
   );
 }
 
@@ -139,47 +142,32 @@ export function BannerList({ banners }: BannerListProps): React.JSX.Element | nu
 }
 
 const styles = StyleSheet.create({
+  // V1 Poster: No gaps between banners, only bottom rule separation
   listContainer: {
-    gap: skin.spacing.md,
+    gap: 0,
   },
-  // Wrapper for shadow + main banner
-  bannerWrapper: {
-    position: 'relative',
-  },
-  bannerShadow: {
-    position: 'absolute',
-    top: 4,
-    left: 4,
-    width: '100%',
-    height: '100%',
-    backgroundColor: skin.colors.border,
-    zIndex: 0,
-  },
+  // V1 Poster: Edge-to-edge, warm yellow fill, only bottom border
   container: {
-    backgroundColor: skin.colors.warningAccent, // Strong fill, not muted background
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
+    backgroundColor: skin.colors.warningAccent, // Warm yellow/orange
+    borderBottomWidth: skin.borders.widthHeavy,
+    borderBottomColor: skin.colors.border,
     padding: skin.spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     gap: skin.spacing.md,
-    zIndex: 1,
   },
   containerUrgent: {
-    backgroundColor: skin.colors.urgent, // Red/terracotta for urgent
+    backgroundColor: skin.colors.orange, // Warmer orange for urgent
   },
-  // Icon box on left - bordered square
+  // V1 Poster: Icon box with red accent
   iconBox: {
     width: 44,
     height: 44,
     borderWidth: skin.borders.widthThin,
     borderColor: skin.colors.border,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: skin.colors.urgent, // Red accent
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  iconBoxUrgent: {
-    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
   // Text content
   textContent: {
@@ -189,20 +177,19 @@ const styles = StyleSheet.create({
     color: skin.colors.textPrimary,
     fontWeight: '700',
   },
-  titleUrgent: {
-    color: 'white',
-  },
   preview: {
     color: skin.colors.textMuted,
     marginTop: skin.spacing.xs,
   },
-  // NEW badge for urgent
-  newBadge: {
-    backgroundColor: skin.colors.border,
+  // V1 Poster: Tag badge with red accent
+  tagBadge: {
+    backgroundColor: skin.colors.urgent, // Red accent
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
     paddingHorizontal: skin.spacing.sm,
     paddingVertical: skin.spacing.xs,
   },
-  newBadgeText: {
+  tagBadgeText: {
     color: 'white',
     fontWeight: '700',
     textTransform: 'uppercase',

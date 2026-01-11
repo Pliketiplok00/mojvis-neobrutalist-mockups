@@ -47,6 +47,7 @@
     "categories": "Categories",
     "upcomingEvents": "Upcoming Events",
     "eventsPlaceholder": "[Events will appear here]",
+    "viewAllEvents": "View all events",
     "feedback": {
       "title": "Have a suggestion?",
       "subtitle": "Send us your feedback"
@@ -315,6 +316,7 @@
   },
   "banner": {
     "urgent": "URGENT",
+    "new": "NEW",
     "accessibilityHint": "Tap for more information"
   },
   "menu": {
