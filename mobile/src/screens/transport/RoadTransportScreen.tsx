@@ -305,8 +305,6 @@ const styles = StyleSheet.create({
   },
   lineName: {
     flex: 1,
-    fontSize: typography.fontSize.lg,
-    fontFamily: typography.fontFamily.body.bold,
     color: colors.textPrimary,
     marginRight: spacing.sm,
   },
@@ -327,8 +325,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   departureTime: {
-    fontSize: typography.fontSize.xl,
-    fontFamily: typography.fontFamily.body.bold,
     color: colors.textPrimary,
     width: 60,
   },

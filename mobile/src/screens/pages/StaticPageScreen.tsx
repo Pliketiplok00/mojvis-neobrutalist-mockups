@@ -17,7 +17,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text as RNText,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -636,7 +635,6 @@ const styles = StyleSheet.create({
   noticeUrgentBadge: {
     backgroundColor: skin.colors.urgent,
     color: skin.colors.urgentText,
-    fontFamily: skin.typography.fontFamily.body.bold,
     paddingHorizontal: skin.spacing.sm,
     paddingVertical: 2,
     borderRadius: skin.spacing.xs,

@@ -15,7 +15,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text as RNText,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -267,7 +266,6 @@ const styles = StyleSheet.create({
   infoLabel: {
     textTransform: 'uppercase',
     marginBottom: skin.spacing.xs,
-    fontFamily: skin.typography.fontFamily.body.bold,
   },
   infoValue: {
     textTransform: 'capitalize',

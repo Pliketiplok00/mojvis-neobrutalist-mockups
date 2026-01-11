@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     // Uses skin.components.card.borderWidth indirectly via Card
   },
   categoryText: {
-    fontWeight: skin.typography.fontWeight.medium,
+    // Typography handled by Body primitive
   },
   placeholder: {
     backgroundColor: skin.colors.backgroundTertiary,

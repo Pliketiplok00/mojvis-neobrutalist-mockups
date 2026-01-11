@@ -16,7 +16,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   LayoutAnimation,
@@ -26,6 +25,7 @@ import {
 import type { DepartureResponse } from '../types/transport';
 import { skin } from '../ui/skin';
 import { Icon } from '../ui/Icon';
+import { H2, Label, Body, Meta } from '../ui/Text';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -62,15 +62,15 @@ export function DepartureItem({ departure }: DepartureItemProps): React.JSX.Elem
     >
       {/* Header - always visible */}
       <View style={styles.header}>
-        <Text style={styles.departureTime}>{departure.departure_time}</Text>
+        <H2 style={styles.departureTime}>{departure.departure_time}</H2>
         <View style={styles.headerInfo}>
-          <Text style={styles.destination} numberOfLines={1}>
+          <Label style={styles.destination} numberOfLines={1}>
             {departure.destination}
-          </Text>
+          </Label>
           {departure.duration_minutes && (
-            <Text style={styles.duration}>
+            <Meta style={styles.duration}>
               {formatDuration(departure.duration_minutes)}
-            </Text>
+            </Meta>
           )}
         </View>
         {hasStopTimes && (
@@ -86,7 +86,7 @@ export function DepartureItem({ departure }: DepartureItemProps): React.JSX.Elem
 
       {/* Notes - if present */}
       {departure.notes && (
-        <Text style={styles.notes}>{departure.notes}</Text>
+        <Meta style={styles.notes}>{departure.notes}</Meta>
       )}
 
       {/* Expanded content - stop times timeline */}
@@ -110,10 +110,10 @@ export function DepartureItem({ departure }: DepartureItemProps): React.JSX.Elem
 
               {/* Stop info */}
               <View style={styles.stopInfo}>
-                <Text style={styles.stopTime}>{stop.arrival_time}</Text>
-                <Text style={styles.stopName} numberOfLines={1}>
+                <Label style={styles.stopTime}>{stop.arrival_time}</Label>
+                <Body style={styles.stopName} numberOfLines={1}>
                   {stop.stop_name}
-                </Text>
+                </Body>
               </View>
             </View>
           ))}
@@ -137,9 +137,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   departureTime: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     width: 70,
   },
   headerInfo: {
@@ -147,13 +144,9 @@ const styles = StyleSheet.create({
     marginLeft: skin.spacing.md,
   },
   destination: {
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.medium,
-    color: skin.colors.textPrimary,
+    // Typography handled by Label primitive
   },
   duration: {
-    fontSize: skin.typography.fontSize.sm,
-    color: skin.colors.textMuted,
     marginTop: 2,
   },
   expandIconContainer: {
@@ -162,7 +155,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   notes: {
-    fontSize: skin.typography.fontSize.sm,
     color: skin.colors.textPrimary,
     backgroundColor: skin.colors.warningBackground,
     paddingHorizontal: skin.spacing.sm,
@@ -214,14 +206,10 @@ const styles = StyleSheet.create({
     paddingBottom: skin.spacing.md,
   },
   stopTime: {
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     width: 50,
   },
   stopName: {
     flex: 1,
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textSecondary,
     marginLeft: skin.spacing.sm,
   },

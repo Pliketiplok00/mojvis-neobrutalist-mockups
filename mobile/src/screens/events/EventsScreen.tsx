@@ -16,7 +16,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text as RNText,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -410,7 +409,6 @@ const styles = StyleSheet.create({
   calendarDayName: {
     flex: 1,
     textAlign: 'center',
-    fontFamily: skin.typography.fontFamily.body.bold,
   },
   calendarGrid: {
     flexDirection: 'row',
@@ -436,7 +434,6 @@ const styles = StyleSheet.create({
   },
   calendarDayTextSelected: {
     color: skin.colors.background,
-    fontFamily: skin.typography.fontFamily.body.bold,
   },
   eventDot: {
     position: 'absolute',
@@ -463,7 +460,6 @@ const styles = StyleSheet.create({
     marginRight: skin.spacing.md,
   },
   eventTimeText: {
-    fontFamily: skin.typography.fontFamily.body.bold,
     color: skin.colors.textPrimary,
   },
   eventContent: {

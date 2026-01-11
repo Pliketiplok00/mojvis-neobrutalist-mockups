@@ -9,7 +9,6 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
@@ -22,6 +21,7 @@ import { useTranslations } from '../../i18n';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { H1, Body, ButtonText } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 type ConfirmationRouteProp = RouteProp<MainStackParamList, 'FeedbackConfirmation'>;
@@ -51,10 +51,10 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
         </View>
 
         {/* Success Message */}
-        <Text style={styles.title}>{t('feedback.confirmation.title')}</Text>
-        <Text style={styles.message}>
+        <H1 style={styles.title}>{t('feedback.confirmation.title')}</H1>
+        <Body style={styles.message}>
           {t('feedback.confirmation.message')}
-        </Text>
+        </Body>
 
         {/* Actions */}
         <View style={styles.actions}>
@@ -63,7 +63,7 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
             onPress={handleViewFeedback}
             activeOpacity={0.7}
           >
-            <Text style={styles.primaryButtonText}>{t('feedback.confirmation.backToInbox')}</Text>
+            <ButtonText style={styles.primaryButtonText}>{t('feedback.confirmation.backToInbox')}</ButtonText>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -71,7 +71,7 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
             onPress={handleGoHome}
             activeOpacity={0.7}
           >
-            <Text style={styles.secondaryButtonText}>{t('navigation.back')}</Text>
+            <ButtonText style={styles.secondaryButtonText}>{t('navigation.back')}</ButtonText>
           </TouchableOpacity>
         </View>
       </View>
@@ -100,14 +100,10 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   title: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.md,
     textAlign: 'center',
   },
   message: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
     textAlign: 'center',
     lineHeight: 24,
@@ -124,8 +120,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
     color: skin.colors.background,
   },
   secondaryButton: {
@@ -137,8 +131,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryButtonText: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.semiBold,
     color: skin.colors.textPrimary,
   },
 });
