@@ -10,12 +10,14 @@
  * - Notice block injected by backend (tapping opens inbox detail)
  * - Loading/empty/error states
  * - Local caching (TODO)
+ *
+ * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
+  Text as RNText,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -43,6 +45,9 @@ import type {
   LinkListBlockContent,
   NoticeBlockContent,
 } from '../../types/static-page';
+import { skin } from '../../ui/skin';
+import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
 
 type PageRouteProp = RouteProp<MainStackParamList, 'StaticPage'>;
 
@@ -120,8 +125,8 @@ export function StaticPageScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container}>
         <GlobalHeader type="child" />
         <View style={styles.loadingState}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
+          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
+          <Label style={styles.loadingText}>{t('common.loading')}</Label>
         </View>
       </SafeAreaView>
     );
@@ -132,12 +137,14 @@ export function StaticPageScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container}>
         <GlobalHeader type="child" />
         <View style={styles.errorState}>
-          <Text style={styles.errorIcon}>!</Text>
-          <Text style={styles.errorTitle}>
+          <View style={styles.errorIconContainer}>
+            <Icon name="alert-triangle" size="lg" colorToken="textSecondary" />
+          </View>
+          <Label style={styles.errorTitle}>
             {error || t('staticPage.notFound')}
-          </Text>
+          </Label>
           <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-            <Text style={styles.retryText}>{t('common.retry')}</Text>
+            <ButtonText style={styles.retryText}>{t('common.retry')}</ButtonText>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -179,9 +186,9 @@ function PageHeaderView({ header }: { header: StaticPageResponse['header'] }): R
           resizeMode="cover"
         />
       )}
-      <Text style={styles.pageTitle}>{header.title}</Text>
+      <H1 style={styles.pageTitle}>{header.title}</H1>
       {header.subtitle && (
-        <Text style={styles.pageSubtitle}>{header.subtitle}</Text>
+        <Body style={styles.pageSubtitle}>{header.subtitle}</Body>
       )}
     </View>
   );
@@ -228,24 +235,24 @@ function BlockRenderer({
 function TextBlock({ content }: { content: TextBlockContent }): React.JSX.Element {
   return (
     <View style={styles.block}>
-      {content.title && <Text style={styles.blockTitle}>{content.title}</Text>}
-      <Text style={styles.blockBody}>{content.body}</Text>
+      {content.title && <H2 style={styles.blockTitle}>{content.title}</H2>}
+      <Body style={styles.blockBody}>{content.body}</Body>
     </View>
   );
 }
 
 function HighlightBlock({ content }: { content: HighlightBlockContent }): React.JSX.Element {
   const variantStyles = {
-    info: { backgroundColor: '#E3F2FD', borderColor: '#1565C0' },
-    warning: { backgroundColor: '#FFF3CD', borderColor: '#856404' },
-    success: { backgroundColor: '#D4EDDA', borderColor: '#155724' },
+    info: { backgroundColor: skin.colors.infoBackground, borderColor: skin.colors.infoText },
+    warning: { backgroundColor: skin.colors.warningBackground, borderColor: skin.colors.warningAccent },
+    success: { backgroundColor: skin.colors.successBackground, borderColor: skin.colors.successText },
   };
   const style = variantStyles[content.variant] || variantStyles.info;
 
   return (
     <View style={[styles.block, styles.highlightBlock, { backgroundColor: style.backgroundColor, borderLeftColor: style.borderColor }]}>
-      {content.title && <Text style={styles.highlightTitle}>{content.title}</Text>}
-      <Text style={styles.highlightBody}>{content.body}</Text>
+      {content.title && <ButtonText style={styles.highlightTitle}>{content.title}</ButtonText>}
+      <Body style={styles.highlightBody}>{content.body}</Body>
     </View>
   );
 }
@@ -272,9 +279,9 @@ function CardListBlock({
             <Image source={{ uri: card.image_url }} style={styles.cardImage} resizeMode="cover" />
           )}
           <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>{card.title}</Text>
-            {card.description && <Text style={styles.cardDescription}>{card.description}</Text>}
-            {card.meta && <Text style={styles.cardMeta}>{card.meta}</Text>}
+            <ButtonText style={styles.cardTitle}>{card.title}</ButtonText>
+            {card.description && <Label style={styles.cardDescription}>{card.description}</Label>}
+            {card.meta && <Meta style={styles.cardMeta}>{card.meta}</Meta>}
           </View>
         </TouchableOpacity>
       ))}
@@ -295,7 +302,7 @@ function MediaBlock({ content }: { content: MediaBlockContent }): React.JSX.Elem
           resizeMode="cover"
         />
       ))}
-      {content.caption && <Text style={styles.mediaCaption}>{content.caption}</Text>}
+      {content.caption && <Meta style={styles.mediaCaption}>{content.caption}</Meta>}
     </View>
   );
 }
@@ -307,13 +314,13 @@ function MapBlock({ content }: { content: MapBlockContent }): React.JSX.Element 
   return (
     <View style={styles.block}>
       <View style={styles.mapPlaceholder}>
-        <Text style={styles.mapPlaceholderText}>{t('staticPage.map')}</Text>
+        <Label style={styles.mapPlaceholderText}>{t('staticPage.map')}</Label>
       </View>
       {content.pins.map((pin) => (
         <View key={pin.id} style={styles.mapPin}>
-          <Text style={styles.mapPinTitle}>{pin.title}</Text>
-          {pin.description && <Text style={styles.mapPinDesc}>{pin.description}</Text>}
-          <Text style={styles.mapPinCoords}>{pin.latitude.toFixed(4)}, {pin.longitude.toFixed(4)}</Text>
+          <ButtonText style={styles.mapPinTitle}>{pin.title}</ButtonText>
+          {pin.description && <Label style={styles.mapPinDesc}>{pin.description}</Label>}
+          <Meta style={styles.mapPinCoords}>{pin.latitude.toFixed(4)}, {pin.longitude.toFixed(4)}</Meta>
         </View>
       ))}
     </View>
@@ -327,18 +334,18 @@ function ContactBlock({ content }: { content: ContactBlockContent }): React.JSX.
     <View style={styles.block}>
       {content.contacts.map((contact) => (
         <View key={contact.id} style={styles.contactItem}>
-          <Text style={styles.contactName}>{contact.name}</Text>
-          {contact.address && <Text style={styles.contactInfo}>{contact.address}</Text>}
+          <ButtonText style={styles.contactName}>{contact.name}</ButtonText>
+          {contact.address && <Label style={styles.contactInfo}>{contact.address}</Label>}
           {contact.phones.length > 0 && (
-            <Text style={styles.contactInfo}>Tel: {contact.phones.join(', ')}</Text>
+            <Label style={styles.contactInfo}>Tel: {contact.phones.join(', ')}</Label>
           )}
           {contact.email && (
             <TouchableOpacity onPress={() => void Linking.openURL(`mailto:${contact.email}`)}>
-              <Text style={styles.contactLink}>{contact.email}</Text>
+              <Label style={styles.contactLink}>{contact.email}</Label>
             </TouchableOpacity>
           )}
-          {contact.working_hours && <Text style={styles.contactInfo}>{contact.working_hours}</Text>}
-          {contact.note && <Text style={styles.contactNote}>{contact.note}</Text>}
+          {contact.working_hours && <Label style={styles.contactInfo}>{contact.working_hours}</Label>}
+          {contact.note && <Meta style={styles.contactNote}>{contact.note}</Meta>}
         </View>
       ))}
     </View>
@@ -362,8 +369,8 @@ function LinkListBlock({
           style={styles.linkItem}
           onPress={() => onLinkPress(link.link_type, link.link_target)}
         >
-          <Text style={styles.linkText}>{link.title}</Text>
-          <Text style={styles.linkArrow}>-</Text>
+          <Body style={styles.linkText}>{link.title}</Body>
+          <Icon name="chevron-right" size="sm" colorToken="chevron" />
         </TouchableOpacity>
       ))}
     </View>
@@ -398,9 +405,9 @@ function NoticeBlock({
           style={[styles.noticeItem, notice.is_urgent && styles.noticeItemUrgent]}
           onPress={() => onPress(notice.id)}
         >
-          {notice.is_urgent && <Text style={styles.noticeUrgentBadge}>{t('banner.urgent')}</Text>}
-          <Text style={styles.noticeTitle}>{notice.title}</Text>
-          <Text style={styles.noticeArrow}>-</Text>
+          {notice.is_urgent && <Meta style={styles.noticeUrgentBadge}>{t('banner.urgent')}</Meta>}
+          <Label style={styles.noticeTitle}>{notice.title}</Label>
+          <Icon name="chevron-right" size="sm" colorToken="chevron" />
         </TouchableOpacity>
       ))}
     </View>
@@ -410,13 +417,13 @@ function NoticeBlock({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: skin.spacing.xxxl,
   },
   loadingState: {
     flex: 1,
@@ -424,102 +431,88 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: skin.spacing.md,
+    color: skin.colors.textMuted,
   },
   errorState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
-  errorIcon: {
-    fontSize: 48,
-    marginBottom: 16,
+  errorIconContainer: {
+    marginBottom: skin.spacing.lg,
   },
   errorTitle: {
-    fontSize: 16,
-    color: '#333333',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
+    color: skin.colors.textSecondary,
   },
   retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: '#000000',
-    borderRadius: 8,
+    paddingHorizontal: skin.spacing.xxl,
+    paddingVertical: skin.spacing.md,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusCard,
   },
   retryText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: skin.colors.background,
   },
 
   // Page Header
   pageHeader: {
-    padding: 16,
+    padding: skin.spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-    marginBottom: 8,
+    borderBottomColor: skin.colors.borderLight,
+    marginBottom: skin.spacing.sm,
   },
   headerImage: {
     width: '100%',
     height: 180,
-    borderRadius: 8,
-    marginBottom: 12,
+    borderRadius: skin.borders.radiusCard,
+    marginBottom: skin.spacing.md,
   },
   pageTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    // Inherited from H1 primitive
   },
   pageSubtitle: {
-    fontSize: 16,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
 
   // Generic block
   block: {
-    padding: 16,
-    marginBottom: 8,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.sm,
   },
   blockTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
+    // Inherited from H2 primitive
   },
   blockBody: {
-    fontSize: 16,
     lineHeight: 24,
-    color: '#333333',
+    color: skin.colors.textSecondary,
   },
 
   // Highlight block
   highlightBlock: {
     borderLeftWidth: 4,
-    borderRadius: 8,
-    marginHorizontal: 16,
+    borderRadius: skin.borders.radiusCard,
+    marginHorizontal: skin.spacing.lg,
   },
   highlightTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    color: skin.colors.textPrimary,
   },
   highlightBody: {
-    fontSize: 15,
     lineHeight: 22,
-    color: '#333333',
+    color: skin.colors.textSecondary,
   },
 
   // Card list
   card: {
-    backgroundColor: '#F8F9FA',
-    borderRadius: 8,
-    marginBottom: 12,
+    backgroundColor: skin.colors.backgroundTertiary,
+    borderRadius: skin.borders.radiusCard,
+    marginBottom: skin.spacing.md,
     overflow: 'hidden',
   },
   cardImage: {
@@ -527,157 +520,132 @@ const styles = StyleSheet.create({
     height: 120,
   },
   cardContent: {
-    padding: 12,
+    padding: skin.spacing.md,
   },
   cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    // Inherited from ButtonText primitive
   },
   cardDescription: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    color: skin.colors.textMuted,
   },
   cardMeta: {
-    fontSize: 12,
-    color: '#999999',
+    // Inherited from Meta primitive (textDisabled)
   },
 
   // Media block
   mediaImage: {
     width: '100%',
     height: 200,
-    borderRadius: 8,
-    marginBottom: 8,
+    borderRadius: skin.borders.radiusCard,
+    marginBottom: skin.spacing.sm,
   },
   mediaCaption: {
-    fontSize: 13,
-    color: '#666666',
     fontStyle: 'italic',
     textAlign: 'center',
+    // Inherited from Meta primitive
   },
 
   // Map block
   mapPlaceholder: {
     height: 200,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 8,
+    backgroundColor: skin.colors.borderLight,
+    borderRadius: skin.borders.radiusCard,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: skin.spacing.md,
   },
   mapPlaceholderText: {
-    fontSize: 16,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
   mapPin: {
-    padding: 12,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 8,
-    marginBottom: 8,
+    padding: skin.spacing.md,
+    backgroundColor: skin.colors.backgroundTertiary,
+    borderRadius: skin.borders.radiusCard,
+    marginBottom: skin.spacing.sm,
   },
   mapPinTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#000000',
+    // Inherited from ButtonText primitive
   },
   mapPinDesc: {
-    fontSize: 14,
-    color: '#666666',
     marginTop: 2,
+    color: skin.colors.textMuted,
   },
   mapPinCoords: {
-    fontSize: 12,
-    color: '#999999',
-    marginTop: 4,
+    marginTop: skin.spacing.xs,
+    // Inherited from Meta primitive
   },
 
   // Contact block
   contactItem: {
-    padding: 12,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 8,
-    marginBottom: 12,
+    padding: skin.spacing.md,
+    backgroundColor: skin.colors.backgroundTertiary,
+    borderRadius: skin.borders.radiusCard,
+    marginBottom: skin.spacing.md,
   },
   contactName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
+    // Inherited from ButtonText primitive
   },
   contactInfo: {
-    fontSize: 14,
-    color: '#333333',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    color: skin.colors.textSecondary,
   },
   contactLink: {
-    fontSize: 14,
-    color: '#1565C0',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    color: skin.colors.link,
   },
   contactNote: {
-    fontSize: 13,
-    color: '#666666',
     fontStyle: 'italic',
-    marginTop: 8,
+    marginTop: skin.spacing.sm,
+    // Inherited from Meta primitive
   },
 
   // Link list
   linkItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: skin.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: skin.colors.borderLight,
   },
   linkText: {
     flex: 1,
-    fontSize: 16,
-    color: '#000000',
-  },
-  linkArrow: {
-    fontSize: 18,
-    color: '#666666',
+    color: skin.colors.textPrimary,
   },
 
   // Notice block
   noticeBlock: {
-    padding: 16,
-    backgroundColor: '#FFF3CD',
-    marginBottom: 8,
+    padding: skin.spacing.lg,
+    backgroundColor: skin.colors.warningBackground,
+    marginBottom: skin.spacing.sm,
   },
   noticeItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: skin.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#FFE69C',
+    borderBottomColor: skin.colors.warningAccent,
   },
   noticeItemUrgent: {
-    backgroundColor: '#F8D7DA',
-    marginHorizontal: -16,
-    paddingHorizontal: 16,
+    backgroundColor: skin.colors.errorBackground,
+    marginHorizontal: -skin.spacing.lg,
+    paddingHorizontal: skin.spacing.lg,
   },
   noticeUrgentBadge: {
-    backgroundColor: '#DC3545',
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 6,
+    backgroundColor: skin.colors.urgent,
+    color: skin.colors.urgentText,
+    fontFamily: skin.typography.fontFamily.body.bold,
+    paddingHorizontal: skin.spacing.sm,
     paddingVertical: 2,
-    borderRadius: 4,
-    marginRight: 8,
+    borderRadius: skin.spacing.xs,
+    marginRight: skin.spacing.sm,
+    overflow: 'hidden',
   },
   noticeTitle: {
     flex: 1,
-    fontSize: 14,
-    color: '#333333',
-  },
-  noticeArrow: {
-    fontSize: 16,
-    color: '#666666',
+    color: skin.colors.textSecondary,
   },
 });
 
