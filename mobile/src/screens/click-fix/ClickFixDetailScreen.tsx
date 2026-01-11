@@ -31,7 +31,7 @@ import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useTranslations } from '../../i18n';
-import { clickFixApi } from '../../services/api';
+import { clickFixApi, getFullApiUrl } from '../../services/api';
 import type { ClickFixDetailResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
@@ -170,7 +170,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
                   activeOpacity={0.8}
                 >
                   <Image
-                    source={{ uri: photo.url }}
+                    source={{ uri: getFullApiUrl(photo.url) }}
                     style={styles.photoThumbnail}
                     resizeMode="cover"
                   />
@@ -222,7 +222,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
           </TouchableOpacity>
           {selectedPhotoIndex !== null && clickFix.photos[selectedPhotoIndex] && (
             <Image
-              source={{ uri: clickFix.photos[selectedPhotoIndex].url }}
+              source={{ uri: getFullApiUrl(clickFix.photos[selectedPhotoIndex].url) }}
               style={styles.modalImage}
               resizeMode="contain"
             />
