@@ -7,6 +7,8 @@
  * - Subject + body (original)
  * - Current status label
  * - Replies list (chronological)
+ *
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -26,15 +28,16 @@ import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import type { FeedbackDetailResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'FeedbackDetail'>;
 
-// Status colors
+// Status colors using semantic skin tokens
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },
-  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },
-  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },
-  odbijeno: { bg: '#FFEBEE', text: '#C62828' },
+  zaprimljeno: { bg: skin.colors.infoBackground, text: skin.colors.infoText },
+  u_razmatranju: { bg: skin.colors.pendingBackground, text: skin.colors.pendingText },
+  prihvaceno: { bg: skin.colors.successBackground, text: skin.colors.successText },
+  odbijeno: { bg: skin.colors.errorBackground, text: skin.colors.errorText },
 };
 
 export function FeedbackDetailScreen(): React.JSX.Element {
@@ -85,7 +88,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
+          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
           <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       </SafeAreaView>
@@ -164,14 +167,14 @@ export function FeedbackDetailScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   loadingContainer: {
     flex: 1,
@@ -179,101 +182,101 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: skin.spacing.md,
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   errorText: {
-    fontSize: 16,
-    color: '#856404',
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.warningAccent,
     textAlign: 'center',
   },
   statusBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 16,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.sm,
+    borderRadius: skin.borders.radiusPill,
+    marginBottom: skin.spacing.lg,
   },
   statusText: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: skin.typography.fontSize.md,
+    fontWeight: skin.typography.fontWeight.semiBold,
   },
   messageCard: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
+    backgroundColor: skin.colors.backgroundSecondary,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.xxl,
   },
   subject: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.xs,
   },
   date: {
-    fontSize: 12,
-    color: '#666666',
-    marginBottom: 16,
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.lg,
   },
   body: {
-    fontSize: 16,
-    color: '#333333',
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textSecondary,
     lineHeight: 24,
   },
   repliesSection: {
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.md,
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: skin.spacing.xxl,
+    backgroundColor: skin.colors.backgroundSecondary,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 14,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
     textAlign: 'center',
   },
   replyCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.md,
   },
   replyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.sm,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
     textTransform: 'uppercase',
   },
   replyDate: {
-    fontSize: 12,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textMuted,
   },
   replyBody: {
-    fontSize: 14,
-    color: '#333333',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textSecondary,
     lineHeight: 22,
   },
 });

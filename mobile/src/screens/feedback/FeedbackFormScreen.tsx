@@ -9,6 +9,8 @@
  *
  * No contact fields. No category.
  * Municipality is derived from onboarding context.
+ *
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React, { useState, useCallback } from 'react';
@@ -32,6 +34,7 @@ import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -109,7 +112,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
               value={subject}
               onChangeText={setSubject}
               placeholder={t('feedback.subjectPlaceholder')}
-              placeholderTextColor="#999999"
+              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
               editable={!isSubmitting}
             />
@@ -137,7 +140,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
               value={body}
               onChangeText={setBody}
               placeholder={t('feedback.messagePlaceholder')}
-              placeholderTextColor="#999999"
+              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.BODY_MAX_LENGTH}
               multiline
               numberOfLines={8}
@@ -162,7 +165,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
             activeOpacity={0.7}
           >
             {isSubmitting ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={skin.colors.background} />
             ) : (
               <Text style={styles.submitButtonText}>{t('feedback.send')}</Text>
             )}
@@ -176,7 +179,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   keyboardView: {
     flex: 1,
@@ -185,57 +188,57 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   titleSection: {
-    marginBottom: 24,
+    marginBottom: skin.spacing.xxl,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.xxxl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 4,
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
+    marginTop: skin.spacing.xs,
   },
   errorContainer: {
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    backgroundColor: skin.colors.warningBackground,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
+    marginBottom: skin.spacing.lg,
   },
   errorText: {
-    fontSize: 14,
-    color: '#856404',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.warningAccent,
     textAlign: 'center',
   },
   field: {
-    marginBottom: 20,
+    marginBottom: skin.spacing.xl,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.sm,
   },
   required: {
-    color: '#CC0000',
+    color: skin.colors.errorText,
   },
   input: {
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#000000',
-    backgroundColor: '#FFFFFF',
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.md,
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textPrimary,
+    backgroundColor: skin.colors.background,
   },
   inputError: {
-    borderColor: '#CC0000',
+    borderColor: skin.colors.errorText,
   },
   textArea: {
     height: 160,
@@ -244,31 +247,31 @@ const styles = StyleSheet.create({
   fieldFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: skin.spacing.xs,
   },
   fieldError: {
-    fontSize: 12,
-    color: '#CC0000',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.errorText,
     flex: 1,
   },
   charCount: {
-    fontSize: 12,
-    color: '#999999',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textDisabled,
   },
   submitButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.lg,
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: skin.spacing.lg,
   },
   submitButtonDisabled: {
     opacity: 0.6,
   },
   submitButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.background,
   },
 });
 

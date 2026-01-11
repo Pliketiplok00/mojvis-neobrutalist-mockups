@@ -36,6 +36,7 @@ import {
   Send,
   MailOpen,
   Camera,
+  Check,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -72,7 +73,8 @@ export type IconName =
   | 'close'
   | 'alert-triangle'
   | 'send'
-  | 'camera';
+  | 'camera'
+  | 'check';
 
 /**
  * Icon size tokens from skin.
@@ -118,6 +120,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'alert-triangle': AlertTriangle,
   'send': Send,
   'camera': Camera,
+  'check': Check,
 };
 
 interface IconProps {
