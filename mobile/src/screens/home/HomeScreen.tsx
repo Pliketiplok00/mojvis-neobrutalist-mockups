@@ -23,8 +23,9 @@ import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
-import { inboxApi } from '../../services/api';
+import { inboxApi, eventsApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
+import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
 
 // UI Primitives
@@ -86,6 +87,7 @@ export function HomeScreen(): React.JSX.Element {
   const { openMenu } = useMenu();
   const { t } = useTranslations();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const userContext = useUserContext();
 
   const fetchBanners = useCallback(async () => {
@@ -99,9 +101,29 @@ export function HomeScreen(): React.JSX.Element {
     }
   }, [userContext]);
 
+  const fetchUpcomingEvents = useCallback(async () => {
+    try {
+      // Fetch events (backend returns all events sorted by date)
+      const response = await eventsApi.getEvents(1, 20);
+      // Filter to only show events from today onwards
+      const now = new Date();
+      now.setHours(0, 0, 0, 0); // Start of today
+      const upcoming = response.events.filter(event => {
+        const eventDate = new Date(event.start_datetime);
+        return eventDate >= now;
+      });
+      // Limit to first 3 upcoming events
+      setUpcomingEvents(upcoming.slice(0, 3));
+    } catch (err) {
+      console.error('[Home] Error fetching upcoming events:', err);
+      // Silently fail - events are optional
+    }
+  }, []);
+
   useEffect(() => {
     void fetchBanners();
-  }, [fetchBanners]);
+    void fetchUpcomingEvents();
+  }, [fetchBanners, fetchUpcomingEvents]);
 
   const handleMenuPress = (): void => {
     openMenu();
@@ -124,6 +146,19 @@ export function HomeScreen(): React.JSX.Element {
 
   const handleEventsPress = (): void => {
     navigation.navigate('Events');
+  };
+
+  const handleEventPress = (eventId: string): void => {
+    navigation.navigate('EventDetail', { eventId });
+  };
+
+  // Format event date for display (day + month abbreviation)
+  const formatEventDate = (isoString: string): { day: string; month: string } => {
+    const date = new Date(isoString);
+    const day = date.getDate().toString();
+    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthNames[date.getMonth()];
+    return { day, month };
   };
 
   return (
@@ -184,31 +219,65 @@ export function HomeScreen(): React.JSX.Element {
         {/* Section 4: Upcoming Events (ticket-style) */}
         <View style={styles.eventsSection}>
           <H2 style={styles.sectionLabel}>{t('home.upcomingEvents').toUpperCase()}</H2>
-          <TouchableOpacity
-            style={styles.eventCardWrapper}
-            onPress={handleEventsPress}
-            activeOpacity={0.8}
-          >
-            {/* Shadow layer */}
-            <View style={[styles.eventCardShadow, styles.eventCardShadowFirst]} />
-            {/* Event card - first item highlighted */}
-            <View style={[styles.eventCard, styles.eventCardFirst]}>
-              {/* Date badge */}
-              <View style={styles.dateBadge}>
-                <Label style={styles.dateBadgeDay}>--</Label>
-                <Meta style={styles.dateBadgeMonth}>---</Meta>
+          {upcomingEvents.length > 0 ? (
+            // Show actual upcoming events
+            upcomingEvents.map((event, index) => {
+              const { day, month } = formatEventDate(event.start_datetime);
+              const isFirst = index === 0;
+              return (
+                <TouchableOpacity
+                  key={event.id}
+                  style={styles.eventCardWrapper}
+                  onPress={() => handleEventPress(event.id)}
+                  activeOpacity={0.8}
+                >
+                  {/* Shadow layer */}
+                  <View style={[styles.eventCardShadow, isFirst && styles.eventCardShadowFirst]} />
+                  {/* Event card */}
+                  <View style={[styles.eventCard, isFirst && styles.eventCardFirst]}>
+                    {/* Date badge */}
+                    <View style={styles.dateBadge}>
+                      <Label style={styles.dateBadgeDay}>{day}</Label>
+                      <Meta style={styles.dateBadgeMonth}>{month}</Meta>
+                    </View>
+                    {/* Event content */}
+                    <View style={styles.eventContent}>
+                      <Label style={styles.eventTitle} numberOfLines={1}>{event.title}</Label>
+                      <Meta style={styles.eventLocation} numberOfLines={1}>
+                        {event.location ?? t('home.viewAllEvents')}
+                      </Meta>
+                    </View>
+                    {/* Arrow */}
+                    <View style={styles.eventArrow}>
+                      <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            // Fallback placeholder when no events
+            <TouchableOpacity
+              style={styles.eventCardWrapper}
+              onPress={handleEventsPress}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.eventCardShadow, styles.eventCardShadowFirst]} />
+              <View style={[styles.eventCard, styles.eventCardFirst]}>
+                <View style={styles.dateBadge}>
+                  <Label style={styles.dateBadgeDay}>--</Label>
+                  <Meta style={styles.dateBadgeMonth}>---</Meta>
+                </View>
+                <View style={styles.eventContent}>
+                  <Label style={styles.eventTitle}>{t('home.eventsPlaceholder')}</Label>
+                  <Meta style={styles.eventLocation}>{t('home.viewAllEvents')}</Meta>
+                </View>
+                <View style={styles.eventArrow}>
+                  <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+                </View>
               </View>
-              {/* Event content */}
-              <View style={styles.eventContent}>
-                <Label style={styles.eventTitle}>{t('home.eventsPlaceholder')}</Label>
-                <Meta style={styles.eventLocation}>{t('home.viewAllEvents')}</Meta>
-              </View>
-              {/* Arrow */}
-              <View style={styles.eventArrow}>
-                <Icon name="chevron-right" size="md" colorToken="textPrimary" />
-              </View>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Section 5: Feedback CTA Panel */}
