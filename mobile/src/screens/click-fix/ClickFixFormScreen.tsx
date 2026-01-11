@@ -10,6 +10,8 @@
  * - Photos - optional, 0-3 images
  *
  * Municipality is derived from onboarding context.
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useCallback } from 'react';
@@ -41,6 +43,8 @@ import {
 } from '../../types/click-fix';
 import type { Location as LocationType, PhotoToUpload } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -233,7 +237,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
               value={subject}
               onChangeText={setSubject}
               placeholder={t('clickFix.titlePlaceholder')}
-              placeholderTextColor="#999999"
+              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
               editable={!isSubmitting}
             />
@@ -261,7 +265,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
               value={description}
               onChangeText={setDescription}
               placeholder={t('clickFix.descriptionPlaceholder')}
-              placeholderTextColor="#999999"
+              placeholderTextColor={skin.colors.textDisabled}
               maxLength={VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
               multiline
               numberOfLines={6}
@@ -306,7 +310,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
                 disabled={isGettingLocation || isSubmitting}
               >
                 {isGettingLocation ? (
-                  <ActivityIndicator color="#000000" />
+                  <ActivityIndicator color={skin.colors.textPrimary} />
                 ) : (
                   <Text style={styles.locationButtonText}>
                     {t('clickFix.locationActions.getLocation')}
@@ -335,7 +339,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
                       style={styles.removePhotoButton}
                       onPress={() => handleRemovePhoto(index)}
                     >
-                      <Text style={styles.removePhotoText}>X</Text>
+                      <Icon name="close" size="sm" colorToken="background" />
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -371,7 +375,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
             activeOpacity={0.7}
           >
             {isSubmitting ? (
-              <ActivityIndicator color="#FFFFFF" />
+              <ActivityIndicator color={skin.colors.background} />
             ) : (
               <Text style={styles.submitButtonText}>{t('clickFix.send')}</Text>
             )}
@@ -385,7 +389,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   keyboardView: {
     flex: 1,
@@ -394,57 +398,57 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   titleSection: {
-    marginBottom: 24,
+    marginBottom: skin.spacing.xxl,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.xxxl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
   },
   subtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 4,
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
+    marginTop: skin.spacing.xs,
   },
   errorContainer: {
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    backgroundColor: skin.colors.warningBackground,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
+    marginBottom: skin.spacing.lg,
   },
   errorText: {
-    fontSize: 14,
-    color: '#856404',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.warningAccent,
     textAlign: 'center',
   },
   field: {
-    marginBottom: 20,
+    marginBottom: skin.spacing.xl,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.sm,
   },
   required: {
-    color: '#CC0000',
+    color: skin.colors.errorText,
   },
   input: {
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#000000',
-    backgroundColor: '#FFFFFF',
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.md,
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textPrimary,
+    backgroundColor: skin.colors.background,
   },
   inputError: {
-    borderColor: '#CC0000',
+    borderColor: skin.colors.errorText,
   },
   textArea: {
     height: 120,
@@ -453,65 +457,65 @@ const styles = StyleSheet.create({
   fieldFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: skin.spacing.xs,
   },
   fieldError: {
-    fontSize: 12,
-    color: '#CC0000',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.errorText,
     flex: 1,
   },
   charCount: {
-    fontSize: 12,
-    color: '#999999',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textDisabled,
   },
   locationButton: {
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.lg,
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: skin.colors.backgroundSecondary,
   },
   locationButtonError: {
-    borderColor: '#CC0000',
+    borderColor: skin.colors.errorText,
   },
   locationButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
   },
   locationDisplay: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#E8F5E9',
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.md,
+    backgroundColor: skin.colors.successBackground,
   },
   locationText: {
-    fontSize: 14,
-    color: '#2E7D32',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.successText,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   changeLocationButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#000000',
-    borderRadius: 4,
+    paddingHorizontal: skin.spacing.md,
+    paddingVertical: skin.spacing.sm,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusSmall,
   },
   changeLocationText: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.background,
+    fontWeight: skin.typography.fontWeight.semiBold,
   },
   photoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
+    gap: skin.spacing.sm,
+    marginBottom: skin.spacing.md,
   },
   photoItem: {
     position: 'relative',
@@ -519,9 +523,9 @@ const styles = StyleSheet.create({
   photoThumbnail: {
     width: 80,
     height: 80,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#000000',
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
   },
   removePhotoButton: {
     position: 'absolute',
@@ -530,47 +534,42 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#CC0000',
+    backgroundColor: skin.colors.errorText,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  removePhotoText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
   photoButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: skin.spacing.md,
   },
   addPhotoButton: {
     flex: 1,
-    borderWidth: 2,
-    borderColor: '#000000',
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
     borderStyle: 'dashed',
-    borderRadius: 8,
-    paddingVertical: 12,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.md,
     alignItems: 'center',
   },
   addPhotoText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.md,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
   },
   submitButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.lg,
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: skin.spacing.lg,
   },
   submitButtonDisabled: {
     opacity: 0.6,
   },
   submitButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.background,
   },
 });
 
