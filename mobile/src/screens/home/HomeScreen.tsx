@@ -257,6 +257,9 @@ const styles = StyleSheet.create({
   bannerSection: {
     paddingHorizontal: skin.spacing.lg,
     paddingTop: skin.spacing.md,
+    paddingBottom: skin.spacing.sm,
+    // Extra right padding to accommodate shadow offset
+    paddingRight: skin.spacing.lg + 4,
   },
 
   // Hero Section - Full-width primary slab
@@ -288,32 +291,31 @@ const styles = StyleSheet.create({
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: skin.spacing.md,
+    justifyContent: 'space-between',
   },
   categoryTileWrapper: {
-    width: '47%',
-    aspectRatio: 1,
-    position: 'relative',
+    width: '48%',
+    height: 110, // Explicit height for stable layout
+    marginBottom: skin.spacing.md,
   },
   categoryTileShadow: {
     position: 'absolute',
     top: 4,
     left: 4,
-    right: -4,
-    bottom: -4,
+    width: '100%',
+    height: '100%',
     backgroundColor: skin.colors.border,
+    zIndex: 0,
   },
   categoryTile: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    width: '100%',
+    height: '100%',
     borderWidth: skin.borders.widthThin,
     borderColor: skin.colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     gap: skin.spacing.sm,
+    zIndex: 1,
   },
   categoryIconBox: {
     // IconBox handles sizing
@@ -321,6 +323,7 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontWeight: '700',
     letterSpacing: 0.5,
+    textAlign: 'center',
   },
 
   // Events Section

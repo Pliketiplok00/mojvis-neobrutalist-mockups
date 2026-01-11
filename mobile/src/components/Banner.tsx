@@ -33,7 +33,8 @@ interface BannerProps {
 }
 
 /**
- * Single banner item
+ * Single banner item - V1 Poster Slab Style
+ * Full-width slab with strong fill, icon box, heavy border
  * Clicking opens the inbox message detail
  */
 export function Banner({ message }: BannerProps): React.JSX.Element {
@@ -48,34 +49,54 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
   const isUrgent = message.is_urgent;
 
   return (
-    <TouchableOpacity
-      style={[styles.container, isUrgent && styles.containerUrgent]}
-      onPress={handlePress}
-      accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
-      accessibilityHint={t('banner.accessibilityHint')}
-    >
-      {/* Urgent indicator */}
-      {isUrgent && (
-        <View style={styles.urgentBadge}>
-          <Meta style={styles.urgentText}>{t('banner.urgent')}</Meta>
+    <View style={styles.bannerWrapper}>
+      {/* Shadow layer for neobrut offset effect */}
+      <View style={styles.bannerShadow} />
+      {/* Main banner slab */}
+      <TouchableOpacity
+        style={[styles.container, isUrgent && styles.containerUrgent]}
+        onPress={handlePress}
+        accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
+        accessibilityHint={t('banner.accessibilityHint')}
+        activeOpacity={0.8}
+      >
+        {/* Icon box on left */}
+        <View style={[styles.iconBox, isUrgent && styles.iconBoxUrgent]}>
+          <Icon
+            name="alert-triangle"
+            size="md"
+            color={isUrgent ? 'white' : skin.colors.textPrimary}
+            stroke="strong"
+          />
         </View>
-      )}
 
-      {/* Title */}
-      <Label style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
-        {message.title}
-      </Label>
+        {/* Text content */}
+        <View style={styles.textContent}>
+          <Label style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
+            {message.title}
+          </Label>
+          <Meta style={styles.preview} numberOfLines={1}>
+            {message.body}
+          </Meta>
+        </View>
 
-      {/* Preview */}
-      <Meta style={styles.preview} numberOfLines={1}>
-        {message.body}
-      </Meta>
+        {/* NEW badge for urgent items */}
+        {isUrgent && (
+          <View style={styles.newBadge}>
+            <Meta style={styles.newBadgeText}>{t('banner.urgent')}</Meta>
+          </View>
+        )}
 
-      {/* Arrow indicator - uses Icon primitive */}
-      <View style={styles.arrowContainer}>
-        <Icon name="chevron-right" size="sm" colorToken="chevron" />
-      </View>
-    </TouchableOpacity>
+        {/* Arrow indicator */}
+        <View style={styles.arrowContainer}>
+          <Icon
+            name="chevron-right"
+            size="md"
+            color={isUrgent ? 'white' : skin.colors.textPrimary}
+          />
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -119,45 +140,75 @@ export function BannerList({ banners }: BannerListProps): React.JSX.Element | nu
 
 const styles = StyleSheet.create({
   listContainer: {
-    gap: skin.spacing.sm,
-    marginBottom: skin.spacing.lg,
+    gap: skin.spacing.md,
+  },
+  // Wrapper for shadow + main banner
+  bannerWrapper: {
+    position: 'relative',
+  },
+  bannerShadow: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    width: '100%',
+    height: '100%',
+    backgroundColor: skin.colors.border,
+    zIndex: 0,
   },
   container: {
-    backgroundColor: skin.colors.warningBackground,
-    borderRadius: skin.borders.radiusCard,
+    backgroundColor: skin.colors.warningAccent, // Strong fill, not muted background
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
     padding: skin.spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    borderLeftWidth: skin.borders.widthHeavy,
-    borderLeftColor: skin.colors.warningAccent,
+    gap: skin.spacing.md,
+    zIndex: 1,
   },
   containerUrgent: {
-    backgroundColor: skin.colors.errorBackground,
-    borderLeftColor: skin.colors.urgent,
+    backgroundColor: skin.colors.urgent, // Red/terracotta for urgent
   },
-  urgentBadge: {
-    backgroundColor: skin.colors.urgent,
-    paddingHorizontal: skin.spacing.sm,
-    paddingVertical: skin.components.badge.paddingVertical,
-    borderRadius: skin.borders.radiusSmall,
-    marginRight: skin.spacing.sm,
+  // Icon box on left - bordered square
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  urgentText: {
-    color: skin.colors.urgentText,
+  iconBoxUrgent: {
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  // Text content
+  textContent: {
+    flex: 1,
   },
   title: {
-    flex: 1,
     color: skin.colors.textPrimary,
+    fontWeight: '700',
   },
   titleUrgent: {
-    color: skin.colors.errorText,
+    color: 'white',
   },
   preview: {
-    flex: 2,
-    marginLeft: skin.spacing.sm,
+    color: skin.colors.textMuted,
+    marginTop: skin.spacing.xs,
+  },
+  // NEW badge for urgent
+  newBadge: {
+    backgroundColor: skin.colors.border,
+    paddingHorizontal: skin.spacing.sm,
+    paddingVertical: skin.spacing.xs,
+  },
+  newBadgeText: {
+    color: 'white',
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
   arrowContainer: {
-    marginLeft: skin.spacing.sm,
+    // Icon handles sizing
   },
 });
 
