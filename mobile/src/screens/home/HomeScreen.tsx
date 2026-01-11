@@ -255,11 +255,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bannerSection: {
-    paddingHorizontal: skin.spacing.lg,
+    // Full-bleed: left edge flush, right edge has space for shadow offset
+    paddingLeft: 0,
+    paddingRight: 4, // Space for 4px shadow offset
     paddingTop: skin.spacing.md,
     paddingBottom: skin.spacing.sm,
-    // Extra right padding to accommodate shadow offset
-    paddingRight: skin.spacing.lg + 4,
   },
 
   // Hero Section - Full-width primary slab

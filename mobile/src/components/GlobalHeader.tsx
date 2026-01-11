@@ -72,13 +72,15 @@ export function GlobalHeader({
 
   return (
     <View style={styles.container}>
-      {/* Left: ALWAYS Hamburger Menu (back navigation via iOS swipe) */}
+      {/* Left: Hamburger Menu in yellow box (V1 poster style) */}
       <TouchableOpacity
         style={styles.leftButton}
         onPress={handleLeftPress}
         accessibilityLabel="Open menu"
       >
-        <Icon name="menu" size="md" colorToken="textPrimary" />
+        <View style={styles.menuIconBox}>
+          <Icon name="menu" size="md" colorToken="textPrimary" />
+        </View>
       </TouchableOpacity>
 
       {/* Center: Always "MOJ VIS" */}
@@ -86,7 +88,7 @@ export function GlobalHeader({
         <H2 style={styles.title}>MOJ VIS</H2>
       </View>
 
-      {/* Right: Inbox (hidden on inbox screens) */}
+      {/* Right: Inbox in blue box (hidden on inbox screens) */}
       <TouchableOpacity
         style={[styles.rightButton, !showInboxIcon && styles.hidden]}
         onPress={handleInboxPress}
@@ -94,8 +96,8 @@ export function GlobalHeader({
         disabled={!showInboxIcon}
       >
         {showInboxIcon && (
-          <View>
-            <Icon name="inbox" size="md" colorToken="textPrimary" />
+          <View style={styles.inboxIconBox}>
+            <Icon name="inbox" size="md" color="white" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Meta style={styles.badgeText}>
@@ -122,10 +124,18 @@ const styles = StyleSheet.create({
     borderBottomColor: skin.components.header.borderBottomColor,
   },
   leftButton: {
-    width: 44,
-    height: 44,
     justifyContent: 'center',
     alignItems: 'flex-start',
+  },
+  // Yellow icon box for menu (V1 poster style)
+  menuIconBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: skin.colors.warningAccent, // Yellow
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleContainer: {
     flex: 1,
@@ -135,20 +145,30 @@ const styles = StyleSheet.create({
     color: skin.colors.textPrimary,
   },
   rightButton: {
-    width: 44,
-    height: 44,
     justifyContent: 'center',
     alignItems: 'flex-end',
+  },
+  // Blue icon box for inbox (V1 poster style)
+  inboxIconBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: skin.colors.primary, // Blue
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   hidden: {
     opacity: 0,
   },
+  // Badge - square style for poster look
   badge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
+    top: -6,
+    right: -6,
     backgroundColor: skin.colors.urgent,
-    borderRadius: skin.borders.radiusPill,
+    borderWidth: skin.borders.widthHairline,
+    borderColor: skin.colors.border,
     minWidth: 20,
     height: 20,
     justifyContent: 'center',
@@ -157,6 +177,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: skin.colors.urgentText,
+    fontWeight: '700',
   },
 });
 
