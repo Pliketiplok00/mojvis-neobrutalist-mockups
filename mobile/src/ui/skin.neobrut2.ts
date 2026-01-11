@@ -43,7 +43,7 @@ const palette = {
 
   // Extended Mediterranean Palette
   lavender: hsl(270, 35, 70), // Feedback section
-  amber: hsl(35, 89, 55), // Banner fill - midpoint between accent(45) and orange(25)
+  amber: hsl(35, 83, 61), // Banner fill - #eeab4b
   orange: hsl(25, 85, 55), // Click-Fix section
   teal: hsl(180, 45, 42), // Catamaran transport
   pink: hsl(350, 50, 65), // Decorative accents
