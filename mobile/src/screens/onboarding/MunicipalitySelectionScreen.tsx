@@ -13,13 +13,14 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'MunicipalitySelection'>;
@@ -50,11 +51,11 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
       <View style={styles.content}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
           <Icon name="chevron-left" size="sm" colorToken="textMuted" />
-          <Text style={styles.backButtonText}>Natrag / Back</Text>
+          <Body style={styles.backButtonText}>Natrag / Back</Body>
         </TouchableOpacity>
 
-        <Text style={styles.title}>Odaberite općinu</Text>
-        <Text style={styles.subtitle}>Select your municipality</Text>
+        <H2 style={styles.title}>Odaberite općinu</H2>
+        <Body style={styles.subtitle}>Select your municipality</Body>
 
         <View style={styles.optionsContainer}>
           <TouchableOpacity
@@ -62,10 +63,10 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
             onPress={() => void handleMunicipalitySelect('vis')}
             accessibilityLabel="Vis"
           >
-            <Text style={styles.municipalityName}>Vis</Text>
-            <Text style={styles.municipalityDescription}>
+            <H1 style={styles.municipalityName}>Vis</H1>
+            <Label style={styles.municipalityDescription}>
               Grad Vis i okolica
-            </Text>
+            </Label>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -73,19 +74,19 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
             onPress={() => void handleMunicipalitySelect('komiza')}
             accessibilityLabel="Komiza"
           >
-            <Text style={styles.municipalityName}>Komiža</Text>
-            <Text style={styles.municipalityDescription}>
+            <H1 style={styles.municipalityName}>Komiža</H1>
+            <Label style={styles.municipalityDescription}>
               Grad Komiža i okolica
-            </Text>
+            </Label>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.hint}>
+        <Meta style={styles.hint}>
           Ovo određuje koje općinske obavijesti primate.
-        </Text>
-        <Text style={styles.hintEn}>
+        </Meta>
+        <Meta style={styles.hintEn}>
           This determines which municipal notifications you receive.
-        </Text>
+        </Meta>
       </View>
     </SafeAreaView>
   );
@@ -107,17 +108,12 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   backButtonText: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
   },
   title: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.xs,
   },
   subtitle: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
     marginBottom: skin.spacing.xxxl,
   },
@@ -132,24 +128,16 @@ const styles = StyleSheet.create({
     borderColor: skin.colors.borderLight,
   },
   municipalityName: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.sm,
   },
   municipalityDescription: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
   },
   hint: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textDisabled,
     textAlign: 'center',
     marginTop: skin.spacing.xxxl,
   },
   hintEn: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textDisabled,
     textAlign: 'center',
     fontStyle: 'italic',
   },

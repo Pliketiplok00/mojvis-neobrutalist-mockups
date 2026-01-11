@@ -14,13 +14,14 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { H2, Body, ButtonText, Label, Meta } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'UserModeSelection'>;
@@ -50,8 +51,8 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Kako koristite aplikaciju?</Text>
-        <Text style={styles.subtitle}>How do you use the app?</Text>
+        <H2 style={styles.title}>Kako koristite aplikaciju?</H2>
+        <Body style={styles.subtitle}>How do you use the app?</Body>
 
         <View style={styles.optionsContainer}>
           <TouchableOpacity
@@ -62,13 +63,13 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             <View style={styles.optionIconContainer}>
               <Icon name="globe" size="lg" colorToken="textPrimary" />
             </View>
-            <Text style={styles.optionTitle}>Posjetitelj / Visitor</Text>
-            <Text style={styles.optionDescription}>
+            <ButtonText style={styles.optionTitle}>Posjetitelj / Visitor</ButtonText>
+            <Label style={styles.optionDescription}>
               Turisticka posjeta otoku
-            </Text>
-            <Text style={styles.optionDescriptionEn}>
+            </Label>
+            <Meta style={styles.optionDescriptionEn}>
               Visiting the island as a tourist
-            </Text>
+            </Meta>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -79,22 +80,22 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             <View style={styles.optionIconContainer}>
               <Icon name="home" size="lg" colorToken="textPrimary" />
             </View>
-            <Text style={styles.optionTitle}>Lokalac / Local</Text>
-            <Text style={styles.optionDescription}>
+            <ButtonText style={styles.optionTitle}>Lokalac / Local</ButtonText>
+            <Label style={styles.optionDescription}>
               Živim ili radim na otoku
-            </Text>
-            <Text style={styles.optionDescriptionEn}>
+            </Label>
+            <Meta style={styles.optionDescriptionEn}>
               I live or work on the island
-            </Text>
+            </Meta>
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.hint}>
+        <Meta style={styles.hint}>
           Možete promijeniti kasnije u postavkama.
-        </Text>
-        <Text style={styles.hintEn}>
+        </Meta>
+        <Meta style={styles.hintEn}>
           You can change this later in settings.
-        </Text>
+        </Meta>
       </View>
     </SafeAreaView>
   );
@@ -111,13 +112,9 @@ const styles = StyleSheet.create({
     paddingTop: skin.spacing.xxxl,
   },
   title: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.xs,
   },
   subtitle: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textMuted,
     marginBottom: skin.spacing.xxxl,
   },
@@ -135,29 +132,19 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.md,
   },
   optionTitle: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.sm,
   },
   optionDescription: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
   },
   optionDescriptionEn: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textDisabled,
     fontStyle: 'italic',
   },
   hint: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textDisabled,
     textAlign: 'center',
     marginTop: skin.spacing.xxxl,
   },
   hintEn: {
-    fontSize: skin.typography.fontSize.md,
-    color: skin.colors.textDisabled,
     textAlign: 'center',
     fontStyle: 'italic',
   },

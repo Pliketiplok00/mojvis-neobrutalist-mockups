@@ -14,7 +14,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   ActivityIndicator,
@@ -29,6 +28,7 @@ import { feedbackApi } from '../../services/api';
 import type { FeedbackDetailResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
+import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'FeedbackDetail'>;
 
@@ -89,7 +89,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
+          <Body style={styles.loadingText}>{t('common.loading')}</Body>
         </View>
       </SafeAreaView>
     );
@@ -100,7 +100,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('feedback.detail.error')}</Text>
+          <Body style={styles.errorText}>{error || t('feedback.detail.error')}</Body>
         </View>
       </SafeAreaView>
     );
@@ -123,38 +123,38 @@ export function FeedbackDetailScreen(): React.JSX.Element {
         <View
           style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}
         >
-          <Text style={[styles.statusText, { color: statusColor.text }]}>
+          <ButtonText style={[styles.statusText, { color: statusColor.text }]}>
             {feedback.status_label}
-          </Text>
+          </ButtonText>
         </View>
 
         {/* Original Message */}
         <View style={styles.messageCard}>
-          <Text style={styles.subject}>{feedback.subject}</Text>
-          <Text style={styles.date}>{formatDate(feedback.created_at)}</Text>
-          <Text style={styles.body}>{feedback.body}</Text>
+          <H2 style={styles.subject}>{feedback.subject}</H2>
+          <Meta style={styles.date}>{formatDate(feedback.created_at)}</Meta>
+          <Body style={styles.body}>{feedback.body}</Body>
         </View>
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <Text style={styles.sectionTitle}>{t('feedback.detail.replies')}</Text>
+          <H2 style={styles.sectionTitle}>{t('feedback.detail.replies')}</H2>
 
           {feedback.replies.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
+              <Body style={styles.emptyText}>
                 {t('feedback.detail.noReplies')}
-              </Text>
+              </Body>
             </View>
           ) : (
             feedback.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Text style={styles.replyLabel}>Odgovor</Text>
-                  <Text style={styles.replyDate}>
+                  <Label style={styles.replyLabel}>Odgovor</Label>
+                  <Meta style={styles.replyDate}>
                     {formatDate(reply.created_at)}
-                  </Text>
+                  </Meta>
                 </View>
-                <Text style={styles.replyBody}>{reply.body}</Text>
+                <Body style={styles.replyBody}>{reply.body}</Body>
               </View>
             ))
           )}
@@ -183,7 +183,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: skin.spacing.md,
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
   },
   errorContainer: {
@@ -193,7 +192,6 @@ const styles = StyleSheet.create({
     padding: skin.spacing.xxl,
   },
   errorText: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.warningAccent,
     textAlign: 'center',
   },
@@ -205,8 +203,6 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.lg,
   },
   statusText: {
-    fontSize: skin.typography.fontSize.md,
-    fontWeight: skin.typography.fontWeight.semiBold,
   },
   messageCard: {
     backgroundColor: skin.colors.backgroundSecondary,
@@ -215,18 +211,12 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   subject: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.xs,
   },
   date: {
-    fontSize: skin.typography.fontSize.sm,
-    color: skin.colors.textMuted,
     marginBottom: skin.spacing.lg,
   },
   body: {
-    fontSize: skin.typography.fontSize.lg,
     color: skin.colors.textSecondary,
     lineHeight: 24,
   },
@@ -234,9 +224,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sectionTitle: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.md,
   },
   emptyState: {
@@ -246,7 +233,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textMuted,
     textAlign: 'center',
   },
@@ -265,17 +251,11 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    fontSize: skin.typography.fontSize.sm,
-    fontWeight: skin.typography.fontWeight.semiBold,
-    color: skin.colors.textPrimary,
     textTransform: 'uppercase',
   },
   replyDate: {
-    fontSize: skin.typography.fontSize.sm,
-    color: skin.colors.textMuted,
   },
   replyBody: {
-    fontSize: skin.typography.fontSize.md,
     color: skin.colors.textSecondary,
     lineHeight: 22,
   },
