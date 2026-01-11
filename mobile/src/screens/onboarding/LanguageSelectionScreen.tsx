@@ -8,14 +8,14 @@
  * - Selected language is stored locally
  * - Language can be changed later in Settings
  *
- * Phase 0: UI skeleton only, no logic.
- * Phase 5.1: Added navigation with language param.
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'LanguageSelection'>;
@@ -64,50 +64,50 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   logoContainer: {
-    marginBottom: 48,
+    marginBottom: skin.spacing.xxxl,
   },
   logoText: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.xxxl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    fontSize: skin.typography.fontSize.xxl,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginBottom: 48,
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.xxxl,
     textAlign: 'center',
   },
   buttonContainer: {
     width: '100%',
-    gap: 16,
+    gap: skin.spacing.lg,
   },
   languageButton: {
-    backgroundColor: '#000000',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    backgroundColor: skin.colors.textPrimary,
+    paddingVertical: skin.spacing.lg,
+    paddingHorizontal: skin.spacing.xxl,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
   },
   languageButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
+    color: skin.colors.background,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.semiBold,
   },
 });
 

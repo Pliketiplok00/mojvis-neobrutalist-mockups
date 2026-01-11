@@ -10,8 +10,7 @@
  * - Local users proceed to municipality selection
  * - Visitors go directly to Home
  *
- * Phase 0: UI skeleton only, no logic.
- * Phase 5.1: Added onboarding completion for visitors.
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no emoji).
  */
 
 import React from 'react';
@@ -20,6 +19,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'UserModeSelection'>;
@@ -58,7 +59,9 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             onPress={() => void handleModeSelect('visitor')}
             accessibilityLabel="Visitor"
           >
-            <Text style={styles.optionIcon}>🧳</Text>
+            <View style={styles.optionIconContainer}>
+              <Icon name="globe" size="lg" colorToken="textPrimary" />
+            </View>
             <Text style={styles.optionTitle}>Posjetitelj / Visitor</Text>
             <Text style={styles.optionDescription}>
               Turisticka posjeta otoku
@@ -73,7 +76,9 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             onPress={() => void handleModeSelect('local')}
             accessibilityLabel="Local resident"
           >
-            <Text style={styles.optionIcon}>🏠</Text>
+            <View style={styles.optionIconContainer}>
+              <Icon name="home" size="lg" colorToken="textPrimary" />
+            </View>
             <Text style={styles.optionTitle}>Lokalac / Local</Text>
             <Text style={styles.optionDescription}>
               Živim ili radim na otoku
@@ -98,62 +103,61 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
-    padding: 24,
-    paddingTop: 48,
+    padding: skin.spacing.xxl,
+    paddingTop: skin.spacing.xxxl,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    fontSize: skin.typography.fontSize.xxl,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginBottom: 32,
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.xxxl,
   },
   optionsContainer: {
-    gap: 16,
+    gap: skin.spacing.lg,
   },
   optionCard: {
-    backgroundColor: '#F5F5F5',
-    padding: 20,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
+    backgroundColor: skin.colors.backgroundSecondary,
+    padding: skin.spacing.xl,
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.borderLight,
   },
-  optionIcon: {
-    fontSize: 32,
-    marginBottom: 12,
+  optionIconContainer: {
+    marginBottom: skin.spacing.md,
   },
   optionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.sm,
   },
   optionDescription: {
-    fontSize: 14,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
   },
   optionDescriptionEn: {
-    fontSize: 14,
-    color: '#999999',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textDisabled,
     fontStyle: 'italic',
   },
   hint: {
-    fontSize: 14,
-    color: '#999999',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textDisabled,
     textAlign: 'center',
-    marginTop: 32,
+    marginTop: skin.spacing.xxxl,
   },
   hintEn: {
-    fontSize: 14,
-    color: '#BBBBBB',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textDisabled,
     textAlign: 'center',
     fontStyle: 'italic',
   },
