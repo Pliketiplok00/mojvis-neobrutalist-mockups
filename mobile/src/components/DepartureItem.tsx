@@ -9,6 +9,8 @@
  * Expanded state:
  * - Vertical timeline with stop times
  * - Only shows stops where vessel STOPS (no null times)
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState } from 'react';
@@ -22,6 +24,8 @@ import {
   UIManager,
 } from 'react-native';
 import type { DepartureResponse } from '../types/transport';
+import { skin } from '../ui/skin';
+import { Icon } from '../ui/Icon';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -70,7 +74,13 @@ export function DepartureItem({ departure }: DepartureItemProps): React.JSX.Elem
           )}
         </View>
         {hasStopTimes && (
-          <Text style={styles.expandIcon}>{expanded ? '−' : '+'}</Text>
+          <View style={styles.expandIconContainer}>
+            <Icon
+              name={expanded ? 'chevron-up' : 'chevron-down'}
+              size="md"
+              colorToken="textPrimary"
+            />
+          </View>
         )}
       </View>
 
@@ -115,56 +125,54 @@ export function DepartureItem({ departure }: DepartureItemProps): React.JSX.Elem
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
+    backgroundColor: skin.colors.backgroundTertiary,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
+    marginBottom: skin.spacing.sm,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   departureTime: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
     width: 70,
   },
   headerInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: skin.spacing.md,
   },
   destination: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.md,
+    fontWeight: skin.typography.fontWeight.medium,
+    color: skin.colors.textPrimary,
   },
   duration: {
-    fontSize: 12,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textMuted,
     marginTop: 2,
   },
-  expandIcon: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-    width: 24,
-    textAlign: 'center',
+  expandIconContainer: {
+    width: skin.icons.size.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   notes: {
-    fontSize: 12,
-    color: '#856404',
-    backgroundColor: '#FFF3CD',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginTop: 8,
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textPrimary,
+    backgroundColor: skin.colors.warningBackground,
+    paddingHorizontal: skin.spacing.sm,
+    paddingVertical: skin.spacing.xs,
+    borderRadius: skin.borders.radiusSmall,
+    marginTop: skin.spacing.sm,
   },
   timeline: {
-    marginTop: 16,
-    marginLeft: 8,
+    marginTop: skin.spacing.lg,
+    marginLeft: skin.spacing.sm,
   },
   timelineItem: {
     flexDirection: 'row',
@@ -178,44 +186,44 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#666666',
+    backgroundColor: skin.colors.textMuted,
   },
   timelineDotFirst: {
-    backgroundColor: '#000000',
+    backgroundColor: skin.colors.textPrimary,
     width: 12,
     height: 12,
     borderRadius: 6,
   },
   timelineDotLast: {
-    backgroundColor: '#000000',
+    backgroundColor: skin.colors.textPrimary,
     width: 12,
     height: 12,
     borderRadius: 6,
   },
   timelineLine: {
-    width: 2,
+    width: skin.borders.widthThin,
     flex: 1,
-    backgroundColor: '#CCCCCC',
-    marginTop: 4,
+    backgroundColor: skin.colors.borderMuted,
+    marginTop: skin.spacing.xs,
   },
   stopInfo: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginLeft: 12,
-    paddingBottom: 12,
+    marginLeft: skin.spacing.md,
+    paddingBottom: skin.spacing.md,
   },
   stopTime: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.md,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
     width: 50,
   },
   stopName: {
     flex: 1,
-    fontSize: 14,
-    color: '#333333',
-    marginLeft: 8,
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textSecondary,
+    marginLeft: skin.spacing.sm,
   },
 });
 

@@ -8,6 +8,8 @@
  * - Clicking a banner ALWAYS opens Inbox message detail
  * - Banners never open external links, filtered lists, or custom screens
  * - Banners are derived from Inbox messages (no separate content)
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React from 'react';
@@ -17,6 +19,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslations } from '../i18n';
 import type { InboxMessage } from '../types/inbox';
 import type { MainStackParamList } from '../navigation/types';
+import { skin } from '../ui/skin';
+import { Icon } from '../ui/Icon';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -66,8 +70,10 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
         {message.body}
       </Text>
 
-      {/* Arrow indicator */}
-      <Text style={styles.arrow}>›</Text>
+      {/* Arrow indicator - uses Icon primitive */}
+      <View style={styles.arrowContainer}>
+        <Icon name="chevron-right" size="sm" colorToken="chevron" />
+      </View>
     </TouchableOpacity>
   );
 }
@@ -112,53 +118,51 @@ export function BannerList({ banners }: BannerListProps): React.JSX.Element | nu
 
 const styles = StyleSheet.create({
   listContainer: {
-    gap: 8,
-    marginBottom: 16,
+    gap: skin.spacing.sm,
+    marginBottom: skin.spacing.lg,
   },
   container: {
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: skin.colors.warningBackground,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFC107',
+    borderLeftWidth: skin.borders.widthHeavy,
+    borderLeftColor: skin.colors.warningAccent,
   },
   containerUrgent: {
-    backgroundColor: '#F8D7DA',
-    borderLeftColor: '#DC3545',
+    backgroundColor: skin.colors.errorBackground,
+    borderLeftColor: skin.colors.urgent,
   },
   urgentBadge: {
-    backgroundColor: '#DC3545',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginRight: 8,
+    backgroundColor: skin.colors.urgent,
+    paddingHorizontal: skin.spacing.sm,
+    paddingVertical: skin.components.badge.paddingVertical,
+    borderRadius: skin.borders.radiusSmall,
+    marginRight: skin.spacing.sm,
   },
   urgentText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: 'bold',
+    color: skin.colors.urgentText,
+    fontSize: skin.typography.fontSize.xs,
+    fontWeight: skin.typography.fontWeight.bold,
   },
   title: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#856404',
+    fontSize: skin.typography.fontSize.md,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
   },
   titleUrgent: {
-    color: '#721C24',
+    color: skin.colors.errorText,
   },
   preview: {
     flex: 2,
-    fontSize: 12,
-    color: '#666666',
-    marginLeft: 8,
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textMuted,
+    marginLeft: skin.spacing.sm,
   },
-  arrow: {
-    fontSize: 20,
-    color: '#999999',
-    marginLeft: 8,
+  arrowContainer: {
+    marginLeft: skin.spacing.sm,
   },
 });
 

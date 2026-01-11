@@ -55,6 +55,7 @@ const borders = {
   widthHeavy: 4,
   radiusSharp: 0,
   radiusSoft: 4, // keep tiny rounding for small elements (badges)
+  radiusCard: 8, // standard card/container radius
   radiusPill: 9999, // fully rounded (pill shape for badges, buttons)
 };
 
@@ -161,6 +162,7 @@ export const colors = {
   // Borders
   border: borders.color,
   borderLight: hsla(220, 18, 10, 0.12),
+  borderMuted: hsla(220, 10, 50, 0.35), // Subtle connector lines, timelines
 
   // Interactive
   primary: palette.primary,
@@ -210,9 +212,11 @@ export const colors = {
 export const bordersToken = {
   widthThin: borders.widthThin,
   widthCard: borders.widthCard,
+  widthHeavy: borders.widthHeavy,
   radiusSmall: borders.radiusSoft,
   radiusMedium: borders.radiusSharp,
   radiusLarge: borders.radiusSharp,
+  radiusCard: borders.radiusCard,
   radiusPill: borders.radiusPill,
 } as const;
 
