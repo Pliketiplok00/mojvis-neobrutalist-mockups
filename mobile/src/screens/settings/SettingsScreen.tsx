@@ -8,6 +8,8 @@
  * - Language display
  * - User mode display
  * - Reset onboarding option
+ *
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React, { useState } from 'react';
@@ -26,6 +28,7 @@ import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
 import { useTranslations } from '../../i18n';
+import { skin } from '../../ui/skin';
 
 export function SettingsScreen(): React.JSX.Element {
   const { data, resetOnboarding } = useOnboarding();
@@ -101,8 +104,8 @@ export function SettingsScreen(): React.JSX.Element {
               value={isOptIn}
               onValueChange={handlePushToggle}
               disabled={isLoading || isUpdating || !isRegistered}
-              trackColor={{ false: '#D1D5DB', true: '#10B981' }}
-              thumbColor={Platform.OS === 'ios' ? undefined : '#FFFFFF'}
+              trackColor={{ false: skin.colors.borderLight, true: skin.colors.successAccent }}
+              thumbColor={Platform.OS === 'ios' ? undefined : skin.colors.background}
             />
           </View>
         </View>
@@ -168,30 +171,26 @@ export function SettingsScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: skin.colors.backgroundSecondary,
   },
   content: {
     flex: 1,
   },
   section: {
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 12,
-    borderWidth: 3,
-    borderColor: '#000000',
-    padding: 16,
-    shadowColor: '#000000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    backgroundColor: skin.colors.backgroundTertiary,
+    marginHorizontal: skin.spacing.lg,
+    marginTop: skin.spacing.lg,
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.lg,
+    ...skin.shadows.card,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 16,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: skin.typography.fontWeight.bold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.lg,
   },
   settingRow: {
     flexDirection: 'row',
@@ -200,63 +199,63 @@ const styles = StyleSheet.create({
   },
   settingInfo: {
     flex: 1,
-    marginRight: 16,
+    marginRight: skin.spacing.lg,
   },
   settingLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.xs,
   },
   settingDescription: {
-    fontSize: 14,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.md,
+    color: skin.colors.textMuted,
   },
   warningText: {
-    fontSize: 12,
-    color: '#F59E0B',
-    marginTop: 12,
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.warningAccent,
+    marginTop: skin.spacing.md,
     fontStyle: 'italic',
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: skin.spacing.md,
   },
   infoLabel: {
-    fontSize: 16,
-    color: '#666666',
+    fontSize: skin.typography.fontSize.lg,
+    color: skin.colors.textMuted,
   },
   infoValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.textPrimary,
   },
   separator: {
     height: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: skin.colors.borderLight,
   },
   dangerButton: {
-    backgroundColor: '#FEE2E2',
-    borderWidth: 2,
-    borderColor: '#EF4444',
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: skin.colors.errorBackground,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.urgent,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.md,
     alignItems: 'center',
   },
   dangerButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#DC2626',
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: skin.typography.fontWeight.semiBold,
+    color: skin.colors.errorText,
   },
   versionContainer: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: skin.spacing.xxl,
   },
   versionText: {
-    fontSize: 12,
-    color: '#9CA3AF',
+    fontSize: skin.typography.fontSize.sm,
+    color: skin.colors.textDisabled,
   },
 });
 
