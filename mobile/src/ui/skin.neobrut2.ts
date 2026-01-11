@@ -184,7 +184,7 @@ export const colors = {
   urgentText: "white",
 
   // Status - Warning (sun)
-  warningBackground: hsla(42, 95, 55, 0.22),
+  warningBackground: hsl(35, 83, 61), // #eeab4b
   warningText: palette.foreground,
   warningAccent: palette.accent, // Border/indicator for warning state
 
