@@ -20,9 +20,9 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
   RefreshControl,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
@@ -32,6 +32,7 @@ import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Meta } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
+import { LoadingState, ErrorState } from '../../ui/States';
 import { skin } from '../../ui/skin';
 import { useTranslations } from '../../i18n';
 import { transportApi } from '../../services/api';
@@ -154,10 +155,7 @@ export function LineDetailScreen({
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.textPrimary} />
-          <Label style={styles.loadingText}>{t('common.loading')}</Label>
-        </View>
+        <LoadingState message={t('common.loading')} />
       </SafeAreaView>
     );
   }
@@ -166,12 +164,11 @@ export function LineDetailScreen({
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Label style={styles.errorText}>{error || t('transport.lineDetail.notFound')}</Label>
-          <Button onPress={handleRefresh} style={styles.retryButton}>
-            {t('common.retry')}
-          </Button>
-        </View>
+        <ErrorState
+          message={error || t('transport.lineDetail.notFound')}
+          onRetry={handleRefresh}
+          retryLabel={t('common.retry')}
+        />
       </SafeAreaView>
     );
   }
@@ -350,28 +347,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: spacing.xxxl,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: spacing.md,
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xxl,
-  },
-  errorText: {
-    textAlign: 'center',
-    color: colors.textPrimary,
-    marginBottom: spacing.lg,
-  },
-  retryButton: {
-    marginTop: spacing.md,
   },
   headerSection: {
     padding: spacing.lg,

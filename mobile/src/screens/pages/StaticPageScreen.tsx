@@ -20,7 +20,6 @@ import {
   ScrollView,
   StyleSheet,
   SafeAreaView,
-  ActivityIndicator,
   TouchableOpacity,
   Image,
   Linking,
@@ -48,6 +47,7 @@ import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
+import { LoadingState, ErrorState } from '../../ui/States';
 
 type PageRouteProp = RouteProp<MainStackParamList, 'StaticPage'>;
 
@@ -124,10 +124,7 @@ export function StaticPageScreen(): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingState}>
-          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
-          <Label style={styles.loadingText}>{t('common.loading')}</Label>
-        </View>
+        <LoadingState message={t('common.loading')} />
       </SafeAreaView>
     );
   }
@@ -136,17 +133,11 @@ export function StaticPageScreen(): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container}>
         <GlobalHeader type="child" />
-        <View style={styles.errorState}>
-          <View style={styles.errorIconContainer}>
-            <Icon name="alert-triangle" size="lg" colorToken="textSecondary" />
-          </View>
-          <Label style={styles.errorTitle}>
-            {error || t('staticPage.notFound')}
-          </Label>
-          <Button variant="primary" onPress={handleRetry}>
-            {t('common.retry')}
-          </Button>
-        </View>
+        <ErrorState
+          message={error || t('staticPage.notFound')}
+          onRetry={handleRetry}
+          retryLabel={t('common.retry')}
+        />
       </SafeAreaView>
     );
   }
@@ -424,29 +415,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: skin.spacing.xxxl,
-  },
-  loadingState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: skin.spacing.md,
-    color: skin.colors.textMuted,
-  },
-  errorState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: skin.spacing.xxl,
-  },
-  errorIconContainer: {
-    marginBottom: skin.spacing.lg,
-  },
-  errorTitle: {
-    textAlign: 'center',
-    marginBottom: skin.spacing.lg,
-    color: skin.colors.textSecondary,
   },
   // Page Header
   pageHeader: {
