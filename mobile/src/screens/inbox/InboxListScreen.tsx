@@ -48,6 +48,8 @@ import {
   Meta,
   Icon,
 } from '../../ui';
+import { STATUS_COLORS } from '../../ui/utils/statusColors';
+import { formatDateShort } from '../../utils/dateFormat';
 
 // Combined sent item type
 interface CombinedSentItem {
@@ -64,14 +66,6 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 // Tab options
 type TabType = 'received' | 'sent';
-
-// Status colors - maps to skin badge variants
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: skin.colors.infoBackground, text: skin.colors.infoText },
-  u_razmatranju: { bg: skin.colors.pendingBackground, text: skin.colors.pendingText },
-  prihvaceno: { bg: skin.colors.successBackground, text: skin.colors.successText },
-  odbijeno: { bg: skin.colors.errorBackground, text: skin.colors.errorText },
-};
 
 export function InboxListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -227,7 +221,7 @@ export function InboxListScreen(): React.JSX.Element {
         </Body>
 
         {/* Date */}
-        <Meta>{formatDate(item.created_at)}</Meta>
+        <Meta>{formatDateShort(item.created_at)}</Meta>
       </ListRow>
     );
   };
@@ -286,7 +280,7 @@ export function InboxListScreen(): React.JSX.Element {
         )}
 
         {/* Date */}
-        <Meta>{formatDate(item.created_at)}</Meta>
+        <Meta>{formatDateShort(item.created_at)}</Meta>
       </ListRow>
     );
   };
@@ -403,17 +397,6 @@ export function InboxListScreen(): React.JSX.Element {
       )}
     </SafeAreaView>
   );
-}
-
-/**
- * Format date for display
- */
-function formatDate(isoString: string): string {
-  const date = new Date(isoString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
 }
 
 const styles = StyleSheet.create({

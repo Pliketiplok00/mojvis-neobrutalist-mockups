@@ -35,6 +35,7 @@ import { Icon } from '../../ui/Icon';
 import { skin } from '../../ui/skin';
 import { useTranslations } from '../../i18n';
 import { transportApi } from '../../services/api';
+import { formatDateISO, formatDisplayDate } from '../../utils/dateFormat';
 import type {
   TransportType,
   LineDetailResponse,
@@ -133,7 +134,7 @@ export function LineDetailScreen({
   const adjustDate = (days: number) => {
     const date = new Date(selectedDate);
     date.setDate(date.getDate() + days);
-    setSelectedDate(formatDateString(date));
+    setSelectedDate(formatDateISO(date));
   };
 
   const handlePhonePress = (phone: string) => {
@@ -329,22 +330,7 @@ export function LineDetailScreen({
 // Helper functions
 function getTodayString(): string {
   const today = new Date();
-  return formatDateString(today);
-}
-
-function formatDateString(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function formatDisplayDate(dateString: string): string {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${day}.${month}.${year}.`;
+  return formatDateISO(today);
 }
 
 function formatDuration(minutes: number): string {

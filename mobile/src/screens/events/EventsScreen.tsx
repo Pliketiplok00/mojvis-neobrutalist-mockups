@@ -36,23 +36,9 @@ import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
+import { formatEventTime } from '../../utils/dateFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
-
-/**
- * Format date for display (DD/MM/YYYY, HH:mm)
- */
-function formatDateTime(dateStr: string, isAllDay: boolean, allDayText: string): string {
-  const date = new Date(dateStr);
-  if (isAllDay) {
-    return allDayText;
-  }
-  return date.toLocaleTimeString('hr-HR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-}
 
 /**
  * Get date string in YYYY-MM-DD format
@@ -179,7 +165,7 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
     >
       <View style={styles.eventTime}>
         <Label style={styles.eventTimeText}>
-          {formatDateTime(event.start_datetime, event.is_all_day, allDayText)}
+          {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
         </Label>
       </View>
       <View style={styles.eventContent}>

@@ -28,17 +28,11 @@ import { feedbackApi } from '../../services/api';
 import type { FeedbackDetailResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
+import { STATUS_COLORS } from '../../ui/utils/statusColors';
 import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
+import { formatDateTimeCroatian } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'FeedbackDetail'>;
-
-// Status colors using semantic skin tokens
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: skin.colors.infoBackground, text: skin.colors.infoText },
-  u_razmatranju: { bg: skin.colors.pendingBackground, text: skin.colors.pendingText },
-  prihvaceno: { bg: skin.colors.successBackground, text: skin.colors.successText },
-  odbijeno: { bg: skin.colors.errorBackground, text: skin.colors.errorText },
-};
 
 export function FeedbackDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
@@ -72,16 +66,6 @@ export function FeedbackDetailScreen(): React.JSX.Element {
     setRefreshing(true);
     void fetchFeedback();
   }, [fetchFeedback]);
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day}.${month}.${year}. ${hours}:${minutes}`;
-  };
 
   if (loading) {
     return (
@@ -131,7 +115,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
         {/* Original Message */}
         <View style={styles.messageCard}>
           <H2 style={styles.subject}>{feedback.subject}</H2>
-          <Meta style={styles.date}>{formatDate(feedback.created_at)}</Meta>
+          <Meta style={styles.date}>{formatDateTimeCroatian(feedback.created_at)}</Meta>
           <Body style={styles.body}>{feedback.body}</Body>
         </View>
 
@@ -151,7 +135,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
                 <View style={styles.replyHeader}>
                   <Label style={styles.replyLabel}>Odgovor</Label>
                   <Meta style={styles.replyDate}>
-                    {formatDate(reply.created_at)}
+                    {formatDateTimeCroatian(reply.created_at)}
                   </Meta>
                 </View>
                 <Body style={styles.replyBody}>{reply.body}</Body>
