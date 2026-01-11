@@ -20,8 +20,8 @@ import {
   TouchableOpacity,
   Alert,
   Platform,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
@@ -78,7 +78,7 @@ export function SettingsScreen(): React.JSX.Element {
     : t('common.empty');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.content}>
