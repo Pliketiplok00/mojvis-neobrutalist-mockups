@@ -8,12 +8,14 @@
  * - Shows event details
  * - Reminder toggle (subscribe/unsubscribe)
  * - Share functionality (OS share sheet)
+ *
+ * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
+  Text as RNText,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -29,6 +31,8 @@ import { useTranslations } from '../../i18n';
 import { eventsApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
 
@@ -137,7 +141,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
+          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
         </View>
       </SafeAreaView>
     );
@@ -148,7 +152,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('eventDetail.notFound')}</Text>
+          <Label style={styles.errorText}>{error || t('eventDetail.notFound')}</Label>
         </View>
       </SafeAreaView>
     );
@@ -161,59 +165,59 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       <ScrollView style={styles.scrollView}>
         {/* Event Title */}
         <View style={styles.header}>
-          <Text style={styles.title}>{event.title}</Text>
+          <H1 style={styles.title}>{event.title}</H1>
         </View>
 
         {/* Date & Time */}
         <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>{t('eventDetail.time')}</Text>
-          <Text style={styles.infoValue}>{formatDate(event.start_datetime)}</Text>
+          <Meta style={styles.infoLabel}>{t('eventDetail.time')}</Meta>
+          <Body style={styles.infoValue}>{formatDate(event.start_datetime)}</Body>
           {event.is_all_day ? (
-            <Text style={styles.infoValueSecondary}>{t('events.allDay')}</Text>
+            <Label style={styles.infoValueSecondary}>{t('events.allDay')}</Label>
           ) : (
-            <Text style={styles.infoValueSecondary}>
+            <Label style={styles.infoValueSecondary}>
               {formatTime(event.start_datetime)}
               {event.end_datetime && ` - ${formatTime(event.end_datetime)}`}
-            </Text>
+            </Label>
           )}
         </View>
 
         {/* Location */}
         {event.location && (
           <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>{t('eventDetail.location')}</Text>
-            <Text style={styles.infoValue}>{event.location}</Text>
+            <Meta style={styles.infoLabel}>{t('eventDetail.location')}</Meta>
+            <Body style={styles.infoValue}>{event.location}</Body>
           </View>
         )}
 
         {/* Description */}
         {event.description && (
           <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>{t('eventDetail.description')}</Text>
-            <Text style={styles.description}>{event.description}</Text>
+            <Meta style={styles.infoLabel}>{t('eventDetail.description')}</Meta>
+            <Body style={styles.description}>{event.description}</Body>
           </View>
         )}
 
         {/* Reminder Toggle */}
         <View style={styles.reminderSection}>
           <View style={styles.reminderInfo}>
-            <Text style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</Text>
-            <Text style={styles.reminderHint}>
+            <ButtonText style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</ButtonText>
+            <Meta style={styles.reminderHint}>
               {t('eventDetail.reminder.active')}
-            </Text>
+            </Meta>
           </View>
           <Switch
             value={subscribed}
             onValueChange={handleToggleReminder}
             disabled={subscribing}
-            trackColor={{ false: '#E0E0E0', true: '#000000' }}
-            thumbColor="#FFFFFF"
+            trackColor={{ false: skin.colors.borderLight, true: skin.colors.textPrimary }}
+            thumbColor={skin.colors.background}
           />
         </View>
 
         {/* Share Button */}
         <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <Text style={styles.shareButtonText}>Podijeli dogadaj</Text>
+          <ButtonText style={styles.shareButtonText}>{t('eventDetail.share')}</ButtonText>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -223,7 +227,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
@@ -237,52 +241,43 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   errorText: {
-    fontSize: 16,
-    color: '#FF0000',
     textAlign: 'center',
+    color: skin.colors.errorText,
   },
 
   // Header
   header: {
-    padding: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: '#000000',
+    padding: skin.spacing.lg,
+    borderBottomWidth: skin.borders.widthThin,
+    borderBottomColor: skin.colors.border,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
+    // Inherited from H1 primitive
   },
 
   // Info sections
   infoSection: {
-    padding: 16,
+    padding: skin.spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    borderBottomColor: skin.colors.borderLight,
   },
   infoLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666666',
     textTransform: 'uppercase',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
+    fontFamily: skin.typography.fontFamily.body.bold,
   },
   infoValue: {
-    fontSize: 16,
-    color: '#000000',
     textTransform: 'capitalize',
+    color: skin.colors.textPrimary,
   },
   infoValueSecondary: {
-    fontSize: 14,
-    color: '#333333',
     marginTop: 2,
+    color: skin.colors.textSecondary,
   },
   description: {
-    fontSize: 15,
-    color: '#333333',
     lineHeight: 22,
   },
 
@@ -290,39 +285,33 @@ const styles = StyleSheet.create({
   reminderSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-    margin: 16,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#000000',
+    padding: skin.spacing.lg,
+    backgroundColor: skin.colors.backgroundSecondary,
+    margin: skin.spacing.lg,
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
   },
   reminderInfo: {
     flex: 1,
   },
   reminderLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    // Inherited from ButtonText primitive
   },
   reminderHint: {
-    fontSize: 12,
-    color: '#666666',
     marginTop: 2,
   },
 
   // Share button
   shareButton: {
-    backgroundColor: '#000000',
-    margin: 16,
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: skin.colors.textPrimary,
+    margin: skin.spacing.lg,
+    padding: skin.spacing.lg,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
   },
   shareButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    color: skin.colors.background,
   },
 });
 

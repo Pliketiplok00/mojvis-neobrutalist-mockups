@@ -9,12 +9,14 @@
  * - Days with events are visually marked
  * - Selected day shows event list below
  * - Events ordered chronologically
+ *
+ * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
+  Text as RNText,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -32,6 +34,9 @@ import { eventsApi, inboxApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -119,14 +124,14 @@ function Calendar({
           ]}
           onPress={() => onSelectDate(date)}
         >
-          <Text
+          <Label
             style={[
               styles.calendarDayText,
               isSelected && styles.calendarDayTextSelected,
             ]}
           >
             {day}
-          </Text>
+          </Label>
           {hasEvents && <View style={styles.eventDot} />}
         </TouchableOpacity>
       );
@@ -139,21 +144,21 @@ function Calendar({
     <View style={styles.calendar}>
       <View style={styles.calendarHeader}>
         <TouchableOpacity onPress={prevMonth} style={styles.calendarNav}>
-          <Text style={styles.calendarNavText}>{'<'}</Text>
+          <Icon name="chevron-left" size="md" colorToken="textPrimary" />
         </TouchableOpacity>
-        <Text style={styles.calendarTitle}>
+        <H2 style={styles.calendarTitle}>
           {monthNames[month]} {year}
-        </Text>
+        </H2>
         <TouchableOpacity onPress={nextMonth} style={styles.calendarNav}>
-          <Text style={styles.calendarNavText}>{'>'}</Text>
+          <Icon name="chevron-right" size="md" colorToken="textPrimary" />
         </TouchableOpacity>
       </View>
 
       <View style={styles.calendarDayNames}>
         {dayNames.map((name) => (
-          <Text key={name} style={styles.calendarDayName}>
+          <Meta key={name} style={styles.calendarDayName}>
             {name}
-          </Text>
+          </Meta>
         ))}
       </View>
 
@@ -174,21 +179,21 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
       onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
     >
       <View style={styles.eventTime}>
-        <Text style={styles.eventTimeText}>
+        <Label style={styles.eventTimeText}>
           {formatDateTime(event.start_datetime, event.is_all_day, allDayText)}
-        </Text>
+        </Label>
       </View>
       <View style={styles.eventContent}>
-        <Text style={styles.eventTitle} numberOfLines={2}>
+        <ButtonText style={styles.eventTitle} numberOfLines={2}>
           {event.title}
-        </Text>
+        </ButtonText>
         {event.location && (
-          <Text style={styles.eventLocation} numberOfLines={1}>
+          <Meta style={styles.eventLocation} numberOfLines={1}>
             {event.location}
-          </Text>
+          </Meta>
         )}
       </View>
-      <Text style={styles.eventArrow}>{'>'}</Text>
+      <Icon name="chevron-right" size="sm" colorToken="chevron" />
     </TouchableOpacity>
   );
 }
@@ -305,7 +310,7 @@ export function EventsScreen(): React.JSX.Element {
 
         {/* Section title */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('events.title')}</Text>
+          <H1 style={styles.sectionTitle}>{t('events.title')}</H1>
         </View>
 
         {/* Calendar */}
@@ -319,26 +324,26 @@ export function EventsScreen(): React.JSX.Element {
 
         {/* Selected day events */}
         <View style={styles.section}>
-          <Text style={styles.selectedDateTitle}>
+          <ButtonText style={styles.selectedDateTitle}>
             {selectedDate.toLocaleDateString('hr-HR', {
               weekday: 'long',
               day: 'numeric',
               month: 'long',
               year: 'numeric',
             })}
-          </Text>
+          </ButtonText>
 
           {loading && (
-            <ActivityIndicator size="large" color="#000000" style={styles.loader} />
+            <ActivityIndicator size="large" color={skin.colors.textPrimary} style={styles.loader} />
           )}
 
-          {error && <Text style={styles.errorText}>{error}</Text>}
+          {error && <Label style={styles.errorText}>{error}</Label>}
 
           {!loading && !error && events.length === 0 && (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>
+              <Label style={styles.emptyStateText}>
                 {t('events.noEvents')}
-              </Text>
+              </Label>
             </View>
           )}
 
@@ -354,74 +359,58 @@ export function EventsScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   bannerSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: skin.spacing.lg,
+    paddingTop: skin.spacing.lg,
   },
   section: {
-    padding: 16,
+    padding: skin.spacing.lg,
   },
   sectionTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   sectionSubtitle: {
-    fontSize: 14,
-    color: '#666666',
+    // Inherited from Meta primitive
   },
   selectedDateTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
     textTransform: 'capitalize',
   },
 
   // Calendar styles
   calendar: {
-    backgroundColor: '#F5F5F5',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#000000',
+    backgroundColor: skin.colors.backgroundSecondary,
+    margin: skin.spacing.lg,
+    padding: skin.spacing.lg,
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
   },
   calendarHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   calendarNav: {
-    padding: 8,
-  },
-  calendarNavText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
+    padding: skin.spacing.sm,
   },
   calendarTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+    // Inherited from H2 primitive
   },
   calendarDayNames: {
     flexDirection: 'row',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   calendarDayName: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666666',
+    fontFamily: skin.typography.fontFamily.body.bold,
   },
   calendarGrid: {
     flexDirection: 'row',
@@ -435,88 +424,75 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   calendarDayToday: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 20,
+    backgroundColor: skin.colors.borderLight,
+    borderRadius: skin.borders.radiusPill,
   },
   calendarDaySelected: {
-    backgroundColor: '#000000',
-    borderRadius: 20,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusPill,
   },
   calendarDayText: {
-    fontSize: 14,
-    color: '#000000',
+    color: skin.colors.textPrimary,
   },
   calendarDayTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+    color: skin.colors.background,
+    fontFamily: skin.typography.fontFamily.body.bold,
   },
   eventDot: {
     position: 'absolute',
-    bottom: 4,
+    bottom: skin.spacing.xs,
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#FF0000',
+    backgroundColor: skin.colors.urgent,
   },
 
   // Event list styles
   eventItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
+    marginBottom: skin.spacing.md,
   },
   eventTime: {
     width: 60,
-    marginRight: 12,
+    marginRight: skin.spacing.md,
   },
   eventTimeText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000000',
+    fontFamily: skin.typography.fontFamily.body.bold,
+    color: skin.colors.textPrimary,
   },
   eventContent: {
     flex: 1,
   },
   eventTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   eventLocation: {
-    fontSize: 12,
-    color: '#666666',
-  },
-  eventArrow: {
-    fontSize: 18,
-    color: '#000000',
-    marginLeft: 8,
+    // Inherited from Meta primitive
   },
 
   // States
   loader: {
-    marginTop: 24,
+    marginTop: skin.spacing.xxl,
   },
   errorText: {
-    fontSize: 14,
-    color: '#FF0000',
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: skin.spacing.lg,
+    color: skin.colors.errorText,
   },
   emptyState: {
-    backgroundColor: '#F5F5F5',
-    padding: 24,
-    borderRadius: 8,
+    backgroundColor: skin.colors.backgroundSecondary,
+    padding: skin.spacing.xxl,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
   },
   emptyStateText: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
 });
 
