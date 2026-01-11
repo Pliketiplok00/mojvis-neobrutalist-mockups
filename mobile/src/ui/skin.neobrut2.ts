@@ -19,33 +19,41 @@ const hsl = (h: number, s: number, l: number) => `hsl(${h} ${s}% ${l}%)`;
 const hsla = (h: number, s: number, l: number, a: number) =>
   `hsla(${h} ${s}% ${l}% / ${a})`;
 
-// Mediterranean Neobrut palette (more visible than "almost white")
+// Mediterranean Neobrut palette - ALIGNED TO V1 DESIGN SYSTEM
 const palette = {
-  // Paper/sand background — clearly not pure white
-  background: hsl(45, 28, 93),
-  foreground: hsl(220, 18, 10), // ink black
+  // Core Background & Foreground (from V1 design system)
+  background: hsl(45, 30, 96), // Warm cream/sand
+  foreground: hsl(220, 20, 10), // Near-black
 
   // Surfaces
-  surface: hsl(45, 22, 97), // cards
-  surfaceAlt: hsl(45, 14, 88), // muted panels / sections
+  surface: hsl(45, 25, 98), // cards (--card)
+  surfaceAlt: hsl(45, 15, 90), // muted panels / sections (--muted)
 
   // Text
-  mutedText: hsl(220, 10, 34),
+  mutedText: hsl(220, 10, 40), // --muted-foreground
 
-  // Accents (Mediterranean)
-  primary: hsl(210, 85, 40), // deep sea blue
-  secondary: hsl(155, 45, 34), // olive
-  accent: hsl(42, 95, 55), // sun yellow
+  // Primary - Mediterranean Blue
+  primary: hsl(210, 80, 45),
+  // Secondary - Olive Green
+  secondary: hsl(160, 45, 38),
+  // Accent - Sun Yellow
+  accent: hsl(45, 92, 55),
+  // Destructive - Terracotta Red
+  destructive: hsl(12, 55, 50),
 
-  destructive: hsl(12, 62, 48), // terracotta
+  // Extended Mediterranean Palette
+  lavender: hsl(270, 35, 70), // Feedback section
+  orange: hsl(25, 85, 55), // Click-Fix section
+  teal: hsl(180, 45, 42), // Catamaran transport
+  pink: hsl(350, 50, 65), // Decorative accents
 
   // UI extras
   chevron: hsl(220, 10, 50),
   typeBadge: hsl(270, 40, 52),
-  unreadIndicator: hsl(210, 85, 40),
+  unreadIndicator: hsl(210, 80, 45), // matches primary
 
   // Link color
-  link: hsl(210, 85, 40), // same as primary for consistency
+  link: hsl(210, 80, 45), // same as primary for consistency
 };
 
 const borders = {
@@ -54,10 +62,10 @@ const borders = {
   widthThin: 2,
   widthCard: 3,
   widthHeavy: 4,
-  radiusSharp: 0,
-  radiusSoft: 4, // keep tiny rounding for small elements (badges)
-  radiusCard: 8, // standard card/container radius
-  radiusPill: 9999, // fully rounded (pill shape for badges, buttons)
+  radiusSharp: 0, // neobrutalist: sharp corners everywhere
+  radiusSoft: 4, // small elements (badges) - per design system --radius-soft
+  radiusCard: 0, // cards/containers: sharp corners (neobrutalist principle)
+  radiusPill: 9999, // fully rounded (pill shape)
 };
 
 const spacing = {
@@ -204,8 +212,14 @@ export const colors = {
   typeBadge: palette.typeBadge,
   chevron: palette.chevron,
 
+  // Extended Mediterranean (feature-specific)
+  lavender: palette.lavender, // Feedback section
+  orange: palette.orange, // Click-Fix section
+  teal: palette.teal, // Catamaran transport
+  pink: palette.pink, // Decorative accents
+
   // Optional overlay
-  overlay: hsla(220, 18, 10, 0.6),
+  overlay: hsla(220, 20, 10, 0.6),
 
   // Test watermark (if still present somewhere)
   testWatermarkBg: borders.color,
@@ -218,10 +232,11 @@ export const bordersToken = {
   widthThin: borders.widthThin,
   widthCard: borders.widthCard,
   widthHeavy: borders.widthHeavy,
+  radiusSharp: borders.radiusSharp, // neobrutalist: 0
   radiusSmall: borders.radiusSoft,
   radiusMedium: borders.radiusSharp,
-  radiusLarge: borders.radiusSharp,
-  radiusCard: borders.radiusCard,
+  radiusLarge: borders.radiusSharp, // neobrutalist: 0
+  radiusCard: borders.radiusCard, // neobrutalist: 0
   radiusPill: borders.radiusPill,
 } as const;
 
@@ -249,6 +264,14 @@ export const shadows = {
 
 // ---- Component tokens (match existing usage pattern) ----
 export const components = {
+  header: {
+    height: 64, // design system: h-16 = 64px
+    borderBottomWidth: bordersToken.widthHeavy, // design system: border-b-4
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+  },
+
   screen: {
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
@@ -277,8 +300,8 @@ export const components = {
     primary: {
       backgroundColor: colors.primary,
       textColor: colors.primaryText,
-      borderWidth: 0,
-      borderColor: "transparent",
+      borderWidth: bordersToken.widthThin, // design system: border-2 border-foreground
+      borderColor: colors.border,
     },
     secondary: {
       backgroundColor: colors.background,
@@ -311,7 +334,9 @@ export const components = {
   badge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: bordersToken.radiusSmall,
+    borderRadius: bordersToken.radiusSharp, // neobrutalist: sharp corners
+    borderWidth: bordersToken.widthThin, // design system: border-2 border-foreground
+    borderColor: colors.border,
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
   },
