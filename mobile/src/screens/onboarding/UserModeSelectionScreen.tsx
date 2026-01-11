@@ -14,13 +14,14 @@
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
+import { Card } from '../../ui/Card';
 import { H2, Body, ButtonText, Label, Meta } from '../../ui/Text';
 
 type Props = {
@@ -55,8 +56,8 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
         <Body style={styles.subtitle}>How do you use the app?</Body>
 
         <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.optionCard}
+          <Card
+            variant="selection"
             onPress={() => void handleModeSelect('visitor')}
             accessibilityLabel="Visitor"
           >
@@ -70,10 +71,10 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             <Meta style={styles.optionDescriptionEn}>
               Visiting the island as a tourist
             </Meta>
-          </TouchableOpacity>
+          </Card>
 
-          <TouchableOpacity
-            style={styles.optionCard}
+          <Card
+            variant="selection"
             onPress={() => void handleModeSelect('local')}
             accessibilityLabel="Local resident"
           >
@@ -87,7 +88,7 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             <Meta style={styles.optionDescriptionEn}>
               I live or work on the island
             </Meta>
-          </TouchableOpacity>
+          </Card>
         </View>
 
         <Meta style={styles.hint}>
@@ -120,13 +121,6 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     gap: skin.spacing.lg,
-  },
-  optionCard: {
-    backgroundColor: skin.colors.backgroundSecondary,
-    padding: skin.spacing.xl,
-    borderRadius: skin.borders.radiusCard,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.borderLight,
   },
   optionIconContainer: {
     marginBottom: skin.spacing.md,
