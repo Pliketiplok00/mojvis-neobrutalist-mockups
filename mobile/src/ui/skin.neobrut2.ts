@@ -506,6 +506,29 @@ export const components = {
       noteTextColor: colors.textSecondary,
     },
 
+    // Overview header (poster-style header for Sea/Road overview screens)
+    overviewHeader: {
+      // Full-bleed header slab (edge-to-edge)
+      padding: spacing.lg,
+      borderBottomWidth: bordersToken.widthHeavy,
+      borderBottomColor: colors.border,
+
+      // Backgrounds per transport type
+      backgroundSea: palette.primary,
+      backgroundRoad: palette.secondary,
+
+      // Icon box (square container for icon)
+      iconBoxSize: 48,
+      iconBoxBackground: colors.background,
+      iconBoxBorderWidth: bordersToken.widthThin,
+      iconBoxBorderColor: colors.border,
+      iconBoxGap: spacing.md,
+
+      // Text styling (white on colored background)
+      titleColor: colors.primaryText,
+      subtitleColor: 'rgba(255, 255, 255, 0.85)',
+    },
+
     // Lines list (poster-style cards)
     list: {
       // Line card (poster card with shadow)
@@ -521,14 +544,24 @@ export const components = {
       lineCardShadowOffsetY: 4,
       lineCardShadowColor: colors.border,
 
-      // Today departure row (stacked grey cards)
+      // Chevron container (right side affordance)
+      lineCardChevronSize: 32,
+      lineCardChevronGap: spacing.sm,
+
+      // Today departure row (poster-style time block)
       departureRowBackground: colors.backgroundSecondary,
       departureRowBorderWidth: bordersToken.widthThin,
       departureRowBorderColor: colors.border,
       departureRowRadius: bordersToken.radiusSharp,
       departureRowPadding: spacing.md,
       departureRowGap: spacing.sm,
-      departureTimeWidth: 56,
+
+      // Time block in departure row
+      todayTimeBlockWidth: 64,
+      todayTimeBlockPadding: spacing.sm,
+      todayTimeBlockBackground: colors.background,
+      todayTimeBlockBorderWidth: bordersToken.widthThin,
+      todayTimeBlockBorderColor: colors.border,
     },
 
     // Line Detail screen tokens (V1 poster style)

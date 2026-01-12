@@ -9,11 +9,11 @@
  * - NO opcenito, kultura, or municipal-only messages
  *
  * Sections:
- * - A: Lines list
- * - B: Today's departures (aggregated)
- * - C: (Contacts shown in line detail)
+ * - Header: Poster-style header with icon box
+ * - A: Lines list (poster cards)
+ * - B: Today's departures (grey rows with time block)
  *
- * Phase 3A: Migrated to skin primitives (100% skin-adopted).
+ * Phase 4B: Aligned to V1 mockup with poster header and improved cards.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -21,7 +21,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
   Pressable,
   ActivityIndicator,
   RefreshControl,
@@ -46,7 +45,17 @@ import type { MainStackParamList } from '../../navigation/types';
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 const { colors, spacing, borders, components } = skin;
+const overviewHeader = components.transport.overviewHeader;
 const listTokens = components.transport.list;
+
+/**
+ * Format time string (HH:MM or HH:MM:SS) to HH:MM display format
+ * Fixes the bug where time breaks into two lines
+ */
+function formatTime(time: string): string {
+  const parts = time.split(':');
+  return `${parts[0]}:${parts[1]}`;
+}
 
 export function SeaTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -93,7 +102,7 @@ export function SeaTransportScreen(): React.JSX.Element {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [userContext]);
+  }, [userContext, t]);
 
   useEffect(() => {
     void fetchData();
@@ -139,22 +148,29 @@ export function SeaTransportScreen(): React.JSX.Element {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Banners */}
+        {/* Full-bleed Banners */}
         {banners.length > 0 && (
           <View style={styles.bannerSection}>
             <BannerList banners={banners} />
           </View>
         )}
 
-        {/* Title */}
-        <View style={styles.titleSection}>
-          <H1>{t('transport.sea.title')}</H1>
-          {dayType && (
-            <Meta style={styles.dayInfo}>
-              {DAY_TYPE_LABELS[dayType]}
-              {isHoliday && ` (${t('transport.holiday')})`}
-            </Meta>
-          )}
+        {/* Poster Header Slab */}
+        <View style={styles.headerSlab}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerIconBox}>
+              <Icon name="ship" size="lg" colorToken="textPrimary" />
+            </View>
+            <View style={styles.headerTextContainer}>
+              <H1 style={styles.headerTitle}>{t('transport.sea.title')}</H1>
+              {dayType && (
+                <Meta style={styles.headerMeta}>
+                  {DAY_TYPE_LABELS[dayType]}
+                  {isHoliday && ` (${t('transport.holiday')})`}
+                </Meta>
+              )}
+            </View>
+          </View>
         </View>
 
         {error && (
@@ -187,25 +203,31 @@ export function SeaTransportScreen(): React.JSX.Element {
                 <View style={styles.lineCardShadow} />
                 {/* Main card */}
                 <View style={styles.lineCard}>
-                  <View style={styles.lineHeader}>
-                    <Label style={styles.lineName} numberOfLines={2}>
-                      {line.name}
-                    </Label>
-                    {line.subtype && (
-                      <Badge variant="default">{line.subtype}</Badge>
-                    )}
-                  </View>
-                  <Meta numberOfLines={1} style={styles.lineStops}>
-                    {line.stops_summary}
-                  </Meta>
-                  <View style={styles.lineFooter}>
-                    <Meta>
-                      {line.stops_count} {t('transport.stations')}
-                      {line.typical_duration_minutes
-                        ? ` • ${formatDuration(line.typical_duration_minutes)}`
-                        : ''}
-                    </Meta>
-                    <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
+                  <View style={styles.lineCardBody}>
+                    {/* Left content */}
+                    <View style={styles.lineCardContent}>
+                      <View style={styles.lineHeader}>
+                        <Label style={styles.lineName} numberOfLines={2}>
+                          {line.name}
+                        </Label>
+                        {line.subtype && (
+                          <Badge variant="default">{line.subtype}</Badge>
+                        )}
+                      </View>
+                      <Meta numberOfLines={1} style={styles.lineStops}>
+                        {line.stops_summary}
+                      </Meta>
+                      <Meta style={styles.lineMeta}>
+                        {line.stops_count} {t('transport.stations')}
+                        {line.typical_duration_minutes
+                          ? ` • ${formatDuration(line.typical_duration_minutes)}`
+                          : ''}
+                      </Meta>
+                    </View>
+                    {/* Right chevron */}
+                    <View style={styles.lineCardChevron}>
+                      <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+                    </View>
                   </View>
                 </View>
               </Pressable>
@@ -231,7 +253,13 @@ export function SeaTransportScreen(): React.JSX.Element {
                   ]}
                   onPress={() => handleLinePress(dep.line_id)}
                 >
-                  <Label style={styles.departureTime}>{dep.departure_time}</Label>
+                  {/* Time block */}
+                  <View style={styles.departureTimeBlock}>
+                    <Label style={styles.departureTime} numberOfLines={1}>
+                      {formatTime(dep.departure_time)}
+                    </Label>
+                  </View>
+                  {/* Info */}
                   <View style={styles.departureInfo}>
                     <Label style={styles.departureLine} numberOfLines={1}>
                       {dep.line_name}
@@ -269,21 +297,48 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: spacing.md,
   },
+
+  // Full-bleed banners (no horizontal padding)
   bannerSection: {
-    // Full-bleed banners (no horizontal padding) like HomeScreen
     paddingHorizontal: 0,
     paddingTop: 0,
   },
-  titleSection: {
-    padding: spacing.lg,
-    paddingBottom: spacing.sm,
+
+  // Poster Header Slab (full-bleed, colored background)
+  headerSlab: {
+    backgroundColor: overviewHeader.backgroundSea,
+    padding: overviewHeader.padding,
+    borderBottomWidth: overviewHeader.borderBottomWidth,
+    borderBottomColor: overviewHeader.borderBottomColor,
   },
-  dayInfo: {
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIconBox: {
+    width: overviewHeader.iconBoxSize,
+    height: overviewHeader.iconBoxSize,
+    backgroundColor: overviewHeader.iconBoxBackground,
+    borderWidth: overviewHeader.iconBoxBorderWidth,
+    borderColor: overviewHeader.iconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: overviewHeader.iconBoxGap,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    color: overviewHeader.titleColor,
+  },
+  headerMeta: {
+    color: overviewHeader.subtitleColor,
     marginTop: spacing.xs,
   },
+
   section: {
     padding: spacing.lg,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.lg,
   },
   sectionTitle: {
     marginBottom: spacing.md,
@@ -334,6 +389,13 @@ const styles = StyleSheet.create({
   lineCardPressed: {
     opacity: 0.7,
   },
+  lineCardBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  lineCardContent: {
+    flex: 1,
+  },
   lineHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -349,13 +411,18 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     color: colors.textSecondary,
   },
-  lineFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  lineMeta: {
+    color: colors.textSecondary,
+  },
+  lineCardChevron: {
+    width: listTokens.lineCardChevronSize,
+    height: listTokens.lineCardChevronSize,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: listTokens.lineCardChevronGap,
   },
 
-  // Today's departures (stacked grey rows)
+  // Today's departures (grey rows with time block)
   departuresList: {
     gap: listTokens.departureRowGap,
   },
@@ -366,19 +433,29 @@ const styles = StyleSheet.create({
     borderWidth: listTokens.departureRowBorderWidth,
     borderColor: listTokens.departureRowBorderColor,
     borderRadius: listTokens.departureRowRadius,
-    padding: listTokens.departureRowPadding,
+    overflow: 'hidden',
   },
   departureRowPressed: {
     opacity: 0.7,
   },
+  departureTimeBlock: {
+    width: listTokens.todayTimeBlockWidth,
+    backgroundColor: listTokens.todayTimeBlockBackground,
+    borderRightWidth: listTokens.todayTimeBlockBorderWidth,
+    borderRightColor: listTokens.todayTimeBlockBorderColor,
+    paddingVertical: listTokens.departureRowPadding,
+    paddingHorizontal: listTokens.todayTimeBlockPadding,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   departureTime: {
     color: colors.textPrimary,
     fontWeight: '700',
-    width: listTokens.departureTimeWidth,
   },
   departureInfo: {
     flex: 1,
-    marginLeft: spacing.md,
+    paddingVertical: listTokens.departureRowPadding,
+    paddingHorizontal: spacing.md,
   },
   departureLine: {
     color: colors.textPrimary,
