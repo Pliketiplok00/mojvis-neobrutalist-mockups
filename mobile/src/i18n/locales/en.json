@@ -166,6 +166,7 @@
       "SUN": "Sunday",
       "PRAZNIK": "Holiday"
     },
+    "note": "Timetables are updated automatically. For the latest information, check the official carrier websites.",
     "lineDetail": {
       "departures": "Departures",
       "route": "Route",

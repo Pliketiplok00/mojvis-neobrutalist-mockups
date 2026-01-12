@@ -462,6 +462,50 @@ export const components = {
       descriptionLineHeight: 22, // Keep same value, now tokenized
     },
   },
+  // Transport Hub screen component tokens (V1 poster style)
+  transport: {
+    // Banner container - full-bleed (edge-to-edge)
+    bannerContainerPaddingHorizontal: 0,
+    bannerContainerPaddingTop: 0,
+
+    // Transport type tiles (poster-style)
+    tiles: {
+      // Tile container
+      tileBorderWidth: bordersToken.widthCard,
+      tileBorderColor: colors.border,
+      tileRadius: bordersToken.radiusSharp, // Sharp corners (poster)
+      tilePadding: spacing.lg,
+      tileGap: spacing.md, // Vertical spacing between tiles
+
+      // Tile backgrounds (semantic colors)
+      tileSeaBackground: palette.primary, // Blue for sea
+      tileRoadBackground: palette.secondary, // Green for road
+
+      // Text styling
+      tileTitleColor: colors.primaryText, // White text on colored bg
+      tileSubtitleColor: 'rgba(255, 255, 255, 0.85)',
+
+      // Icon box (square container for icon)
+      tileIconBoxSize: 48,
+      tileIconBoxBorderWidth: bordersToken.widthThin,
+      tileIconBoxBorderColor: colors.border,
+      tileIconBoxBackground: colors.background,
+
+      // Arrow affordance
+      tileArrowSize: icons.size.lg,
+      tileArrowColor: colors.primaryText, // White
+    },
+
+    // Bottom note info box
+    note: {
+      noteBorderWidth: bordersToken.widthThin,
+      noteBorderColor: colors.border,
+      noteBackground: colors.background,
+      notePadding: spacing.lg,
+      noteRadius: bordersToken.radiusSharp, // Sharp corners (poster)
+      noteTextColor: colors.textSecondary,
+    },
+  },
 } as const;
 
 // ---- Final skin object ----

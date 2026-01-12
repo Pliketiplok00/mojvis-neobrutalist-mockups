@@ -166,6 +166,7 @@
       "SUN": "Nedjelja",
       "PRAZNIK": "Praznik"
     },
+    "note": "Vozni redovi se automatski azuriraju. Za najnovije informacije provjerite sluzbene stranice prijevoznika.",
     "lineDetail": {
       "departures": "Polasci",
       "route": "Ruta",
