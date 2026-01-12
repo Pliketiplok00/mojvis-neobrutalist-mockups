@@ -35,6 +35,8 @@ export interface Event {
   end_datetime: Date | null;
   location_hr: string | null;
   location_en: string | null;
+  organizer_hr: string;
+  organizer_en: string;
   is_all_day: boolean;
   image_url: string | null;
   created_at: Date;
@@ -51,6 +53,7 @@ export interface EventResponse {
   start_datetime: string;
   end_datetime: string | null;
   location: string | null;
+  organizer: string;
   is_all_day: boolean;
   image_url: string | null;
   created_at: string;
@@ -80,6 +83,8 @@ export interface AdminEventResponse {
   end_datetime: string | null;
   location_hr: string | null;
   location_en: string | null;
+  organizer_hr: string;
+  organizer_en: string;
   is_all_day: boolean;
   image_url: string | null;
   created_at: string;

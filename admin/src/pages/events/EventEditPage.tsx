@@ -43,6 +43,8 @@ export function EventEditPage() {
   const [endTime, setEndTime] = useState('');
   const [locationHr, setLocationHr] = useState('');
   const [locationEn, setLocationEn] = useState('');
+  const [organizerHr, setOrganizerHr] = useState('Grad Vis');
+  const [organizerEn, setOrganizerEn] = useState('Municipality of Vis');
   const [isAllDay, setIsAllDay] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
 
@@ -75,6 +77,8 @@ export function EventEditPage() {
     setDescriptionEn(event.description_en || '');
     setLocationHr(event.location_hr || '');
     setLocationEn(event.location_en || '');
+    setOrganizerHr(event.organizer_hr);
+    setOrganizerEn(event.organizer_en);
     setIsAllDay(event.is_all_day);
     setImageUrl(event.image_url || '');
 
@@ -107,6 +111,14 @@ export function EventEditPage() {
       setError('Datum početka je obavezan.');
       return;
     }
+    if (!organizerHr.trim()) {
+      setError('Organizator (HR) je obavezan.');
+      return;
+    }
+    if (!organizerEn.trim()) {
+      setError('Organizator (EN) je obavezan.');
+      return;
+    }
     if (!isValidImageUrl(imageUrl)) {
       setError('URL slike mora biti HTTP ili HTTPS URL.');
       return;
@@ -133,6 +145,8 @@ export function EventEditPage() {
       end_datetime: endDatetime,
       location_hr: locationHr.trim() || null,
       location_en: locationEn.trim() || null,
+      organizer_hr: organizerHr.trim(),
+      organizer_en: organizerEn.trim(),
       is_all_day: isAllDay,
       image_url: imageUrl.trim() || null,
     };
@@ -303,6 +317,34 @@ export function EventEditPage() {
               onChange={(e) => setLocationEn(e.target.value)}
               style={styles.input}
               placeholder="Enter location in English"
+            />
+          </div>
+
+          {/* Organizer HR */}
+          <div style={styles.formGroup}>
+            <label style={styles.label}>
+              Organizator (HR) <span style={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              value={organizerHr}
+              onChange={(e) => setOrganizerHr(e.target.value)}
+              style={styles.input}
+              placeholder="Unesite organizatora na hrvatskom"
+            />
+          </div>
+
+          {/* Organizer EN */}
+          <div style={styles.formGroup}>
+            <label style={styles.label}>
+              Organizator (EN) <span style={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              value={organizerEn}
+              onChange={(e) => setOrganizerEn(e.target.value)}
+              style={styles.input}
+              placeholder="Enter organizer in English"
             />
           </div>
 
