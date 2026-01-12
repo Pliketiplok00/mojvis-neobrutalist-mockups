@@ -183,6 +183,7 @@ export const colors = {
   // Interactive
   primary: palette.primary,
   primaryText: "white",
+  primaryTextMuted: hsla(0, 0, 100, 0.85), // White at 85% opacity for subtitles on colored surfaces
 
   // Links
   link: palette.link,
@@ -417,6 +418,21 @@ export const components = {
     emptyStatePadding: spacing.xxl,
     emptyStateBorderRadius: bordersToken.radiusSharp,
 
+    // Event list card (clickable poster box)
+    card: {
+      // Border styling (matches canonical clickable box)
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      background: colors.background,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      // Dual-layer offset shadow (poster style)
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+    },
+
     // Event Detail screen tokens (V1 poster style)
     detail: {
       // Hero image (optional)
@@ -468,32 +484,46 @@ export const components = {
     bannerContainerPaddingHorizontal: 0,
     bannerContainerPaddingTop: 0,
 
-    // Transport type tiles (poster-style)
+    // Transport type tiles (poster slab style)
     tiles: {
       // Tile container
       tileBorderWidth: bordersToken.widthCard,
       tileBorderColor: colors.border,
       tileRadius: bordersToken.radiusSharp, // Sharp corners (poster)
-      tilePadding: spacing.lg,
       tileGap: spacing.md, // Vertical spacing between tiles
 
       // Tile backgrounds (semantic colors)
       tileSeaBackground: palette.primary, // Blue for sea
       tileRoadBackground: palette.secondary, // Green for road
 
+      // Poster slab shadow (dual-layer offset)
+      tileShadowOffsetX: 4,
+      tileShadowOffsetY: 4,
+      tileShadowColor: colors.border,
+
+      // Left icon slab (full height section)
+      tileIconSlabWidth: 64,
+      tileIconSlabPadding: spacing.md,
+
+      // Vertical divider between icon slab and content
+      tileDividerWidth: bordersToken.widthThin,
+      tileDividerColor: colors.border,
+
+      // Content slab (right section with text)
+      tileContentPadding: spacing.md,
+
       // Text styling
       tileTitleColor: colors.primaryText, // White text on colored bg
-      tileSubtitleColor: 'rgba(255, 255, 255, 0.85)',
+      tileTitleFontSize: typography.fontSize.xl, // 18px - stronger title
+      tileTitleFontFamily: typography.fontFamily.body.bold, // Bold weight
+      tileSubtitleColor: colors.primaryTextMuted, // White at 85% opacity
 
-      // Icon box (square container for icon)
-      tileIconBoxSize: 48,
-      tileIconBoxBorderWidth: bordersToken.widthThin,
-      tileIconBoxBorderColor: colors.border,
-      tileIconBoxBackground: colors.background,
+      // Icon on colored surface
+      tileIconColor: colors.primaryText, // White icon
 
-      // Arrow affordance
-      tileArrowSize: icons.size.lg,
-      tileArrowColor: colors.primaryText, // White
+      // Chevron affordance (muted on colored surface)
+      tileChevronColor: colors.primaryTextMuted,
+      tileChevronPaddingRight: spacing.md,
     },
 
     // Bottom note info box
@@ -693,6 +723,70 @@ export const components = {
       contactCardBorderColor: colors.border,
       contactCardBackground: colors.background,
       contactCardRadius: bordersToken.radiusSharp,
+    },
+  },
+
+  // Inbox screen component tokens (V1 poster style)
+  inbox: {
+    // Poster-style tabs
+    tabs: {
+      borderBottomWidth: bordersToken.widthCard,
+      borderBottomColor: colors.border,
+      // Active tab (filled)
+      activeBackground: palette.primary,
+      activeTextColor: colors.primaryText,
+      activeBorderWidth: bordersToken.widthThin,
+      activeBorderColor: colors.border,
+      // Inactive tab
+      inactiveBackground: colors.background,
+      inactiveTextColor: colors.textPrimary,
+      inactiveBorderWidth: bordersToken.widthThin,
+      inactiveBorderColor: colors.border,
+      // Layout
+      tabPadding: spacing.md,
+      tabGap: spacing.sm,
+      iconGap: spacing.sm,
+    },
+
+    // List item (poster-style row)
+    listItem: {
+      // Container
+      background: colors.background,
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      marginHorizontal: spacing.lg,
+      // Dual-layer shadow
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+      // Icon slab (left)
+      iconSlabSize: 44,
+      iconSlabBorderWidth: bordersToken.widthThin,
+      iconSlabBorderColor: colors.border,
+      iconSlabGap: spacing.md,
+      // Icon slab backgrounds by type
+      iconSlabBackgroundDefault: colors.backgroundSecondary,
+      iconSlabBackgroundUrgent: palette.destructive,
+      iconSlabBackgroundTransport: palette.primary,
+      iconSlabBackgroundCulture: palette.lavender,
+      iconSlabBackgroundGeneral: palette.secondary,
+      // Text styling
+      titleMarginBottom: spacing.xs,
+      snippetMarginBottom: spacing.xs,
+      // NEW badge
+      newBadgeBackground: palette.primary,
+      newBadgeTextColor: colors.primaryText,
+      newBadgePadding: spacing.xs,
+      newBadgeBorderWidth: bordersToken.widthThin,
+      newBadgeBorderColor: colors.border,
+      // Chevron box
+      chevronBoxSize: 32,
+      chevronBoxBackground: colors.backgroundSecondary,
+      chevronBoxBorderWidth: bordersToken.widthThin,
+      chevronBoxBorderColor: colors.border,
     },
   },
 } as const;

@@ -87,43 +87,63 @@ export function TransportHubScreen(): React.JSX.Element {
           <H1>{t('transport.hub.title')}</H1>
         </View>
 
-        {/* Transport Type Selection - Poster Tiles */}
+        {/* Transport Type Selection - Poster Slab Tiles */}
         <View style={styles.tilesContainer}>
           {/* Road Transport Tile */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('RoadTransport')}
-            activeOpacity={0.8}
-            style={[styles.tile, styles.tileRoad]}
-            accessibilityRole="button"
-            accessibilityLabel={t('transport.hub.road')}
-          >
-            <View style={styles.tileIconBox}>
-              <Icon name="bus" size="lg" colorToken="textPrimary" />
-            </View>
-            <View style={styles.tileTextContainer}>
-              <Label style={styles.tileTitle}>{t('transport.hub.road')}</Label>
-              <Meta style={styles.tileSubtitle}>{t('transport.hub.roadDescription')}</Meta>
-            </View>
-            <Icon name="chevron-right" size="lg" color={tiles.tileArrowColor} />
-          </TouchableOpacity>
+          <View style={styles.tileWrapper}>
+            <View style={styles.tileShadow} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('RoadTransport')}
+              activeOpacity={0.8}
+              style={[styles.tile, styles.tileRoad]}
+              accessibilityRole="button"
+              accessibilityLabel={t('transport.hub.road')}
+            >
+              {/* Left icon slab */}
+              <View style={styles.tileIconSlab}>
+                <Icon name="bus" size="lg" colorToken="primaryText" />
+              </View>
+              {/* Vertical divider */}
+              <View style={styles.tileDivider} />
+              {/* Content slab */}
+              <View style={styles.tileContent}>
+                <Label style={styles.tileTitle}>{t('transport.hub.road')}</Label>
+                <Meta style={styles.tileSubtitle}>{t('transport.hub.roadDescription')}</Meta>
+              </View>
+              {/* Chevron */}
+              <View style={styles.tileChevron}>
+                <Icon name="chevron-right" size="md" colorToken="primaryTextMuted" />
+              </View>
+            </TouchableOpacity>
+          </View>
 
           {/* Sea Transport Tile */}
-          <TouchableOpacity
-            onPress={() => navigation.navigate('SeaTransport')}
-            activeOpacity={0.8}
-            style={[styles.tile, styles.tileSea]}
-            accessibilityRole="button"
-            accessibilityLabel={t('transport.hub.sea')}
-          >
-            <View style={styles.tileIconBox}>
-              <Icon name="ship" size="lg" colorToken="textPrimary" />
-            </View>
-            <View style={styles.tileTextContainer}>
-              <Label style={styles.tileTitle}>{t('transport.hub.sea')}</Label>
-              <Meta style={styles.tileSubtitle}>{t('transport.hub.seaDescription')}</Meta>
-            </View>
-            <Icon name="chevron-right" size="lg" color={tiles.tileArrowColor} />
-          </TouchableOpacity>
+          <View style={styles.tileWrapper}>
+            <View style={styles.tileShadow} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SeaTransport')}
+              activeOpacity={0.8}
+              style={[styles.tile, styles.tileSea]}
+              accessibilityRole="button"
+              accessibilityLabel={t('transport.hub.sea')}
+            >
+              {/* Left icon slab */}
+              <View style={styles.tileIconSlab}>
+                <Icon name="ship" size="lg" colorToken="primaryText" />
+              </View>
+              {/* Vertical divider */}
+              <View style={styles.tileDivider} />
+              {/* Content slab */}
+              <View style={styles.tileContent}>
+                <Label style={styles.tileTitle}>{t('transport.hub.sea')}</Label>
+                <Meta style={styles.tileSubtitle}>{t('transport.hub.seaDescription')}</Meta>
+              </View>
+              {/* Chevron */}
+              <View style={styles.tileChevron}>
+                <Icon name="chevron-right" size="md" colorToken="primaryTextMuted" />
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Bottom Note Info Box */}
@@ -156,20 +176,36 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
 
-  // Poster Tiles Container
+  // Poster Slab Tiles Container
   tilesContainer: {
     paddingHorizontal: spacing.lg,
     gap: tiles.tileGap,
   },
 
-  // Base Tile Style
+  // Tile wrapper for shadow layer
+  tileWrapper: {
+    position: 'relative',
+  },
+
+  // Offset shadow (dual-layer poster effect)
+  tileShadow: {
+    position: 'absolute',
+    top: tiles.tileShadowOffsetY,
+    left: tiles.tileShadowOffsetX,
+    right: -tiles.tileShadowOffsetX,
+    bottom: -tiles.tileShadowOffsetY,
+    backgroundColor: tiles.tileShadowColor,
+    borderRadius: tiles.tileRadius,
+  },
+
+  // Base Tile Style (poster slab)
   tile: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: tiles.tilePadding,
+    alignItems: 'stretch',
     borderWidth: tiles.tileBorderWidth,
     borderColor: tiles.tileBorderColor,
     borderRadius: tiles.tileRadius,
+    overflow: 'hidden',
   },
 
   // Road Transport Tile (Green)
@@ -182,30 +218,43 @@ const styles = StyleSheet.create({
     backgroundColor: tiles.tileSeaBackground,
   },
 
-  // Icon Box (square container)
-  tileIconBox: {
-    width: tiles.tileIconBoxSize,
-    height: tiles.tileIconBoxSize,
-    backgroundColor: tiles.tileIconBoxBackground,
-    borderWidth: tiles.tileIconBoxBorderWidth,
-    borderColor: tiles.tileIconBoxBorderColor,
+  // Left icon slab (full height)
+  tileIconSlab: {
+    width: tiles.tileIconSlabWidth,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.lg,
+    padding: tiles.tileIconSlabPadding,
   },
 
-  tileTextContainer: {
+  // Vertical divider between icon and content
+  tileDivider: {
+    width: tiles.tileDividerWidth,
+    backgroundColor: tiles.tileDividerColor,
+  },
+
+  // Content slab (text + chevron area)
+  tileContent: {
     flex: 1,
+    justifyContent: 'center',
+    padding: tiles.tileContentPadding,
   },
 
   tileTitle: {
     color: tiles.tileTitleColor,
+    fontSize: tiles.tileTitleFontSize,
+    fontFamily: tiles.tileTitleFontFamily,
     textTransform: 'uppercase',
     marginBottom: spacing.xs,
   },
 
   tileSubtitle: {
     color: tiles.tileSubtitleColor,
+  },
+
+  // Chevron container
+  tileChevron: {
+    justifyContent: 'center',
+    paddingRight: tiles.tileChevronPaddingRight,
   },
 
   // Bottom Note Info Box
