@@ -506,6 +506,31 @@ export const components = {
       noteTextColor: colors.textSecondary,
     },
 
+    // Lines list (poster-style cards)
+    list: {
+      // Line card (poster card with shadow)
+      lineCardBorderWidth: bordersToken.widthCard,
+      lineCardBorderColor: colors.border,
+      lineCardBackground: colors.background,
+      lineCardRadius: bordersToken.radiusSharp,
+      lineCardPadding: spacing.lg,
+      lineCardGap: spacing.md,
+
+      // Shadow offset for line cards
+      lineCardShadowOffsetX: 4,
+      lineCardShadowOffsetY: 4,
+      lineCardShadowColor: colors.border,
+
+      // Today departure row (stacked grey cards)
+      departureRowBackground: colors.backgroundSecondary,
+      departureRowBorderWidth: bordersToken.widthThin,
+      departureRowBorderColor: colors.border,
+      departureRowRadius: bordersToken.radiusSharp,
+      departureRowPadding: spacing.md,
+      departureRowGap: spacing.sm,
+      departureTimeWidth: 56,
+    },
+
     // Line Detail screen tokens (V1 poster style)
     lineDetail: {
       // Header slab (colored poster band)
@@ -526,11 +551,11 @@ export const components = {
       headerTitleColor: colors.primaryText, // White on colored bg
       headerMetaColor: 'rgba(255, 255, 255, 0.85)',
 
-      // Date selector card
+      // Date selector card (YELLOW poster button per mockup)
       dateSelectorPadding: spacing.lg,
       dateSelectorBorderWidth: bordersToken.widthCard,
       dateSelectorBorderColor: colors.border,
-      dateSelectorBackground: colors.background,
+      dateSelectorBackground: palette.accent, // Yellow per mockup
       dateSelectorRadius: bordersToken.radiusSharp,
       dateSelectorArrowSize: 44,
 

@@ -21,7 +21,7 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
@@ -30,7 +30,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
-import { Card } from '../../ui/Card';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Meta } from '../../ui/Text';
@@ -45,7 +44,8 @@ import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
-const { colors, spacing, typography } = skin;
+const { colors, spacing, borders, components } = skin;
+const listTokens = components.transport.list;
 
 export function RoadTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -174,32 +174,40 @@ export function RoadTransportScreen(): React.JSX.Element {
             </View>
           ) : (
             lines.map((line) => (
-              <Card
+              <Pressable
                 key={line.id}
                 onPress={() => handleLinePress(line.id)}
-                style={styles.lineCard}
+                style={({ pressed }) => [
+                  styles.lineCardWrapper,
+                  pressed && styles.lineCardPressed,
+                ]}
               >
-                <View style={styles.lineHeader}>
-                  <Label style={styles.lineName} numberOfLines={2}>
-                    {line.name}
-                  </Label>
-                  {line.subtype && (
-                    <Badge variant="default">{line.subtype}</Badge>
-                  )}
-                </View>
-                <Meta numberOfLines={1} style={styles.lineStops}>
-                  {line.stops_summary}
-                </Meta>
-                <View style={styles.lineFooter}>
-                  <Meta>
-                    {line.stops_count} {t('transport.stations')}
-                    {line.typical_duration_minutes
-                      ? ` • ${formatDuration(line.typical_duration_minutes)}`
-                      : ''}
+                {/* Shadow layer */}
+                <View style={styles.lineCardShadow} />
+                {/* Main card */}
+                <View style={styles.lineCard}>
+                  <View style={styles.lineHeader}>
+                    <Label style={styles.lineName} numberOfLines={2}>
+                      {line.name}
+                    </Label>
+                    {line.subtype && (
+                      <Badge variant="default">{line.subtype}</Badge>
+                    )}
+                  </View>
+                  <Meta numberOfLines={1} style={styles.lineStops}>
+                    {line.stops_summary}
                   </Meta>
-                  <Icon name="chevron-right" size="sm" stroke="regular" colorToken="chevron" />
+                  <View style={styles.lineFooter}>
+                    <Meta>
+                      {line.stops_count} {t('transport.stations')}
+                      {line.typical_duration_minutes
+                        ? ` • ${formatDuration(line.typical_duration_minutes)}`
+                        : ''}
+                    </Meta>
+                    <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
+                  </View>
                 </View>
-              </Card>
+              </Pressable>
             ))
           )}
         </View>
@@ -212,24 +220,28 @@ export function RoadTransportScreen(): React.JSX.Element {
               <Label>{t('transport.noDepartures')}</Label>
             </View>
           ) : (
-            todaysDepartures.slice(0, 10).map((dep, index) => (
-              <TouchableOpacity
-                key={`${dep.line_id}-${dep.departure_time}-${index}`}
-                style={styles.departureCard}
-                onPress={() => handleLinePress(dep.line_id)}
-                activeOpacity={0.7}
-              >
-                <Label style={styles.departureTime}>{dep.departure_time}</Label>
-                <View style={styles.departureInfo}>
-                  <Label style={styles.departureLine} numberOfLines={1}>
-                    {dep.line_name}
-                  </Label>
-                  <Meta numberOfLines={1}>
-                    {dep.direction_label}
-                  </Meta>
-                </View>
-              </TouchableOpacity>
-            ))
+            <View style={styles.departuresList}>
+              {todaysDepartures.slice(0, 10).map((dep, index) => (
+                <Pressable
+                  key={`${dep.line_id}-${dep.departure_time}-${index}`}
+                  style={({ pressed }) => [
+                    styles.departureRow,
+                    pressed && styles.departureRowPressed,
+                  ]}
+                  onPress={() => handleLinePress(dep.line_id)}
+                >
+                  <Label style={styles.departureTime}>{dep.departure_time}</Label>
+                  <View style={styles.departureInfo}>
+                    <Label style={styles.departureLine} numberOfLines={1}>
+                      {dep.line_name}
+                    </Label>
+                    <Meta style={styles.departureDirection} numberOfLines={1}>
+                      {dep.direction_label}
+                    </Meta>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
           )}
         </View>
       </ScrollView>
@@ -257,8 +269,9 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   bannerSection: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    // Full-bleed banners (no horizontal padding) like HomeScreen
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
   titleSection: {
     padding: spacing.lg,
@@ -278,8 +291,9 @@ const styles = StyleSheet.create({
     margin: spacing.lg,
     padding: spacing.lg,
     backgroundColor: colors.warningBackground,
-    borderRadius: spacing.sm,
     alignItems: 'center',
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
   },
   errorText: {
     textAlign: 'center',
@@ -291,11 +305,33 @@ const styles = StyleSheet.create({
   emptyState: {
     padding: spacing.xxl,
     backgroundColor: colors.backgroundSecondary,
-    borderRadius: spacing.sm,
     alignItems: 'center',
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+  },
+
+  // Line card (poster-style with shadow)
+  lineCardWrapper: {
+    position: 'relative',
+    marginBottom: listTokens.lineCardGap,
+  },
+  lineCardShadow: {
+    position: 'absolute',
+    top: listTokens.lineCardShadowOffsetY,
+    left: listTokens.lineCardShadowOffsetX,
+    right: -listTokens.lineCardShadowOffsetX,
+    bottom: -listTokens.lineCardShadowOffsetY,
+    backgroundColor: listTokens.lineCardShadowColor,
   },
   lineCard: {
-    marginBottom: spacing.md,
+    backgroundColor: listTokens.lineCardBackground,
+    borderWidth: listTokens.lineCardBorderWidth,
+    borderColor: listTokens.lineCardBorderColor,
+    borderRadius: listTokens.lineCardRadius,
+    padding: listTokens.lineCardPadding,
+  },
+  lineCardPressed: {
+    opacity: 0.7,
   },
   lineHeader: {
     flexDirection: 'row',
@@ -310,23 +346,34 @@ const styles = StyleSheet.create({
   },
   lineStops: {
     marginBottom: spacing.sm,
+    color: colors.textSecondary,
   },
   lineFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  departureCard: {
+
+  // Today's departures (stacked grey rows)
+  departuresList: {
+    gap: listTokens.departureRowGap,
+  },
+  departureRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: spacing.sm,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
+    backgroundColor: listTokens.departureRowBackground,
+    borderWidth: listTokens.departureRowBorderWidth,
+    borderColor: listTokens.departureRowBorderColor,
+    borderRadius: listTokens.departureRowRadius,
+    padding: listTokens.departureRowPadding,
+  },
+  departureRowPressed: {
+    opacity: 0.7,
   },
   departureTime: {
     color: colors.textPrimary,
-    width: 60,
+    fontWeight: '700',
+    width: listTokens.departureTimeWidth,
   },
   departureInfo: {
     flex: 1,
@@ -334,6 +381,10 @@ const styles = StyleSheet.create({
   },
   departureLine: {
     color: colors.textPrimary,
+  },
+  departureDirection: {
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
   },
 });
 

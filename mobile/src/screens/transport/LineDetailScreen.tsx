@@ -30,14 +30,17 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { BannerList } from '../../components/Banner';
 import { DepartureItem } from '../../components/DepartureItem';
 import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
 import { skin } from '../../ui/skin';
+import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
-import { transportApi } from '../../services/api';
+import { inboxApi, transportApi } from '../../services/api';
 import { formatDateISO, formatDisplayDate } from '../../utils/dateFormat';
+import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
   LineDetailResponse,
@@ -59,6 +62,7 @@ export function LineDetailScreen({
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
   const { t } = useTranslations();
+  const userContext = useUserContext();
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
     MON: t('transport.dayTypes.MON'),
@@ -71,6 +75,7 @@ export function LineDetailScreen({
     PRAZNIK: t('transport.dayTypes.PRAZNIK'),
   };
 
+  const [banners, setBanners] = useState<InboxMessage[]>([]);
   const [lineDetailData, setLineDetailData] = useState<LineDetailResponse | null>(null);
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
@@ -89,12 +94,16 @@ export function LineDetailScreen({
     ? lineDetail.timeBlockBackgroundSea
     : lineDetail.timeBlockBackgroundRoad;
 
-  // Fetch line detail
+  // Fetch line detail and banners
   const fetchLineDetail = useCallback(async () => {
     setError(null);
     try {
-      const detail = await transportApi.getLine(transportType, lineId);
+      const [detail, bannersRes] = await Promise.all([
+        transportApi.getLine(transportType, lineId),
+        inboxApi.getActiveBanners(userContext, 'transport'),
+      ]);
       setLineDetailData(detail);
+      setBanners(bannersRes.banners);
     } catch (err) {
       console.error('[LineDetail] Error fetching line:', err);
       setError(t('transport.lineDetail.error'));
@@ -102,7 +111,7 @@ export function LineDetailScreen({
       setLoading(false);
       setRefreshing(false);
     }
-  }, [lineId, transportType, t]);
+  }, [lineId, transportType, userContext, t]);
 
   // Fetch departures for selected date and direction
   const fetchDepartures = useCallback(async () => {
@@ -214,6 +223,13 @@ export function LineDetailScreen({
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
+        {/* Full-bleed Banners */}
+        {banners.length > 0 && (
+          <View style={styles.bannerSection}>
+            <BannerList banners={banners} />
+          </View>
+        )}
+
         {/* Poster Header Slab */}
         <View style={[styles.headerSlab, { backgroundColor: headerBackground }]}>
           <View style={styles.headerContent}>
@@ -481,6 +497,12 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: spacing.xxxl,
+  },
+
+  // Full-bleed banners (no horizontal padding)
+  bannerSection: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
 
   // Poster Header Slab
