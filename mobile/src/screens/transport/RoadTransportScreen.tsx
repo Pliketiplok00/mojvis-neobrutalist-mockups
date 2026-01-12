@@ -10,10 +10,10 @@
  *
  * Sections:
  * - Header: Poster-style header with icon box
- * - A: Lines list (poster cards)
- * - B: Today's departures (grey rows with time block)
+ * - A: Lines list (heavy poster cards with boxed chevron)
+ * - B: Today's departures (stacked set with dividers)
  *
- * Phase 4B: Aligned to V1 mockup with poster header and improved cards.
+ * Phase 4C: Polished to V1 mockup with heavy borders + stacked rows.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -137,6 +137,8 @@ export function RoadTransportScreen(): React.JSX.Element {
     );
   }
 
+  const visibleDepartures = todaysDepartures.slice(0, 10);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
@@ -206,7 +208,8 @@ export function RoadTransportScreen(): React.JSX.Element {
                   <View style={styles.lineCardBody}>
                     {/* Left content */}
                     <View style={styles.lineCardContent}>
-                      <View style={styles.lineHeader}>
+                      {/* Title row: name + badge */}
+                      <View style={styles.lineTitleRow}>
                         <Label style={styles.lineName} numberOfLines={2}>
                           {line.name}
                         </Label>
@@ -214,19 +217,21 @@ export function RoadTransportScreen(): React.JSX.Element {
                           <Badge variant="default">{line.subtype}</Badge>
                         )}
                       </View>
+                      {/* Stops summary */}
                       <Meta numberOfLines={1} style={styles.lineStops}>
                         {line.stops_summary}
                       </Meta>
-                      <Meta style={styles.lineMeta}>
+                      {/* Meta row */}
+                      <Meta style={styles.lineMeta} numberOfLines={1}>
                         {line.stops_count} {t('transport.stations')}
                         {line.typical_duration_minutes
                           ? ` • ${formatDuration(line.typical_duration_minutes)}`
                           : ''}
                       </Meta>
                     </View>
-                    {/* Right chevron */}
-                    <View style={styles.lineCardChevron}>
-                      <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+                    {/* Boxed chevron */}
+                    <View style={styles.lineCardChevronBox}>
+                      <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
                     </View>
                   </View>
                 </View>
@@ -243,33 +248,39 @@ export function RoadTransportScreen(): React.JSX.Element {
               <Label>{t('transport.noDepartures')}</Label>
             </View>
           ) : (
-            <View style={styles.departuresList}>
-              {todaysDepartures.slice(0, 10).map((dep, index) => (
-                <Pressable
-                  key={`${dep.line_id}-${dep.departure_time}-${index}`}
-                  style={({ pressed }) => [
-                    styles.departureRow,
-                    pressed && styles.departureRowPressed,
-                  ]}
-                  onPress={() => handleLinePress(dep.line_id)}
-                >
-                  {/* Time block */}
-                  <View style={styles.departureTimeBlock}>
-                    <Label style={styles.departureTime} numberOfLines={1}>
-                      {formatTime(dep.departure_time)}
-                    </Label>
-                  </View>
-                  {/* Info */}
-                  <View style={styles.departureInfo}>
-                    <Label style={styles.departureLine} numberOfLines={1}>
-                      {dep.line_name}
-                    </Label>
-                    <Meta style={styles.departureDirection} numberOfLines={1}>
-                      {dep.direction_label}
-                    </Meta>
-                  </View>
-                </Pressable>
-              ))}
+            <View style={styles.todaySetWrapper}>
+              {/* Shadow layer */}
+              <View style={styles.todaySetShadow} />
+              {/* Main container */}
+              <View style={styles.todaySet}>
+                {visibleDepartures.map((dep, index) => (
+                  <Pressable
+                    key={`${dep.line_id}-${dep.departure_time}-${index}`}
+                    style={({ pressed }) => [
+                      styles.todayRow,
+                      index > 0 && styles.todayRowWithDivider,
+                      pressed && styles.todayRowPressed,
+                    ]}
+                    onPress={() => handleLinePress(dep.line_id)}
+                  >
+                    {/* Time block */}
+                    <View style={styles.todayTimeBlock}>
+                      <Label style={styles.todayTime} numberOfLines={1}>
+                        {formatTime(dep.departure_time)}
+                      </Label>
+                    </View>
+                    {/* Info */}
+                    <View style={styles.todayInfo}>
+                      <Label style={styles.todayLineName} numberOfLines={1}>
+                        {dep.line_name}
+                      </Label>
+                      <Meta style={styles.todayDirection} numberOfLines={1}>
+                        {dep.direction_label}
+                      </Meta>
+                    </View>
+                  </Pressable>
+                ))}
+              </View>
             </View>
           )}
         </View>
@@ -366,7 +377,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
 
-  // Line card (poster-style with shadow)
+  // Line card (heavy poster-style with shadow + boxed chevron)
   lineCardWrapper: {
     position: 'relative',
     marginBottom: listTokens.lineCardGap,
@@ -396,71 +407,90 @@ const styles = StyleSheet.create({
   lineCardContent: {
     flex: 1,
   },
-  lineHeader: {
+  lineTitleRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: spacing.sm,
+    marginBottom: listTokens.lineCardTitleGap,
   },
   lineName: {
     flex: 1,
     color: colors.textPrimary,
-    marginRight: spacing.sm,
+    marginRight: listTokens.lineCardTitleGap,
   },
   lineStops: {
-    marginBottom: spacing.sm,
+    marginBottom: listTokens.lineCardStopsGap,
     color: colors.textSecondary,
   },
   lineMeta: {
     color: colors.textSecondary,
+    marginTop: listTokens.lineCardMetaGap,
   },
-  lineCardChevron: {
-    width: listTokens.lineCardChevronSize,
-    height: listTokens.lineCardChevronSize,
+  lineCardChevronBox: {
+    width: listTokens.lineCardChevronBoxSize,
+    height: listTokens.lineCardChevronBoxSize,
+    backgroundColor: listTokens.lineCardChevronBoxBackground,
+    borderWidth: listTokens.lineCardChevronBoxBorderWidth,
+    borderColor: listTokens.lineCardChevronBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: listTokens.lineCardChevronGap,
   },
 
-  // Today's departures (grey rows with time block)
-  departuresList: {
-    gap: listTokens.departureRowGap,
+  // Today's departures (stacked set with dividers)
+  todaySetWrapper: {
+    position: 'relative',
   },
-  departureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: listTokens.departureRowBackground,
-    borderWidth: listTokens.departureRowBorderWidth,
-    borderColor: listTokens.departureRowBorderColor,
-    borderRadius: listTokens.departureRowRadius,
+  todaySetShadow: {
+    position: 'absolute',
+    top: listTokens.todaySetShadowOffsetY,
+    left: listTokens.todaySetShadowOffsetX,
+    right: -listTokens.todaySetShadowOffsetX,
+    bottom: -listTokens.todaySetShadowOffsetY,
+    backgroundColor: listTokens.todaySetShadowColor,
+  },
+  todaySet: {
+    backgroundColor: listTokens.todaySetBackground,
+    borderWidth: listTokens.todaySetBorderWidth,
+    borderColor: listTokens.todaySetBorderColor,
+    borderRadius: listTokens.todaySetRadius,
     overflow: 'hidden',
   },
-  departureRowPressed: {
-    opacity: 0.7,
+  todayRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  departureTimeBlock: {
+  todayRowWithDivider: {
+    borderTopWidth: listTokens.todayRowDividerWidth,
+    borderTopColor: listTokens.todayRowDividerColor,
+  },
+  todayRowPressed: {
+    backgroundColor: colors.backgroundSecondary,
+  },
+  todayTimeBlock: {
     width: listTokens.todayTimeBlockWidth,
     backgroundColor: listTokens.todayTimeBlockBackground,
     borderRightWidth: listTokens.todayTimeBlockBorderWidth,
     borderRightColor: listTokens.todayTimeBlockBorderColor,
-    paddingVertical: listTokens.departureRowPadding,
+    paddingVertical: listTokens.todayRowPadding,
     paddingHorizontal: listTokens.todayTimeBlockPadding,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  departureTime: {
+  todayTime: {
     color: colors.textPrimary,
     fontWeight: '700',
   },
-  departureInfo: {
+  todayInfo: {
     flex: 1,
-    paddingVertical: listTokens.departureRowPadding,
+    paddingVertical: listTokens.todayRowPadding,
     paddingHorizontal: spacing.md,
   },
-  departureLine: {
+  todayLineName: {
     color: colors.textPrimary,
+    fontWeight: '600',
   },
-  departureDirection: {
+  todayDirection: {
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },

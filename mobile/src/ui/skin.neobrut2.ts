@@ -531,36 +531,50 @@ export const components = {
 
     // Lines list (poster-style cards)
     list: {
-      // Line card (poster card with shadow)
-      lineCardBorderWidth: bordersToken.widthCard,
+      // Line card (poster card with heavy border + shadow)
+      lineCardBorderWidth: bordersToken.widthHeavy, // Heavy outline
       lineCardBorderColor: colors.border,
       lineCardBackground: colors.background,
       lineCardRadius: bordersToken.radiusSharp,
-      lineCardPadding: spacing.lg,
-      lineCardGap: spacing.md,
+      lineCardPadding: spacing.xl, // More breathing room
+      lineCardGap: spacing.lg, // Increased gap between cards
 
-      // Shadow offset for line cards
-      lineCardShadowOffsetX: 4,
-      lineCardShadowOffsetY: 4,
+      // Shadow offset for line cards (dual-layer look)
+      lineCardShadowOffsetX: 5,
+      lineCardShadowOffsetY: 5,
       lineCardShadowColor: colors.border,
 
-      // Chevron container (right side affordance)
-      lineCardChevronSize: 32,
-      lineCardChevronGap: spacing.sm,
+      // Boxed chevron affordance (square with border)
+      lineCardChevronBoxSize: 36,
+      lineCardChevronBoxBorderWidth: bordersToken.widthThin,
+      lineCardChevronBoxBorderColor: colors.border,
+      lineCardChevronBoxBackground: colors.backgroundSecondary,
+      lineCardChevronGap: spacing.md,
 
-      // Today departure row (poster-style time block)
-      departureRowBackground: colors.backgroundSecondary,
-      departureRowBorderWidth: bordersToken.widthThin,
-      departureRowBorderColor: colors.border,
-      departureRowRadius: bordersToken.radiusSharp,
-      departureRowPadding: spacing.md,
-      departureRowGap: spacing.sm,
+      // Line card text spacing
+      lineCardTitleGap: spacing.sm, // Gap between title and badge
+      lineCardStopsGap: spacing.sm, // Gap after stops summary
+      lineCardMetaGap: spacing.xs, // Gap before meta row
 
-      // Time block in departure row
-      todayTimeBlockWidth: 64,
-      todayTimeBlockPadding: spacing.sm,
+      // Today departures set (single bordered container with stacked rows)
+      todaySetBorderWidth: bordersToken.widthCard,
+      todaySetBorderColor: colors.border,
+      todaySetBackground: colors.background,
+      todaySetRadius: bordersToken.radiusSharp,
+      todaySetShadowOffsetX: 4,
+      todaySetShadowOffsetY: 4,
+      todaySetShadowColor: colors.border,
+
+      // Today row (inside the set)
+      todayRowDividerWidth: bordersToken.widthThin,
+      todayRowDividerColor: colors.border,
+      todayRowPadding: spacing.md,
+
+      // Time block in today row (heavy bordered box)
+      todayTimeBlockWidth: 68,
+      todayTimeBlockPadding: spacing.md,
       todayTimeBlockBackground: colors.background,
-      todayTimeBlockBorderWidth: bordersToken.widthThin,
+      todayTimeBlockBorderWidth: bordersToken.widthCard,
       todayTimeBlockBorderColor: colors.border,
     },
 
