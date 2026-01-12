@@ -183,6 +183,7 @@ export const colors = {
   // Interactive
   primary: palette.primary,
   primaryText: "white",
+  primaryTextMuted: hsla(0, 0, 100, 0.85), // White at 85% opacity for subtitles on colored surfaces
 
   // Links
   link: palette.link,
@@ -468,32 +469,44 @@ export const components = {
     bannerContainerPaddingHorizontal: 0,
     bannerContainerPaddingTop: 0,
 
-    // Transport type tiles (poster-style)
+    // Transport type tiles (poster slab style)
     tiles: {
       // Tile container
       tileBorderWidth: bordersToken.widthCard,
       tileBorderColor: colors.border,
       tileRadius: bordersToken.radiusSharp, // Sharp corners (poster)
-      tilePadding: spacing.lg,
       tileGap: spacing.md, // Vertical spacing between tiles
 
       // Tile backgrounds (semantic colors)
       tileSeaBackground: palette.primary, // Blue for sea
       tileRoadBackground: palette.secondary, // Green for road
 
+      // Poster slab shadow (dual-layer offset)
+      tileShadowOffsetX: 4,
+      tileShadowOffsetY: 4,
+      tileShadowColor: colors.border,
+
+      // Left icon slab (full height section)
+      tileIconSlabWidth: 64,
+      tileIconSlabPadding: spacing.md,
+
+      // Vertical divider between icon slab and content
+      tileDividerWidth: bordersToken.widthThin,
+      tileDividerColor: colors.border,
+
+      // Content slab (right section with text)
+      tileContentPadding: spacing.md,
+
       // Text styling
       tileTitleColor: colors.primaryText, // White text on colored bg
-      tileSubtitleColor: 'rgba(255, 255, 255, 0.85)',
+      tileSubtitleColor: colors.primaryTextMuted, // White at 85% opacity
 
-      // Icon box (square container for icon)
-      tileIconBoxSize: 48,
-      tileIconBoxBorderWidth: bordersToken.widthThin,
-      tileIconBoxBorderColor: colors.border,
-      tileIconBoxBackground: colors.background,
+      // Icon on colored surface
+      tileIconColor: colors.primaryText, // White icon
 
-      // Arrow affordance
-      tileArrowSize: icons.size.lg,
-      tileArrowColor: colors.primaryText, // White
+      // Chevron affordance (muted on colored surface)
+      tileChevronColor: colors.primaryTextMuted,
+      tileChevronPaddingRight: spacing.md,
     },
 
     // Bottom note info box
