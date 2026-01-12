@@ -105,13 +105,16 @@ function Calendar({
       const isSelected = dateStr === selected;
       const hasEvents = eventDates.has(dateStr);
 
+      // V1 Poster: State priority: selected > today > hasEvents
+      // Apply styles in correct order so higher priority overrides lower
       days.push(
         <TouchableOpacity
           key={day}
           style={[
             styles.calendarDay,
+            hasEvents && !isSelected && !isToday && styles.calendarDayHasEvents,
+            isToday && !isSelected && styles.calendarDayToday,
             isSelected && styles.calendarDaySelected,
-            isToday && styles.calendarDayToday,
           ]}
           onPress={() => onSelectDate(date)}
         >
@@ -119,11 +122,13 @@ function Calendar({
             style={[
               styles.calendarDayText,
               isSelected && styles.calendarDayTextSelected,
+              isToday && !isSelected && styles.calendarDayTextToday,
             ]}
           >
             {day}
           </Label>
-          {hasEvents && <View style={styles.eventDot} />}
+          {/* V1 Poster: Show blue square indicator for days with events (except when selected) */}
+          {hasEvents && !isSelected && <View style={styles.eventIndicator} />}
         </TouchableOpacity>
       );
     }
@@ -162,7 +167,7 @@ function Calendar({
 }
 
 /**
- * Event list item
+ * Event list item - V1 Poster style with icons
  */
 function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -172,19 +177,25 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
       style={styles.eventItem}
       onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
     >
-      <View style={styles.eventTime}>
-        <Label style={styles.eventTimeText}>
-          {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
-        </Label>
-      </View>
       <View style={styles.eventContent}>
         <ButtonText style={styles.eventTitle} numberOfLines={2}>
           {event.title}
         </ButtonText>
-        {event.location && (
-          <Meta style={styles.eventLocation} numberOfLines={1}>
-            {event.location}
+        {/* V1 Poster: Time row with clock icon */}
+        <View style={styles.eventMetaRow}>
+          <Icon name="clock" size="xs" colorToken="textMuted" />
+          <Meta style={styles.eventMetaText} numberOfLines={1}>
+            {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
           </Meta>
+        </View>
+        {/* V1 Poster: Location row with map-pin icon */}
+        {event.location && (
+          <View style={styles.eventMetaRow}>
+            <Icon name="map-pin" size="xs" colorToken="textMuted" />
+            <Meta style={styles.eventMetaText} numberOfLines={1}>
+              {event.location}
+            </Meta>
+          </View>
         )}
       </View>
       <Icon name="chevron-right" size="sm" colorToken="chevron" />
@@ -448,13 +459,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'relative',
   },
+  // V1 Poster: Yellow fill for today
   calendarDayToday: {
-    backgroundColor: skin.colors.borderLight,
-    // V1 Poster: Sharp corners, not pills
+    backgroundColor: skin.colors.calendarToday,
   },
+  // V1 Poster: Blue fill for selected
   calendarDaySelected: {
-    backgroundColor: skin.colors.textPrimary,
-    // V1 Poster: Sharp corners, not pills
+    backgroundColor: skin.colors.calendarSelected,
+  },
+  // V1 Poster: Green-ish fill for days with events
+  calendarDayHasEvents: {
+    backgroundColor: skin.colors.calendarHasEvents,
   },
   calendarDayText: {
     color: skin.colors.textPrimary,
@@ -462,14 +477,18 @@ const styles = StyleSheet.create({
   calendarDayTextSelected: {
     color: skin.colors.background,
   },
-  // V1 Poster: Sharp event dot indicator
-  eventDot: {
+  // V1 Poster: Ensure contrast on yellow today tile
+  calendarDayTextToday: {
+    color: skin.colors.textPrimary,
+  },
+  // V1 Poster: Blue square indicator for days with events
+  eventIndicator: {
     position: 'absolute',
     bottom: skin.spacing.xs,
-    width: 6,
-    height: 6,
-    // Sharp square indicator
-    backgroundColor: skin.colors.urgent,
+    width: skin.sizes.calendarEventIndicator,
+    height: skin.sizes.calendarEventIndicator,
+    // Sharp square (no borderRadius)
+    backgroundColor: skin.colors.calendarEventIndicator,
   },
 
   // V1 Poster: Event cards with thick borders
@@ -483,21 +502,21 @@ const styles = StyleSheet.create({
     padding: skin.spacing.md,
     marginBottom: skin.spacing.md,
   },
-  eventTime: {
-    width: 60,
-    marginRight: skin.spacing.md,
-  },
-  eventTimeText: {
-    color: skin.colors.textPrimary,
-  },
   eventContent: {
     flex: 1,
   },
   eventTitle: {
-    marginBottom: skin.spacing.xs,
+    marginBottom: skin.spacing.sm,
   },
-  eventLocation: {
-    // Inherited from Meta primitive
+  // V1 Poster: Meta row with icon + text
+  eventMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.xs,
+    marginTop: skin.spacing.xs,
+  },
+  eventMetaText: {
+    flex: 1,
   },
 
   // States

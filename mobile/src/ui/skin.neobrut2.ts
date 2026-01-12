@@ -137,6 +137,11 @@ const icons = {
   },
 } as const;
 
+// Size tokens for specific UI elements
+const sizes = {
+  calendarEventIndicator: 6, // Small square indicator for days with events
+} as const;
+
 const hardShadow = (offset: number, color: string = borders.color): ShadowToken => ({
   ios: {
     shadowColor: color,
@@ -212,6 +217,12 @@ export const colors = {
   unreadIndicator: palette.unreadIndicator,
   typeBadge: palette.typeBadge,
   chevron: palette.chevron,
+
+  // Calendar day tile states (V1 poster parity)
+  calendarToday: palette.accent, // Yellow fill for today
+  calendarSelected: palette.primary, // Blue fill for selected
+  calendarHasEvents: hsla(160, 45, 38, 0.2), // Green-ish tint for days with events
+  calendarEventIndicator: palette.primary, // Blue square indicator
 
   // Extended Mediterranean (feature-specific)
   lavender: palette.lavender, // Feedback section
@@ -377,6 +388,7 @@ export const skinNeobrut2 = {
   shadows,
   typography,
   icons,
+  sizes,
   components,
 
   // Optional: for future "external shadow layer" (fake neo shadow)
