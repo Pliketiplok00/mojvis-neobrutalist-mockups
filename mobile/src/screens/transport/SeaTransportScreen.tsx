@@ -10,11 +10,11 @@
  *
  * Sections:
  * - Header: Poster-style header with icon box
- * - A: Lines list (heavy poster cards with type icon + boxed chevron)
- * - B: Today's departures (stacked set with dividers)
+ * - A: Lines list (2-part poster cards: colored header slab + white body)
+ * - B: Today's departures (stacked set with blue time blocks)
  *
- * Phase 4E: Poster polish - display typography, section rules, grey rows,
- *           neobrut press states with transform offset.
+ * Phase 4F: Aligned with LineDetail poster system - colored time blocks,
+ *           2-part line cards with header slab + icon.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -71,6 +71,19 @@ function getSeaTypeIcon(subtype: string | null): IconName {
   if (lower.includes('katamaran')) return 'anchor';
   if (lower.includes('trajekt')) return 'ship';
   return 'ship';
+}
+
+/**
+ * Get header background color based on sea transport subtype
+ * - KATAMARAN -> teal
+ * - TRAJEKT -> blue (primary)
+ * - Default -> blue (primary)
+ */
+function getSeaHeaderBackground(subtype: string | null): string {
+  if (!subtype) return listTokens.lineCardHeaderBackgroundSea;
+  const lower = subtype.toLowerCase();
+  if (lower.includes('katamaran')) return listTokens.lineCardHeaderBackgroundSeaCatamaran;
+  return listTokens.lineCardHeaderBackgroundSea;
 }
 
 export function SeaTransportScreen(): React.JSX.Element {
@@ -219,31 +232,30 @@ export function SeaTransportScreen(): React.JSX.Element {
               >
                 {/* Shadow layer */}
                 <View style={styles.lineCardShadow} />
-                {/* Main card */}
+                {/* Main card - 2-part structure */}
                 <View style={styles.lineCard}>
+                  {/* TOP: Colored header slab with icon + title */}
+                  <View style={[
+                    styles.lineCardHeader,
+                    { backgroundColor: getSeaHeaderBackground(line.subtype) }
+                  ]}>
+                    <View style={styles.lineCardHeaderIconBox}>
+                      <Icon
+                        name={getSeaTypeIcon(line.subtype)}
+                        size="md"
+                        colorToken="textPrimary"
+                      />
+                    </View>
+                    <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
+                      {line.name}
+                    </H2>
+                  </View>
+                  {/* BOTTOM: White body with meta + chevron */}
                   <View style={styles.lineCardBody}>
-                    {/* Left content */}
                     <View style={styles.lineCardContent}>
-                      {/* Title row: name + type icon */}
-                      <View style={styles.lineTitleRow}>
-                        <Label style={styles.lineName} numberOfLines={2}>
-                          {line.name}
-                        </Label>
-                        {line.subtype && (
-                          <View style={styles.lineTypeIconBox}>
-                            <Icon
-                              name={getSeaTypeIcon(line.subtype)}
-                              size="xs"
-                              colorToken="textPrimary"
-                            />
-                          </View>
-                        )}
-                      </View>
-                      {/* Stops summary */}
                       <Meta numberOfLines={1} style={styles.lineStops}>
                         {line.stops_summary}
                       </Meta>
-                      {/* Meta row */}
                       <Meta style={styles.lineMeta} numberOfLines={1}>
                         {line.stops_count} {t('transport.stations')}
                         {line.typical_duration_minutes
@@ -251,7 +263,6 @@ export function SeaTransportScreen(): React.JSX.Element {
                           : ''}
                       </Meta>
                     </View>
-                    {/* Boxed chevron */}
                     <View style={styles.lineCardChevronBox}>
                       <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
                     </View>
@@ -285,11 +296,11 @@ export function SeaTransportScreen(): React.JSX.Element {
                     ]}
                     onPress={() => handleLinePress(dep.line_id)}
                   >
-                    {/* Time block */}
+                    {/* Time block - blue like LineDetail */}
                     <View style={styles.todayTimeBlock}>
-                      <Label style={styles.todayTime} numberOfLines={1}>
+                      <H2 style={styles.todayTime}>
                         {formatTime(dep.departure_time)}
-                      </Label>
+                      </H2>
                     </View>
                     {/* Info */}
                     <View style={styles.todayInfo}>
@@ -402,7 +413,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
 
-  // Line card (heavy poster-style with shadow + boxed chevron)
+  // Line card (2-part poster card: colored header + white body)
   lineCardWrapper: {
     position: 'relative',
     marginBottom: listTokens.lineCardGap,
@@ -416,11 +427,10 @@ const styles = StyleSheet.create({
     backgroundColor: listTokens.lineCardShadowColor,
   },
   lineCard: {
-    backgroundColor: listTokens.lineCardBackground,
     borderWidth: listTokens.lineCardBorderWidth,
     borderColor: listTokens.lineCardBorderColor,
     borderRadius: listTokens.lineCardRadius,
-    padding: listTokens.lineCardPadding,
+    overflow: 'hidden',
   },
   lineCardPressed: {
     transform: [
@@ -428,37 +438,39 @@ const styles = StyleSheet.create({
       { translateY: listTokens.lineCardPressedOffsetY },
     ],
   },
+  // TOP: Colored header slab with icon + title
+  lineCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: listTokens.lineCardHeaderPadding,
+  },
+  lineCardHeaderIconBox: {
+    width: listTokens.lineCardHeaderIconBoxSize,
+    height: listTokens.lineCardHeaderIconBoxSize,
+    backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
+    borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
+    borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: listTokens.lineCardHeaderIconGap,
+  },
+  lineCardHeaderTitle: {
+    flex: 1,
+    color: listTokens.lineCardHeaderTitleColor,
+  },
+  // BOTTOM: White body with meta + chevron
   lineCardBody: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: listTokens.lineCardBodyBackground,
+    padding: listTokens.lineCardBodyPadding,
+    borderTopWidth: listTokens.lineCardBodyBorderTopWidth,
+    borderTopColor: listTokens.lineCardBodyBorderColor,
   },
   lineCardContent: {
     flex: 1,
   },
-  lineTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: listTokens.lineCardTitleGap,
-  },
-  lineName: {
-    flex: 1,
-    color: colors.textPrimary,
-    fontFamily: typography.fontFamily.display.semiBold,
-    fontSize: typography.fontSize.lg,
-    marginRight: listTokens.lineCardTitleGap,
-  },
-  lineTypeIconBox: {
-    width: listTokens.lineCardTypeIconBoxSize,
-    height: listTokens.lineCardTypeIconBoxSize,
-    backgroundColor: listTokens.lineCardTypeIconBoxBackground,
-    borderWidth: listTokens.lineCardTypeIconBoxBorderWidth,
-    borderColor: listTokens.lineCardTypeIconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   lineStops: {
-    marginBottom: listTokens.lineCardStopsGap,
     color: colors.textSecondary,
   },
   lineMeta: {
@@ -512,17 +524,16 @@ const styles = StyleSheet.create({
   },
   todayTimeBlock: {
     width: listTokens.todayTimeBlockWidth,
-    backgroundColor: listTokens.todayTimeBlockBackground,
+    backgroundColor: listTokens.todayTimeBlockBackgroundSea, // Blue like LineDetail
     borderRightWidth: listTokens.todayTimeBlockBorderWidth,
     borderRightColor: listTokens.todayTimeBlockBorderColor,
-    paddingVertical: listTokens.todayRowPadding,
+    paddingVertical: listTokens.todayTimeBlockPadding,
     paddingHorizontal: listTokens.todayTimeBlockPadding,
     alignItems: 'center',
     justifyContent: 'center',
   },
   todayTime: {
-    color: colors.textPrimary,
-    fontWeight: '700',
+    color: listTokens.todayTimeBlockTextColor, // White text on blue
   },
   todayInfo: {
     flex: 1,

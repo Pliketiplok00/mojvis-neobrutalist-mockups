@@ -539,13 +539,11 @@ export const components = {
 
     // Lines list (poster-style cards)
     list: {
-      // Line card (poster card with heavy border + shadow)
+      // Line card outer structure (poster card with 2-part layout)
       lineCardBorderWidth: bordersToken.widthHeavy, // Heavy outline
       lineCardBorderColor: colors.border,
-      lineCardBackground: colors.background,
       lineCardRadius: bordersToken.radiusSharp,
-      lineCardPadding: spacing.lg, // Tighter padding for poster density
-      lineCardGap: spacing.md, // Tighter gap between cards
+      lineCardGap: spacing.md, // Gap between cards
 
       // Shadow offset for line cards (dual-layer look)
       lineCardShadowOffsetX: 4,
@@ -556,23 +554,33 @@ export const components = {
       lineCardPressedOffsetX: 2,
       lineCardPressedOffsetY: 2,
 
+      // Line card header slab (colored top section with icon + title)
+      lineCardHeaderPadding: spacing.md,
+      lineCardHeaderBackgroundSea: palette.primary, // Blue for sea ferry
+      lineCardHeaderBackgroundSeaCatamaran: palette.teal, // Teal for catamaran
+      lineCardHeaderBackgroundRoad: palette.secondary, // Green for road
+      lineCardHeaderIconBoxSize: 40,
+      lineCardHeaderIconBoxBackground: colors.background,
+      lineCardHeaderIconBoxBorderWidth: bordersToken.widthThin,
+      lineCardHeaderIconBoxBorderColor: colors.border,
+      lineCardHeaderIconGap: spacing.md,
+      lineCardHeaderTitleColor: colors.primaryText, // White on colored bg
+
+      // Line card body (white bottom section with meta + chevron)
+      lineCardBodyBackground: colors.background,
+      lineCardBodyPadding: spacing.md,
+      lineCardBodyBorderTopWidth: bordersToken.widthThin,
+      lineCardBodyBorderColor: colors.border,
+
       // Boxed chevron affordance (square with border)
-      lineCardChevronBoxSize: 40, // Slightly larger for clarity
+      lineCardChevronBoxSize: 36,
       lineCardChevronBoxBorderWidth: bordersToken.widthThin,
       lineCardChevronBoxBorderColor: colors.border,
       lineCardChevronBoxBackground: colors.backgroundSecondary,
       lineCardChevronGap: spacing.md,
 
-      // Line card text spacing (tighter vertical rhythm)
-      lineCardTitleGap: spacing.xs, // Tighter gap between title and type icon
-      lineCardStopsGap: spacing.xs, // Tighter gap after stops summary
-      lineCardMetaGap: spacing.xs, // Consistent gap before meta row
-
-      // Type icon box (replaces text badge with icon indicator)
-      lineCardTypeIconBoxSize: 28,
-      lineCardTypeIconBoxBorderWidth: bordersToken.widthThin,
-      lineCardTypeIconBoxBorderColor: colors.border,
-      lineCardTypeIconBoxBackground: colors.backgroundSecondary,
+      // Line card text spacing
+      lineCardMetaGap: spacing.xs,
 
       // Today departures set (single bordered container with stacked rows)
       todaySetBorderWidth: bordersToken.widthCard,
@@ -591,12 +599,14 @@ export const components = {
       todayRowPressedOffsetX: 1, // Subtle press-in for rows
       todayRowPressedOffsetY: 1,
 
-      // Time block in today row (visually distinct)
-      todayTimeBlockWidth: 72, // Slightly wider for emphasis
-      todayTimeBlockPadding: spacing.md,
-      todayTimeBlockBackground: colors.background, // Cream fill stands out on grey
-      todayTimeBlockBorderWidth: bordersToken.widthCard,
+      // Time block in today row - MATCHES LineDetail time block
+      todayTimeBlockWidth: 72, // Same as lineDetail.timeBlockWidth
+      todayTimeBlockPadding: spacing.sm, // Same as lineDetail.timeBlockPadding
+      todayTimeBlockBackgroundSea: palette.primary, // Blue - same as lineDetail
+      todayTimeBlockBackgroundRoad: palette.secondary, // Green - same as lineDetail
+      todayTimeBlockBorderWidth: bordersToken.widthThin,
       todayTimeBlockBorderColor: colors.border,
+      todayTimeBlockTextColor: colors.primaryText, // White text
     },
 
     // Line Detail screen tokens (V1 poster style)
