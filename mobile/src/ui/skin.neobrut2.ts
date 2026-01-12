@@ -419,6 +419,11 @@ export const components = {
 
     // Event Detail screen tokens (V1 poster style)
     detail: {
+      // Hero image (optional)
+      heroImageAspectRatio: 16 / 9, // Standard hero ratio
+      heroImageBorderWidth: bordersToken.widthCard,
+      heroImageBorderColor: colors.border,
+
       // Title header section (poster band)
       titlePadding: spacing.xl,
       titleBorderWidth: bordersToken.widthCard, // Heavy poster-style rule

@@ -24,6 +24,7 @@ export interface AdminEvent {
   location_hr: string | null;
   location_en: string | null;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +42,7 @@ export interface AdminEventInput {
   location_hr?: string | null;
   location_en?: string | null;
   is_all_day?: boolean;
+  image_url?: string | null;
 }
 
 /**
