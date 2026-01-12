@@ -43,6 +43,7 @@ function toEventResponse(event: Event, language: Language): EventResponse {
   const title = language === 'en' ? event.title_en : event.title_hr;
   const description = language === 'en' ? event.description_en : event.description_hr;
   const location = language === 'en' ? event.location_en : event.location_hr;
+  const organizer = language === 'en' ? event.organizer_en : event.organizer_hr;
 
   return {
     id: event.id,
@@ -51,6 +52,7 @@ function toEventResponse(event: Event, language: Language): EventResponse {
     start_datetime: event.start_datetime.toISOString(),
     end_datetime: event.end_datetime?.toISOString() ?? null,
     location: location ?? null,
+    organizer,
     is_all_day: event.is_all_day,
     image_url: event.image_url ?? null,
     created_at: event.created_at.toISOString(),

@@ -33,6 +33,8 @@ interface CreateEventBody {
   end_datetime?: string | null;
   location_hr?: string | null;
   location_en?: string | null;
+  organizer_hr: string;
+  organizer_en: string;
   is_all_day?: boolean;
   image_url?: string | null;
 }
@@ -46,6 +48,8 @@ interface UpdateEventBody {
   end_datetime?: string | null;
   location_hr?: string | null;
   location_en?: string | null;
+  organizer_hr?: string;
+  organizer_en?: string;
   is_all_day?: boolean;
   image_url?: string | null;
 }
@@ -74,6 +78,8 @@ function toAdminResponse(event: Event): AdminEventResponse {
     end_datetime: event.end_datetime?.toISOString() ?? null,
     location_hr: event.location_hr,
     location_en: event.location_en,
+    organizer_hr: event.organizer_hr,
+    organizer_en: event.organizer_en,
     is_all_day: event.is_all_day,
     image_url: event.image_url,
     created_at: event.created_at.toISOString(),
@@ -166,6 +172,12 @@ export async function adminEventRoutes(
     if (!body.title_en?.trim()) {
       return reply.status(400).send({ error: 'title_en is required' });
     }
+    if (!body.organizer_hr?.trim()) {
+      return reply.status(400).send({ error: 'organizer_hr is required' });
+    }
+    if (!body.organizer_en?.trim()) {
+      return reply.status(400).send({ error: 'organizer_en is required' });
+    }
     if (!body.start_datetime) {
       return reply.status(400).send({ error: 'start_datetime is required' });
     }
@@ -198,6 +210,8 @@ export async function adminEventRoutes(
         end_datetime: body.end_datetime ? new Date(body.end_datetime) : null,
         location_hr: body.location_hr?.trim() || null,
         location_en: body.location_en?.trim() || null,
+        organizer_hr: body.organizer_hr.trim(),
+        organizer_en: body.organizer_en.trim(),
         is_all_day: body.is_all_day ?? false,
         image_url: body.image_url?.trim() || null,
       });
@@ -273,6 +287,12 @@ export async function adminEventRoutes(
       }
       if (body.is_all_day !== undefined) {
         updates.is_all_day = body.is_all_day;
+      }
+      if (body.organizer_hr !== undefined) {
+        updates.organizer_hr = body.organizer_hr.trim();
+      }
+      if (body.organizer_en !== undefined) {
+        updates.organizer_en = body.organizer_en.trim();
       }
       if (body.image_url !== undefined) {
         updates.image_url = body.image_url?.trim() || null;

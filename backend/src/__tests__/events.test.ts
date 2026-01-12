@@ -49,6 +49,8 @@ function createMockEvent(overrides = {}) {
     end_datetime: new Date('2024-07-15T22:00:00Z'),
     location_hr: 'Trg u Komiži',
     location_en: 'Komiža Square',
+    organizer_hr: 'Grad Vis',
+    organizer_en: 'Municipality of Vis',
     is_all_day: false,
     image_url: null,
     created_at: new Date('2024-01-15T10:00:00Z'),
