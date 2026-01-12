@@ -47,7 +47,6 @@ type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 const { colors, spacing, borders, components } = skin;
 const overviewHeader = components.transport.overviewHeader;
-const sectionHeader = components.transport.sectionHeader;
 const listTokens = components.transport.list;
 
 /**
@@ -196,7 +195,7 @@ export function RoadTransportScreen(): React.JSX.Element {
 
         {/* Section A: Lines List */}
         <View style={styles.section}>
-          <H2 style={styles.sectionTitle}>{t('transport.lines')}</H2>
+          <Label style={styles.sectionLabel}>{t('transport.lines')}</Label>
           {lines.length === 0 ? (
             <View style={styles.emptyState}>
               <Label>{t('transport.noLines')}</Label>
@@ -253,7 +252,7 @@ export function RoadTransportScreen(): React.JSX.Element {
 
         {/* Section B: Today's Departures */}
         <View style={styles.section}>
-          <H2 style={styles.sectionTitle}>{t('transport.todaysDepartures')}</H2>
+          <Label style={styles.sectionLabel}>{t('transport.todaysDepartures')}</Label>
           {todaysDepartures.length === 0 ? (
             <View style={styles.emptyState}>
               <Label>{t('transport.noDepartures')}</Label>
@@ -362,11 +361,10 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
     paddingTop: spacing.xl,
   },
-  sectionTitle: {
-    marginBottom: sectionHeader.marginBottom,
-    paddingBottom: sectionHeader.paddingBottom,
-    borderBottomWidth: sectionHeader.borderBottomWidth,
-    borderBottomColor: sectionHeader.borderBottomColor,
+  sectionLabel: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.md,
   },
   errorContainer: {
     margin: spacing.lg,
