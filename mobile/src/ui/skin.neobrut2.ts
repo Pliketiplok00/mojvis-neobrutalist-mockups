@@ -417,6 +417,21 @@ export const components = {
     emptyStatePadding: spacing.xxl,
     emptyStateBorderRadius: bordersToken.radiusSharp,
 
+    // Event list card (clickable poster box)
+    card: {
+      // Border styling (matches canonical clickable box)
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      background: colors.background,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      // Dual-layer offset shadow (poster style)
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+    },
+
     // Event Detail screen tokens (V1 poster style)
     detail: {
       // Hero image (optional)
