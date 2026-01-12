@@ -25,7 +25,9 @@ import {
   Linking,
   ActivityIndicator,
   Platform,
+  Modal,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { DepartureItem } from '../../components/DepartureItem';
@@ -77,6 +79,7 @@ export function LineDetailScreen({
   const [departuresLoading, setDeparturesLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   // Get transport-type-specific colors
   const headerBackground = transportType === 'sea'
@@ -143,6 +146,26 @@ export function LineDetailScreen({
     const date = new Date(selectedDate);
     date.setDate(date.getDate() + days);
     setSelectedDate(formatDateISO(date));
+  };
+
+  // Date picker handlers
+  const openDatePicker = () => {
+    setIsDatePickerOpen(true);
+  };
+
+  const handleDateChange = (event: { type: string }, date?: Date) => {
+    // On Android, dismiss events also call this handler
+    if (Platform.OS === 'android') {
+      setIsDatePickerOpen(false);
+    }
+    if (event.type === 'set' && date) {
+      const newDateString = formatDateISO(date);
+      setSelectedDate(newDateString);
+    }
+  };
+
+  const closeDatePicker = () => {
+    setIsDatePickerOpen(false);
   };
 
   const handlePhonePress = (phone: string) => {
@@ -228,7 +251,12 @@ export function LineDetailScreen({
             >
               <Icon name="chevron-left" size="md" colorToken="textPrimary" />
             </TouchableOpacity>
-            <View style={styles.dateInfo}>
+            <TouchableOpacity
+              style={styles.dateInfo}
+              onPress={openDatePicker}
+              accessibilityLabel={t('transport.lineDetail.selectDate')}
+              accessibilityRole="button"
+            >
               <Label style={styles.dateSelectorLabel}>DATUM</Label>
               <H2 style={styles.dateText}>{formatDisplayDate(selectedDate)}</H2>
               {departures && (
@@ -237,7 +265,7 @@ export function LineDetailScreen({
                   {departures.is_holiday && ` (${t('transport.holiday')})`}
                 </Meta>
               )}
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.dateArrow}
               onPress={() => adjustDate(1)}
@@ -380,6 +408,52 @@ export function LineDetailScreen({
           </View>
         )}
       </ScrollView>
+
+      {/* Date Picker - Platform-specific rendering */}
+      {Platform.OS === 'ios' ? (
+        <Modal
+          visible={isDatePickerOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={closeDatePicker}
+        >
+          <View style={styles.datePickerModalOverlay}>
+            <View style={styles.datePickerModalContent}>
+              <View style={styles.datePickerHeader}>
+                <TouchableOpacity onPress={closeDatePicker}>
+                  <Label style={styles.datePickerCancel}>
+                    {t('common.cancel')}
+                  </Label>
+                </TouchableOpacity>
+                <Label style={styles.datePickerTitle}>
+                  {t('transport.lineDetail.selectDate')}
+                </Label>
+                <TouchableOpacity onPress={closeDatePicker}>
+                  <Label style={styles.datePickerDone}>
+                    {t('common.done')}
+                  </Label>
+                </TouchableOpacity>
+              </View>
+              <DateTimePicker
+                value={new Date(selectedDate)}
+                mode="date"
+                display="spinner"
+                onChange={handleDateChange}
+                style={styles.datePickerIOS}
+              />
+            </View>
+          </View>
+        </Modal>
+      ) : (
+        isDatePickerOpen && (
+          <DateTimePicker
+            value={new Date(selectedDate)}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )
+      )}
     </SafeAreaView>
   );
 }
@@ -633,6 +707,42 @@ const styles = StyleSheet.create({
   contactLink: {
     flex: 1,
     color: colors.link,
+  },
+
+  // Date Picker Modal (iOS)
+  datePickerModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  datePickerModalContent: {
+    backgroundColor: colors.background,
+    borderTopWidth: lineDetail.dateSelectorBorderWidth,
+    borderTopColor: lineDetail.dateSelectorBorderColor,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: borders.widthThin,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.backgroundSecondary,
+  },
+  datePickerTitle: {
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  datePickerCancel: {
+    color: colors.textSecondary,
+  },
+  datePickerDone: {
+    color: colors.link,
+  },
+  datePickerIOS: {
+    height: 216,
+    backgroundColor: colors.background,
   },
 });
 
