@@ -3,7 +3,7 @@
  *
  * Core types for the Events module (Phase 2).
  *
- * Event fields per spec (NO extras):
+ * Event fields per spec:
  * - id
  * - title_hr / title_en (REQUIRED)
  * - description_hr / description_en
@@ -11,6 +11,7 @@
  * - end_datetime (optional)
  * - location_hr / location_en (optional)
  * - is_all_day (boolean)
+ * - image_url (optional hero image URL)
  * - created_at / updated_at
  *
  * NOT included per spec:
@@ -19,7 +20,6 @@
  * - ticketing
  * - categories
  * - recurrence rules
- * - images
  */
 
 /**
@@ -36,6 +36,7 @@ export interface Event {
   location_hr: string | null;
   location_en: string | null;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -51,6 +52,7 @@ export interface EventResponse {
   end_datetime: string | null;
   location: string | null;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: string;
 }
 
@@ -79,6 +81,7 @@ export interface AdminEventResponse {
   location_hr: string | null;
   location_en: string | null;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
 }

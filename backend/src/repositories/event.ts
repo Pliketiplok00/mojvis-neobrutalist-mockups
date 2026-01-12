@@ -19,6 +19,7 @@ interface EventRow {
   location_hr: string | null;
   location_en: string | null;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -48,7 +49,7 @@ export async function getEvents(
   const result = await query<EventRow>(
     `SELECT id, title_hr, title_en, description_hr, description_en,
             start_datetime, end_datetime, location_hr, location_en,
-            is_all_day, created_at, updated_at
+            is_all_day, image_url, created_at, updated_at
      FROM events
      ORDER BY start_datetime ASC
      LIMIT $1 OFFSET $2`,
@@ -70,7 +71,7 @@ export async function getEventsByDate(
   const result = await query<EventRow>(
     `SELECT id, title_hr, title_en, description_hr, description_en,
             start_datetime, end_datetime, location_hr, location_en,
-            is_all_day, created_at, updated_at
+            is_all_day, image_url, created_at, updated_at
      FROM events
      WHERE DATE(start_datetime AT TIME ZONE 'Europe/Zagreb') = $1
      ORDER BY start_datetime ASC`,
@@ -87,7 +88,7 @@ export async function getEventById(id: string): Promise<Event | null> {
   const result = await query<EventRow>(
     `SELECT id, title_hr, title_en, description_hr, description_en,
             start_datetime, end_datetime, location_hr, location_en,
-            is_all_day, created_at, updated_at
+            is_all_day, image_url, created_at, updated_at
      FROM events
      WHERE id = $1`,
     [id]
@@ -109,11 +110,11 @@ export async function createEvent(
   const result = await query<EventRow>(
     `INSERT INTO events
        (title_hr, title_en, description_hr, description_en,
-        start_datetime, end_datetime, location_hr, location_en, is_all_day)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        start_datetime, end_datetime, location_hr, location_en, is_all_day, image_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
      RETURNING id, title_hr, title_en, description_hr, description_en,
                start_datetime, end_datetime, location_hr, location_en,
-               is_all_day, created_at, updated_at`,
+               is_all_day, image_url, created_at, updated_at`,
     [
       event.title_hr,
       event.title_en,
@@ -124,6 +125,7 @@ export async function createEvent(
       event.location_hr,
       event.location_en,
       event.is_all_day,
+      event.image_url,
     ]
   );
 
@@ -177,6 +179,10 @@ export async function updateEvent(
     fields.push(`is_all_day = $${paramIndex++}`);
     values.push(updates.is_all_day);
   }
+  if (updates.image_url !== undefined) {
+    fields.push(`image_url = $${paramIndex++}`);
+    values.push(updates.image_url);
+  }
 
   if (fields.length === 0) {
     return getEventById(id);
@@ -189,7 +195,7 @@ export async function updateEvent(
      WHERE id = $${paramIndex}
      RETURNING id, title_hr, title_en, description_hr, description_en,
                start_datetime, end_datetime, location_hr, location_en,
-               is_all_day, created_at, updated_at`,
+               is_all_day, image_url, created_at, updated_at`,
     values
   );
 
@@ -297,7 +303,7 @@ export async function getSubscriptionsForDate(
             e.id as event_id, e.title_hr, e.title_en,
             e.description_hr, e.description_en,
             e.start_datetime, e.end_datetime,
-            e.location_hr, e.location_en, e.is_all_day,
+            e.location_hr, e.location_en, e.is_all_day, e.image_url,
             e.created_at as event_created_at, e.updated_at as event_updated_at
      FROM reminder_subscriptions rs
      JOIN events e ON rs.event_id = e.id
@@ -318,6 +324,7 @@ export async function getSubscriptionsForDate(
       location_hr: row.location_hr,
       location_en: row.location_en,
       is_all_day: row.is_all_day,
+      image_url: row.image_url,
       created_at: row.created_at,
       updated_at: row.updated_at,
     },
@@ -339,6 +346,7 @@ function rowToEvent(row: EventRow): Event {
     location_hr: row.location_hr,
     location_en: row.location_en,
     is_all_day: row.is_all_day,
+    image_url: row.image_url,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };

@@ -50,6 +50,7 @@ function createMockEvent(overrides = {}) {
     location_hr: 'Trg u Komiži',
     location_en: 'Komiža Square',
     is_all_day: false,
+    image_url: null,
     created_at: new Date('2024-01-15T10:00:00Z'),
     updated_at: new Date('2024-01-15T10:00:00Z'),
     ...overrides,

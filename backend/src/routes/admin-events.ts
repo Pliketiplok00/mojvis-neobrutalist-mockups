@@ -34,6 +34,7 @@ interface CreateEventBody {
   location_hr?: string | null;
   location_en?: string | null;
   is_all_day?: boolean;
+  image_url?: string | null;
 }
 
 interface UpdateEventBody {
@@ -46,6 +47,17 @@ interface UpdateEventBody {
   location_hr?: string | null;
   location_en?: string | null;
   is_all_day?: boolean;
+  image_url?: string | null;
+}
+
+/**
+ * Validate image URL (must be http/https if provided)
+ */
+function isValidImageUrl(url: string | null | undefined): boolean {
+  if (!url) return true; // null/undefined/empty is valid
+  const trimmed = url.trim();
+  if (!trimmed) return true;
+  return trimmed.startsWith('http://') || trimmed.startsWith('https://');
 }
 
 /**
@@ -63,6 +75,7 @@ function toAdminResponse(event: Event): AdminEventResponse {
     location_hr: event.location_hr,
     location_en: event.location_en,
     is_all_day: event.is_all_day,
+    image_url: event.image_url,
     created_at: event.created_at.toISOString(),
     updated_at: event.updated_at.toISOString(),
   };
@@ -168,6 +181,13 @@ export async function adminEventRoutes(
       }
     }
 
+    // Validate image_url if provided
+    if (!isValidImageUrl(body.image_url)) {
+      return reply.status(400).send({
+        error: 'image_url must be a valid HTTP or HTTPS URL',
+      });
+    }
+
     try {
       const event = await createEvent({
         title_hr: body.title_hr.trim(),
@@ -179,6 +199,7 @@ export async function adminEventRoutes(
         location_hr: body.location_hr?.trim() || null,
         location_en: body.location_en?.trim() || null,
         is_all_day: body.is_all_day ?? false,
+        image_url: body.image_url?.trim() || null,
       });
 
       return reply.status(201).send(toAdminResponse(event));
@@ -216,6 +237,13 @@ export async function adminEventRoutes(
       }
     }
 
+    // Validate image_url if provided
+    if (body.image_url !== undefined && !isValidImageUrl(body.image_url)) {
+      return reply.status(400).send({
+        error: 'image_url must be a valid HTTP or HTTPS URL',
+      });
+    }
+
     try {
       const updates: Parameters<typeof updateEvent>[1] = {};
 
@@ -245,6 +273,9 @@ export async function adminEventRoutes(
       }
       if (body.is_all_day !== undefined) {
         updates.is_all_day = body.is_all_day;
+      }
+      if (body.image_url !== undefined) {
+        updates.image_url = body.image_url?.trim() || null;
       }
 
       const event = await updateEvent(id, updates);

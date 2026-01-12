@@ -20,6 +20,7 @@ import {
   Switch,
   Share,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -134,6 +135,15 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.scrollView}>
+        {/* Hero Image (optional) */}
+        {event.image_url && (
+          <Image
+            source={{ uri: event.image_url }}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+        )}
+
         {/* Event Title */}
         <View style={styles.header}>
           <H1 style={styles.title}>{event.title}</H1>
@@ -202,6 +212,14 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+
+  // V1 Poster: Hero image (optional, skin-token driven)
+  heroImage: {
+    width: '100%',
+    aspectRatio: skin.components.events.detail.heroImageAspectRatio,
+    borderBottomWidth: skin.components.events.detail.heroImageBorderWidth,
+    borderBottomColor: skin.components.events.detail.heroImageBorderColor,
   },
 
   // V1 Poster: Title header (poster band with heavy bottom rule)

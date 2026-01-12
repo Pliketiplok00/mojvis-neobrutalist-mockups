@@ -52,6 +52,7 @@ function toEventResponse(event: Event, language: Language): EventResponse {
     end_datetime: event.end_datetime?.toISOString() ?? null,
     location: location ?? null,
     is_all_day: event.is_all_day,
+    image_url: event.image_url ?? null,
     created_at: event.created_at.toISOString(),
   };
 }

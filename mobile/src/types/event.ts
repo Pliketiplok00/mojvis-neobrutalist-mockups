@@ -16,6 +16,7 @@ export interface Event {
   end_datetime: string | null;
   location: string | null;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: string;
 }
 
