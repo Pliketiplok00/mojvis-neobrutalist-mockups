@@ -505,6 +505,92 @@ export const components = {
       noteRadius: bordersToken.radiusSharp, // Sharp corners (poster)
       noteTextColor: colors.textSecondary,
     },
+
+    // Line Detail screen tokens (V1 poster style)
+    lineDetail: {
+      // Header slab (colored poster band)
+      headerBackground: palette.primary, // Blue for sea (override for road: secondary)
+      headerBackgroundSea: palette.primary,
+      headerBackgroundRoad: palette.secondary,
+      headerPadding: spacing.lg,
+      headerBorderWidth: bordersToken.widthCard,
+      headerBorderColor: colors.border,
+
+      // Header icon box
+      headerIconBoxSize: 52,
+      headerIconBoxBackground: colors.background,
+      headerIconBoxBorderWidth: bordersToken.widthThin,
+      headerIconBoxBorderColor: colors.border,
+
+      // Header text
+      headerTitleColor: colors.primaryText, // White on colored bg
+      headerMetaColor: 'rgba(255, 255, 255, 0.85)',
+
+      // Date selector card
+      dateSelectorPadding: spacing.lg,
+      dateSelectorBorderWidth: bordersToken.widthCard,
+      dateSelectorBorderColor: colors.border,
+      dateSelectorBackground: colors.background,
+      dateSelectorRadius: bordersToken.radiusSharp,
+      dateSelectorArrowSize: 44,
+
+      // Dual-layer shadow offset
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+
+      // Direction toggle tabs
+      directionTabPadding: spacing.md,
+      directionTabBorderWidth: bordersToken.widthCard,
+      directionTabBorderColor: colors.border,
+      directionTabRadius: bordersToken.radiusSharp,
+      directionTabActiveBackground: palette.primary, // Same as header for sea
+      directionTabInactiveBackground: colors.background,
+      directionTabActiveText: colors.primaryText,
+      directionTabInactiveText: colors.textPrimary,
+
+      // Section dividers
+      sectionDividerWidth: bordersToken.widthThin,
+      sectionDividerColor: colors.border,
+
+      // Departure row (poster card)
+      departureRowBorderWidth: bordersToken.widthCard,
+      departureRowBorderColor: colors.border,
+      departureRowBackground: colors.background,
+      departureRowRadius: bordersToken.radiusSharp,
+      departureRowPadding: spacing.md,
+      departureRowGap: spacing.sm,
+
+      // Time block (colored left block)
+      timeBlockWidth: 72,
+      timeBlockPadding: spacing.sm,
+      timeBlockBorderWidth: bordersToken.widthThin,
+      timeBlockBorderColor: colors.border,
+      timeBlockBackground: palette.primary, // Sea blue
+      timeBlockBackgroundSea: palette.primary,
+      timeBlockBackgroundRoad: palette.secondary,
+      timeBlockTextColor: colors.primaryText,
+
+      // Timeline (expanded)
+      timelineDotSize: 10,
+      timelineDotSizeEndpoint: 12,
+      timelineDotColor: colors.textMuted,
+      timelineDotEndpointColor: colors.textPrimary,
+      timelineLineWidth: bordersToken.widthThin,
+      timelineLineColor: colors.borderMuted,
+      timelineStopTimeWidth: 56,
+
+      // Notes badge
+      notesBadgeBackground: colors.warningBackground,
+      notesBadgePadding: spacing.sm,
+
+      // Contact card
+      contactCardPadding: spacing.lg,
+      contactCardBorderWidth: bordersToken.widthCard,
+      contactCardBorderColor: colors.border,
+      contactCardBackground: colors.background,
+      contactCardRadius: bordersToken.radiusSharp,
+    },
   },
 } as const;
 
