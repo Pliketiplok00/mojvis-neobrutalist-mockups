@@ -382,9 +382,14 @@ export const components = {
 
   // Calendar component tokens (V1 poster style)
   calendar: {
-    // Day tile outline
-    dayTileBorderWidth: bordersToken.widthThin,
-    dayTileBorderColor: colors.border,
+    // Day tile outline - ONLY for days with events
+    hasEventsBorderWidth: bordersToken.widthThin,
+    hasEventsBorderColor: colors.border,
+    // Grid spacing (gutters between tiles)
+    dayTileGap: spacing.xs,
+    dayTilePadding: spacing.xs,
+    // Event indicator spacing
+    eventIndicatorMarginTop: spacing.xs,
     // Selected day offset shadow (neobrut double-layer)
     selectedShadowOffsetX: 3,
     selectedShadowOffsetY: 3,
@@ -392,6 +397,8 @@ export const components = {
     // Typography
     weekdayFontWeight: typography.fontWeight.bold,
     dayNumberFontWeight: typography.fontWeight.bold,
+    dayNumberColor: colors.textPrimary,
+    selectedDayNumberColor: colors.primaryText, // white
   },
 } as const;
 
