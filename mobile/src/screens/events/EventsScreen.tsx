@@ -94,7 +94,11 @@ function Calendar({
 
     // Empty cells for days before first day of month
     for (let i = 0; i < startDay; i++) {
-      days.push(<View key={`empty-${i}`} style={styles.calendarDay} />);
+      days.push(
+        <View key={`empty-${i}`} style={styles.calendarDayWrapper}>
+          <View style={styles.calendarDayEmpty} />
+        </View>
+      );
     }
 
     // Days of the month
@@ -107,29 +111,33 @@ function Calendar({
 
       // V1 Poster: State priority: selected > today > hasEvents
       // Apply styles in correct order so higher priority overrides lower
+      // Selected day gets neobrut offset shadow layer
       days.push(
-        <TouchableOpacity
-          key={day}
-          style={[
-            styles.calendarDay,
-            hasEvents && !isSelected && !isToday && styles.calendarDayHasEvents,
-            isToday && !isSelected && styles.calendarDayToday,
-            isSelected && styles.calendarDaySelected,
-          ]}
-          onPress={() => onSelectDate(date)}
-        >
-          <Label
+        <View key={day} style={styles.calendarDayWrapper}>
+          {/* V1 Poster: Offset shadow layer for selected day */}
+          {isSelected && <View style={styles.calendarDayShadow} />}
+          <TouchableOpacity
             style={[
-              styles.calendarDayText,
-              isSelected && styles.calendarDayTextSelected,
-              isToday && !isSelected && styles.calendarDayTextToday,
+              styles.calendarDay,
+              hasEvents && !isSelected && !isToday && styles.calendarDayHasEvents,
+              isToday && !isSelected && styles.calendarDayToday,
+              isSelected && styles.calendarDaySelected,
             ]}
+            onPress={() => onSelectDate(date)}
           >
-            {day}
-          </Label>
-          {/* V1 Poster: Show blue square indicator for days with events (except when selected) */}
-          {hasEvents && !isSelected && <View style={styles.eventIndicator} />}
-        </TouchableOpacity>
+            <Label
+              style={[
+                styles.calendarDayText,
+                isSelected && styles.calendarDayTextSelected,
+                isToday && !isSelected && styles.calendarDayTextToday,
+              ]}
+            >
+              {day}
+            </Label>
+            {/* V1 Poster: Show blue square indicator for days with events (except when selected) */}
+            {hasEvents && !isSelected && <View style={styles.eventIndicator} />}
+          </TouchableOpacity>
+        </View>
       );
     }
 
@@ -411,14 +419,13 @@ const styles = StyleSheet.create({
     // Inherited from Label primitive
   },
 
-  // V1 Poster: Calendar with thick borders and sharp corners
+  // V1 Poster: Calendar container (no outline per spec)
   calendar: {
     backgroundColor: skin.colors.backgroundSecondary,
     margin: skin.spacing.lg,
     padding: skin.spacing.lg,
     borderRadius: skin.borders.radiusCard, // Sharp: 0
-    borderWidth: skin.borders.widthCard, // Thick: 3px
-    borderColor: skin.colors.border,
+    // No container border - only day tiles have outlines
   },
   calendarHeader: {
     flexDirection: 'row',
@@ -443,24 +450,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: skin.spacing.sm,
   },
+  // V1 Poster: Bold weekday labels
   calendarDayName: {
     flex: 1,
     textAlign: 'center',
+    fontWeight: skin.components.calendar.weekdayFontWeight,
   },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     // V1 Poster: Add row gap to prevent vertical squashing
-    rowGap: skin.spacing.xs,
+    rowGap: skin.spacing.sm,
   },
-  // V1 Poster: Sharp calendar tiles (squares, not squashed)
-  calendarDay: {
+  // V1 Poster: Wrapper for day tile + shadow layer
+  calendarDayWrapper: {
     width: '14.28%',
     aspectRatio: 1,
     minHeight: skin.sizes.calendarDayMinHeight,
+    position: 'relative',
+  },
+  // V1 Poster: Empty cell (no border, no fill)
+  calendarDayEmpty: {
+    flex: 1,
+  },
+  // V1 Poster: Offset shadow layer for selected day (neobrut double-layer)
+  calendarDayShadow: {
+    position: 'absolute',
+    top: skin.components.calendar.selectedShadowOffsetY,
+    left: skin.components.calendar.selectedShadowOffsetX,
+    right: -skin.components.calendar.selectedShadowOffsetX,
+    bottom: -skin.components.calendar.selectedShadowOffsetY,
+    backgroundColor: skin.components.calendar.selectedShadowColor,
+  },
+  // V1 Poster: Sharp calendar tiles with outline
+  calendarDay: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    // Outline on all tiles
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
+    backgroundColor: skin.colors.backgroundSecondary,
     // Ensure indicator is not clipped
     overflow: 'visible',
   },
@@ -476,8 +507,10 @@ const styles = StyleSheet.create({
   calendarDayHasEvents: {
     backgroundColor: skin.colors.calendarHasEvents,
   },
+  // V1 Poster: Bold day numbers
   calendarDayText: {
     color: skin.colors.textPrimary,
+    fontWeight: skin.components.calendar.dayNumberFontWeight,
   },
   calendarDayTextSelected: {
     color: skin.colors.background,

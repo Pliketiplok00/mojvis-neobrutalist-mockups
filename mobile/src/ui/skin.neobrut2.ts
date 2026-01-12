@@ -379,6 +379,20 @@ export const components = {
     placeholderColor: colors.textDisabled,
     disabledOpacity: 0.5,
   },
+
+  // Calendar component tokens (V1 poster style)
+  calendar: {
+    // Day tile outline
+    dayTileBorderWidth: bordersToken.widthThin,
+    dayTileBorderColor: colors.border,
+    // Selected day offset shadow (neobrut double-layer)
+    selectedShadowOffsetX: 3,
+    selectedShadowOffsetY: 3,
+    selectedShadowColor: colors.border,
+    // Typography
+    weekdayFontWeight: typography.fontWeight.bold,
+    dayNumberFontWeight: typography.fontWeight.bold,
+  },
 } as const;
 
 // ---- Final skin object ----
