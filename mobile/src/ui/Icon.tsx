@@ -39,6 +39,7 @@ import {
   Check,
   Clock,
   MapPin,
+  User,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -78,7 +79,8 @@ export type IconName =
   | 'camera'
   | 'check'
   | 'clock'
-  | 'map-pin';
+  | 'map-pin'
+  | 'user';
 
 /**
  * Icon size tokens from skin.
@@ -127,6 +129,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'check': Check,
   'clock': Clock,
   'map-pin': MapPin,
+  'user': User,
 };
 
 interface IconProps {

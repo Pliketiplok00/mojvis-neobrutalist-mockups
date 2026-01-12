@@ -424,16 +424,30 @@ export const components = {
       heroImageBorderWidth: bordersToken.widthCard,
       heroImageBorderColor: colors.border,
 
-      // Title header section (poster band)
+      // Title header section (poster band - YELLOW slab)
       titlePadding: spacing.xl,
       titleBorderWidth: bordersToken.widthCard, // Heavy poster-style rule
       titleBorderColor: colors.border,
+      titleBackground: palette.accent, // Yellow slab background
+
+      // Info tile tokens (icon tile row with square icon box)
+      infoTileIconBoxSize: 44, // Square icon box size
+      infoTileIconBoxBackground: colors.background,
+      infoTileIconBoxBorderWidth: bordersToken.widthThin,
+      infoTileIconBoxBorderColor: colors.border,
+      infoTileGap: spacing.md, // Gap between icon box and text
+      infoTilePadding: spacing.lg, // Row padding
 
       // Info sections (Time/Location/Description)
       infoSectionPadding: spacing.lg,
       infoSectionDividerWidth: bordersToken.widthThin, // Poster-style separator
       infoSectionDividerColor: colors.border,
       infoLabelMarginBottom: spacing.xs,
+
+      // CTA dual-layer shadow (neobrut offset shadow)
+      ctaShadowOffsetX: 4,
+      ctaShadowOffsetY: 4,
+      ctaShadowColor: colors.border,
 
       // Reminder CTA card
       reminderCardPadding: spacing.lg,

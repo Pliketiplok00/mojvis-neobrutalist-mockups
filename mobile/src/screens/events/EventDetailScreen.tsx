@@ -9,6 +9,11 @@
  * - Reminder toggle (subscribe/unsubscribe)
  * - Share functionality (OS share sheet)
  *
+ * Design:
+ * - Yellow title slab (poster-style)
+ * - Info tiles with square icon boxes (Clock, MapPin, User)
+ * - Neobrut dual-layer shadows on CTAs
+ *
  * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
@@ -31,7 +36,8 @@ import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
-import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { H1, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
 import { formatDateLocaleFull, formatTimeHrHR } from '../../utils/dateFormat';
 
@@ -144,62 +150,93 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
           />
         )}
 
-        {/* Event Title */}
+        {/* Event Title - Yellow Slab */}
         <View style={styles.header}>
           <H1 style={styles.title}>{event.title}</H1>
         </View>
 
-        {/* Date & Time */}
-        <View style={styles.infoSection}>
-          <Meta style={styles.infoLabel}>{t('eventDetail.time')}</Meta>
-          <Body style={styles.infoValue}>{formatDateLocaleFull(event.start_datetime)}</Body>
-          {event.is_all_day ? (
-            <Label style={styles.infoValueSecondary}>{t('events.allDay')}</Label>
-          ) : (
-            <Label style={styles.infoValueSecondary}>
-              {formatTimeHrHR(event.start_datetime)}
-              {event.end_datetime && ` - ${formatTimeHrHR(event.end_datetime)}`}
-            </Label>
-          )}
-        </View>
-
-        {/* Location */}
-        {event.location && (
-          <View style={styles.infoSection}>
-            <Meta style={styles.infoLabel}>{t('eventDetail.location')}</Meta>
-            <Body style={styles.infoValue}>{event.location}</Body>
+        {/* Info Tiles */}
+        <View style={styles.infoTilesContainer}>
+          {/* Date & Time Tile */}
+          <View style={styles.infoTile}>
+            <View style={styles.infoTileIconBox}>
+              <Icon name="clock" size="md" colorToken="textPrimary" />
+            </View>
+            <View style={styles.infoTileContent}>
+              <Body style={styles.infoTileValue}>{formatDateLocaleFull(event.start_datetime)}</Body>
+              {event.is_all_day ? (
+                <Label style={styles.infoTileSecondary}>{t('events.allDay')}</Label>
+              ) : (
+                <Label style={styles.infoTileSecondary}>
+                  {formatTimeHrHR(event.start_datetime)}
+                  {event.end_datetime && ` - ${formatTimeHrHR(event.end_datetime)}`}
+                </Label>
+              )}
+            </View>
           </View>
-        )}
+
+          {/* Location Tile */}
+          {event.location && (
+            <View style={styles.infoTile}>
+              <View style={styles.infoTileIconBox}>
+                <Icon name="map-pin" size="md" colorToken="textPrimary" />
+              </View>
+              <View style={styles.infoTileContent}>
+                <Body style={styles.infoTileValue}>{event.location}</Body>
+              </View>
+            </View>
+          )}
+
+          {/* Organizer Tile */}
+          <View style={styles.infoTile}>
+            <View style={styles.infoTileIconBox}>
+              <Icon name="user" size="md" colorToken="textPrimary" />
+            </View>
+            <View style={styles.infoTileContent}>
+              <Body style={styles.infoTileValue}>{event.organizer}</Body>
+            </View>
+          </View>
+        </View>
 
         {/* Description */}
         {event.description && (
-          <View style={styles.infoSection}>
-            <Meta style={styles.infoLabel}>{t('eventDetail.description')}</Meta>
+          <View style={styles.descriptionSection}>
+            <Meta style={styles.descriptionLabel}>{t('eventDetail.description')}</Meta>
             <Body style={styles.description}>{event.description}</Body>
           </View>
         )}
 
-        {/* Reminder Toggle */}
-        <View style={styles.reminderSection}>
-          <View style={styles.reminderInfo}>
-            <ButtonText style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</ButtonText>
-            <Meta style={styles.reminderHint}>
-              {t('eventDetail.reminder.active')}
-            </Meta>
+        {/* Reminder Toggle - Dual-layer CTA */}
+        <View style={styles.reminderWrapper}>
+          {/* Shadow layer */}
+          <View style={styles.ctaShadowLayer} />
+          {/* Main card */}
+          <View style={styles.reminderSection}>
+            <View style={styles.reminderInfo}>
+              <ButtonText style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</ButtonText>
+              <Meta style={styles.reminderHint}>
+                {t('eventDetail.reminder.active')}
+              </Meta>
+            </View>
+            <Switch
+              value={subscribed}
+              onValueChange={handleToggleReminder}
+              disabled={subscribing}
+              trackColor={{ false: skin.colors.borderLight, true: skin.colors.textPrimary }}
+              thumbColor={skin.colors.background}
+            />
           </View>
-          <Switch
-            value={subscribed}
-            onValueChange={handleToggleReminder}
-            disabled={subscribing}
-            trackColor={{ false: skin.colors.borderLight, true: skin.colors.textPrimary }}
-            thumbColor={skin.colors.background}
-          />
         </View>
 
-        {/* Share Button */}
-        <Button variant="secondary" onPress={handleShare} style={styles.shareButton}>
-          {t('eventDetail.share')}
-        </Button>
+        {/* Share Button - Dual-layer CTA */}
+        <View style={styles.shareWrapper}>
+          {/* Shadow layer */}
+          <View style={styles.ctaShadowLayerButton} />
+          {/* Main button */}
+          <Button variant="secondary" onPress={handleShare} style={styles.shareButton}>
+            {t('eventDetail.share')}
+          </Button>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -222,45 +259,85 @@ const styles = StyleSheet.create({
     borderBottomColor: skin.components.events.detail.heroImageBorderColor,
   },
 
-  // V1 Poster: Title header (poster band with heavy bottom rule)
+  // V1 Poster: Title header (yellow slab with heavy bottom rule)
   header: {
     padding: skin.components.events.detail.titlePadding,
     borderBottomWidth: skin.components.events.detail.titleBorderWidth,
     borderBottomColor: skin.components.events.detail.titleBorderColor,
+    backgroundColor: skin.components.events.detail.titleBackground,
   },
   title: {
     // Inherited from H1 primitive
   },
 
-  // V1 Poster: Info sections with stronger separators
-  infoSection: {
+  // Info Tiles Container
+  infoTilesContainer: {
+    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
+    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
+  },
+
+  // Info Tile Row (icon box + content)
+  infoTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: skin.components.events.detail.infoTilePadding,
+    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
+    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
+    gap: skin.components.events.detail.infoTileGap,
+  },
+  infoTileIconBox: {
+    width: skin.components.events.detail.infoTileIconBoxSize,
+    height: skin.components.events.detail.infoTileIconBoxSize,
+    backgroundColor: skin.components.events.detail.infoTileIconBoxBackground,
+    borderWidth: skin.components.events.detail.infoTileIconBoxBorderWidth,
+    borderColor: skin.components.events.detail.infoTileIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoTileContent: {
+    flex: 1,
+  },
+  infoTileValue: {
+    color: skin.colors.textPrimary,
+  },
+  infoTileSecondary: {
+    marginTop: skin.components.events.detail.secondaryValueMarginTop,
+    color: skin.colors.textSecondary,
+  },
+
+  // Description Section
+  descriptionSection: {
     padding: skin.components.events.detail.infoSectionPadding,
     borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
     borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
   },
-  infoLabel: {
+  descriptionLabel: {
     textTransform: 'uppercase',
     marginBottom: skin.components.events.detail.infoLabelMarginBottom,
-  },
-  infoValue: {
-    textTransform: 'capitalize',
-    color: skin.colors.textPrimary,
-  },
-  infoValueSecondary: {
-    marginTop: skin.components.events.detail.secondaryValueMarginTop,
-    color: skin.colors.textSecondary,
   },
   description: {
     lineHeight: skin.components.events.detail.descriptionLineHeight,
   },
 
-  // V1 Poster: Reminder CTA card (strong border, clean background, sharp corners)
+  // Reminder CTA with dual-layer shadow
+  reminderWrapper: {
+    margin: skin.spacing.lg,
+    position: 'relative',
+  },
+  ctaShadowLayer: {
+    position: 'absolute',
+    top: skin.components.events.detail.ctaShadowOffsetY,
+    left: skin.components.events.detail.ctaShadowOffsetX,
+    right: -skin.components.events.detail.ctaShadowOffsetX,
+    bottom: -skin.components.events.detail.ctaShadowOffsetY,
+    backgroundColor: skin.components.events.detail.ctaShadowColor,
+    borderRadius: skin.components.events.detail.reminderCardRadius,
+  },
   reminderSection: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: skin.components.events.detail.reminderCardPadding,
     backgroundColor: skin.components.events.detail.reminderCardBackground,
-    margin: skin.spacing.lg,
     borderRadius: skin.components.events.detail.reminderCardRadius,
     borderWidth: skin.components.events.detail.reminderCardBorderWidth,
     borderColor: skin.components.events.detail.reminderCardBorderColor,
@@ -275,9 +352,23 @@ const styles = StyleSheet.create({
     marginTop: skin.components.events.detail.reminderHintMarginTop,
   },
 
-  // Share button
+  // Share Button with dual-layer shadow
+  shareWrapper: {
+    marginHorizontal: skin.spacing.lg,
+    marginBottom: skin.spacing.lg,
+    position: 'relative',
+  },
+  ctaShadowLayerButton: {
+    position: 'absolute',
+    top: skin.components.events.detail.ctaShadowOffsetY,
+    left: skin.components.events.detail.ctaShadowOffsetX,
+    right: -skin.components.events.detail.ctaShadowOffsetX,
+    bottom: -skin.components.events.detail.ctaShadowOffsetY,
+    backgroundColor: skin.components.events.detail.ctaShadowColor,
+    borderRadius: skin.borders.radiusCard,
+  },
   shareButton: {
-    margin: skin.spacing.lg,
+    // Button styling handled by Button component
   },
 });
 
