@@ -18,7 +18,7 @@
 import React, { useState } from 'react';
 import {
   View,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   LayoutAnimation,
   Platform,
@@ -101,10 +101,12 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
       <View style={styles.shadowLayer} />
 
       {/* Main Card */}
-      <TouchableOpacity
-        style={styles.container}
+      <Pressable
+        style={({ pressed }) => [
+          styles.container,
+          hasStopTimes && pressed && styles.containerPressed,
+        ]}
         onPress={hasStopTimes ? toggleExpanded : undefined}
-        activeOpacity={hasStopTimes ? 0.7 : 1}
       >
         {/* Header Row */}
         <View style={styles.header}>
@@ -190,7 +192,7 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
             })}
           </View>
         )}
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -213,6 +215,9 @@ const styles = StyleSheet.create({
     borderColor: lineDetail.departureRowBorderColor,
     borderRadius: lineDetail.departureRowRadius,
     overflow: 'hidden',
+  },
+  containerPressed: {
+    opacity: 0.7,
   },
   header: {
     flexDirection: 'row',
