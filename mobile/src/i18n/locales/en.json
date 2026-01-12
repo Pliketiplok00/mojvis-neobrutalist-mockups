@@ -131,7 +131,8 @@
     },
     "location": "Location",
     "time": "Time",
-    "description": "Description"
+    "description": "Description",
+    "share": "Share"
   },
   "transport": {
     "hub": {

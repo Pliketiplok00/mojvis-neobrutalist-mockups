@@ -204,48 +204,48 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
-  // Header
+  // V1 Poster: Title header (poster band with heavy bottom rule)
   header: {
-    padding: skin.spacing.lg,
-    borderBottomWidth: skin.borders.widthThin,
-    borderBottomColor: skin.colors.border,
+    padding: skin.components.events.detail.titlePadding,
+    borderBottomWidth: skin.components.events.detail.titleBorderWidth,
+    borderBottomColor: skin.components.events.detail.titleBorderColor,
   },
   title: {
     // Inherited from H1 primitive
   },
 
-  // Info sections
+  // V1 Poster: Info sections with stronger separators
   infoSection: {
-    padding: skin.spacing.lg,
-    borderBottomWidth: skin.borders.widthHairline,
-    borderBottomColor: skin.colors.borderLight,
+    padding: skin.components.events.detail.infoSectionPadding,
+    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
+    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
   },
   infoLabel: {
     textTransform: 'uppercase',
-    marginBottom: skin.spacing.xs,
+    marginBottom: skin.components.events.detail.infoLabelMarginBottom,
   },
   infoValue: {
     textTransform: 'capitalize',
     color: skin.colors.textPrimary,
   },
   infoValueSecondary: {
-    marginTop: 2,
+    marginTop: skin.components.events.detail.secondaryValueMarginTop,
     color: skin.colors.textSecondary,
   },
   description: {
-    lineHeight: 22,
+    lineHeight: skin.components.events.detail.descriptionLineHeight,
   },
 
-  // Reminder section
+  // V1 Poster: Reminder CTA card (strong border, clean background, sharp corners)
   reminderSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: skin.spacing.lg,
-    backgroundColor: skin.colors.backgroundSecondary,
+    padding: skin.components.events.detail.reminderCardPadding,
+    backgroundColor: skin.components.events.detail.reminderCardBackground,
     margin: skin.spacing.lg,
-    borderRadius: skin.borders.radiusCard,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
+    borderRadius: skin.components.events.detail.reminderCardRadius,
+    borderWidth: skin.components.events.detail.reminderCardBorderWidth,
+    borderColor: skin.components.events.detail.reminderCardBorderColor,
   },
   reminderInfo: {
     flex: 1,
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     // Inherited from ButtonText primitive
   },
   reminderHint: {
-    marginTop: 2,
+    marginTop: skin.components.events.detail.reminderHintMarginTop,
   },
 
   // Share button

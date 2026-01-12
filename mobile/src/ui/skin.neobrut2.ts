@@ -416,6 +416,32 @@ export const components = {
     emptyStateBackground: 'transparent',
     emptyStatePadding: spacing.xxl,
     emptyStateBorderRadius: bordersToken.radiusSharp,
+
+    // Event Detail screen tokens (V1 poster style)
+    detail: {
+      // Title header section (poster band)
+      titlePadding: spacing.xl,
+      titleBorderWidth: bordersToken.widthCard, // Heavy poster-style rule
+      titleBorderColor: colors.border,
+
+      // Info sections (Time/Location/Description)
+      infoSectionPadding: spacing.lg,
+      infoSectionDividerWidth: bordersToken.widthThin, // Poster-style separator
+      infoSectionDividerColor: colors.border,
+      infoLabelMarginBottom: spacing.xs,
+
+      // Reminder CTA card
+      reminderCardPadding: spacing.lg,
+      reminderCardBorderWidth: bordersToken.widthCard, // Strong CTA border
+      reminderCardBorderColor: colors.border,
+      reminderCardBackground: colors.background, // Clean, not grey panel
+      reminderCardRadius: bordersToken.radiusSharp, // Sharp corners (poster)
+
+      // Tokenized hardcoded values
+      secondaryValueMarginTop: spacing.xs, // Was: 2
+      reminderHintMarginTop: spacing.xs, // Was: 2
+      descriptionLineHeight: 22, // Keep same value, now tokenized
+    },
   },
 } as const;
 

@@ -131,7 +131,8 @@
     },
     "location": "Lokacija",
     "time": "Vrijeme",
-    "description": "Opis"
+    "description": "Opis",
+    "share": "Podijeli"
   },
   "transport": {
     "hub": {
