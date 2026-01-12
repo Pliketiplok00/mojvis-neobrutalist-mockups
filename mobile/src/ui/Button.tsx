@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   primary: {
     backgroundColor: components.button.primary.backgroundColor,
     borderWidth: components.button.primary.borderWidth,
+    borderColor: components.button.primary.borderColor,
   },
   secondary: {
     backgroundColor: components.button.secondary.backgroundColor,

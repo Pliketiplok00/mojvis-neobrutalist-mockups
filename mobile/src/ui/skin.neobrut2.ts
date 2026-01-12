@@ -19,33 +19,42 @@ const hsl = (h: number, s: number, l: number) => `hsl(${h} ${s}% ${l}%)`;
 const hsla = (h: number, s: number, l: number, a: number) =>
   `hsla(${h} ${s}% ${l}% / ${a})`;
 
-// Mediterranean Neobrut palette (more visible than "almost white")
+// Mediterranean Neobrut palette - ALIGNED TO V1 DESIGN SYSTEM
 const palette = {
-  // Paper/sand background — clearly not pure white
-  background: hsl(45, 28, 93),
-  foreground: hsl(220, 18, 10), // ink black
+  // Core Background & Foreground (from V1 design system)
+  background: hsl(45, 30, 96), // Warm cream/sand
+  foreground: hsl(220, 20, 10), // Near-black
 
   // Surfaces
-  surface: hsl(45, 22, 97), // cards
-  surfaceAlt: hsl(45, 14, 88), // muted panels / sections
+  surface: hsl(45, 25, 98), // cards (--card)
+  surfaceAlt: hsl(45, 15, 90), // muted panels / sections (--muted)
 
   // Text
-  mutedText: hsl(220, 10, 34),
+  mutedText: hsl(220, 10, 40), // --muted-foreground
 
-  // Accents (Mediterranean)
-  primary: hsl(210, 85, 40), // deep sea blue
-  secondary: hsl(155, 45, 34), // olive
-  accent: hsl(42, 95, 55), // sun yellow
+  // Primary - Mediterranean Blue
+  primary: hsl(210, 80, 45),
+  // Secondary - Olive Green
+  secondary: hsl(160, 45, 38),
+  // Accent - Sun Yellow
+  accent: hsl(45, 92, 55),
+  // Destructive - Terracotta Red
+  destructive: hsl(12, 55, 50),
 
-  destructive: hsl(12, 62, 48), // terracotta
+  // Extended Mediterranean Palette
+  lavender: hsl(270, 35, 70), // Feedback section
+  amber: hsl(35, 83, 61), // Banner fill - #eeab4b
+  orange: hsl(25, 85, 55), // Click-Fix section
+  teal: hsl(180, 45, 42), // Catamaran transport
+  pink: hsl(350, 50, 65), // Decorative accents
 
   // UI extras
   chevron: hsl(220, 10, 50),
   typeBadge: hsl(270, 40, 52),
-  unreadIndicator: hsl(210, 85, 40),
+  unreadIndicator: hsl(210, 80, 45), // matches primary
 
   // Link color
-  link: hsl(210, 85, 40), // same as primary for consistency
+  link: hsl(210, 80, 45), // same as primary for consistency
 };
 
 const borders = {
@@ -54,10 +63,10 @@ const borders = {
   widthThin: 2,
   widthCard: 3,
   widthHeavy: 4,
-  radiusSharp: 0,
-  radiusSoft: 4, // keep tiny rounding for small elements (badges)
-  radiusCard: 8, // standard card/container radius
-  radiusPill: 9999, // fully rounded (pill shape for badges, buttons)
+  radiusSharp: 0, // neobrutalist: sharp corners everywhere
+  radiusSoft: 4, // small elements (badges) - per design system --radius-soft
+  radiusCard: 0, // cards/containers: sharp corners (neobrutalist principle)
+  radiusPill: 9999, // fully rounded (pill shape)
 };
 
 const spacing = {
@@ -128,6 +137,12 @@ const icons = {
   },
 } as const;
 
+// Size tokens for specific UI elements
+const sizes = {
+  calendarEventIndicator: 8, // Small square indicator for days with events
+  calendarDayMinHeight: 40, // Minimum height for calendar day tiles
+} as const;
+
 const hardShadow = (offset: number, color: string = borders.color): ShadowToken => ({
   ios: {
     shadowColor: color,
@@ -184,7 +199,7 @@ export const colors = {
   urgentText: "white",
 
   // Status - Warning (sun)
-  warningBackground: hsla(42, 95, 55, 0.22),
+  warningBackground: hsl(35, 83, 61), // #eeab4b
   warningText: palette.foreground,
   warningAccent: palette.accent, // Border/indicator for warning state
 
@@ -204,8 +219,21 @@ export const colors = {
   typeBadge: palette.typeBadge,
   chevron: palette.chevron,
 
+  // Calendar day tile states (V1 poster parity)
+  calendarToday: palette.accent, // Yellow fill for today
+  calendarSelected: palette.primary, // Blue fill for selected
+  calendarHasEvents: hsla(160, 45, 38, 0.35), // Green-ish tint for days with events (visible)
+  calendarEventIndicator: palette.primary, // Blue square indicator
+
+  // Extended Mediterranean (feature-specific)
+  lavender: palette.lavender, // Feedback section
+  amber: palette.amber, // Banner fill (midpoint yellow-orange)
+  orange: palette.orange, // Click-Fix section
+  teal: palette.teal, // Catamaran transport
+  pink: palette.pink, // Decorative accents
+
   // Optional overlay
-  overlay: hsla(220, 18, 10, 0.6),
+  overlay: hsla(220, 20, 10, 0.6),
 
   // Test watermark (if still present somewhere)
   testWatermarkBg: borders.color,
@@ -218,10 +246,11 @@ export const bordersToken = {
   widthThin: borders.widthThin,
   widthCard: borders.widthCard,
   widthHeavy: borders.widthHeavy,
+  radiusSharp: borders.radiusSharp, // neobrutalist: 0
   radiusSmall: borders.radiusSoft,
   radiusMedium: borders.radiusSharp,
-  radiusLarge: borders.radiusSharp,
-  radiusCard: borders.radiusCard,
+  radiusLarge: borders.radiusSharp, // neobrutalist: 0
+  radiusCard: borders.radiusCard, // neobrutalist: 0
   radiusPill: borders.radiusPill,
 } as const;
 
@@ -249,6 +278,14 @@ export const shadows = {
 
 // ---- Component tokens (match existing usage pattern) ----
 export const components = {
+  header: {
+    height: 64, // design system: h-16 = 64px
+    borderBottomWidth: bordersToken.widthHeavy, // design system: border-b-4
+    borderBottomColor: colors.border,
+    backgroundColor: colors.background,
+    paddingHorizontal: spacing.lg,
+  },
+
   screen: {
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
@@ -277,8 +314,8 @@ export const components = {
     primary: {
       backgroundColor: colors.primary,
       textColor: colors.primaryText,
-      borderWidth: 0,
-      borderColor: "transparent",
+      borderWidth: bordersToken.widthThin, // design system: border-2 border-foreground
+      borderColor: colors.border,
     },
     secondary: {
       backgroundColor: colors.background,
@@ -311,7 +348,9 @@ export const components = {
   badge: {
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: bordersToken.radiusSmall,
+    borderRadius: bordersToken.radiusSharp, // neobrutalist: sharp corners
+    borderWidth: bordersToken.widthThin, // design system: border-2 border-foreground
+    borderColor: colors.border,
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
   },
@@ -340,6 +379,70 @@ export const components = {
     placeholderColor: colors.textDisabled,
     disabledOpacity: 0.5,
   },
+
+  // Calendar component tokens (V1 poster style)
+  calendar: {
+    // Container background (transparent - matches screen background per V1 mockup)
+    containerBackground: 'transparent',
+    // Day tile outline - for colored tiles (has-events, today, selected)
+    dayTileBorderWidth: bordersToken.widthThin,
+    dayTileBorderColor: colors.border,
+    // Legacy aliases (same as dayTile*)
+    hasEventsBorderWidth: bordersToken.widthThin,
+    hasEventsBorderColor: colors.border,
+    // Grid spacing (gutters between tiles)
+    dayTileGap: spacing.xs,
+    dayTileGapY: spacing.sm, // Vertical row spacing (slightly larger than horizontal)
+    dayTilePadding: spacing.xs,
+    // Event indicator spacing
+    eventIndicatorMarginTop: spacing.xs,
+    // Selected day offset shadow (neobrut double-layer) - ONLY for selected
+    selectedShadowOffsetX: 3,
+    selectedShadowOffsetY: 3,
+    selectedShadowColor: colors.border,
+    // Typography
+    weekdayFontWeight: typography.fontWeight.bold,
+    dayNumberFontWeight: typography.fontWeight.bold,
+    dayNumberColor: colors.textPrimary,
+    selectedDayNumberColor: colors.primaryText, // white
+  },
+
+  // Events screen component tokens
+  events: {
+    // Empty state (dotted outline box per V1 mockup)
+    emptyStateBorderWidth: bordersToken.widthThin,
+    emptyStateBorderColor: colors.borderMuted,
+    emptyStateBorderStyle: 'dotted' as const,
+    emptyStateBackground: 'transparent',
+    emptyStatePadding: spacing.xxl,
+    emptyStateBorderRadius: bordersToken.radiusSharp,
+
+    // Event Detail screen tokens (V1 poster style)
+    detail: {
+      // Title header section (poster band)
+      titlePadding: spacing.xl,
+      titleBorderWidth: bordersToken.widthCard, // Heavy poster-style rule
+      titleBorderColor: colors.border,
+
+      // Info sections (Time/Location/Description)
+      infoSectionPadding: spacing.lg,
+      infoSectionDividerWidth: bordersToken.widthThin, // Poster-style separator
+      infoSectionDividerColor: colors.border,
+      infoLabelMarginBottom: spacing.xs,
+
+      // Reminder CTA card
+      reminderCardPadding: spacing.lg,
+      reminderCardBorderWidth: bordersToken.widthCard, // Strong CTA border
+      reminderCardBorderColor: colors.border,
+      reminderCardBackground: colors.background, // Clean, not grey panel
+      reminderCardRadius: bordersToken.radiusSharp, // Sharp corners (poster)
+
+      // Tokenized hardcoded values
+      secondaryValueMarginTop: spacing.xs, // Was: 2
+      reminderHintMarginTop: spacing.xs, // Was: 2
+      descriptionLineHeight: 22, // Keep same value, now tokenized
+    },
+  },
 } as const;
 
 // ---- Final skin object ----
@@ -350,6 +453,7 @@ export const skinNeobrut2 = {
   shadows,
   typography,
   icons,
+  sizes,
   components,
 
   // Optional: for future "external shadow layer" (fake neo shadow)

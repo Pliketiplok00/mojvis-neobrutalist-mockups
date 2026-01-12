@@ -9,6 +9,14 @@
  * - Banners never open external links, filtered lists, or custom screens
  * - Banners are derived from Inbox messages (no separate content)
  *
+ * V1 Poster Style:
+ * - Edge-to-edge (no inset)
+ * - No gaps between banners, only bottom rule separation
+ * - Only bottom border, not full outline
+ * - No shadow
+ * - Warm yellow/orange fill
+ * - Red accents for icon box + tags
+ *
  * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
@@ -33,7 +41,8 @@ interface BannerProps {
 }
 
 /**
- * Single banner item
+ * Single banner item - V1 Poster Style
+ * Edge-to-edge slab with warm yellow fill, red icon box, bottom border only
  * Clicking opens the inbox message detail
  */
 export function Banner({ message }: BannerProps): React.JSX.Element {
@@ -53,27 +62,42 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
       onPress={handlePress}
       accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
       accessibilityHint={t('banner.accessibilityHint')}
+      activeOpacity={0.8}
     >
-      {/* Urgent indicator */}
-      {isUrgent && (
-        <View style={styles.urgentBadge}>
-          <Meta style={styles.urgentText}>{t('banner.urgent')}</Meta>
-        </View>
-      )}
+      {/* Icon box on left - red accent */}
+      <View style={styles.iconBox}>
+        <Icon
+          name="alert-triangle"
+          size="md"
+          color="white"
+          stroke="strong"
+        />
+      </View>
 
-      {/* Title */}
-      <Label style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
-        {message.title}
-      </Label>
+      {/* Text content */}
+      <View style={styles.textContent}>
+        <Label style={styles.title} numberOfLines={1}>
+          {message.title}
+        </Label>
+        <Meta style={styles.preview} numberOfLines={1}>
+          {message.body}
+        </Meta>
+      </View>
 
-      {/* Preview */}
-      <Meta style={styles.preview} numberOfLines={1}>
-        {message.body}
-      </Meta>
+      {/* Tag badge - red accent */}
+      <View style={styles.tagBadge}>
+        <Meta style={styles.tagBadgeText}>
+          {isUrgent ? t('banner.urgent') : t('banner.new')}
+        </Meta>
+      </View>
 
-      {/* Arrow indicator - uses Icon primitive */}
+      {/* Arrow indicator */}
       <View style={styles.arrowContainer}>
-        <Icon name="chevron-right" size="sm" colorToken="chevron" />
+        <Icon
+          name="chevron-right"
+          size="md"
+          colorToken="textPrimary"
+        />
       </View>
     </TouchableOpacity>
   );
@@ -118,46 +142,60 @@ export function BannerList({ banners }: BannerListProps): React.JSX.Element | nu
 }
 
 const styles = StyleSheet.create({
+  // V1 Poster: No gaps between banners, only bottom rule separation
   listContainer: {
-    gap: skin.spacing.sm,
-    marginBottom: skin.spacing.lg,
+    gap: 0,
   },
+  // V1 Poster: Edge-to-edge, amber fill (midpoint yellow-orange), only bottom border
   container: {
-    backgroundColor: skin.colors.warningBackground,
-    borderRadius: skin.borders.radiusCard,
+    backgroundColor: skin.colors.amber, // Midpoint between warningAccent and orange
+    borderBottomWidth: skin.borders.widthHeavy,
+    borderBottomColor: skin.colors.border,
     padding: skin.spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    borderLeftWidth: skin.borders.widthHeavy,
-    borderLeftColor: skin.colors.warningAccent,
+    gap: skin.spacing.md,
   },
   containerUrgent: {
-    backgroundColor: skin.colors.errorBackground,
-    borderLeftColor: skin.colors.urgent,
+    backgroundColor: skin.colors.orange, // Warmer orange for urgent
   },
-  urgentBadge: {
-    backgroundColor: skin.colors.urgent,
-    paddingHorizontal: skin.spacing.sm,
-    paddingVertical: skin.components.badge.paddingVertical,
-    borderRadius: skin.borders.radiusSmall,
-    marginRight: skin.spacing.sm,
+  // V1 Poster: Icon box with red accent
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    backgroundColor: skin.colors.urgent, // Red accent
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  urgentText: {
-    color: skin.colors.urgentText,
+  // Text content
+  textContent: {
+    flex: 1,
   },
   title: {
-    flex: 1,
     color: skin.colors.textPrimary,
-  },
-  titleUrgent: {
-    color: skin.colors.errorText,
+    fontWeight: '700',
   },
   preview: {
-    flex: 2,
-    marginLeft: skin.spacing.sm,
+    color: skin.colors.textMuted,
+    marginTop: skin.spacing.xs,
+  },
+  // V1 Poster: Tag badge with red accent
+  tagBadge: {
+    backgroundColor: skin.colors.urgent, // Red accent
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    paddingHorizontal: skin.spacing.sm,
+    paddingVertical: skin.spacing.xs,
+  },
+  tagBadgeText: {
+    color: 'white',
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
   arrowContainer: {
-    marginLeft: skin.spacing.sm,
+    // Icon handles sizing
   },
 });
 

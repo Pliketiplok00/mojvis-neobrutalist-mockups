@@ -10,6 +10,12 @@
  * - Selected day shows event list below
  * - Events ordered chronologically
  *
+ * V1 Poster Style:
+ * - Hero slab (matches Home exactly)
+ * - Sharp calendar tiles (no circles/pills)
+ * - Thick borders on calendar and cards
+ * - Poster-style event cards
+ *
  * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
@@ -88,7 +94,11 @@ function Calendar({
 
     // Empty cells for days before first day of month
     for (let i = 0; i < startDay; i++) {
-      days.push(<View key={`empty-${i}`} style={styles.calendarDay} />);
+      days.push(
+        <View key={`empty-${i}`} style={styles.calendarDayWrapper}>
+          <View style={styles.calendarDayEmpty} />
+        </View>
+      );
     }
 
     // Days of the month
@@ -99,26 +109,37 @@ function Calendar({
       const isSelected = dateStr === selected;
       const hasEvents = eventDates.has(dateStr);
 
+      // V1 Poster: State priority: selected > today > hasEvents
+      // All colored tiles (hasEvents, today, selected) get outlines
+      // ONLY selected day gets neobrut offset shadow layer
       days.push(
-        <TouchableOpacity
-          key={day}
-          style={[
-            styles.calendarDay,
-            isSelected && styles.calendarDaySelected,
-            isToday && styles.calendarDayToday,
-          ]}
-          onPress={() => onSelectDate(date)}
-        >
-          <Label
+        <View key={day} style={styles.calendarDayWrapper}>
+          {/* V1 Poster: Offset shadow layer ONLY for selected day */}
+          {isSelected && <View style={styles.calendarDayShadow} />}
+          <TouchableOpacity
             style={[
-              styles.calendarDayText,
-              isSelected && styles.calendarDayTextSelected,
+              styles.calendarDay,
+              // Fill + outline (priority: selected > today > hasEvents)
+              // Each colored state includes its own outline
+              hasEvents && !isSelected && !isToday && styles.calendarDayHasEvents,
+              isToday && !isSelected && styles.calendarDayToday,
+              isSelected && styles.calendarDaySelected,
             ]}
+            onPress={() => onSelectDate(date)}
           >
-            {day}
-          </Label>
-          {hasEvents && <View style={styles.eventDot} />}
-        </TouchableOpacity>
+            <Label
+              style={[
+                styles.calendarDayText,
+                isSelected && styles.calendarDayTextSelected,
+                isToday && !isSelected && styles.calendarDayTextToday,
+              ]}
+            >
+              {day}
+            </Label>
+            {/* V1 Poster: Show blue square indicator for days with events (except when selected) */}
+            {hasEvents && !isSelected && <View style={styles.eventIndicator} />}
+          </TouchableOpacity>
+        </View>
       );
     }
 
@@ -127,33 +148,36 @@ function Calendar({
 
   return (
     <View style={styles.calendar}>
+      {/* V1 Poster: Month header with square nav buttons */}
       <View style={styles.calendarHeader}>
-        <TouchableOpacity onPress={prevMonth} style={styles.calendarNav}>
+        <TouchableOpacity onPress={prevMonth} style={styles.calendarNavButton}>
           <Icon name="chevron-left" size="md" colorToken="textPrimary" />
         </TouchableOpacity>
         <H2 style={styles.calendarTitle}>
-          {monthNames[month]} {year}
+          {monthNames[month].toUpperCase()} {year}
         </H2>
-        <TouchableOpacity onPress={nextMonth} style={styles.calendarNav}>
+        <TouchableOpacity onPress={nextMonth} style={styles.calendarNavButton}>
           <Icon name="chevron-right" size="md" colorToken="textPrimary" />
         </TouchableOpacity>
       </View>
 
+      {/* Day names header */}
       <View style={styles.calendarDayNames}>
         {dayNames.map((name) => (
-          <Meta key={name} style={styles.calendarDayName}>
+          <Label key={name} style={styles.calendarDayName}>
             {name}
-          </Meta>
+          </Label>
         ))}
       </View>
 
+      {/* Calendar grid */}
       <View style={styles.calendarGrid}>{renderDays()}</View>
     </View>
   );
 }
 
 /**
- * Event list item
+ * Event list item - V1 Poster style with icons
  */
 function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -163,19 +187,25 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
       style={styles.eventItem}
       onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
     >
-      <View style={styles.eventTime}>
-        <Label style={styles.eventTimeText}>
-          {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
-        </Label>
-      </View>
       <View style={styles.eventContent}>
         <ButtonText style={styles.eventTitle} numberOfLines={2}>
           {event.title}
         </ButtonText>
-        {event.location && (
-          <Meta style={styles.eventLocation} numberOfLines={1}>
-            {event.location}
+        {/* V1 Poster: Time row with clock icon */}
+        <View style={styles.eventMetaRow}>
+          <Icon name="clock" size="xs" colorToken="textMuted" />
+          <Meta style={styles.eventMetaText} numberOfLines={1}>
+            {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
           </Meta>
+        </View>
+        {/* V1 Poster: Location row with map-pin icon */}
+        {event.location && (
+          <View style={styles.eventMetaRow}>
+            <Icon name="map-pin" size="xs" colorToken="textMuted" />
+            <Meta style={styles.eventMetaText} numberOfLines={1}>
+              {event.location}
+            </Meta>
+          </View>
         )}
       </View>
       <Icon name="chevron-right" size="sm" colorToken="chevron" />
@@ -286,16 +316,16 @@ export function EventsScreen(): React.JSX.Element {
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView}>
-        {/* Banners */}
+        {/* Banners - V1 Poster: edge-to-edge */}
         {banners.length > 0 && (
           <View style={styles.bannerSection}>
             <BannerList banners={banners} />
           </View>
         )}
 
-        {/* Section title */}
-        <View style={styles.section}>
-          <H1 style={styles.sectionTitle}>{t('events.title')}</H1>
+        {/* Hero Slab - V1 Poster: matches Home exactly */}
+        <View style={styles.heroSection}>
+          <H1 style={styles.heroTitle}>{t('events.title').toUpperCase()}</H1>
         </View>
 
         {/* Calendar */}
@@ -307,16 +337,18 @@ export function EventsScreen(): React.JSX.Element {
           dayNames={dayNames}
         />
 
-        {/* Selected day events */}
-        <View style={styles.section}>
-          <ButtonText style={styles.selectedDateTitle}>
-            {selectedDate.toLocaleDateString('hr-HR', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </ButtonText>
+        {/* Selected day events - V1 Poster: heavy divider above */}
+        <View style={styles.dayEventsSection}>
+          <View style={styles.dayHeader}>
+            <Label style={styles.selectedDateTitle}>
+              {selectedDate.toLocaleDateString('hr-HR', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              }).toUpperCase()}
+            </Label>
+          </View>
 
           {loading && (
             <ActivityIndicator size="large" color={skin.colors.textPrimary} style={styles.loader} />
@@ -350,9 +382,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bannerSection: {
-    paddingHorizontal: skin.spacing.lg,
-    paddingTop: skin.spacing.lg,
+    // V1 Poster: Banners edge-to-edge, no padding
   },
+
+  // V1 Poster: Hero slab matches Home exactly
+  heroSection: {
+    backgroundColor: skin.colors.primary,
+    paddingHorizontal: skin.spacing.xl,
+    paddingVertical: skin.spacing.xxl,
+    borderBottomWidth: skin.borders.widthHeavy,
+    borderBottomColor: skin.colors.border,
+  },
+  heroTitle: {
+    color: 'white',
+    marginBottom: skin.spacing.sm,
+  },
+
   section: {
     padding: skin.spacing.lg,
   },
@@ -362,19 +407,27 @@ const styles = StyleSheet.create({
   sectionSubtitle: {
     // Inherited from Meta primitive
   },
-  selectedDateTitle: {
+
+  // V1 Poster: Day events section with heavy divider above
+  dayEventsSection: {
+    padding: skin.spacing.lg,
+    borderTopWidth: skin.borders.widthHeavy,
+    borderTopColor: skin.colors.border,
+  },
+  dayHeader: {
     marginBottom: skin.spacing.lg,
-    textTransform: 'capitalize',
+  },
+  selectedDateTitle: {
+    // Inherited from Label primitive
   },
 
-  // Calendar styles
+  // V1 Poster: Calendar container (transparent background per mockup)
   calendar: {
-    backgroundColor: skin.colors.backgroundSecondary,
+    backgroundColor: skin.components.calendar.containerBackground,
     margin: skin.spacing.lg,
     padding: skin.spacing.lg,
-    borderRadius: skin.borders.radiusCard,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard, // Sharp: 0
+    // No container border - only day tiles have outlines
   },
   calendarHeader: {
     flexDirection: 'row',
@@ -382,8 +435,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: skin.spacing.lg,
   },
-  calendarNav: {
-    padding: skin.spacing.sm,
+  // V1 Poster: Square nav buttons with thick borders
+  calendarNavButton: {
+    width: 44,
+    height: 44,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    backgroundColor: skin.colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   calendarTitle: {
     // Inherited from H2 primitive
@@ -392,70 +452,123 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: skin.spacing.sm,
   },
+  // V1 Poster: Bold weekday labels
   calendarDayName: {
     flex: 1,
     textAlign: 'center',
+    fontWeight: skin.components.calendar.weekdayFontWeight,
   },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    // V1 Poster: Gutters between tiles (not glued together)
+    columnGap: skin.components.calendar.dayTileGap,
+    rowGap: skin.components.calendar.dayTileGapY,
   },
-  calendarDay: {
-    width: '14.28%',
+  // V1 Poster: Wrapper for day tile + shadow layer
+  calendarDayWrapper: {
+    // 7 columns with gaps - use flex basis to account for gaps
+    flexBasis: '13%',
+    flexGrow: 1,
+    maxWidth: '14.28%',
     aspectRatio: 1,
+    minHeight: skin.sizes.calendarDayMinHeight,
+    position: 'relative',
+  },
+  // V1 Poster: Empty cell (no border, no fill)
+  calendarDayEmpty: {
+    flex: 1,
+  },
+  // V1 Poster: Offset shadow layer for selected day (neobrut double-layer)
+  calendarDayShadow: {
+    position: 'absolute',
+    top: skin.components.calendar.selectedShadowOffsetY,
+    left: skin.components.calendar.selectedShadowOffsetX,
+    right: -skin.components.calendar.selectedShadowOffsetX,
+    bottom: -skin.components.calendar.selectedShadowOffsetY,
+    backgroundColor: skin.components.calendar.selectedShadowColor,
+  },
+  // V1 Poster: Calendar day tile (no outline by default, matches screen bg)
+  calendarDay: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    // No border by default - only colored tiles (has-events/today/selected) get outline
+    backgroundColor: skin.colors.background,
+    padding: skin.components.calendar.dayTilePadding,
+    // Ensure indicator is not clipped
+    overflow: 'visible',
   },
+  // V1 Poster: Yellow fill for today (with outline)
   calendarDayToday: {
-    backgroundColor: skin.colors.borderLight,
-    borderRadius: skin.borders.radiusPill,
+    backgroundColor: skin.colors.calendarToday,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
+  // V1 Poster: Blue fill for selected (with outline)
   calendarDaySelected: {
-    backgroundColor: skin.colors.textPrimary,
-    borderRadius: skin.borders.radiusPill,
+    backgroundColor: skin.colors.calendarSelected,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
+  // V1 Poster: Days with events get outline + green-ish fill
+  calendarDayHasEvents: {
+    backgroundColor: skin.colors.calendarHasEvents,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
+  },
+  // V1 Poster: Bold day numbers (all states)
   calendarDayText: {
-    color: skin.colors.textPrimary,
+    color: skin.components.calendar.dayNumberColor,
+    fontWeight: skin.components.calendar.dayNumberFontWeight,
   },
+  // V1 Poster: Selected day = white text (same bold weight)
   calendarDayTextSelected: {
-    color: skin.colors.background,
+    color: skin.components.calendar.selectedDayNumberColor,
   },
-  eventDot: {
-    position: 'absolute',
-    bottom: skin.spacing.xs,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: skin.colors.urgent,
+  // V1 Poster: Today tile text (same as default)
+  calendarDayTextToday: {
+    color: skin.components.calendar.dayNumberColor,
+  },
+  // V1 Poster: Blue square indicator for days with events
+  eventIndicator: {
+    // Positioned below day number with gap
+    marginTop: skin.components.calendar.eventIndicatorMarginTop,
+    width: skin.sizes.calendarEventIndicator,
+    height: skin.sizes.calendarEventIndicator,
+    // Sharp square (no borderRadius)
+    backgroundColor: skin.colors.calendarEventIndicator,
   },
 
-  // Event list styles
+  // V1 Poster: Event cards with thick borders
   eventItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthThin,
+    borderWidth: skin.borders.widthCard, // Thick: 3px
     borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
+    borderRadius: skin.borders.radiusCard, // Sharp: 0
     padding: skin.spacing.md,
     marginBottom: skin.spacing.md,
-  },
-  eventTime: {
-    width: 60,
-    marginRight: skin.spacing.md,
-  },
-  eventTimeText: {
-    color: skin.colors.textPrimary,
   },
   eventContent: {
     flex: 1,
   },
   eventTitle: {
-    marginBottom: skin.spacing.xs,
+    marginBottom: skin.spacing.sm,
   },
-  eventLocation: {
-    // Inherited from Meta primitive
+  // V1 Poster: Meta row with icon + text (horizontal layout)
+  eventMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.sm, // Increased gap for better readability
+    marginTop: skin.spacing.xs,
+  },
+  eventMetaText: {
+    flex: 1,
+    // Ensure text doesn't push icon to new line
+    flexShrink: 1,
   },
 
   // States
@@ -467,10 +580,14 @@ const styles = StyleSheet.create({
     marginTop: skin.spacing.lg,
     color: skin.colors.errorText,
   },
+  // V1 Poster: Empty state with dotted outline (no fill)
   emptyState: {
-    backgroundColor: skin.colors.backgroundSecondary,
-    padding: skin.spacing.xxl,
-    borderRadius: skin.borders.radiusCard,
+    backgroundColor: skin.components.events.emptyStateBackground,
+    padding: skin.components.events.emptyStatePadding,
+    borderRadius: skin.components.events.emptyStateBorderRadius,
+    borderWidth: skin.components.events.emptyStateBorderWidth,
+    borderColor: skin.components.events.emptyStateBorderColor,
+    borderStyle: skin.components.events.emptyStateBorderStyle,
     alignItems: 'center',
   },
   emptyStateText: {
