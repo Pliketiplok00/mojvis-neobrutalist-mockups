@@ -382,15 +382,21 @@ export const components = {
 
   // Calendar component tokens (V1 poster style)
   calendar: {
-    // Day tile outline - ONLY for days with events
+    // Container background (transparent - matches screen background per V1 mockup)
+    containerBackground: 'transparent',
+    // Day tile outline - for colored tiles (has-events, today, selected)
+    dayTileBorderWidth: bordersToken.widthThin,
+    dayTileBorderColor: colors.border,
+    // Legacy aliases (same as dayTile*)
     hasEventsBorderWidth: bordersToken.widthThin,
     hasEventsBorderColor: colors.border,
     // Grid spacing (gutters between tiles)
     dayTileGap: spacing.xs,
+    dayTileGapY: spacing.sm, // Vertical row spacing (slightly larger than horizontal)
     dayTilePadding: spacing.xs,
     // Event indicator spacing
     eventIndicatorMarginTop: spacing.xs,
-    // Selected day offset shadow (neobrut double-layer)
+    // Selected day offset shadow (neobrut double-layer) - ONLY for selected
     selectedShadowOffsetX: 3,
     selectedShadowOffsetY: 3,
     selectedShadowColor: colors.border,
@@ -399,6 +405,17 @@ export const components = {
     dayNumberFontWeight: typography.fontWeight.bold,
     dayNumberColor: colors.textPrimary,
     selectedDayNumberColor: colors.primaryText, // white
+  },
+
+  // Events screen component tokens
+  events: {
+    // Empty state (dotted outline box per V1 mockup)
+    emptyStateBorderWidth: bordersToken.widthThin,
+    emptyStateBorderColor: colors.borderMuted,
+    emptyStateBorderStyle: 'dotted' as const,
+    emptyStateBackground: 'transparent',
+    emptyStatePadding: spacing.xxl,
+    emptyStateBorderRadius: bordersToken.radiusSharp,
   },
 } as const;
 

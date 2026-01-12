@@ -110,22 +110,20 @@ function Calendar({
       const hasEvents = eventDates.has(dateStr);
 
       // V1 Poster: State priority: selected > today > hasEvents
-      // Outline = hasEvents only (semantic: days with events get outline)
-      // Selected day gets neobrut offset shadow layer
+      // All colored tiles (hasEvents, today, selected) get outlines
+      // ONLY selected day gets neobrut offset shadow layer
       days.push(
         <View key={day} style={styles.calendarDayWrapper}>
-          {/* V1 Poster: Offset shadow layer for selected day */}
+          {/* V1 Poster: Offset shadow layer ONLY for selected day */}
           {isSelected && <View style={styles.calendarDayShadow} />}
           <TouchableOpacity
             style={[
               styles.calendarDay,
-              // Fill colors (priority: selected > today > hasEvents)
+              // Fill + outline (priority: selected > today > hasEvents)
+              // Each colored state includes its own outline
               hasEvents && !isSelected && !isToday && styles.calendarDayHasEvents,
               isToday && !isSelected && styles.calendarDayToday,
               isSelected && styles.calendarDaySelected,
-              // Outline only for days with events
-              isToday && !isSelected && hasEvents && styles.calendarDayTodayWithEvents,
-              isSelected && hasEvents && styles.calendarDaySelectedWithEvents,
             ]}
             onPress={() => onSelectDate(date)}
           >
@@ -423,9 +421,9 @@ const styles = StyleSheet.create({
     // Inherited from Label primitive
   },
 
-  // V1 Poster: Calendar container (no outline per spec)
+  // V1 Poster: Calendar container (transparent background per mockup)
   calendar: {
-    backgroundColor: skin.colors.backgroundSecondary,
+    backgroundColor: skin.components.calendar.containerBackground,
     margin: skin.spacing.lg,
     padding: skin.spacing.lg,
     borderRadius: skin.borders.radiusCard, // Sharp: 0
@@ -464,7 +462,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     // V1 Poster: Gutters between tiles (not glued together)
-    gap: skin.components.calendar.dayTileGap,
+    columnGap: skin.components.calendar.dayTileGap,
+    rowGap: skin.components.calendar.dayTileGapY,
   },
   // V1 Poster: Wrapper for day tile + shadow layer
   calendarDayWrapper: {
@@ -489,41 +488,35 @@ const styles = StyleSheet.create({
     bottom: -skin.components.calendar.selectedShadowOffsetY,
     backgroundColor: skin.components.calendar.selectedShadowColor,
   },
-  // V1 Poster: Calendar day tile (no outline by default)
+  // V1 Poster: Calendar day tile (no outline by default, matches screen bg)
   calendarDay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    // No border by default - only days with events get outline
-    backgroundColor: skin.colors.backgroundSecondary,
+    // No border by default - only colored tiles (has-events/today/selected) get outline
+    backgroundColor: skin.colors.background,
     padding: skin.components.calendar.dayTilePadding,
     // Ensure indicator is not clipped
     overflow: 'visible',
   },
-  // V1 Poster: Yellow fill for today
+  // V1 Poster: Yellow fill for today (with outline)
   calendarDayToday: {
     backgroundColor: skin.colors.calendarToday,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
-  // V1 Poster: Blue fill for selected
+  // V1 Poster: Blue fill for selected (with outline)
   calendarDaySelected: {
     backgroundColor: skin.colors.calendarSelected,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
   // V1 Poster: Days with events get outline + green-ish fill
   calendarDayHasEvents: {
     backgroundColor: skin.colors.calendarHasEvents,
-    borderWidth: skin.components.calendar.hasEventsBorderWidth,
-    borderColor: skin.components.calendar.hasEventsBorderColor,
-  },
-  // V1 Poster: Selected day with events gets outline too
-  calendarDaySelectedWithEvents: {
-    borderWidth: skin.components.calendar.hasEventsBorderWidth,
-    borderColor: skin.components.calendar.hasEventsBorderColor,
-  },
-  // V1 Poster: Today with events gets outline
-  calendarDayTodayWithEvents: {
-    borderWidth: skin.components.calendar.hasEventsBorderWidth,
-    borderColor: skin.components.calendar.hasEventsBorderColor,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
   // V1 Poster: Bold day numbers (all states)
   calendarDayText: {
@@ -587,10 +580,14 @@ const styles = StyleSheet.create({
     marginTop: skin.spacing.lg,
     color: skin.colors.errorText,
   },
+  // V1 Poster: Empty state with dotted outline (no fill)
   emptyState: {
-    backgroundColor: skin.colors.backgroundSecondary,
-    padding: skin.spacing.xxl,
-    borderRadius: skin.borders.radiusCard,
+    backgroundColor: skin.components.events.emptyStateBackground,
+    padding: skin.components.events.emptyStatePadding,
+    borderRadius: skin.components.events.emptyStateBorderRadius,
+    borderWidth: skin.components.events.emptyStateBorderWidth,
+    borderColor: skin.components.events.emptyStateBorderColor,
+    borderStyle: skin.components.events.emptyStateBorderStyle,
     alignItems: 'center',
   },
   emptyStateText: {
