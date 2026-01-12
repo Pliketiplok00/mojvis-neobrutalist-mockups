@@ -726,21 +726,21 @@ export const components = {
     },
   },
 
-  // Inbox screen component tokens (V1 poster style)
+  // Inbox screen component tokens (V1 banner list style)
   inbox: {
-    // Poster-style tabs
+    // Banner-style tabs (stronger typography)
     tabs: {
       borderBottomWidth: bordersToken.widthCard,
       borderBottomColor: colors.border,
       // Active tab (filled)
       activeBackground: palette.primary,
       activeTextColor: colors.primaryText,
-      activeBorderWidth: bordersToken.widthThin,
+      activeBorderWidth: bordersToken.widthCard,
       activeBorderColor: colors.border,
       // Inactive tab
       inactiveBackground: colors.background,
       inactiveTextColor: colors.textPrimary,
-      inactiveBorderWidth: bordersToken.widthThin,
+      inactiveBorderWidth: bordersToken.widthCard,
       inactiveBorderColor: colors.border,
       // Layout
       tabPadding: spacing.md,
@@ -748,20 +748,14 @@ export const components = {
       iconGap: spacing.sm,
     },
 
-    // List item (poster-style row)
+    // Banner list item (full-width, bottom border only, no shadow)
     listItem: {
-      // Container
+      // Container - full width banners
       background: colors.background,
-      borderWidth: bordersToken.widthCard,
-      borderColor: colors.border,
-      borderRadius: bordersToken.radiusSharp,
-      padding: spacing.md,
-      marginBottom: spacing.md,
-      marginHorizontal: spacing.lg,
-      // Dual-layer shadow
-      shadowOffsetX: 4,
-      shadowOffsetY: 4,
-      shadowColor: colors.border,
+      borderBottomWidth: bordersToken.widthCard,
+      borderBottomColor: colors.border,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.lg,
       // Icon slab (left)
       iconSlabSize: 44,
       iconSlabBorderWidth: bordersToken.widthThin,
@@ -782,11 +776,6 @@ export const components = {
       newBadgePadding: spacing.xs,
       newBadgeBorderWidth: bordersToken.widthThin,
       newBadgeBorderColor: colors.border,
-      // Chevron box
-      chevronBoxSize: 32,
-      chevronBoxBackground: colors.backgroundSecondary,
-      chevronBoxBorderWidth: bordersToken.widthThin,
-      chevronBoxBorderColor: colors.border,
     },
   },
 } as const;
