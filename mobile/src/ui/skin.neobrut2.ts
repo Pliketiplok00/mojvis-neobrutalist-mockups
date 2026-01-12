@@ -725,6 +725,70 @@ export const components = {
       contactCardRadius: bordersToken.radiusSharp,
     },
   },
+
+  // Inbox screen component tokens (V1 poster style)
+  inbox: {
+    // Poster-style tabs
+    tabs: {
+      borderBottomWidth: bordersToken.widthCard,
+      borderBottomColor: colors.border,
+      // Active tab (filled)
+      activeBackground: palette.primary,
+      activeTextColor: colors.primaryText,
+      activeBorderWidth: bordersToken.widthThin,
+      activeBorderColor: colors.border,
+      // Inactive tab
+      inactiveBackground: colors.background,
+      inactiveTextColor: colors.textPrimary,
+      inactiveBorderWidth: bordersToken.widthThin,
+      inactiveBorderColor: colors.border,
+      // Layout
+      tabPadding: spacing.md,
+      tabGap: spacing.sm,
+      iconGap: spacing.sm,
+    },
+
+    // List item (poster-style row)
+    listItem: {
+      // Container
+      background: colors.background,
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      marginHorizontal: spacing.lg,
+      // Dual-layer shadow
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+      // Icon slab (left)
+      iconSlabSize: 44,
+      iconSlabBorderWidth: bordersToken.widthThin,
+      iconSlabBorderColor: colors.border,
+      iconSlabGap: spacing.md,
+      // Icon slab backgrounds by type
+      iconSlabBackgroundDefault: colors.backgroundSecondary,
+      iconSlabBackgroundUrgent: palette.destructive,
+      iconSlabBackgroundTransport: palette.primary,
+      iconSlabBackgroundCulture: palette.lavender,
+      iconSlabBackgroundGeneral: palette.secondary,
+      // Text styling
+      titleMarginBottom: spacing.xs,
+      snippetMarginBottom: spacing.xs,
+      // NEW badge
+      newBadgeBackground: palette.primary,
+      newBadgeTextColor: colors.primaryText,
+      newBadgePadding: spacing.xs,
+      newBadgeBorderWidth: bordersToken.widthThin,
+      newBadgeBorderColor: colors.border,
+      // Chevron box
+      chevronBoxSize: 32,
+      chevronBoxBackground: colors.backgroundSecondary,
+      chevronBoxBorderWidth: bordersToken.widthThin,
+      chevronBoxBorderColor: colors.border,
+    },
+  },
 } as const;
 
 // ---- Final skin object ----
