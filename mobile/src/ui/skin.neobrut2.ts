@@ -483,6 +483,8 @@ export const components = {
 
       // Text styling
       tileTitleColor: colors.primaryText, // White text on colored bg
+      tileTitleFontSize: typography.fontSize.xl, // ~20% larger than Label default (18 vs 14)
+      tileTitleFontFamily: typography.fontFamily.body.bold, // Bold weight for prominence
       tileSubtitleColor: 'rgba(255, 255, 255, 0.85)',
 
       // Icon box (square container for icon)

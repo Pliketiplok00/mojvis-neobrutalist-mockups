@@ -23,7 +23,8 @@ import { Badge } from '../../ui/Badge';
 import { Input } from '../../ui/Input';
 import { skin } from '../../ui/skin';
 
-const { colors, spacing, borders, typography, icons, shadows } = skin;
+const { colors, spacing, borders, typography, icons, shadows, components } = skin;
+const tiles = components.transport.tiles;
 
 // ============================================================================
 // Helper Components
@@ -459,6 +460,7 @@ export function UiInventoryScreen(): React.JSX.Element {
             tokens={[
               'tokens: components.transport.tiles.*',
               'background: tileSeaBackground (primary)',
+              'title: tileTitleFontSize (xl/18), tileTitleFontFamily (body.bold)',
               'divider: tileDividerWidth, tileDividerColor',
             ]}
           >
@@ -772,7 +774,9 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   tileDemoTitle: {
-    color: colors.primaryText,
+    color: tiles.tileTitleColor,
+    fontSize: tiles.tileTitleFontSize,
+    fontFamily: tiles.tileTitleFontFamily,
     textTransform: 'uppercase',
     marginBottom: spacing.xs,
   },

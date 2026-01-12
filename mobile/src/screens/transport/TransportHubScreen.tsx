@@ -200,6 +200,8 @@ const styles = StyleSheet.create({
 
   tileTitle: {
     color: tiles.tileTitleColor,
+    fontSize: tiles.tileTitleFontSize,
+    fontFamily: tiles.tileTitleFontFamily,
     textTransform: 'uppercase',
     marginBottom: spacing.xs,
   },
