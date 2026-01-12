@@ -18,6 +18,8 @@ interface EventRow {
   end_datetime: Date | null;
   location_hr: string | null;
   location_en: string | null;
+  organizer_hr: string;
+  organizer_en: string;
   is_all_day: boolean;
   image_url: string | null;
   created_at: Date;
@@ -49,7 +51,7 @@ export async function getEvents(
   const result = await query<EventRow>(
     `SELECT id, title_hr, title_en, description_hr, description_en,
             start_datetime, end_datetime, location_hr, location_en,
-            is_all_day, image_url, created_at, updated_at
+            organizer_hr, organizer_en, is_all_day, image_url, created_at, updated_at
      FROM events
      ORDER BY start_datetime ASC
      LIMIT $1 OFFSET $2`,
@@ -71,7 +73,7 @@ export async function getEventsByDate(
   const result = await query<EventRow>(
     `SELECT id, title_hr, title_en, description_hr, description_en,
             start_datetime, end_datetime, location_hr, location_en,
-            is_all_day, image_url, created_at, updated_at
+            organizer_hr, organizer_en, is_all_day, image_url, created_at, updated_at
      FROM events
      WHERE DATE(start_datetime AT TIME ZONE 'Europe/Zagreb') = $1
      ORDER BY start_datetime ASC`,
@@ -88,7 +90,7 @@ export async function getEventById(id: string): Promise<Event | null> {
   const result = await query<EventRow>(
     `SELECT id, title_hr, title_en, description_hr, description_en,
             start_datetime, end_datetime, location_hr, location_en,
-            is_all_day, image_url, created_at, updated_at
+            organizer_hr, organizer_en, is_all_day, image_url, created_at, updated_at
      FROM events
      WHERE id = $1`,
     [id]
@@ -110,11 +112,12 @@ export async function createEvent(
   const result = await query<EventRow>(
     `INSERT INTO events
        (title_hr, title_en, description_hr, description_en,
-        start_datetime, end_datetime, location_hr, location_en, is_all_day, image_url)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        start_datetime, end_datetime, location_hr, location_en,
+        organizer_hr, organizer_en, is_all_day, image_url)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      RETURNING id, title_hr, title_en, description_hr, description_en,
                start_datetime, end_datetime, location_hr, location_en,
-               is_all_day, image_url, created_at, updated_at`,
+               organizer_hr, organizer_en, is_all_day, image_url, created_at, updated_at`,
     [
       event.title_hr,
       event.title_en,
@@ -124,6 +127,8 @@ export async function createEvent(
       event.end_datetime,
       event.location_hr,
       event.location_en,
+      event.organizer_hr,
+      event.organizer_en,
       event.is_all_day,
       event.image_url,
     ]
@@ -179,6 +184,14 @@ export async function updateEvent(
     fields.push(`is_all_day = $${paramIndex++}`);
     values.push(updates.is_all_day);
   }
+  if (updates.organizer_hr !== undefined) {
+    fields.push(`organizer_hr = $${paramIndex++}`);
+    values.push(updates.organizer_hr);
+  }
+  if (updates.organizer_en !== undefined) {
+    fields.push(`organizer_en = $${paramIndex++}`);
+    values.push(updates.organizer_en);
+  }
   if (updates.image_url !== undefined) {
     fields.push(`image_url = $${paramIndex++}`);
     values.push(updates.image_url);
@@ -195,7 +208,7 @@ export async function updateEvent(
      WHERE id = $${paramIndex}
      RETURNING id, title_hr, title_en, description_hr, description_en,
                start_datetime, end_datetime, location_hr, location_en,
-               is_all_day, image_url, created_at, updated_at`,
+               organizer_hr, organizer_en, is_all_day, image_url, created_at, updated_at`,
     values
   );
 
@@ -303,7 +316,8 @@ export async function getSubscriptionsForDate(
             e.id as event_id, e.title_hr, e.title_en,
             e.description_hr, e.description_en,
             e.start_datetime, e.end_datetime,
-            e.location_hr, e.location_en, e.is_all_day, e.image_url,
+            e.location_hr, e.location_en, e.organizer_hr, e.organizer_en,
+            e.is_all_day, e.image_url,
             e.created_at as event_created_at, e.updated_at as event_updated_at
      FROM reminder_subscriptions rs
      JOIN events e ON rs.event_id = e.id
@@ -323,6 +337,8 @@ export async function getSubscriptionsForDate(
       end_datetime: row.end_datetime,
       location_hr: row.location_hr,
       location_en: row.location_en,
+      organizer_hr: row.organizer_hr,
+      organizer_en: row.organizer_en,
       is_all_day: row.is_all_day,
       image_url: row.image_url,
       created_at: row.created_at,
@@ -345,6 +361,8 @@ function rowToEvent(row: EventRow): Event {
     end_datetime: row.end_datetime,
     location_hr: row.location_hr,
     location_en: row.location_en,
+    organizer_hr: row.organizer_hr,
+    organizer_en: row.organizer_en,
     is_all_day: row.is_all_day,
     image_url: row.image_url,
     created_at: row.created_at,
