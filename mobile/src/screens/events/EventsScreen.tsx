@@ -450,14 +450,19 @@ const styles = StyleSheet.create({
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    // V1 Poster: Add row gap to prevent vertical squashing
+    rowGap: skin.spacing.xs,
   },
-  // V1 Poster: Sharp calendar tiles (no circles/pills)
+  // V1 Poster: Sharp calendar tiles (squares, not squashed)
   calendarDay: {
     width: '14.28%',
     aspectRatio: 1,
+    minHeight: skin.sizes.calendarDayMinHeight,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    // Ensure indicator is not clipped
+    overflow: 'visible',
   },
   // V1 Poster: Yellow fill for today
   calendarDayToday: {
@@ -489,6 +494,8 @@ const styles = StyleSheet.create({
     height: skin.sizes.calendarEventIndicator,
     // Sharp square (no borderRadius)
     backgroundColor: skin.colors.calendarEventIndicator,
+    // Ensure visibility
+    zIndex: 1,
   },
 
   // V1 Poster: Event cards with thick borders
@@ -508,15 +515,17 @@ const styles = StyleSheet.create({
   eventTitle: {
     marginBottom: skin.spacing.sm,
   },
-  // V1 Poster: Meta row with icon + text
+  // V1 Poster: Meta row with icon + text (horizontal layout)
   eventMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: skin.spacing.xs,
+    gap: skin.spacing.sm, // Increased gap for better readability
     marginTop: skin.spacing.xs,
   },
   eventMetaText: {
     flex: 1,
+    // Ensure text doesn't push icon to new line
+    flexShrink: 1,
   },
 
   // States

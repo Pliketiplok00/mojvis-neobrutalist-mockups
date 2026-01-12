@@ -139,7 +139,8 @@ const icons = {
 
 // Size tokens for specific UI elements
 const sizes = {
-  calendarEventIndicator: 6, // Small square indicator for days with events
+  calendarEventIndicator: 8, // Small square indicator for days with events
+  calendarDayMinHeight: 40, // Minimum height for calendar day tiles
 } as const;
 
 const hardShadow = (offset: number, color: string = borders.color): ShadowToken => ({
@@ -221,7 +222,7 @@ export const colors = {
   // Calendar day tile states (V1 poster parity)
   calendarToday: palette.accent, // Yellow fill for today
   calendarSelected: palette.primary, // Blue fill for selected
-  calendarHasEvents: hsla(160, 45, 38, 0.2), // Green-ish tint for days with events
+  calendarHasEvents: hsla(160, 45, 38, 0.35), // Green-ish tint for days with events (visible)
   calendarEventIndicator: palette.primary, // Blue square indicator
 
   // Extended Mediterranean (feature-specific)
