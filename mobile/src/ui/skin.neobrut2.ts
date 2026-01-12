@@ -552,9 +552,15 @@ export const components = {
       lineCardChevronGap: spacing.md,
 
       // Line card text spacing
-      lineCardTitleGap: spacing.sm, // Gap between title and badge
+      lineCardTitleGap: spacing.sm, // Gap between title and type icon
       lineCardStopsGap: spacing.sm, // Gap after stops summary
       lineCardMetaGap: spacing.xs, // Gap before meta row
+
+      // Type icon box (replaces text badge with icon indicator)
+      lineCardTypeIconBoxSize: 28,
+      lineCardTypeIconBoxBorderWidth: bordersToken.widthThin,
+      lineCardTypeIconBoxBorderColor: colors.border,
+      lineCardTypeIconBoxBackground: colors.backgroundSecondary,
 
       // Today departures set (single bordered container with stacked rows)
       todaySetBorderWidth: bordersToken.widthCard,

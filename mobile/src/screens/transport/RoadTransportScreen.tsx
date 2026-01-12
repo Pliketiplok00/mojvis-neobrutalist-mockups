@@ -10,10 +10,10 @@
  *
  * Sections:
  * - Header: Poster-style header with icon box
- * - A: Lines list (heavy poster cards with boxed chevron)
+ * - A: Lines list (heavy poster cards with type icon + boxed chevron)
  * - B: Today's departures (stacked set with dividers)
  *
- * Phase 4C: Polished to V1 mockup with heavy borders + stacked rows.
+ * Phase 4D: Polished with type icons replacing text badges.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -30,10 +30,10 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
-import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Meta } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
+import type { IconName } from '../../ui/Icon';
 import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
@@ -55,6 +55,14 @@ const listTokens = components.transport.list;
 function formatTime(time: string): string {
   const parts = time.split(':');
   return `${parts[0]}:${parts[1]}`;
+}
+
+/**
+ * Map road transport subtype to icon name
+ * Road transport is always bus-based
+ */
+function getRoadTypeIcon(_subtype: string | null): IconName {
+  return 'bus';
 }
 
 export function RoadTransportScreen(): React.JSX.Element {
@@ -208,13 +216,19 @@ export function RoadTransportScreen(): React.JSX.Element {
                   <View style={styles.lineCardBody}>
                     {/* Left content */}
                     <View style={styles.lineCardContent}>
-                      {/* Title row: name + badge */}
+                      {/* Title row: name + type icon */}
                       <View style={styles.lineTitleRow}>
                         <Label style={styles.lineName} numberOfLines={2}>
                           {line.name}
                         </Label>
                         {line.subtype && (
-                          <Badge variant="default">{line.subtype}</Badge>
+                          <View style={styles.lineTypeIconBox}>
+                            <Icon
+                              name={getRoadTypeIcon(line.subtype)}
+                              size="xs"
+                              colorToken="textPrimary"
+                            />
+                          </View>
                         )}
                       </View>
                       {/* Stops summary */}
@@ -417,6 +431,15 @@ const styles = StyleSheet.create({
     flex: 1,
     color: colors.textPrimary,
     marginRight: listTokens.lineCardTitleGap,
+  },
+  lineTypeIconBox: {
+    width: listTokens.lineCardTypeIconBoxSize,
+    height: listTokens.lineCardTypeIconBoxSize,
+    backgroundColor: listTokens.lineCardTypeIconBoxBackground,
+    borderWidth: listTokens.lineCardTypeIconBoxBorderWidth,
+    borderColor: listTokens.lineCardTypeIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   lineStops: {
     marginBottom: listTokens.lineCardStopsGap,
