@@ -24,6 +24,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
@@ -178,41 +179,47 @@ function Calendar({
 
 /**
  * Event list item - V1 Poster style with icons and dual-layer shadow
+ * Uses Pressable to avoid opacity dimming; shadow hides on press.
  */
 function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={styles.eventItemWrapper}>
-      {/* V1 Poster: Offset shadow layer (dual-layer poster effect) */}
-      <View style={styles.eventItemShadow} />
-      <TouchableOpacity
-        style={styles.eventItem}
+      <Pressable
         onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
       >
-        <View style={styles.eventContent}>
-          <ButtonText style={styles.eventTitle} numberOfLines={2}>
-            {event.title}
-          </ButtonText>
-          {/* V1 Poster: Time row with clock icon */}
-          <View style={styles.eventMetaRow}>
-            <Icon name="clock" size="xs" colorToken="textMuted" />
-            <Meta style={styles.eventMetaText} numberOfLines={1}>
-              {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
-            </Meta>
-          </View>
-          {/* V1 Poster: Location row with map-pin icon */}
-          {event.location && (
-            <View style={styles.eventMetaRow}>
-              <Icon name="map-pin" size="xs" colorToken="textMuted" />
-              <Meta style={styles.eventMetaText} numberOfLines={1}>
-                {event.location}
-              </Meta>
+        {({ pressed }) => (
+          <>
+            {/* V1 Poster: Offset shadow layer - hidden when pressed */}
+            {!pressed && <View style={styles.eventItemShadow} />}
+            <View style={styles.eventItem}>
+              <View style={styles.eventContent}>
+                <ButtonText style={styles.eventTitle} numberOfLines={2}>
+                  {event.title}
+                </ButtonText>
+                {/* V1 Poster: Time row with clock icon */}
+                <View style={styles.eventMetaRow}>
+                  <Icon name="clock" size="xs" colorToken="textMuted" />
+                  <Meta style={styles.eventMetaText} numberOfLines={1}>
+                    {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
+                  </Meta>
+                </View>
+                {/* V1 Poster: Location row with map-pin icon */}
+                {event.location && (
+                  <View style={styles.eventMetaRow}>
+                    <Icon name="map-pin" size="xs" colorToken="textMuted" />
+                    <Meta style={styles.eventMetaText} numberOfLines={1}>
+                      {event.location}
+                    </Meta>
+                  </View>
+                )}
+              </View>
+              <Icon name="chevron-right" size="sm" colorToken="chevron" />
             </View>
-          )}
-        </View>
-        <Icon name="chevron-right" size="sm" colorToken="chevron" />
-      </TouchableOpacity>
+          </>
+        )}
+      </Pressable>
     </View>
   );
 }
