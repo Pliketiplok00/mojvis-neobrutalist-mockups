@@ -462,6 +462,239 @@ export const components = {
       descriptionLineHeight: 22, // Keep same value, now tokenized
     },
   },
+  // Transport Hub screen component tokens (V1 poster style)
+  transport: {
+    // Banner container - full-bleed (edge-to-edge)
+    bannerContainerPaddingHorizontal: 0,
+    bannerContainerPaddingTop: 0,
+
+    // Transport type tiles (poster-style)
+    tiles: {
+      // Tile container
+      tileBorderWidth: bordersToken.widthCard,
+      tileBorderColor: colors.border,
+      tileRadius: bordersToken.radiusSharp, // Sharp corners (poster)
+      tilePadding: spacing.lg,
+      tileGap: spacing.md, // Vertical spacing between tiles
+
+      // Tile backgrounds (semantic colors)
+      tileSeaBackground: palette.primary, // Blue for sea
+      tileRoadBackground: palette.secondary, // Green for road
+
+      // Text styling
+      tileTitleColor: colors.primaryText, // White text on colored bg
+      tileSubtitleColor: 'rgba(255, 255, 255, 0.85)',
+
+      // Icon box (square container for icon)
+      tileIconBoxSize: 48,
+      tileIconBoxBorderWidth: bordersToken.widthThin,
+      tileIconBoxBorderColor: colors.border,
+      tileIconBoxBackground: colors.background,
+
+      // Arrow affordance
+      tileArrowSize: icons.size.lg,
+      tileArrowColor: colors.primaryText, // White
+    },
+
+    // Bottom note info box
+    note: {
+      noteBorderWidth: bordersToken.widthThin,
+      noteBorderColor: colors.border,
+      noteBackground: colors.background,
+      notePadding: spacing.lg,
+      noteRadius: bordersToken.radiusSharp, // Sharp corners (poster)
+      noteTextColor: colors.textSecondary,
+    },
+
+    // Overview header (poster-style header for Sea/Road overview screens)
+    overviewHeader: {
+      // Full-bleed header slab (edge-to-edge)
+      padding: spacing.lg,
+      borderBottomWidth: bordersToken.widthHeavy,
+      borderBottomColor: colors.border,
+
+      // Backgrounds per transport type
+      backgroundSea: palette.primary,
+      backgroundRoad: palette.secondary,
+
+      // Icon box (square container for icon)
+      iconBoxSize: 48,
+      iconBoxBackground: colors.background,
+      iconBoxBorderWidth: bordersToken.widthThin,
+      iconBoxBorderColor: colors.border,
+      iconBoxGap: spacing.md,
+
+      // Text styling (white on colored background)
+      titleColor: colors.primaryText,
+      subtitleColor: 'rgba(255, 255, 255, 0.85)',
+    },
+
+    // Section header (poster-style with bottom rule)
+    sectionHeader: {
+      marginBottom: spacing.md,
+      paddingBottom: spacing.sm,
+      borderBottomWidth: bordersToken.widthCard, // Thick poster rule
+      borderBottomColor: colors.border,
+    },
+
+    // Lines list (poster-style cards)
+    list: {
+      // Line card outer structure (poster card with 2-part layout)
+      lineCardBorderWidth: bordersToken.widthHeavy, // Heavy outline
+      lineCardBorderColor: colors.border,
+      lineCardRadius: bordersToken.radiusSharp,
+      lineCardGap: spacing.md, // Gap between cards
+
+      // Shadow offset for line cards (dual-layer look)
+      lineCardShadowOffsetX: 4,
+      lineCardShadowOffsetY: 4,
+      lineCardShadowColor: colors.border,
+
+      // Pressed state offset (neobrut press-in effect)
+      lineCardPressedOffsetX: 2,
+      lineCardPressedOffsetY: 2,
+
+      // Line card header slab (colored top section with icon + title)
+      lineCardHeaderPadding: spacing.md,
+      lineCardHeaderBackgroundSea: palette.primary, // Blue for sea ferry
+      lineCardHeaderBackgroundSeaCatamaran: palette.teal, // Teal for catamaran
+      lineCardHeaderBackgroundRoad: palette.secondary, // Green for road
+      lineCardHeaderIconBoxSize: 40,
+      lineCardHeaderIconBoxBackground: colors.background,
+      lineCardHeaderIconBoxBorderWidth: bordersToken.widthThin,
+      lineCardHeaderIconBoxBorderColor: colors.border,
+      lineCardHeaderIconGap: spacing.md,
+      lineCardHeaderTitleColor: colors.primaryText, // White on colored bg
+
+      // Line card body (white bottom section with meta + chevron)
+      lineCardBodyBackground: colors.background,
+      lineCardBodyPadding: spacing.md,
+      lineCardBodyBorderTopWidth: bordersToken.widthThin,
+      lineCardBodyBorderColor: colors.border,
+
+      // Boxed chevron affordance (square with border)
+      lineCardChevronBoxSize: 36,
+      lineCardChevronBoxBorderWidth: bordersToken.widthThin,
+      lineCardChevronBoxBorderColor: colors.border,
+      lineCardChevronBoxBackground: colors.backgroundSecondary,
+      lineCardChevronGap: spacing.md,
+
+      // Line card text spacing
+      lineCardMetaGap: spacing.xs,
+
+      // Today departures set (single bordered container with stacked rows)
+      todaySetBorderWidth: bordersToken.widthCard,
+      todaySetBorderColor: colors.border,
+      todaySetBackground: colors.backgroundSecondary, // Grey tinted container
+      todaySetRadius: bordersToken.radiusSharp,
+      todaySetShadowOffsetX: 4,
+      todaySetShadowOffsetY: 4,
+      todaySetShadowColor: colors.border,
+
+      // Today row (inside the set)
+      todayRowBackground: colors.backgroundSecondary, // Low-fi grey row
+      todayRowDividerWidth: bordersToken.widthThin,
+      todayRowDividerColor: colors.border,
+      todayRowPadding: spacing.md,
+      todayRowPressedOffsetX: 1, // Subtle press-in for rows
+      todayRowPressedOffsetY: 1,
+
+      // Time block in today row - MATCHES LineDetail time block
+      todayTimeBlockWidth: 72, // Same as lineDetail.timeBlockWidth
+      todayTimeBlockPadding: spacing.sm, // Same as lineDetail.timeBlockPadding
+      todayTimeBlockBackgroundSea: palette.primary, // Blue - same as lineDetail
+      todayTimeBlockBackgroundRoad: palette.secondary, // Green - same as lineDetail
+      todayTimeBlockBorderWidth: bordersToken.widthThin,
+      todayTimeBlockBorderColor: colors.border,
+      todayTimeBlockTextColor: colors.primaryText, // White text
+    },
+
+    // Line Detail screen tokens (V1 poster style)
+    lineDetail: {
+      // Header slab (colored poster band)
+      headerBackground: palette.primary, // Blue for sea (override for road: secondary)
+      headerBackgroundSea: palette.primary,
+      headerBackgroundRoad: palette.secondary,
+      headerPadding: spacing.lg,
+      headerBorderWidth: bordersToken.widthCard,
+      headerBorderColor: colors.border,
+
+      // Header icon box
+      headerIconBoxSize: 52,
+      headerIconBoxBackground: colors.background,
+      headerIconBoxBorderWidth: bordersToken.widthThin,
+      headerIconBoxBorderColor: colors.border,
+
+      // Header text
+      headerTitleColor: colors.primaryText, // White on colored bg
+      headerMetaColor: 'rgba(255, 255, 255, 0.85)',
+
+      // Date selector card (YELLOW poster button per mockup)
+      dateSelectorPadding: spacing.lg,
+      dateSelectorBorderWidth: bordersToken.widthCard,
+      dateSelectorBorderColor: colors.border,
+      dateSelectorBackground: palette.accent, // Yellow per mockup
+      dateSelectorRadius: bordersToken.radiusSharp,
+      dateSelectorArrowSize: 44,
+
+      // Dual-layer shadow offset
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+
+      // Direction toggle tabs
+      directionTabPadding: spacing.md,
+      directionTabBorderWidth: bordersToken.widthCard,
+      directionTabBorderColor: colors.border,
+      directionTabRadius: bordersToken.radiusSharp,
+      directionTabActiveBackground: palette.primary, // Same as header for sea
+      directionTabInactiveBackground: colors.background,
+      directionTabActiveText: colors.primaryText,
+      directionTabInactiveText: colors.textPrimary,
+
+      // Section dividers
+      sectionDividerWidth: bordersToken.widthThin,
+      sectionDividerColor: colors.border,
+
+      // Departure row (poster card)
+      departureRowBorderWidth: bordersToken.widthCard,
+      departureRowBorderColor: colors.border,
+      departureRowBackground: colors.background,
+      departureRowRadius: bordersToken.radiusSharp,
+      departureRowPadding: spacing.md,
+      departureRowGap: spacing.sm,
+
+      // Time block (colored left block)
+      timeBlockWidth: 72,
+      timeBlockPadding: spacing.sm,
+      timeBlockBorderWidth: bordersToken.widthThin,
+      timeBlockBorderColor: colors.border,
+      timeBlockBackground: palette.primary, // Sea blue
+      timeBlockBackgroundSea: palette.primary,
+      timeBlockBackgroundRoad: palette.secondary,
+      timeBlockTextColor: colors.primaryText,
+
+      // Timeline (expanded)
+      timelineDotSize: 10,
+      timelineDotSizeEndpoint: 12,
+      timelineDotColor: colors.textMuted,
+      timelineDotEndpointColor: colors.textPrimary,
+      timelineLineWidth: bordersToken.widthThin,
+      timelineLineColor: colors.borderMuted,
+      timelineStopTimeWidth: 56,
+
+      // Notes badge
+      notesBadgeBackground: colors.warningBackground,
+      notesBadgePadding: spacing.sm,
+
+      // Contact card
+      contactCardPadding: spacing.lg,
+      contactCardBorderWidth: bordersToken.widthCard,
+      contactCardBorderColor: colors.border,
+      contactCardBackground: colors.background,
+      contactCardRadius: bordersToken.radiusSharp,
+    },
+  },
 } as const;
 
 // ---- Final skin object ----

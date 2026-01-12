@@ -4,14 +4,15 @@
  * Displays full details for a transport line.
  * Shared component for both Road and Sea transport.
  *
- * Sections:
- * - Header: Line name, subtype
- * - Date selector: Single date (default today)
- * - Direction toggle: 0 or 1 (resolved via route)
- * - Departures list: Expandable with stop times
- * - Contacts: BY LINE
+ * V1 Poster Style:
+ * - Colored header slab with icon box
+ * - Poster-style date selector card with offset shadow
+ * - Direction toggle tabs with sharp corners
+ * - Departure rows with colored time block
+ * - Expandable timeline with (+1 day) indicator
+ * - Contact cards with offset shadow
  *
- * Phase 3D: Migrated to skin primitives (100% skin-adopted).
+ * Phase 3D: 100% skin-tokenized.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -23,20 +24,23 @@ import {
   RefreshControl,
   Linking,
   ActivityIndicator,
+  Platform,
+  Modal,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { BannerList } from '../../components/Banner';
 import { DepartureItem } from '../../components/DepartureItem';
-import { Card } from '../../ui/Card';
-import { Badge } from '../../ui/Badge';
-import { Button } from '../../ui/Button';
-import { H1, H2, Label, Meta } from '../../ui/Text';
+import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
 import { skin } from '../../ui/skin';
+import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
-import { transportApi } from '../../services/api';
+import { inboxApi, transportApi } from '../../services/api';
 import { formatDateISO, formatDisplayDate } from '../../utils/dateFormat';
+import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
   LineDetailResponse,
@@ -50,13 +54,15 @@ interface LineDetailScreenProps {
   transportType: TransportType;
 }
 
-const { colors, spacing, typography, borders } = skin;
+const { colors, spacing, borders, components } = skin;
+const lineDetail = components.transport.lineDetail;
 
 export function LineDetailScreen({
   lineId,
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
   const { t } = useTranslations();
+  const userContext = useUserContext();
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
     MON: t('transport.dayTypes.MON'),
@@ -69,7 +75,8 @@ export function LineDetailScreen({
     PRAZNIK: t('transport.dayTypes.PRAZNIK'),
   };
 
-  const [lineDetail, setLineDetail] = useState<LineDetailResponse | null>(null);
+  const [banners, setBanners] = useState<InboxMessage[]>([]);
+  const [lineDetailData, setLineDetailData] = useState<LineDetailResponse | null>(null);
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
   const [selectedDirection, setSelectedDirection] = useState<number>(0);
@@ -77,13 +84,26 @@ export function LineDetailScreen({
   const [departuresLoading, setDeparturesLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  // Fetch line detail
+  // Get transport-type-specific colors
+  const headerBackground = transportType === 'sea'
+    ? lineDetail.headerBackgroundSea
+    : lineDetail.headerBackgroundRoad;
+  const timeBlockBackground = transportType === 'sea'
+    ? lineDetail.timeBlockBackgroundSea
+    : lineDetail.timeBlockBackgroundRoad;
+
+  // Fetch line detail and banners
   const fetchLineDetail = useCallback(async () => {
     setError(null);
     try {
-      const detail = await transportApi.getLine(transportType, lineId);
-      setLineDetail(detail);
+      const [detail, bannersRes] = await Promise.all([
+        transportApi.getLine(transportType, lineId),
+        inboxApi.getActiveBanners(userContext, 'transport'),
+      ]);
+      setLineDetailData(detail);
+      setBanners(bannersRes.banners);
     } catch (err) {
       console.error('[LineDetail] Error fetching line:', err);
       setError(t('transport.lineDetail.error'));
@@ -91,7 +111,7 @@ export function LineDetailScreen({
       setLoading(false);
       setRefreshing(false);
     }
-  }, [lineId, transportType]);
+  }, [lineId, transportType, userContext, t]);
 
   // Fetch departures for selected date and direction
   const fetchDepartures = useCallback(async () => {
@@ -106,7 +126,6 @@ export function LineDetailScreen({
       setDepartures(deps);
     } catch (err) {
       console.error('[LineDetail] Error fetching departures:', err);
-      // Don't set error - just show empty departures
     } finally {
       setDeparturesLoading(false);
     }
@@ -117,10 +136,10 @@ export function LineDetailScreen({
   }, [fetchLineDetail]);
 
   useEffect(() => {
-    if (lineDetail) {
+    if (lineDetailData) {
       void fetchDepartures();
     }
-  }, [lineDetail, fetchDepartures]);
+  }, [lineDetailData, fetchDepartures]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -128,7 +147,7 @@ export function LineDetailScreen({
   }, [fetchLineDetail]);
 
   // Get routes for direction toggle
-  const routes: RouteInfo[] = lineDetail?.routes || [];
+  const routes: RouteInfo[] = lineDetailData?.routes || [];
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
 
   // Date navigation
@@ -136,6 +155,26 @@ export function LineDetailScreen({
     const date = new Date(selectedDate);
     date.setDate(date.getDate() + days);
     setSelectedDate(formatDateISO(date));
+  };
+
+  // Date picker handlers
+  const openDatePicker = () => {
+    setIsDatePickerOpen(true);
+  };
+
+  const handleDateChange = (event: { type: string }, date?: Date) => {
+    // On Android, dismiss events also call this handler
+    if (Platform.OS === 'android') {
+      setIsDatePickerOpen(false);
+    }
+    if (event.type === 'set' && date) {
+      const newDateString = formatDateISO(date);
+      setSelectedDate(newDateString);
+    }
+  };
+
+  const closeDatePicker = () => {
+    setIsDatePickerOpen(false);
   };
 
   const handlePhonePress = (phone: string) => {
@@ -160,7 +199,7 @@ export function LineDetailScreen({
     );
   }
 
-  if (error || !lineDetail) {
+  if (error || !lineDetailData) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
@@ -184,142 +223,253 @@ export function LineDetailScreen({
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Line Header */}
-        <View style={styles.headerSection}>
-          <H1 style={styles.lineName}>{lineDetail.name}</H1>
-          {lineDetail.subtype && (
-            <Badge variant="default" style={styles.subtypeBadge}>{lineDetail.subtype}</Badge>
-          )}
-        </View>
-
-        {/* Date Selector */}
-        <View style={styles.dateSection}>
-          <TouchableOpacity
-            style={styles.dateArrow}
-            onPress={() => adjustDate(-1)}
-          >
-            <Icon name="chevron-left" size="md" colorToken="textPrimary" />
-          </TouchableOpacity>
-          <View style={styles.dateInfo}>
-            <Label style={styles.dateText}>{formatDisplayDate(selectedDate)}</Label>
-            {departures && (
-              <Meta>
-                {DAY_TYPE_LABELS[departures.day_type]}
-                {departures.is_holiday && ` (${t('transport.holiday')})`}
-              </Meta>
-            )}
+        {/* Full-bleed Banners */}
+        {banners.length > 0 && (
+          <View style={styles.bannerSection}>
+            <BannerList banners={banners} />
           </View>
-          <TouchableOpacity
-            style={styles.dateArrow}
-            onPress={() => adjustDate(1)}
-          >
-            <Icon name="chevron-right" size="md" colorToken="textPrimary" />
-          </TouchableOpacity>
+        )}
+
+        {/* Poster Header Slab */}
+        <View style={[styles.headerSlab, { backgroundColor: headerBackground }]}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerIconBox}>
+              <Icon
+                name={transportType === 'sea' ? 'ship' : 'bus'}
+                size="lg"
+                colorToken="textPrimary"
+              />
+            </View>
+            <View style={styles.headerTextContainer}>
+              <H1 style={styles.headerTitle}>{lineDetailData.name}</H1>
+              <View style={styles.headerMetaRow}>
+                {lineDetailData.subtype && (
+                  <Meta style={styles.headerMeta}>{lineDetailData.subtype}</Meta>
+                )}
+                {currentRoute?.typical_duration_minutes && (
+                  <Meta style={styles.headerMeta}>
+                    {formatDuration(currentRoute.typical_duration_minutes)}
+                  </Meta>
+                )}
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Direction Toggle */}
+        {/* Date Selector Card with Offset Shadow */}
+        <View style={styles.dateSelectorContainer}>
+          <View style={styles.dateSelectorShadow} />
+          <View style={styles.dateSelector}>
+            <TouchableOpacity
+              style={styles.dateArrow}
+              onPress={() => adjustDate(-1)}
+              accessibilityLabel={t('common.back')}
+            >
+              <Icon name="chevron-left" size="md" colorToken="textPrimary" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.dateInfo}
+              onPress={openDatePicker}
+              accessibilityLabel={t('transport.lineDetail.selectDate')}
+              accessibilityRole="button"
+            >
+              <Label style={styles.dateSelectorLabel}>DATUM</Label>
+              <H2 style={styles.dateText}>{formatDisplayDate(selectedDate)}</H2>
+              {departures && (
+                <Meta style={styles.dayTypeText}>
+                  {DAY_TYPE_LABELS[departures.day_type]}
+                  {departures.is_holiday && ` (${t('transport.holiday')})`}
+                </Meta>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.dateArrow}
+              onPress={() => adjustDate(1)}
+              accessibilityLabel="Next day"
+            >
+              <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Direction Toggle Tabs */}
         {routes.length > 1 && (
-          <View style={styles.directionSection}>
-            {routes.map((route) => (
-              <TouchableOpacity
-                key={route.id}
-                style={[
-                  styles.directionButton,
-                  selectedDirection === route.direction && styles.directionButtonActive,
-                ]}
-                onPress={() => setSelectedDirection(route.direction)}
-              >
-                <Label
-                  style={[
-                    styles.directionText,
-                    selectedDirection === route.direction && styles.directionTextActive,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {route.direction_label}
-                </Label>
-              </TouchableOpacity>
-            ))}
+          <View style={styles.directionContainer}>
+            <Label style={styles.sectionLabel}>{t('transport.lineDetail.direction')}</Label>
+            <View style={styles.directionTabsWrapper}>
+              <View style={styles.directionTabsShadow} />
+              <View style={styles.directionTabs}>
+                {routes.map((route) => {
+                  const isActive = selectedDirection === route.direction;
+                  return (
+                    <TouchableOpacity
+                      key={route.id}
+                      style={[
+                        styles.directionTab,
+                        isActive && [
+                          styles.directionTabActive,
+                          { backgroundColor: headerBackground },
+                        ],
+                        route.direction === 1 && styles.directionTabRight,
+                      ]}
+                      onPress={() => setSelectedDirection(route.direction)}
+                    >
+                      <Label
+                        style={[
+                          styles.directionTabText,
+                          isActive && styles.directionTabTextActive,
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {route.direction_label}
+                      </Label>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
           </View>
         )}
 
         {/* Route Info */}
         {currentRoute && (
           <View style={styles.routeInfo}>
-            <Label style={styles.routeLabel}>
-              {currentRoute.origin} → {currentRoute.destination}
-            </Label>
-            {currentRoute.typical_duration_minutes && (
-              <Meta>
-                Trajanje: {formatDuration(currentRoute.typical_duration_minutes)}
-              </Meta>
-            )}
+            <View style={styles.routeStops}>
+              <Icon name="map-pin" size="sm" colorToken="textSecondary" />
+              <Body style={styles.routeStopsText}>
+                {currentRoute.stops.length} {t('transport.stations')}
+              </Body>
+            </View>
           </View>
         )}
 
-        {/* Departures */}
+        {/* Section Divider */}
+        <View style={styles.sectionDivider} />
+
+        {/* Departures Section */}
         <View style={styles.section}>
-          <H2 style={styles.sectionTitle}>Polasci</H2>
+          <Label style={styles.sectionLabel}>{t('transport.lineDetail.departures')}</Label>
           {departuresLoading ? (
             <View style={styles.departuresLoading}>
               <ActivityIndicator size="small" color={colors.textSecondary} />
             </View>
           ) : departures && departures.departures.length > 0 ? (
-            departures.departures.map((dep) => (
-              <DepartureItem key={dep.id} departure={dep} />
-            ))
+            <View style={styles.departuresList}>
+              {departures.departures.map((dep) => (
+                <DepartureItem
+                  key={dep.id}
+                  departure={dep}
+                  transportType={transportType}
+                />
+              ))}
+            </View>
           ) : (
             <View style={styles.emptyState}>
-              <Label>Nema polazaka za odabrani dan</Label>
+              <Icon name="calendar" size="lg" colorToken="textMuted" />
+              <Body style={styles.emptyStateText}>
+                {t('transport.lineDetail.noDeparturesForDate')}
+              </Body>
             </View>
           )}
         </View>
 
-        {/* Contacts */}
-        {lineDetail.contacts.length > 0 && (
+        {/* Section Divider */}
+        {lineDetailData.contacts.length > 0 && <View style={styles.sectionDivider} />}
+
+        {/* Contacts Section */}
+        {lineDetailData.contacts.length > 0 && (
           <View style={styles.section}>
-            <H2 style={styles.sectionTitle}>Kontakt</H2>
-            {lineDetail.contacts.map((contact, index) => (
-              <Card key={`${contact.operator}-${index}`} style={styles.contactCard}>
-                <Label style={styles.contactOperator}>{contact.operator}</Label>
-                {contact.phone && (
-                  <TouchableOpacity
-                    style={styles.contactRow}
-                    onPress={() => handlePhonePress(contact.phone!)}
-                  >
-                    <View style={styles.contactIconContainer}>
-                      <Icon name="phone" size="sm" colorToken="textSecondary" />
-                    </View>
-                    <Label style={styles.contactLink}>{contact.phone}</Label>
-                  </TouchableOpacity>
-                )}
-                {contact.email && (
-                  <TouchableOpacity
-                    style={styles.contactRow}
-                    onPress={() => handleEmailPress(contact.email!)}
-                  >
-                    <View style={styles.contactIconContainer}>
-                      <Icon name="mail" size="sm" colorToken="textSecondary" />
-                    </View>
-                    <Label style={styles.contactLink}>{contact.email}</Label>
-                  </TouchableOpacity>
-                )}
-                {contact.website && (
-                  <TouchableOpacity
-                    style={styles.contactRow}
-                    onPress={() => handleWebsitePress(contact.website!)}
-                  >
-                    <View style={styles.contactIconContainer}>
-                      <Icon name="globe" size="sm" colorToken="textSecondary" />
-                    </View>
-                    <Label style={styles.contactLink}>{contact.website}</Label>
-                  </TouchableOpacity>
-                )}
-              </Card>
+            <Label style={styles.sectionLabel}>{t('transport.lineDetail.contacts')}</Label>
+            {lineDetailData.contacts.map((contact, index) => (
+              <View key={`${contact.operator}-${index}`} style={styles.contactCardWrapper}>
+                <View style={styles.contactCardShadow} />
+                <View style={styles.contactCard}>
+                  <Label style={styles.contactOperator}>{contact.operator}</Label>
+                  {contact.phone && (
+                    <TouchableOpacity
+                      style={styles.contactRow}
+                      onPress={() => handlePhonePress(contact.phone!)}
+                    >
+                      <View style={styles.contactIconBox}>
+                        <Icon name="phone" size="sm" colorToken="textPrimary" />
+                      </View>
+                      <Label style={styles.contactLink}>{contact.phone}</Label>
+                    </TouchableOpacity>
+                  )}
+                  {contact.email && (
+                    <TouchableOpacity
+                      style={styles.contactRow}
+                      onPress={() => handleEmailPress(contact.email!)}
+                    >
+                      <View style={styles.contactIconBox}>
+                        <Icon name="mail" size="sm" colorToken="textPrimary" />
+                      </View>
+                      <Label style={styles.contactLink}>{contact.email}</Label>
+                    </TouchableOpacity>
+                  )}
+                  {contact.website && (
+                    <TouchableOpacity
+                      style={styles.contactRow}
+                      onPress={() => handleWebsitePress(contact.website!)}
+                    >
+                      <View style={styles.contactIconBox}>
+                        <Icon name="globe" size="sm" colorToken="textPrimary" />
+                      </View>
+                      <Label style={styles.contactLink}>{contact.website}</Label>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
             ))}
           </View>
         )}
       </ScrollView>
+
+      {/* Date Picker - Platform-specific rendering */}
+      {Platform.OS === 'ios' ? (
+        <Modal
+          visible={isDatePickerOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={closeDatePicker}
+        >
+          <View style={styles.datePickerModalOverlay}>
+            <View style={styles.datePickerModalContent}>
+              <View style={styles.datePickerHeader}>
+                <TouchableOpacity onPress={closeDatePicker}>
+                  <Label style={styles.datePickerCancel}>
+                    {t('common.cancel')}
+                  </Label>
+                </TouchableOpacity>
+                <Label style={styles.datePickerTitle}>
+                  {t('transport.lineDetail.selectDate')}
+                </Label>
+                <TouchableOpacity onPress={closeDatePicker}>
+                  <Label style={styles.datePickerDone}>
+                    {t('common.done')}
+                  </Label>
+                </TouchableOpacity>
+              </View>
+              <DateTimePicker
+                value={new Date(selectedDate)}
+                mode="date"
+                display="spinner"
+                onChange={handleDateChange}
+                style={styles.datePickerIOS}
+              />
+            </View>
+          </View>
+        </Modal>
+      ) : (
+        isDatePickerOpen && (
+          <DateTimePicker
+            value={new Date(selectedDate)}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )
+      )}
     </SafeAreaView>
   );
 }
@@ -348,29 +498,74 @@ const styles = StyleSheet.create({
   content: {
     paddingBottom: spacing.xxxl,
   },
-  headerSection: {
-    padding: spacing.lg,
-    paddingBottom: spacing.sm,
+
+  // Full-bleed banners (no horizontal padding)
+  bannerSection: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
-  lineName: {
-    marginBottom: spacing.sm,
+
+  // Poster Header Slab
+  headerSlab: {
+    padding: lineDetail.headerPadding,
+    borderBottomWidth: lineDetail.headerBorderWidth,
+    borderBottomColor: lineDetail.headerBorderColor,
   },
-  subtypeBadge: {
-    alignSelf: 'flex-start',
-  },
-  dateSection: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
-    backgroundColor: colors.backgroundSecondary,
+  },
+  headerIconBox: {
+    width: lineDetail.headerIconBoxSize,
+    height: lineDetail.headerIconBoxSize,
+    backgroundColor: lineDetail.headerIconBoxBackground,
+    borderWidth: lineDetail.headerIconBoxBorderWidth,
+    borderColor: lineDetail.headerIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    color: lineDetail.headerTitleColor,
+  },
+  headerMetaRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: spacing.xs,
+  },
+  headerMeta: {
+    color: lineDetail.headerMetaColor,
+  },
+
+  // Date Selector with Offset Shadow
+  dateSelectorContainer: {
     marginHorizontal: spacing.lg,
-    borderRadius: spacing.sm,
+    marginTop: spacing.lg,
+    position: 'relative',
+  },
+  dateSelectorShadow: {
+    position: 'absolute',
+    top: lineDetail.shadowOffsetY,
+    left: lineDetail.shadowOffsetX,
+    right: -lineDetail.shadowOffsetX,
+    bottom: -lineDetail.shadowOffsetY,
+    backgroundColor: lineDetail.shadowColor,
+  },
+  dateSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: lineDetail.dateSelectorBackground,
+    borderWidth: lineDetail.dateSelectorBorderWidth,
+    borderColor: lineDetail.dateSelectorBorderColor,
+    borderRadius: lineDetail.dateSelectorRadius,
+    padding: lineDetail.dateSelectorPadding,
   },
   dateArrow: {
-    width: 40,
-    height: 40,
+    width: lineDetail.dateSelectorArrowSize,
+    height: lineDetail.dateSelectorArrowSize,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -378,61 +573,139 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  dateSelectorLabel: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
   dateText: {
     color: colors.textPrimary,
   },
-  directionSection: {
+  dayTypeText: {
+    marginTop: spacing.xs,
+  },
+
+  // Direction Toggle Tabs
+  directionContainer: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+  },
+  directionTabsWrapper: {
+    position: 'relative',
+    marginTop: spacing.sm,
+  },
+  directionTabsShadow: {
+    position: 'absolute',
+    top: lineDetail.shadowOffsetY,
+    left: lineDetail.shadowOffsetX,
+    right: -lineDetail.shadowOffsetX,
+    bottom: -lineDetail.shadowOffsetY,
+    backgroundColor: lineDetail.shadowColor,
+  },
+  directionTabs: {
     flexDirection: 'row',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
-    gap: spacing.sm,
+    borderWidth: lineDetail.directionTabBorderWidth,
+    borderColor: lineDetail.directionTabBorderColor,
+    borderRadius: lineDetail.directionTabRadius,
+    overflow: 'hidden',
   },
-  directionButton: {
+  directionTab: {
     flex: 1,
-    paddingVertical: spacing.md,
+    paddingVertical: lineDetail.directionTabPadding,
     paddingHorizontal: spacing.sm,
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: spacing.sm,
-    borderWidth: borders.widthThin,
-    borderColor: 'transparent',
+    backgroundColor: lineDetail.directionTabInactiveBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  directionButtonActive: {
-    backgroundColor: colors.textPrimary,
-    borderColor: colors.textPrimary,
+  directionTabRight: {
+    borderLeftWidth: lineDetail.directionTabBorderWidth,
+    borderLeftColor: lineDetail.directionTabBorderColor,
   },
-  directionText: {
-    color: colors.textSecondary,
+  directionTabActive: {
+    // backgroundColor set dynamically
+  },
+  directionTabText: {
+    color: lineDetail.directionTabInactiveText,
     textAlign: 'center',
   },
-  directionTextActive: {
-    color: colors.primaryText,
+  directionTabTextActive: {
+    color: lineDetail.directionTabActiveText,
   },
+
+  // Route Info
   routeInfo: {
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
   },
-  routeLabel: {
-    color: colors.textPrimary,
+  routeStops: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
+  routeStopsText: {
+    color: colors.textSecondary,
+  },
+
+  // Section Divider
+  sectionDivider: {
+    height: lineDetail.sectionDividerWidth,
+    backgroundColor: lineDetail.sectionDividerColor,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+  },
+
+  // Section
   section: {
-    padding: spacing.lg,
-    paddingTop: spacing.xxl,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
   },
-  sectionTitle: {
+  sectionLabel: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
     marginBottom: spacing.md,
   },
+
+  // Departures
   departuresLoading: {
     padding: spacing.xxl,
     alignItems: 'center',
   },
+  departuresList: {
+    gap: lineDetail.departureRowGap,
+  },
   emptyState: {
     padding: spacing.xxl,
     backgroundColor: colors.backgroundSecondary,
-    borderRadius: spacing.sm,
     alignItems: 'center',
+    gap: spacing.md,
+    borderWidth: borders.widthThin,
+    borderColor: colors.borderMuted,
+    borderStyle: 'dashed',
+  },
+  emptyStateText: {
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+
+  // Contact Card with Offset Shadow
+  contactCardWrapper: {
+    position: 'relative',
+    marginBottom: spacing.md,
+  },
+  contactCardShadow: {
+    position: 'absolute',
+    top: lineDetail.shadowOffsetY,
+    left: lineDetail.shadowOffsetX,
+    right: -lineDetail.shadowOffsetX,
+    bottom: -lineDetail.shadowOffsetY,
+    backgroundColor: lineDetail.shadowColor,
   },
   contactCard: {
-    marginBottom: spacing.sm,
+    backgroundColor: lineDetail.contactCardBackground,
+    borderWidth: lineDetail.contactCardBorderWidth,
+    borderColor: lineDetail.contactCardBorderColor,
+    borderRadius: lineDetail.contactCardRadius,
+    padding: lineDetail.contactCardPadding,
   },
   contactOperator: {
     color: colors.textPrimary,
@@ -443,13 +716,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
-  contactIconContainer: {
-    width: 24,
-    marginRight: spacing.sm,
+  contactIconBox: {
+    width: 32,
+    height: 32,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
   },
   contactLink: {
     flex: 1,
     color: colors.link,
+  },
+
+  // Date Picker Modal (iOS)
+  datePickerModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  datePickerModalContent: {
+    backgroundColor: colors.background,
+    borderTopWidth: lineDetail.dateSelectorBorderWidth,
+    borderTopColor: lineDetail.dateSelectorBorderColor,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: borders.widthThin,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.backgroundSecondary,
+  },
+  datePickerTitle: {
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  datePickerCancel: {
+    color: colors.textSecondary,
+  },
+  datePickerDone: {
+    color: colors.link,
+  },
+  datePickerIOS: {
+    height: 216,
+    backgroundColor: colors.background,
   },
 });
 

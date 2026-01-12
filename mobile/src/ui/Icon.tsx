@@ -18,6 +18,7 @@ import {
   Calendar,
   Bus,
   Ship,
+  Anchor,
   Leaf,
   Info,
   Wrench,
@@ -59,6 +60,7 @@ export type IconName =
   | 'calendar'
   | 'bus'
   | 'ship'
+  | 'anchor'
   | 'leaf'
   | 'info'
   | 'wrench'
@@ -108,6 +110,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'calendar': Calendar,
   'bus': Bus,
   'ship': Ship,
+  'anchor': Anchor,
   'leaf': Leaf,
   'info': Info,
   'wrench': Wrench,
