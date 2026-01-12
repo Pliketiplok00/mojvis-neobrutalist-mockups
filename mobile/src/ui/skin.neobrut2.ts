@@ -499,6 +499,8 @@ export const components = {
 
       // Text styling
       tileTitleColor: colors.primaryText, // White text on colored bg
+      tileTitleFontSize: typography.fontSize.xl, // 18px - stronger title
+      tileTitleFontFamily: typography.fontFamily.body.bold, // Bold weight
       tileSubtitleColor: colors.primaryTextMuted, // White at 85% opacity
 
       // Icon on colored surface
