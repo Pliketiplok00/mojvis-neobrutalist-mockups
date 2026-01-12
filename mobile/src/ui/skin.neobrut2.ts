@@ -529,6 +529,14 @@ export const components = {
       subtitleColor: 'rgba(255, 255, 255, 0.85)',
     },
 
+    // Section header (poster-style with bottom rule)
+    sectionHeader: {
+      marginBottom: spacing.md,
+      paddingBottom: spacing.sm,
+      borderBottomWidth: bordersToken.widthCard, // Thick poster rule
+      borderBottomColor: colors.border,
+    },
+
     // Lines list (poster-style cards)
     list: {
       // Line card (poster card with heavy border + shadow)
@@ -536,25 +544,29 @@ export const components = {
       lineCardBorderColor: colors.border,
       lineCardBackground: colors.background,
       lineCardRadius: bordersToken.radiusSharp,
-      lineCardPadding: spacing.xl, // More breathing room
-      lineCardGap: spacing.lg, // Increased gap between cards
+      lineCardPadding: spacing.lg, // Tighter padding for poster density
+      lineCardGap: spacing.md, // Tighter gap between cards
 
       // Shadow offset for line cards (dual-layer look)
-      lineCardShadowOffsetX: 5,
-      lineCardShadowOffsetY: 5,
+      lineCardShadowOffsetX: 4,
+      lineCardShadowOffsetY: 4,
       lineCardShadowColor: colors.border,
 
+      // Pressed state offset (neobrut press-in effect)
+      lineCardPressedOffsetX: 2,
+      lineCardPressedOffsetY: 2,
+
       // Boxed chevron affordance (square with border)
-      lineCardChevronBoxSize: 36,
+      lineCardChevronBoxSize: 40, // Slightly larger for clarity
       lineCardChevronBoxBorderWidth: bordersToken.widthThin,
       lineCardChevronBoxBorderColor: colors.border,
       lineCardChevronBoxBackground: colors.backgroundSecondary,
       lineCardChevronGap: spacing.md,
 
-      // Line card text spacing
-      lineCardTitleGap: spacing.sm, // Gap between title and type icon
-      lineCardStopsGap: spacing.sm, // Gap after stops summary
-      lineCardMetaGap: spacing.xs, // Gap before meta row
+      // Line card text spacing (tighter vertical rhythm)
+      lineCardTitleGap: spacing.xs, // Tighter gap between title and type icon
+      lineCardStopsGap: spacing.xs, // Tighter gap after stops summary
+      lineCardMetaGap: spacing.xs, // Consistent gap before meta row
 
       // Type icon box (replaces text badge with icon indicator)
       lineCardTypeIconBoxSize: 28,
@@ -565,21 +577,24 @@ export const components = {
       // Today departures set (single bordered container with stacked rows)
       todaySetBorderWidth: bordersToken.widthCard,
       todaySetBorderColor: colors.border,
-      todaySetBackground: colors.background,
+      todaySetBackground: colors.backgroundSecondary, // Grey tinted container
       todaySetRadius: bordersToken.radiusSharp,
       todaySetShadowOffsetX: 4,
       todaySetShadowOffsetY: 4,
       todaySetShadowColor: colors.border,
 
       // Today row (inside the set)
+      todayRowBackground: colors.backgroundSecondary, // Low-fi grey row
       todayRowDividerWidth: bordersToken.widthThin,
       todayRowDividerColor: colors.border,
       todayRowPadding: spacing.md,
+      todayRowPressedOffsetX: 1, // Subtle press-in for rows
+      todayRowPressedOffsetY: 1,
 
-      // Time block in today row (heavy bordered box)
-      todayTimeBlockWidth: 68,
+      // Time block in today row (visually distinct)
+      todayTimeBlockWidth: 72, // Slightly wider for emphasis
       todayTimeBlockPadding: spacing.md,
-      todayTimeBlockBackground: colors.background,
+      todayTimeBlockBackground: colors.background, // Cream fill stands out on grey
       todayTimeBlockBorderWidth: bordersToken.widthCard,
       todayTimeBlockBorderColor: colors.border,
     },

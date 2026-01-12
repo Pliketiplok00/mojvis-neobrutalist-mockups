@@ -13,7 +13,8 @@
  * - A: Lines list (heavy poster cards with type icon + boxed chevron)
  * - B: Today's departures (stacked set with dividers)
  *
- * Phase 4D: Polished with type icons replacing text badges.
+ * Phase 4E: Poster polish - display typography, section rules, grey rows,
+ *           neobrut press states with transform offset.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -44,8 +45,9 @@ import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
-const { colors, spacing, borders, components } = skin;
+const { colors, spacing, borders, typography, components } = skin;
 const overviewHeader = components.transport.overviewHeader;
+const sectionHeader = components.transport.sectionHeader;
 const listTokens = components.transport.list;
 
 /**
@@ -363,10 +365,13 @@ const styles = StyleSheet.create({
 
   section: {
     padding: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingTop: spacing.xl,
   },
   sectionTitle: {
-    marginBottom: spacing.md,
+    marginBottom: sectionHeader.marginBottom,
+    paddingBottom: sectionHeader.paddingBottom,
+    borderBottomWidth: sectionHeader.borderBottomWidth,
+    borderBottomColor: sectionHeader.borderBottomColor,
   },
   errorContainer: {
     margin: spacing.lg,
@@ -412,7 +417,10 @@ const styles = StyleSheet.create({
     padding: listTokens.lineCardPadding,
   },
   lineCardPressed: {
-    opacity: 0.7,
+    transform: [
+      { translateX: listTokens.lineCardPressedOffsetX },
+      { translateY: listTokens.lineCardPressedOffsetY },
+    ],
   },
   lineCardBody: {
     flexDirection: 'row',
@@ -430,6 +438,8 @@ const styles = StyleSheet.create({
   lineName: {
     flex: 1,
     color: colors.textPrimary,
+    fontFamily: typography.fontFamily.display.semiBold,
+    fontSize: typography.fontSize.lg,
     marginRight: listTokens.lineCardTitleGap,
   },
   lineTypeIconBox: {
@@ -482,13 +492,17 @@ const styles = StyleSheet.create({
   todayRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: listTokens.todayRowBackground,
   },
   todayRowWithDivider: {
     borderTopWidth: listTokens.todayRowDividerWidth,
     borderTopColor: listTokens.todayRowDividerColor,
   },
   todayRowPressed: {
-    backgroundColor: colors.backgroundSecondary,
+    transform: [
+      { translateX: listTokens.todayRowPressedOffsetX },
+      { translateY: listTokens.todayRowPressedOffsetY },
+    ],
   },
   todayTimeBlock: {
     width: listTokens.todayTimeBlockWidth,
