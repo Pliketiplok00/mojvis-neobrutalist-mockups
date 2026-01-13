@@ -480,6 +480,8 @@ const styles = StyleSheet.create({
   },
   tabText: {
     color: inboxTokens.tabs.inactiveTextColor,
+    fontFamily: inboxTokens.tabs.labelFontFamily,
+    fontSize: inboxTokens.tabs.labelFontSize,
     textTransform: 'uppercase',
   },
   tabTextActive: {

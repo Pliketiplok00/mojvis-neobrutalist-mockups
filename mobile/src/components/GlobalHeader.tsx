@@ -17,12 +17,16 @@
  */
 
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMenu } from '../contexts/MenuContext';
+import { useUnread } from '../contexts/UnreadContext';
 import { Icon } from '../ui/Icon';
 import { skin } from '../ui/skin';
-import { H2, Meta } from '../ui/Text';
+import { H2 } from '../ui/Text';
+
+// Header badge tokens
+const { inboxBadge } = skin.components.header;
 
 export type HeaderType = 'root' | 'child' | 'inbox';
 
@@ -45,17 +49,17 @@ interface GlobalHeaderProps {
   onMenuPress?: () => void;
 
   /**
-   * Optional: Number of unread inbox messages (shows badge)
+   * @deprecated unreadCount is now sourced from UnreadContext automatically
    */
   unreadCount?: number;
 }
 
 export function GlobalHeader({
   type,
-  unreadCount = 0,
 }: GlobalHeaderProps): React.JSX.Element {
   const navigation = useNavigation();
   const { openMenu } = useMenu();
+  const { unreadCount } = useUnread();
 
   // ALWAYS open menu - no back button behavior
   const handleLeftPress = (): void => {
@@ -100,9 +104,9 @@ export function GlobalHeader({
             <Icon name="inbox" size="md" color="white" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
-                <Meta style={styles.badgeText}>
+                <Text style={styles.badgeText}>
                   {unreadCount > 99 ? '99+' : unreadCount}
-                </Meta>
+                </Text>
               </View>
             )}
           </View>
@@ -161,23 +165,24 @@ const styles = StyleSheet.create({
   hidden: {
     opacity: 0,
   },
-  // Badge - square style for poster look
+  // Badge - square style for poster look (skin tokens)
   badge: {
     position: 'absolute',
-    top: -6,
-    right: -6,
-    backgroundColor: skin.colors.urgent,
-    borderWidth: skin.borders.widthHairline,
-    borderColor: skin.colors.border,
-    minWidth: 20,
-    height: 20,
+    top: inboxBadge.offsetTop,
+    right: inboxBadge.offsetRight,
+    backgroundColor: inboxBadge.backgroundColor,
+    borderWidth: inboxBadge.borderWidth,
+    borderColor: inboxBadge.borderColor,
+    minWidth: inboxBadge.minSize,
+    height: inboxBadge.minSize,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: skin.spacing.xs,
+    paddingHorizontal: inboxBadge.paddingHorizontal,
   },
   badgeText: {
-    color: skin.colors.urgentText,
-    fontWeight: '700',
+    color: inboxBadge.textColor,
+    fontSize: inboxBadge.fontSize,
+    fontFamily: inboxBadge.fontFamily,
   },
 });
 
