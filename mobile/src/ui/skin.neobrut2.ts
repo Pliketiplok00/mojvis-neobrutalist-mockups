@@ -11,7 +11,7 @@ type ShadowStyle = {
 };
 
 type ShadowToken = {
-  ios: Omit<ShadowStyle, 'elevation'>;
+  ios: Omit<ShadowStyle, "elevation">;
   android: { elevation: number };
 };
 
@@ -157,9 +157,15 @@ const hardShadow = (offset: number, color: string = borders.color): ShadowToken 
 });
 
 const platformShadow = (token: ShadowToken): ShadowStyle | Record<string, never> =>
-  Platform.OS === 'ios'
+  Platform.OS === "ios"
     ? token.ios
-    : { shadowColor: 'transparent', shadowOpacity: 0, shadowRadius: 0, shadowOffset: { width: 0, height: 0 }, ...token.android };
+    : {
+        shadowColor: "transparent",
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        shadowOffset: { width: 0, height: 0 },
+        ...token.android,
+      };
 
 // ---- Colors (include aliases expected by existing primitives/screens) ----
 export const colors = {
@@ -285,6 +291,19 @@ export const components = {
     borderBottomColor: colors.border,
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
+    // Inbox badge (unread indicator)
+    inboxBadge: {
+      backgroundColor: palette.destructive, // Terracotta red for urgency
+      borderWidth: bordersToken.widthHairline,
+      borderColor: colors.border,
+      textColor: colors.primaryText,
+      minSize: 20,
+      offsetTop: -6,
+      offsetRight: -6,
+      paddingHorizontal: spacing.xs,
+      fontSize: typography.fontSize.xs,
+      fontFamily: typography.fontFamily.body.bold,
+    },
   },
 
   screen: {
@@ -384,7 +403,7 @@ export const components = {
   // Calendar component tokens (V1 poster style)
   calendar: {
     // Container background (transparent - matches screen background per V1 mockup)
-    containerBackground: 'transparent',
+    containerBackground: "transparent",
     // Day tile outline - for colored tiles (has-events, today, selected)
     dayTileBorderWidth: bordersToken.widthThin,
     dayTileBorderColor: colors.border,
@@ -413,8 +432,8 @@ export const components = {
     // Empty state (dotted outline box per V1 mockup)
     emptyStateBorderWidth: bordersToken.widthThin,
     emptyStateBorderColor: colors.borderMuted,
-    emptyStateBorderStyle: 'dotted' as const,
-    emptyStateBackground: 'transparent',
+    emptyStateBorderStyle: "dotted" as const,
+    emptyStateBackground: "transparent",
     emptyStatePadding: spacing.xxl,
     emptyStateBorderRadius: bordersToken.radiusSharp,
 
@@ -478,6 +497,7 @@ export const components = {
       descriptionLineHeight: 22, // Keep same value, now tokenized
     },
   },
+
   // Transport Hub screen component tokens (V1 poster style)
   transport: {
     // Banner container - full-bleed (edge-to-edge)
@@ -556,7 +576,7 @@ export const components = {
 
       // Text styling (white on colored background)
       titleColor: colors.primaryText,
-      subtitleColor: 'rgba(255, 255, 255, 0.85)',
+      subtitleColor: "rgba(255, 255, 255, 0.85)",
     },
 
     // Section header (poster-style with bottom rule)
@@ -657,7 +677,7 @@ export const components = {
 
       // Header text
       headerTitleColor: colors.primaryText, // White on colored bg
-      headerMetaColor: 'rgba(255, 255, 255, 0.85)',
+      headerMetaColor: "rgba(255, 255, 255, 0.85)",
 
       // Date selector card (YELLOW poster button per mockup)
       dateSelectorPadding: spacing.lg,
@@ -728,7 +748,7 @@ export const components = {
 
   // Inbox screen component tokens (V1 banner list style)
   inbox: {
-    // Banner-style tabs (stronger typography)
+    // Banner-style tabs (stronger typography hierarchy)
     tabs: {
       borderBottomWidth: bordersToken.widthCard,
       borderBottomColor: colors.border,
@@ -746,6 +766,9 @@ export const components = {
       tabPadding: spacing.md,
       tabGap: spacing.sm,
       iconGap: spacing.sm,
+      // Tab label typography (BOLD - must outrank row titles)
+      labelFontFamily: typography.fontFamily.body.bold,
+      labelFontSize: typography.fontSize.md,
     },
 
     // Banner list item (full-width, bottom border only, no shadow)
