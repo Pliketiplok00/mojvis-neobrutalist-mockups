@@ -49,6 +49,8 @@ export type MainStackParamList = {
   ClickFixDetail: { clickFixId: string };
   Settings: undefined;
   StaticPage: { slug: string };
+  // Dev-only screens (gated by __DEV__)
+  UiInventory: undefined;
 };
 
 /**

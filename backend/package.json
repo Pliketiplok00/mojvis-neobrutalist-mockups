@@ -11,7 +11,8 @@
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint src/**/*.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "purge:inbox": "tsx scripts/purge-inbox-dev.ts"
   },
   "keywords": [
     "mojvis",

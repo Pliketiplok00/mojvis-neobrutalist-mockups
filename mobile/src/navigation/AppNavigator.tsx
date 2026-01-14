@@ -56,6 +56,8 @@ import { ClickFixConfirmationScreen } from '../screens/click-fix/ClickFixConfirm
 import { ClickFixDetailScreen } from '../screens/click-fix/ClickFixDetailScreen';
 import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
 import { SettingsScreen } from '../screens/settings/SettingsScreen';
+// Dev-only screens
+import { UiInventoryScreen } from '../screens/dev/UiInventoryScreen';
 
 // Create navigators
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -120,6 +122,8 @@ function MainNavigator(): React.JSX.Element {
       <MainStack.Screen name="ClickFixDetail" component={ClickFixDetailScreen} />
       <MainStack.Screen name="StaticPage" component={StaticPageScreen} />
       <MainStack.Screen name="Settings" component={SettingsScreen} />
+      {/* Dev-only screens */}
+      <MainStack.Screen name="UiInventory" component={UiInventoryScreen} />
     </MainStack.Navigator>
   );
 }
