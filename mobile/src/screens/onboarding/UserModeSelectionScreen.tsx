@@ -10,16 +10,19 @@
  * - Local users proceed to municipality selection
  * - Visitors go directly to Home
  *
- * Phase 0: UI skeleton only, no logic.
- * Phase 5.1: Added onboarding completion for visitors.
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no emoji).
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
+import { Card } from '../../ui/Card';
+import { H2, Body, ButtonText, Label, Meta } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'UserModeSelection'>;
@@ -49,47 +52,51 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Kako koristite aplikaciju?</Text>
-        <Text style={styles.subtitle}>How do you use the app?</Text>
+        <H2 style={styles.title}>Kako koristite aplikaciju?</H2>
+        <Body style={styles.subtitle}>How do you use the app?</Body>
 
         <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.optionCard}
+          <Card
+            variant="selection"
             onPress={() => void handleModeSelect('visitor')}
             accessibilityLabel="Visitor"
           >
-            <Text style={styles.optionIcon}>🧳</Text>
-            <Text style={styles.optionTitle}>Posjetitelj / Visitor</Text>
-            <Text style={styles.optionDescription}>
+            <View style={styles.optionIconContainer}>
+              <Icon name="globe" size="lg" colorToken="textPrimary" />
+            </View>
+            <ButtonText style={styles.optionTitle}>Posjetitelj / Visitor</ButtonText>
+            <Label style={styles.optionDescription}>
               Turisticka posjeta otoku
-            </Text>
-            <Text style={styles.optionDescriptionEn}>
+            </Label>
+            <Meta style={styles.optionDescriptionEn}>
               Visiting the island as a tourist
-            </Text>
-          </TouchableOpacity>
+            </Meta>
+          </Card>
 
-          <TouchableOpacity
-            style={styles.optionCard}
+          <Card
+            variant="selection"
             onPress={() => void handleModeSelect('local')}
             accessibilityLabel="Local resident"
           >
-            <Text style={styles.optionIcon}>🏠</Text>
-            <Text style={styles.optionTitle}>Lokalac / Local</Text>
-            <Text style={styles.optionDescription}>
+            <View style={styles.optionIconContainer}>
+              <Icon name="home" size="lg" colorToken="textPrimary" />
+            </View>
+            <ButtonText style={styles.optionTitle}>Lokalac / Local</ButtonText>
+            <Label style={styles.optionDescription}>
               Živim ili radim na otoku
-            </Text>
-            <Text style={styles.optionDescriptionEn}>
+            </Label>
+            <Meta style={styles.optionDescriptionEn}>
               I live or work on the island
-            </Text>
-          </TouchableOpacity>
+            </Meta>
+          </Card>
         </View>
 
-        <Text style={styles.hint}>
+        <Meta style={styles.hint}>
           Možete promijeniti kasnije u postavkama.
-        </Text>
-        <Text style={styles.hintEn}>
+        </Meta>
+        <Meta style={styles.hintEn}>
           You can change this later in settings.
-        </Text>
+        </Meta>
       </View>
     </SafeAreaView>
   );
@@ -98,62 +105,40 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
-    padding: 24,
-    paddingTop: 48,
+    padding: skin.spacing.xxl,
+    paddingTop: skin.spacing.xxxl,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginBottom: 32,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.xxxl,
   },
   optionsContainer: {
-    gap: 16,
+    gap: skin.spacing.lg,
   },
-  optionCard: {
-    backgroundColor: '#F5F5F5',
-    padding: 20,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-  },
-  optionIcon: {
-    fontSize: 32,
-    marginBottom: 12,
+  optionIconContainer: {
+    marginBottom: skin.spacing.md,
   },
   optionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   optionDescription: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
   optionDescriptionEn: {
-    fontSize: 14,
-    color: '#999999',
     fontStyle: 'italic',
   },
   hint: {
-    fontSize: 14,
-    color: '#999999',
     textAlign: 'center',
-    marginTop: 32,
+    marginTop: skin.spacing.xxxl,
   },
   hintEn: {
-    fontSize: 14,
-    color: '#BBBBBB',
     textAlign: 'center',
     fontStyle: 'italic',
   },

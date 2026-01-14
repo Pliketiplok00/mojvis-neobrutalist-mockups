@@ -10,6 +10,7 @@
     "back": "Natrag",
     "send": "Posalji",
     "cancel": "Odustani",
+    "done": "Gotovo",
     "save": "Spremi",
     "delete": "Obrisi",
     "confirm": "Potvrdi",
@@ -47,6 +48,7 @@
     "categories": "Kategorije",
     "upcomingEvents": "Nadolazeci dogadaji",
     "eventsPlaceholder": "[Ovdje ce se prikazati dogadaji]",
+    "viewAllEvents": "Pogledaj sve dogadaje",
     "feedback": {
       "title": "Imate prijedlog?",
       "subtitle": "Posaljite nam povratnu informaciju"
@@ -130,7 +132,8 @@
     },
     "location": "Lokacija",
     "time": "Vrijeme",
-    "description": "Opis"
+    "description": "Opis",
+    "share": "Podijeli"
   },
   "transport": {
     "hub": {
@@ -164,6 +167,7 @@
       "SUN": "Nedjelja",
       "PRAZNIK": "Praznik"
     },
+    "note": "Vozni redovi se automatski azuriraju. Za najnovije informacije provjerite sluzbene stranice prijevoznika.",
     "lineDetail": {
       "departures": "Polasci",
       "route": "Ruta",
@@ -315,6 +319,7 @@
   },
   "banner": {
     "urgent": "HITNO",
+    "new": "NOVO",
     "accessibilityHint": "Dodirnite za vise informacija"
   },
   "menu": {

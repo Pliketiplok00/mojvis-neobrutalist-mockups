@@ -8,26 +8,38 @@
  * - Language display
  * - User mode display
  * - Reset onboarding option
+ *
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   Switch,
-  TouchableOpacity,
   Alert,
   Platform,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
 import { useTranslations } from '../../i18n';
+import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { H2, Label, Body, Meta } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import type { MainStackParamList } from '../../navigation/types';
+
+type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 export function SettingsScreen(): React.JSX.Element {
+  const navigation = useNavigation<NavigationProp>();
   const { data, resetOnboarding } = useOnboarding();
   const { isOptIn, isRegistered, isLoading, setOptIn } = usePush();
   const { t } = useTranslations();
@@ -78,65 +90,65 @@ export function SettingsScreen(): React.JSX.Element {
     : t('common.empty');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.content}>
         {/* Notifications Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <H2 style={styles.sectionTitle}>
             {t('settings.pushNotifications.title')}
-          </Text>
+          </H2>
 
           <View style={styles.settingRow}>
             <View style={styles.settingInfo}>
-              <Text style={styles.settingLabel}>
+              <Label style={styles.settingLabel}>
                 {t('settings.pushNotifications.title')}
-              </Text>
-              <Text style={styles.settingDescription}>
+              </Label>
+              <Body style={styles.settingDescription}>
                 {t('settings.pushNotifications.description')}
-              </Text>
+              </Body>
             </View>
             <Switch
               value={isOptIn}
               onValueChange={handlePushToggle}
               disabled={isLoading || isUpdating || !isRegistered}
-              trackColor={{ false: '#D1D5DB', true: '#10B981' }}
-              thumbColor={Platform.OS === 'ios' ? undefined : '#FFFFFF'}
+              trackColor={{ false: skin.colors.borderLight, true: skin.colors.successAccent }}
+              thumbColor={Platform.OS === 'ios' ? undefined : skin.colors.background}
             />
           </View>
         </View>
 
         {/* Profile Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <H2 style={styles.sectionTitle}>
             {t('settings.profile.title')}
-          </Text>
+          </H2>
 
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>
+            <Body style={styles.infoLabel}>
               {t('settings.profile.language')}
-            </Text>
-            <Text style={styles.infoValue}>{languageLabel}</Text>
+            </Body>
+            <Label style={styles.infoValue}>{languageLabel}</Label>
           </View>
 
           <View style={styles.separator} />
 
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>
+            <Body style={styles.infoLabel}>
               {t('settings.profile.userMode')}
-            </Text>
-            <Text style={styles.infoValue}>{userModeLabel}</Text>
+            </Body>
+            <Label style={styles.infoValue}>{userModeLabel}</Label>
           </View>
 
           {userMode === 'local' && (
             <>
               <View style={styles.separator} />
               <View style={styles.infoRow}>
-                <Text style={styles.infoLabel}>
+                <Body style={styles.infoLabel}>
                   {t('settings.profile.municipality')}
-                </Text>
-                <Text style={styles.infoValue}>{municipalityLabel}</Text>
+                </Body>
+                <Label style={styles.infoValue}>{municipalityLabel}</Label>
               </View>
             </>
           )}
@@ -144,21 +156,35 @@ export function SettingsScreen(): React.JSX.Element {
 
         {/* Actions Section */}
         <View style={styles.section}>
-          <TouchableOpacity
-            style={styles.dangerButton}
-            onPress={handleResetOnboarding}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.dangerButtonText}>
-              {t('settings.reset.button')}
-            </Text>
-          </TouchableOpacity>
+          <Button variant="danger" onPress={handleResetOnboarding}>
+            {t('settings.reset.button')}
+          </Button>
         </View>
+
+        {/* Dev Tools Section (DEV ONLY) */}
+        {__DEV__ && (
+          <View style={styles.section}>
+            <H2 style={styles.sectionTitle}>Developer Tools</H2>
+            <TouchableOpacity
+              style={styles.devRow}
+              onPress={() => navigation.navigate('UiInventory')}
+              activeOpacity={0.7}
+            >
+              <View style={styles.devRowContent}>
+                <Label style={styles.devRowLabel}>UI Inventory (DEV)</Label>
+                <Body style={styles.devRowDescription}>
+                  View all UI components and tokens
+                </Body>
+              </View>
+              <Icon name="chevron-right" size="md" colorToken="chevron" />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Version Info */}
         <View style={styles.versionContainer}>
-          <Text style={styles.versionText}>MOJ VIS v1.0.0</Text>
-          <Text style={styles.versionText}>Phase 7 - Push Notifications</Text>
+          <Meta style={styles.versionText}>MOJ VIS v1.0.0</Meta>
+          <Meta style={styles.versionText}>Phase 7 - Push Notifications</Meta>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -168,30 +194,23 @@ export function SettingsScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: skin.colors.backgroundSecondary,
   },
   content: {
     flex: 1,
   },
   section: {
-    backgroundColor: '#FFFFFF',
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 12,
-    borderWidth: 3,
-    borderColor: '#000000',
-    padding: 16,
-    shadowColor: '#000000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 4,
+    backgroundColor: skin.colors.backgroundTertiary,
+    marginHorizontal: skin.spacing.lg,
+    marginTop: skin.spacing.lg,
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.lg,
+    ...skin.shadows.card,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   settingRow: {
     flexDirection: 'row',
@@ -200,63 +219,57 @@ const styles = StyleSheet.create({
   },
   settingInfo: {
     flex: 1,
-    marginRight: 16,
+    marginRight: skin.spacing.lg,
   },
   settingLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   settingDescription: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
   warningText: {
-    fontSize: 12,
-    color: '#F59E0B',
-    marginTop: 12,
+    color: skin.colors.warningAccent,
+    marginTop: skin.spacing.md,
     fontStyle: 'italic',
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: skin.spacing.md,
   },
   infoLabel: {
-    fontSize: 16,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
   infoValue: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    // Typography handled by Label primitive
   },
   separator: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-  },
-  dangerButton: {
-    backgroundColor: '#FEE2E2',
-    borderWidth: 2,
-    borderColor: '#EF4444',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  dangerButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#DC2626',
+    height: skin.borders.widthHairline,
+    backgroundColor: skin.colors.borderLight,
   },
   versionContainer: {
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: skin.spacing.xxl,
   },
   versionText: {
-    fontSize: 12,
-    color: '#9CA3AF',
+    color: skin.colors.textDisabled,
+  },
+  // Dev tools
+  devRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: skin.spacing.md,
+  },
+  devRowContent: {
+    flex: 1,
+  },
+  devRowLabel: {
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.xs,
+  },
+  devRowDescription: {
+    color: skin.colors.textMuted,
   },
 });
 

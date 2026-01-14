@@ -15,6 +15,14 @@ import { DashboardLayout } from '../../layouts/DashboardLayout';
 import { adminEventsApi } from '../../services/api';
 import type { AdminEvent, AdminEventInput } from '../../types/event';
 
+/**
+ * Validate image URL (must be http/https if provided)
+ */
+function isValidImageUrl(url: string): boolean {
+  if (!url.trim()) return true; // empty is valid
+  return url.startsWith('http://') || url.startsWith('https://');
+}
+
 export function EventEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -35,7 +43,10 @@ export function EventEditPage() {
   const [endTime, setEndTime] = useState('');
   const [locationHr, setLocationHr] = useState('');
   const [locationEn, setLocationEn] = useState('');
+  const [organizerHr, setOrganizerHr] = useState('Grad Vis');
+  const [organizerEn, setOrganizerEn] = useState('Municipality of Vis');
   const [isAllDay, setIsAllDay] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   // Load existing event if editing
   useEffect(() => {
@@ -66,7 +77,10 @@ export function EventEditPage() {
     setDescriptionEn(event.description_en || '');
     setLocationHr(event.location_hr || '');
     setLocationEn(event.location_en || '');
+    setOrganizerHr(event.organizer_hr);
+    setOrganizerEn(event.organizer_en);
     setIsAllDay(event.is_all_day);
+    setImageUrl(event.image_url || '');
 
     // Parse datetime
     const start = new Date(event.start_datetime);
@@ -97,6 +111,18 @@ export function EventEditPage() {
       setError('Datum početka je obavezan.');
       return;
     }
+    if (!organizerHr.trim()) {
+      setError('Organizator (HR) je obavezan.');
+      return;
+    }
+    if (!organizerEn.trim()) {
+      setError('Organizator (EN) je obavezan.');
+      return;
+    }
+    if (!isValidImageUrl(imageUrl)) {
+      setError('URL slike mora biti HTTP ili HTTPS URL.');
+      return;
+    }
 
     // Build datetime strings
     const startDatetime = isAllDay
@@ -119,7 +145,10 @@ export function EventEditPage() {
       end_datetime: endDatetime,
       location_hr: locationHr.trim() || null,
       location_en: locationEn.trim() || null,
+      organizer_hr: organizerHr.trim(),
+      organizer_en: organizerEn.trim(),
       is_all_day: isAllDay,
+      image_url: imageUrl.trim() || null,
     };
 
     setSaving(true);
@@ -291,6 +320,34 @@ export function EventEditPage() {
             />
           </div>
 
+          {/* Organizer HR */}
+          <div style={styles.formGroup}>
+            <label style={styles.label}>
+              Organizator (HR) <span style={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              value={organizerHr}
+              onChange={(e) => setOrganizerHr(e.target.value)}
+              style={styles.input}
+              placeholder="Unesite organizatora na hrvatskom"
+            />
+          </div>
+
+          {/* Organizer EN */}
+          <div style={styles.formGroup}>
+            <label style={styles.label}>
+              Organizator (EN) <span style={styles.required}>*</span>
+            </label>
+            <input
+              type="text"
+              value={organizerEn}
+              onChange={(e) => setOrganizerEn(e.target.value)}
+              style={styles.input}
+              placeholder="Enter organizer in English"
+            />
+          </div>
+
           {/* Description HR */}
           <div style={styles.formGroup}>
             <label style={styles.label}>Opis (HR)</label>
@@ -312,6 +369,18 @@ export function EventEditPage() {
               style={styles.textarea}
               rows={4}
               placeholder="Enter description in English"
+            />
+          </div>
+
+          {/* Image URL */}
+          <div style={styles.formGroup}>
+            <label style={styles.label}>URL slike</label>
+            <input
+              type="url"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              style={styles.input}
+              placeholder="https://example.com/image.jpg"
             />
           </div>
 

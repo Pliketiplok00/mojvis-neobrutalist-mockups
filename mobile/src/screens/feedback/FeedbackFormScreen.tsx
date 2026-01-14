@@ -9,17 +9,15 @@
  *
  * No contact fields. No category.
  * Municipality is derived from onboarding context.
+ *
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  Text,
-  TextInput,
-  TouchableOpacity,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -32,6 +30,10 @@ import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import { validateFeedbackForm, VALIDATION_LIMITS } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { Input } from '../../ui/Input';
+import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -89,84 +91,76 @@ export function FeedbackFormScreen(): React.JSX.Element {
         >
           {/* Title */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>{t('feedback.title')}</Text>
+            <H1>{t('feedback.title')}</H1>
           </View>
 
           {/* Submit Error */}
           {submitError && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{submitError}</Text>
+              <Body style={styles.errorText}>{submitError}</Body>
             </View>
           )}
 
           {/* Subject Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('feedback.subject')} <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, errors.subject && styles.inputError]}
+            <H2 style={styles.label}>
+              {t('feedback.subject')} <Label style={styles.required}>*</Label>
+            </H2>
+            <Input
               value={subject}
               onChangeText={setSubject}
               placeholder={t('feedback.subjectPlaceholder')}
-              placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              editable={!isSubmitting}
+              disabled={isSubmitting}
+              error={!!errors.subject}
+              accessibilityLabel={t('feedback.subject')}
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
-                <Text style={styles.fieldError}>{t(errors.subject)}</Text>
+                <Label style={styles.fieldError}>{t(errors.subject)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {subject.length}/{VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Body Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('feedback.message')} <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                styles.textArea,
-                errors.body && styles.inputError,
-              ]}
+            <H2 style={styles.label}>
+              {t('feedback.message')} <Label style={styles.required}>*</Label>
+            </H2>
+            <Input
               value={body}
               onChangeText={setBody}
               placeholder={t('feedback.messagePlaceholder')}
-              placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.BODY_MAX_LENGTH}
               multiline
-              numberOfLines={8}
-              textAlignVertical="top"
-              editable={!isSubmitting}
+              height={160}
+              disabled={isSubmitting}
+              error={!!errors.body}
+              accessibilityLabel={t('feedback.message')}
             />
             <View style={styles.fieldFooter}>
               {errors.body && (
-                <Text style={styles.fieldError}>{t(errors.body)}</Text>
+                <Label style={styles.fieldError}>{t(errors.body)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {body.length}/{VALIDATION_LIMITS.BODY_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          <Button
+            variant="primary"
             onPress={handleSubmit}
+            loading={isSubmitting}
             disabled={isSubmitting}
-            activeOpacity={0.7}
+            style={styles.submitButton}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text style={styles.submitButtonText}>{t('feedback.send')}</Text>
-            )}
-          </TouchableOpacity>
+            {t('feedback.send')}
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -176,7 +170,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   keyboardView: {
     flex: 1,
@@ -185,90 +179,45 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   titleSection: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 4,
+    marginBottom: skin.spacing.xxl,
   },
   errorContainer: {
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    backgroundColor: skin.colors.warningBackground,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
+    marginBottom: skin.spacing.lg,
   },
   errorText: {
-    fontSize: 14,
-    color: '#856404',
+    color: skin.colors.warningAccent,
     textAlign: 'center',
   },
   field: {
-    marginBottom: 20,
+    marginBottom: skin.spacing.xl,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   required: {
-    color: '#CC0000',
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#000000',
-    backgroundColor: '#FFFFFF',
-  },
-  inputError: {
-    borderColor: '#CC0000',
-  },
-  textArea: {
-    height: 160,
-    textAlignVertical: 'top',
+    color: skin.colors.errorText,
   },
   fieldFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: skin.spacing.xs,
   },
   fieldError: {
-    fontSize: 12,
-    color: '#CC0000',
+    color: skin.colors.errorText,
     flex: 1,
   },
   charCount: {
-    fontSize: 12,
-    color: '#999999',
+    color: skin.colors.textDisabled,
   },
   submitButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    marginTop: skin.spacing.lg,
   },
 });
 

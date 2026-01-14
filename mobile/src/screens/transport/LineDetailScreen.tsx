@@ -4,30 +4,43 @@
  * Displays full details for a transport line.
  * Shared component for both Road and Sea transport.
  *
- * Sections:
- * - Header: Line name, subtype
- * - Date selector: Single date (default today)
- * - Direction toggle: 0 or 1 (resolved via route)
- * - Departures list: Expandable with stop times
- * - Contacts: BY LINE
+ * V1 Poster Style:
+ * - Colored header slab with icon box
+ * - Poster-style date selector card with offset shadow
+ * - Direction toggle tabs with sharp corners
+ * - Departure rows with colored time block
+ * - Expandable timeline with (+1 day) indicator
+ * - Contact cards with offset shadow
+ *
+ * Phase 3D: 100% skin-tokenized.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
   RefreshControl,
   Linking,
+  ActivityIndicator,
+  Platform,
+  Modal,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { BannerList } from '../../components/Banner';
 import { DepartureItem } from '../../components/DepartureItem';
+import { H1, H2, Label, Meta, Body } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { LoadingState, ErrorState } from '../../ui/States';
+import { skin } from '../../ui/skin';
+import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
-import { transportApi } from '../../services/api';
+import { inboxApi, transportApi } from '../../services/api';
+import { formatDateISO, formatDisplayDate } from '../../utils/dateFormat';
+import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
   LineDetailResponse,
@@ -41,11 +54,15 @@ interface LineDetailScreenProps {
   transportType: TransportType;
 }
 
+const { colors, spacing, borders, components } = skin;
+const lineDetail = components.transport.lineDetail;
+
 export function LineDetailScreen({
   lineId,
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
   const { t } = useTranslations();
+  const userContext = useUserContext();
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
     MON: t('transport.dayTypes.MON'),
@@ -58,7 +75,8 @@ export function LineDetailScreen({
     PRAZNIK: t('transport.dayTypes.PRAZNIK'),
   };
 
-  const [lineDetail, setLineDetail] = useState<LineDetailResponse | null>(null);
+  const [banners, setBanners] = useState<InboxMessage[]>([]);
+  const [lineDetailData, setLineDetailData] = useState<LineDetailResponse | null>(null);
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
   const [selectedDirection, setSelectedDirection] = useState<number>(0);
@@ -66,13 +84,26 @@ export function LineDetailScreen({
   const [departuresLoading, setDeparturesLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
-  // Fetch line detail
+  // Get transport-type-specific colors
+  const headerBackground = transportType === 'sea'
+    ? lineDetail.headerBackgroundSea
+    : lineDetail.headerBackgroundRoad;
+  const timeBlockBackground = transportType === 'sea'
+    ? lineDetail.timeBlockBackgroundSea
+    : lineDetail.timeBlockBackgroundRoad;
+
+  // Fetch line detail and banners
   const fetchLineDetail = useCallback(async () => {
     setError(null);
     try {
-      const detail = await transportApi.getLine(transportType, lineId);
-      setLineDetail(detail);
+      const [detail, bannersRes] = await Promise.all([
+        transportApi.getLine(transportType, lineId),
+        inboxApi.getActiveBanners(userContext, 'transport'),
+      ]);
+      setLineDetailData(detail);
+      setBanners(bannersRes.banners);
     } catch (err) {
       console.error('[LineDetail] Error fetching line:', err);
       setError(t('transport.lineDetail.error'));
@@ -80,7 +111,7 @@ export function LineDetailScreen({
       setLoading(false);
       setRefreshing(false);
     }
-  }, [lineId, transportType]);
+  }, [lineId, transportType, userContext, t]);
 
   // Fetch departures for selected date and direction
   const fetchDepartures = useCallback(async () => {
@@ -95,7 +126,6 @@ export function LineDetailScreen({
       setDepartures(deps);
     } catch (err) {
       console.error('[LineDetail] Error fetching departures:', err);
-      // Don't set error - just show empty departures
     } finally {
       setDeparturesLoading(false);
     }
@@ -106,10 +136,10 @@ export function LineDetailScreen({
   }, [fetchLineDetail]);
 
   useEffect(() => {
-    if (lineDetail) {
+    if (lineDetailData) {
       void fetchDepartures();
     }
-  }, [lineDetail, fetchDepartures]);
+  }, [lineDetailData, fetchDepartures]);
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -117,14 +147,34 @@ export function LineDetailScreen({
   }, [fetchLineDetail]);
 
   // Get routes for direction toggle
-  const routes: RouteInfo[] = lineDetail?.routes || [];
+  const routes: RouteInfo[] = lineDetailData?.routes || [];
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
 
   // Date navigation
   const adjustDate = (days: number) => {
     const date = new Date(selectedDate);
     date.setDate(date.getDate() + days);
-    setSelectedDate(formatDateString(date));
+    setSelectedDate(formatDateISO(date));
+  };
+
+  // Date picker handlers
+  const openDatePicker = () => {
+    setIsDatePickerOpen(true);
+  };
+
+  const handleDateChange = (event: { type: string }, date?: Date) => {
+    // On Android, dismiss events also call this handler
+    if (Platform.OS === 'android') {
+      setIsDatePickerOpen(false);
+    }
+    if (event.type === 'set' && date) {
+      const newDateString = formatDateISO(date);
+      setSelectedDate(newDateString);
+    }
+  };
+
+  const closeDatePicker = () => {
+    setIsDatePickerOpen(false);
   };
 
   const handlePhonePress = (phone: string) => {
@@ -144,24 +194,20 @@ export function LineDetailScreen({
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
-        </View>
+        <LoadingState message={t('common.loading')} />
       </SafeAreaView>
     );
   }
 
-  if (error || !lineDetail) {
+  if (error || !lineDetailData) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('transport.lineDetail.notFound')}</Text>
-          <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-            <Text style={styles.retryText}>{t('common.retry')}</Text>
-          </TouchableOpacity>
-        </View>
+        <ErrorState
+          message={error || t('transport.lineDetail.notFound')}
+          onRetry={handleRefresh}
+          retryLabel={t('common.retry')}
+        />
       </SafeAreaView>
     );
   }
@@ -177,140 +223,253 @@ export function LineDetailScreen({
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Line Header */}
-        <View style={styles.headerSection}>
-          <Text style={styles.lineName}>{lineDetail.name}</Text>
-          {lineDetail.subtype && (
-            <View style={styles.subtypeBadge}>
-              <Text style={styles.subtypeText}>{lineDetail.subtype}</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Date Selector */}
-        <View style={styles.dateSection}>
-          <TouchableOpacity
-            style={styles.dateArrow}
-            onPress={() => adjustDate(-1)}
-          >
-            <Text style={styles.dateArrowText}>{'<'}</Text>
-          </TouchableOpacity>
-          <View style={styles.dateInfo}>
-            <Text style={styles.dateText}>{formatDisplayDate(selectedDate)}</Text>
-            {departures && (
-              <Text style={styles.dayTypeText}>
-                {DAY_TYPE_LABELS[departures.day_type]}
-                {departures.is_holiday && ` (${t('transport.holiday')})`}
-              </Text>
-            )}
+        {/* Full-bleed Banners */}
+        {banners.length > 0 && (
+          <View style={styles.bannerSection}>
+            <BannerList banners={banners} />
           </View>
-          <TouchableOpacity
-            style={styles.dateArrow}
-            onPress={() => adjustDate(1)}
-          >
-            <Text style={styles.dateArrowText}>{'>'}</Text>
-          </TouchableOpacity>
+        )}
+
+        {/* Poster Header Slab */}
+        <View style={[styles.headerSlab, { backgroundColor: headerBackground }]}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerIconBox}>
+              <Icon
+                name={transportType === 'sea' ? 'ship' : 'bus'}
+                size="lg"
+                colorToken="textPrimary"
+              />
+            </View>
+            <View style={styles.headerTextContainer}>
+              <H1 style={styles.headerTitle}>{lineDetailData.name}</H1>
+              <View style={styles.headerMetaRow}>
+                {lineDetailData.subtype && (
+                  <Meta style={styles.headerMeta}>{lineDetailData.subtype}</Meta>
+                )}
+                {currentRoute?.typical_duration_minutes && (
+                  <Meta style={styles.headerMeta}>
+                    {formatDuration(currentRoute.typical_duration_minutes)}
+                  </Meta>
+                )}
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Direction Toggle */}
+        {/* Date Selector Card with Offset Shadow */}
+        <View style={styles.dateSelectorContainer}>
+          <View style={styles.dateSelectorShadow} />
+          <View style={styles.dateSelector}>
+            <TouchableOpacity
+              style={styles.dateArrow}
+              onPress={() => adjustDate(-1)}
+              accessibilityLabel={t('common.back')}
+            >
+              <Icon name="chevron-left" size="md" colorToken="textPrimary" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.dateInfo}
+              onPress={openDatePicker}
+              accessibilityLabel={t('transport.lineDetail.selectDate')}
+              accessibilityRole="button"
+            >
+              <Label style={styles.dateSelectorLabel}>DATUM</Label>
+              <H2 style={styles.dateText}>{formatDisplayDate(selectedDate)}</H2>
+              {departures && (
+                <Meta style={styles.dayTypeText}>
+                  {DAY_TYPE_LABELS[departures.day_type]}
+                  {departures.is_holiday && ` (${t('transport.holiday')})`}
+                </Meta>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.dateArrow}
+              onPress={() => adjustDate(1)}
+              accessibilityLabel="Next day"
+            >
+              <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Direction Toggle Tabs */}
         {routes.length > 1 && (
-          <View style={styles.directionSection}>
-            {routes.map((route) => (
-              <TouchableOpacity
-                key={route.id}
-                style={[
-                  styles.directionButton,
-                  selectedDirection === route.direction && styles.directionButtonActive,
-                ]}
-                onPress={() => setSelectedDirection(route.direction)}
-              >
-                <Text
-                  style={[
-                    styles.directionText,
-                    selectedDirection === route.direction && styles.directionTextActive,
-                  ]}
-                  numberOfLines={1}
-                >
-                  {route.direction_label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+          <View style={styles.directionContainer}>
+            <Label style={styles.sectionLabel}>{t('transport.lineDetail.direction')}</Label>
+            <View style={styles.directionTabsWrapper}>
+              <View style={styles.directionTabsShadow} />
+              <View style={styles.directionTabs}>
+                {routes.map((route) => {
+                  const isActive = selectedDirection === route.direction;
+                  return (
+                    <TouchableOpacity
+                      key={route.id}
+                      style={[
+                        styles.directionTab,
+                        isActive && [
+                          styles.directionTabActive,
+                          { backgroundColor: headerBackground },
+                        ],
+                        route.direction === 1 && styles.directionTabRight,
+                      ]}
+                      onPress={() => setSelectedDirection(route.direction)}
+                    >
+                      <Label
+                        style={[
+                          styles.directionTabText,
+                          isActive && styles.directionTabTextActive,
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {route.direction_label}
+                      </Label>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
           </View>
         )}
 
         {/* Route Info */}
         {currentRoute && (
           <View style={styles.routeInfo}>
-            <Text style={styles.routeLabel}>
-              {currentRoute.origin} → {currentRoute.destination}
-            </Text>
-            {currentRoute.typical_duration_minutes && (
-              <Text style={styles.routeDuration}>
-                Trajanje: {formatDuration(currentRoute.typical_duration_minutes)}
-              </Text>
-            )}
+            <View style={styles.routeStops}>
+              <Icon name="map-pin" size="sm" colorToken="textSecondary" />
+              <Body style={styles.routeStopsText}>
+                {currentRoute.stops.length} {t('transport.stations')}
+              </Body>
+            </View>
           </View>
         )}
 
-        {/* Departures */}
+        {/* Section Divider */}
+        <View style={styles.sectionDivider} />
+
+        {/* Departures Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Polasci</Text>
+          <Label style={styles.sectionLabel}>{t('transport.lineDetail.departures')}</Label>
           {departuresLoading ? (
             <View style={styles.departuresLoading}>
-              <ActivityIndicator size="small" color="#666666" />
+              <ActivityIndicator size="small" color={colors.textSecondary} />
             </View>
           ) : departures && departures.departures.length > 0 ? (
-            departures.departures.map((dep) => (
-              <DepartureItem key={dep.id} departure={dep} />
-            ))
+            <View style={styles.departuresList}>
+              {departures.departures.map((dep) => (
+                <DepartureItem
+                  key={dep.id}
+                  departure={dep}
+                  transportType={transportType}
+                />
+              ))}
+            </View>
           ) : (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
-                Nema polazaka za odabrani dan
-              </Text>
+              <Icon name="calendar" size="lg" colorToken="textMuted" />
+              <Body style={styles.emptyStateText}>
+                {t('transport.lineDetail.noDeparturesForDate')}
+              </Body>
             </View>
           )}
         </View>
 
-        {/* Contacts */}
-        {lineDetail.contacts.length > 0 && (
+        {/* Section Divider */}
+        {lineDetailData.contacts.length > 0 && <View style={styles.sectionDivider} />}
+
+        {/* Contacts Section */}
+        {lineDetailData.contacts.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Kontakt</Text>
-            {lineDetail.contacts.map((contact, index) => (
-              <View key={`${contact.operator}-${index}`} style={styles.contactCard}>
-                <Text style={styles.contactOperator}>{contact.operator}</Text>
-                {contact.phone && (
-                  <TouchableOpacity
-                    style={styles.contactRow}
-                    onPress={() => handlePhonePress(contact.phone!)}
-                  >
-                    <Text style={styles.contactLabel}>Tel:</Text>
-                    <Text style={styles.contactLink}>{contact.phone}</Text>
-                  </TouchableOpacity>
-                )}
-                {contact.email && (
-                  <TouchableOpacity
-                    style={styles.contactRow}
-                    onPress={() => handleEmailPress(contact.email!)}
-                  >
-                    <Text style={styles.contactLabel}>Email:</Text>
-                    <Text style={styles.contactLink}>{contact.email}</Text>
-                  </TouchableOpacity>
-                )}
-                {contact.website && (
-                  <TouchableOpacity
-                    style={styles.contactRow}
-                    onPress={() => handleWebsitePress(contact.website!)}
-                  >
-                    <Text style={styles.contactLabel}>Web:</Text>
-                    <Text style={styles.contactLink}>{contact.website}</Text>
-                  </TouchableOpacity>
-                )}
+            <Label style={styles.sectionLabel}>{t('transport.lineDetail.contacts')}</Label>
+            {lineDetailData.contacts.map((contact, index) => (
+              <View key={`${contact.operator}-${index}`} style={styles.contactCardWrapper}>
+                <View style={styles.contactCardShadow} />
+                <View style={styles.contactCard}>
+                  <Label style={styles.contactOperator}>{contact.operator}</Label>
+                  {contact.phone && (
+                    <TouchableOpacity
+                      style={styles.contactRow}
+                      onPress={() => handlePhonePress(contact.phone!)}
+                    >
+                      <View style={styles.contactIconBox}>
+                        <Icon name="phone" size="sm" colorToken="textPrimary" />
+                      </View>
+                      <Label style={styles.contactLink}>{contact.phone}</Label>
+                    </TouchableOpacity>
+                  )}
+                  {contact.email && (
+                    <TouchableOpacity
+                      style={styles.contactRow}
+                      onPress={() => handleEmailPress(contact.email!)}
+                    >
+                      <View style={styles.contactIconBox}>
+                        <Icon name="mail" size="sm" colorToken="textPrimary" />
+                      </View>
+                      <Label style={styles.contactLink}>{contact.email}</Label>
+                    </TouchableOpacity>
+                  )}
+                  {contact.website && (
+                    <TouchableOpacity
+                      style={styles.contactRow}
+                      onPress={() => handleWebsitePress(contact.website!)}
+                    >
+                      <View style={styles.contactIconBox}>
+                        <Icon name="globe" size="sm" colorToken="textPrimary" />
+                      </View>
+                      <Label style={styles.contactLink}>{contact.website}</Label>
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             ))}
           </View>
         )}
       </ScrollView>
+
+      {/* Date Picker - Platform-specific rendering */}
+      {Platform.OS === 'ios' ? (
+        <Modal
+          visible={isDatePickerOpen}
+          transparent
+          animationType="slide"
+          onRequestClose={closeDatePicker}
+        >
+          <View style={styles.datePickerModalOverlay}>
+            <View style={styles.datePickerModalContent}>
+              <View style={styles.datePickerHeader}>
+                <TouchableOpacity onPress={closeDatePicker}>
+                  <Label style={styles.datePickerCancel}>
+                    {t('common.cancel')}
+                  </Label>
+                </TouchableOpacity>
+                <Label style={styles.datePickerTitle}>
+                  {t('transport.lineDetail.selectDate')}
+                </Label>
+                <TouchableOpacity onPress={closeDatePicker}>
+                  <Label style={styles.datePickerDone}>
+                    {t('common.done')}
+                  </Label>
+                </TouchableOpacity>
+              </View>
+              <DateTimePicker
+                value={new Date(selectedDate)}
+                mode="date"
+                display="spinner"
+                onChange={handleDateChange}
+                style={styles.datePickerIOS}
+              />
+            </View>
+          </View>
+        </Modal>
+      ) : (
+        isDatePickerOpen && (
+          <DateTimePicker
+            value={new Date(selectedDate)}
+            mode="date"
+            display="default"
+            onChange={handleDateChange}
+          />
+        )
+      )}
     </SafeAreaView>
   );
 }
@@ -318,22 +477,7 @@ export function LineDetailScreen({
 // Helper functions
 function getTodayString(): string {
   const today = new Date();
-  return formatDateString(today);
-}
-
-function formatDateString(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function formatDisplayDate(dateString: string): string {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
-  return `${day}.${month}.${year}.`;
+  return formatDateISO(today);
 }
 
 function formatDuration(minutes: number): string {
@@ -346,198 +490,281 @@ function formatDuration(minutes: number): string {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: spacing.xxxl,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+
+  // Full-bleed banners (no horizontal padding)
+  bannerSection: {
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+
+  // Poster Header Slab
+  headerSlab: {
+    padding: lineDetail.headerPadding,
+    borderBottomWidth: lineDetail.headerBorderWidth,
+    borderBottomColor: lineDetail.headerBorderColor,
   },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#856404',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: '#000000',
-    borderRadius: 8,
-  },
-  retryText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '500',
-  },
-  headerSection: {
-    padding: 16,
-    paddingBottom: 8,
-  },
-  lineName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 8,
-  },
-  subtypeBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  subtypeText: {
-    fontSize: 12,
-    color: '#666666',
-    fontWeight: '500',
-  },
-  dateSection: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#F5F5F5',
-    marginHorizontal: 16,
-    borderRadius: 8,
+  },
+  headerIconBox: {
+    width: lineDetail.headerIconBoxSize,
+    height: lineDetail.headerIconBoxSize,
+    backgroundColor: lineDetail.headerIconBoxBackground,
+    borderWidth: lineDetail.headerIconBoxBorderWidth,
+    borderColor: lineDetail.headerIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
+  },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    color: lineDetail.headerTitleColor,
+  },
+  headerMetaRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: spacing.xs,
+  },
+  headerMeta: {
+    color: lineDetail.headerMetaColor,
+  },
+
+  // Date Selector with Offset Shadow
+  dateSelectorContainer: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+    position: 'relative',
+  },
+  dateSelectorShadow: {
+    position: 'absolute',
+    top: lineDetail.shadowOffsetY,
+    left: lineDetail.shadowOffsetX,
+    right: -lineDetail.shadowOffsetX,
+    bottom: -lineDetail.shadowOffsetY,
+    backgroundColor: lineDetail.shadowColor,
+  },
+  dateSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: lineDetail.dateSelectorBackground,
+    borderWidth: lineDetail.dateSelectorBorderWidth,
+    borderColor: lineDetail.dateSelectorBorderColor,
+    borderRadius: lineDetail.dateSelectorRadius,
+    padding: lineDetail.dateSelectorPadding,
   },
   dateArrow: {
-    width: 40,
-    height: 40,
+    width: lineDetail.dateSelectorArrowSize,
+    height: lineDetail.dateSelectorArrowSize,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  dateArrowText: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
   },
   dateInfo: {
     flex: 1,
     alignItems: 'center',
   },
+  dateSelectorLabel: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
   dateText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+    color: colors.textPrimary,
   },
   dayTypeText: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
+    marginTop: spacing.xs,
   },
-  directionSection: {
+
+  // Direction Toggle Tabs
+  directionContainer: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+  },
+  directionTabsWrapper: {
+    position: 'relative',
+    marginTop: spacing.sm,
+  },
+  directionTabsShadow: {
+    position: 'absolute',
+    top: lineDetail.shadowOffsetY,
+    left: lineDetail.shadowOffsetX,
+    right: -lineDetail.shadowOffsetX,
+    bottom: -lineDetail.shadowOffsetY,
+    backgroundColor: lineDetail.shadowColor,
+  },
+  directionTabs: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    gap: 8,
+    borderWidth: lineDetail.directionTabBorderWidth,
+    borderColor: lineDetail.directionTabBorderColor,
+    borderRadius: lineDetail.directionTabRadius,
+    overflow: 'hidden',
   },
-  directionButton: {
+  directionTab: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: 'transparent',
+    paddingVertical: lineDetail.directionTabPadding,
+    paddingHorizontal: spacing.sm,
+    backgroundColor: lineDetail.directionTabInactiveBackground,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  directionButtonActive: {
-    backgroundColor: '#000000',
-    borderColor: '#000000',
+  directionTabRight: {
+    borderLeftWidth: lineDetail.directionTabBorderWidth,
+    borderLeftColor: lineDetail.directionTabBorderColor,
   },
-  directionText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666666',
+  directionTabActive: {
+    // backgroundColor set dynamically
+  },
+  directionTabText: {
+    color: lineDetail.directionTabInactiveText,
     textAlign: 'center',
   },
-  directionTextActive: {
-    color: '#FFFFFF',
+  directionTabTextActive: {
+    color: lineDetail.directionTabActiveText,
   },
+
+  // Route Info
   routeInfo: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
   },
-  routeLabel: {
-    fontSize: 14,
-    color: '#333333',
-    fontWeight: '500',
-  },
-  routeDuration: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 4,
-  },
-  section: {
-    padding: 16,
-    paddingTop: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
-  },
-  departuresLoading: {
-    padding: 24,
+  routeStops: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
+  },
+  routeStopsText: {
+    color: colors.textSecondary,
+  },
+
+  // Section Divider
+  sectionDivider: {
+    height: lineDetail.sectionDividerWidth,
+    backgroundColor: lineDetail.sectionDividerColor,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+  },
+
+  // Section
+  section: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+  },
+  sectionLabel: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.md,
+  },
+
+  // Departures
+  departuresLoading: {
+    padding: spacing.xxl,
+    alignItems: 'center',
+  },
+  departuresList: {
+    gap: lineDetail.departureRowGap,
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: spacing.xxl,
+    backgroundColor: colors.backgroundSecondary,
     alignItems: 'center',
+    gap: spacing.md,
+    borderWidth: borders.widthThin,
+    borderColor: colors.borderMuted,
+    borderStyle: 'dashed',
   },
-  emptyText: {
-    fontSize: 14,
-    color: '#666666',
+  emptyStateText: {
+    color: colors.textMuted,
+    textAlign: 'center',
+  },
+
+  // Contact Card with Offset Shadow
+  contactCardWrapper: {
+    position: 'relative',
+    marginBottom: spacing.md,
+  },
+  contactCardShadow: {
+    position: 'absolute',
+    top: lineDetail.shadowOffsetY,
+    left: lineDetail.shadowOffsetX,
+    right: -lineDetail.shadowOffsetX,
+    bottom: -lineDetail.shadowOffsetY,
+    backgroundColor: lineDetail.shadowColor,
   },
   contactCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 8,
+    backgroundColor: lineDetail.contactCardBackground,
+    borderWidth: lineDetail.contactCardBorderWidth,
+    borderColor: lineDetail.contactCardBorderColor,
+    borderRadius: lineDetail.contactCardRadius,
+    padding: lineDetail.contactCardPadding,
   },
   contactOperator: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    marginBottom: spacing.md,
   },
   contactRow: {
     flexDirection: 'row',
-    marginBottom: 8,
+    alignItems: 'center',
+    marginBottom: spacing.sm,
   },
-  contactLabel: {
-    fontSize: 14,
-    color: '#666666',
-    width: 50,
+  contactIconBox: {
+    width: 32,
+    height: 32,
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.md,
   },
   contactLink: {
     flex: 1,
-    fontSize: 14,
-    color: '#0066CC',
-    textDecorationLine: 'underline',
+    color: colors.link,
+  },
+
+  // Date Picker Modal (iOS)
+  datePickerModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  datePickerModalContent: {
+    backgroundColor: colors.background,
+    borderTopWidth: lineDetail.dateSelectorBorderWidth,
+    borderTopColor: lineDetail.dateSelectorBorderColor,
+  },
+  datePickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderBottomWidth: borders.widthThin,
+    borderBottomColor: colors.border,
+    backgroundColor: colors.backgroundSecondary,
+  },
+  datePickerTitle: {
+    color: colors.textPrimary,
+    textAlign: 'center',
+  },
+  datePickerCancel: {
+    color: colors.textSecondary,
+  },
+  datePickerDone: {
+    color: colors.link,
+  },
+  datePickerIOS: {
+    height: 216,
+    backgroundColor: colors.background,
   },
 });
 

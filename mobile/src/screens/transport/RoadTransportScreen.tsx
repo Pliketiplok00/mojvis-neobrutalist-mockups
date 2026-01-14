@@ -9,18 +9,20 @@
  * - NO opcenito, kultura, or municipal-only messages
  *
  * Sections:
- * - A: Lines list
- * - B: Today's departures (aggregated)
- * - C: (Contacts shown in line detail)
+ * - Header: Poster-style header with icon box
+ * - A: Lines list (2-part poster cards: colored header slab + white body)
+ * - B: Today's departures (stacked set with green time blocks)
+ *
+ * Phase 4F: Aligned with LineDetail poster system - colored time blocks,
+ *           2-part line cards with header slab + icon.
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
@@ -29,6 +31,11 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { Button } from '../../ui/Button';
+import { H1, H2, Label, Meta } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import type { IconName } from '../../ui/Icon';
+import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
@@ -37,6 +44,27 @@ import type { LineListItem, TodayDepartureItem, DayType } from '../../types/tran
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
+
+const { colors, spacing, borders, components } = skin;
+const overviewHeader = components.transport.overviewHeader;
+const listTokens = components.transport.list;
+
+/**
+ * Format time string (HH:MM or HH:MM:SS) to HH:MM display format
+ * Fixes the bug where time breaks into two lines
+ */
+function formatTime(time: string): string {
+  const parts = time.split(':');
+  return `${parts[0]}:${parts[1]}`;
+}
+
+/**
+ * Map road transport subtype to icon name
+ * Road transport is always bus-based
+ */
+function getRoadTypeIcon(_subtype: string | null): IconName {
+  return 'bus';
+}
 
 export function RoadTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -83,7 +111,7 @@ export function RoadTransportScreen(): React.JSX.Element {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [userContext]);
+  }, [userContext, t]);
 
   useEffect(() => {
     void fetchData();
@@ -111,12 +139,14 @@ export function RoadTransportScreen(): React.JSX.Element {
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('transport.loading')}</Text>
+          <ActivityIndicator size="large" color={colors.textPrimary} />
+          <Label style={styles.loadingText}>{t('transport.loading')}</Label>
         </View>
       </SafeAreaView>
     );
   }
+
+  const visibleDepartures = todaysDepartures.slice(0, 10);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -129,101 +159,139 @@ export function RoadTransportScreen(): React.JSX.Element {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Banners */}
+        {/* Full-bleed Banners */}
         {banners.length > 0 && (
           <View style={styles.bannerSection}>
             <BannerList banners={banners} />
           </View>
         )}
 
-        {/* Title */}
-        <View style={styles.titleSection}>
-          <Text style={styles.title}>{t('transport.road.title')}</Text>
-          {dayType && (
-            <Text style={styles.dayInfo}>
-              {DAY_TYPE_LABELS[dayType]}
-              {isHoliday && ` (${t('transport.holiday')})`}
-            </Text>
-          )}
+        {/* Poster Header Slab */}
+        <View style={styles.headerSlab}>
+          <View style={styles.headerContent}>
+            <View style={styles.headerIconBox}>
+              <Icon name="bus" size="lg" colorToken="textPrimary" />
+            </View>
+            <View style={styles.headerTextContainer}>
+              <H1 style={styles.headerTitle}>{t('transport.road.title')}</H1>
+              {dayType && (
+                <Meta style={styles.headerMeta}>
+                  {DAY_TYPE_LABELS[dayType]}
+                  {isHoliday && ` (${t('transport.holiday')})`}
+                </Meta>
+              )}
+            </View>
+          </View>
         </View>
 
         {error && (
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-            <TouchableOpacity onPress={handleRefresh} style={styles.retryButton}>
-              <Text style={styles.retryText}>{t('common.retry')}</Text>
-            </TouchableOpacity>
+            <Label style={styles.errorText}>{error}</Label>
+            <Button onPress={handleRefresh} style={styles.retryButton}>
+              {t('common.retry')}
+            </Button>
           </View>
         )}
 
         {/* Section A: Lines List */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('transport.lines')}</Text>
+          <Label style={styles.sectionLabel}>{t('transport.lines')}</Label>
           {lines.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>{t('transport.noLines')}</Text>
+              <Label>{t('transport.noLines')}</Label>
             </View>
           ) : (
             lines.map((line) => (
-              <TouchableOpacity
+              <Pressable
                 key={line.id}
-                style={styles.lineCard}
                 onPress={() => handleLinePress(line.id)}
-                activeOpacity={0.7}
+                style={({ pressed }) => [
+                  styles.lineCardWrapper,
+                  pressed && styles.lineCardPressed,
+                ]}
               >
-                <View style={styles.lineHeader}>
-                  <Text style={styles.lineName} numberOfLines={2}>
-                    {line.name}
-                  </Text>
-                  {line.subtype && (
-                    <View style={styles.subtypeBadge}>
-                      <Text style={styles.subtypeText}>{line.subtype}</Text>
+                {/* Shadow layer */}
+                <View style={styles.lineCardShadow} />
+                {/* Main card - 2-part structure */}
+                <View style={styles.lineCard}>
+                  {/* TOP: Colored header slab with icon + title */}
+                  <View style={styles.lineCardHeader}>
+                    <View style={styles.lineCardHeaderIconBox}>
+                      <Icon
+                        name={getRoadTypeIcon(line.subtype)}
+                        size="md"
+                        colorToken="textPrimary"
+                      />
                     </View>
-                  )}
+                    <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
+                      {line.name}
+                    </H2>
+                  </View>
+                  {/* BOTTOM: White body with meta + chevron */}
+                  <View style={styles.lineCardBody}>
+                    <View style={styles.lineCardContent}>
+                      <Meta numberOfLines={1} style={styles.lineStops}>
+                        {line.stops_summary}
+                      </Meta>
+                      <Meta style={styles.lineMeta} numberOfLines={1}>
+                        {line.stops_count} {t('transport.stations')}
+                        {line.typical_duration_minutes
+                          ? ` • ${formatDuration(line.typical_duration_minutes)}`
+                          : ''}
+                      </Meta>
+                    </View>
+                    <View style={styles.lineCardChevronBox}>
+                      <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
+                    </View>
+                  </View>
                 </View>
-                <Text style={styles.lineStops} numberOfLines={1}>
-                  {line.stops_summary}
-                </Text>
-                <View style={styles.lineFooter}>
-                  <Text style={styles.lineInfo}>
-                    {line.stops_count} {t('transport.stations')}
-                    {line.typical_duration_minutes
-                      ? ` • ${formatDuration(line.typical_duration_minutes)}`
-                      : ''}
-                  </Text>
-                  <Text style={styles.chevron}>{'>'}</Text>
-                </View>
-              </TouchableOpacity>
+              </Pressable>
             ))
           )}
         </View>
 
         {/* Section B: Today's Departures */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('transport.todaysDepartures')}</Text>
+          <Label style={styles.sectionLabel}>{t('transport.todaysDepartures')}</Label>
           {todaysDepartures.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>{t('transport.noDepartures')}</Text>
+              <Label>{t('transport.noDepartures')}</Label>
             </View>
           ) : (
-            todaysDepartures.slice(0, 10).map((dep, index) => (
-              <TouchableOpacity
-                key={`${dep.line_id}-${dep.departure_time}-${index}`}
-                style={styles.departureCard}
-                onPress={() => handleLinePress(dep.line_id)}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.departureTime}>{dep.departure_time}</Text>
-                <View style={styles.departureInfo}>
-                  <Text style={styles.departureLine} numberOfLines={1}>
-                    {dep.line_name}
-                  </Text>
-                  <Text style={styles.departureDirection} numberOfLines={1}>
-                    {dep.direction_label}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))
+            <View style={styles.todaySetWrapper}>
+              {/* Shadow layer */}
+              <View style={styles.todaySetShadow} />
+              {/* Main container */}
+              <View style={styles.todaySet}>
+                {visibleDepartures.map((dep, index) => (
+                  <Pressable
+                    key={`${dep.line_id}-${dep.departure_time}-${index}`}
+                    style={({ pressed }) => [
+                      styles.todayRow,
+                      index > 0 && styles.todayRowWithDivider,
+                      pressed && styles.todayRowPressed,
+                    ]}
+                    onPress={() => handleLinePress(dep.line_id)}
+                  >
+                    {/* Time block - green like LineDetail */}
+                    <View style={styles.todayTimeBlock}>
+                      <H2 style={styles.todayTime}>
+                        {formatTime(dep.departure_time)}
+                      </H2>
+                    </View>
+                    {/* Info */}
+                    <View style={styles.todayInfo}>
+                      <Label style={styles.todayLineName} numberOfLines={1}>
+                        {dep.line_name}
+                      </Label>
+                      <Meta style={styles.todayDirection} numberOfLines={1}>
+                        {dep.direction_label}
+                      </Meta>
+                    </View>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
           )}
         </View>
       </ScrollView>
@@ -234,13 +302,13 @@ export function RoadTransportScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    paddingBottom: 32,
+    paddingBottom: spacing.xxxl,
   },
   loadingContainer: {
     flex: 1,
@@ -248,150 +316,214 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: spacing.md,
   },
+
+  // Full-bleed banners (no horizontal padding)
   bannerSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: 0,
+    paddingTop: 0,
   },
-  titleSection: {
-    padding: 16,
-    paddingBottom: 8,
+
+  // Poster Header Slab (full-bleed, colored background - ROAD: green)
+  headerSlab: {
+    backgroundColor: overviewHeader.backgroundRoad,
+    padding: overviewHeader.padding,
+    borderBottomWidth: overviewHeader.borderBottomWidth,
+    borderBottomColor: overviewHeader.borderBottomColor,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  dayInfo: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 4,
+  headerIconBox: {
+    width: overviewHeader.iconBoxSize,
+    height: overviewHeader.iconBoxSize,
+    backgroundColor: overviewHeader.iconBoxBackground,
+    borderWidth: overviewHeader.iconBoxBorderWidth,
+    borderColor: overviewHeader.iconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: overviewHeader.iconBoxGap,
   },
+  headerTextContainer: {
+    flex: 1,
+  },
+  headerTitle: {
+    color: overviewHeader.titleColor,
+  },
+  headerMeta: {
+    color: overviewHeader.subtitleColor,
+    marginTop: spacing.xs,
+  },
+
   section: {
-    padding: 16,
-    paddingTop: 8,
+    padding: spacing.lg,
+    paddingTop: spacing.xl,
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+  sectionLabel: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.md,
   },
   errorContainer: {
-    margin: 16,
-    padding: 16,
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
+    margin: spacing.lg,
+    padding: spacing.lg,
+    backgroundColor: colors.warningBackground,
     alignItems: 'center',
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
   },
   errorText: {
-    fontSize: 14,
-    color: '#856404',
     textAlign: 'center',
+    color: colors.textPrimary,
   },
   retryButton: {
-    marginTop: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: '#000000',
-    borderRadius: 4,
-  },
-  retryText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    fontWeight: '500',
+    marginTop: spacing.md,
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: spacing.xxl,
+    backgroundColor: colors.backgroundSecondary,
     alignItems: 'center',
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
   },
-  emptyText: {
-    fontSize: 14,
-    color: '#666666',
+
+  // Line card (2-part poster card: colored header + white body)
+  lineCardWrapper: {
+    position: 'relative',
+    marginBottom: listTokens.lineCardGap,
+  },
+  lineCardShadow: {
+    position: 'absolute',
+    top: listTokens.lineCardShadowOffsetY,
+    left: listTokens.lineCardShadowOffsetX,
+    right: -listTokens.lineCardShadowOffsetX,
+    bottom: -listTokens.lineCardShadowOffsetY,
+    backgroundColor: listTokens.lineCardShadowColor,
   },
   lineCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    borderWidth: listTokens.lineCardBorderWidth,
+    borderColor: listTokens.lineCardBorderColor,
+    borderRadius: listTokens.lineCardRadius,
+    overflow: 'hidden',
   },
-  lineHeader: {
+  lineCardPressed: {
+    transform: [
+      { translateX: listTokens.lineCardPressedOffsetX },
+      { translateY: listTokens.lineCardPressedOffsetY },
+    ],
+  },
+  // TOP: Colored header slab with icon + title (GREEN for road)
+  lineCardHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'center',
+    padding: listTokens.lineCardHeaderPadding,
+    backgroundColor: listTokens.lineCardHeaderBackgroundRoad,
   },
-  lineName: {
+  lineCardHeaderIconBox: {
+    width: listTokens.lineCardHeaderIconBoxSize,
+    height: listTokens.lineCardHeaderIconBoxSize,
+    backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
+    borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
+    borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: listTokens.lineCardHeaderIconGap,
+  },
+  lineCardHeaderTitle: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginRight: 8,
+    color: listTokens.lineCardHeaderTitleColor,
   },
-  subtypeBadge: {
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+  // BOTTOM: White body with meta + chevron
+  lineCardBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: listTokens.lineCardBodyBackground,
+    padding: listTokens.lineCardBodyPadding,
+    borderTopWidth: listTokens.lineCardBodyBorderTopWidth,
+    borderTopColor: listTokens.lineCardBodyBorderColor,
   },
-  subtypeText: {
-    fontSize: 12,
-    color: '#666666',
-    fontWeight: '500',
+  lineCardContent: {
+    flex: 1,
   },
   lineStops: {
-    fontSize: 14,
-    color: '#666666',
-    marginBottom: 8,
+    color: colors.textSecondary,
   },
-  lineFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  lineMeta: {
+    color: colors.textSecondary,
+    marginTop: listTokens.lineCardMetaGap,
+  },
+  lineCardChevronBox: {
+    width: listTokens.lineCardChevronBoxSize,
+    height: listTokens.lineCardChevronBoxSize,
+    backgroundColor: listTokens.lineCardChevronBoxBackground,
+    borderWidth: listTokens.lineCardChevronBoxBorderWidth,
+    borderColor: listTokens.lineCardChevronBoxBorderColor,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: listTokens.lineCardChevronGap,
   },
-  lineInfo: {
-    fontSize: 12,
-    color: '#888888',
+
+  // Today's departures (stacked set with dividers)
+  todaySetWrapper: {
+    position: 'relative',
   },
-  chevron: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+  todaySetShadow: {
+    position: 'absolute',
+    top: listTokens.todaySetShadowOffsetY,
+    left: listTokens.todaySetShadowOffsetX,
+    right: -listTokens.todaySetShadowOffsetX,
+    bottom: -listTokens.todaySetShadowOffsetY,
+    backgroundColor: listTokens.todaySetShadowColor,
   },
-  departureCard: {
+  todaySet: {
+    backgroundColor: listTokens.todaySetBackground,
+    borderWidth: listTokens.todaySetBorderWidth,
+    borderColor: listTokens.todaySetBorderColor,
+    borderRadius: listTokens.todaySetRadius,
+    overflow: 'hidden',
+  },
+  todayRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 8,
+    backgroundColor: listTokens.todayRowBackground,
   },
-  departureTime: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000000',
-    width: 60,
+  todayRowWithDivider: {
+    borderTopWidth: listTokens.todayRowDividerWidth,
+    borderTopColor: listTokens.todayRowDividerColor,
   },
-  departureInfo: {
+  todayRowPressed: {
+    transform: [
+      { translateX: listTokens.todayRowPressedOffsetX },
+      { translateY: listTokens.todayRowPressedOffsetY },
+    ],
+  },
+  todayTimeBlock: {
+    width: listTokens.todayTimeBlockWidth,
+    backgroundColor: listTokens.todayTimeBlockBackgroundRoad, // Green like LineDetail
+    borderRightWidth: listTokens.todayTimeBlockBorderWidth,
+    borderRightColor: listTokens.todayTimeBlockBorderColor,
+    paddingVertical: listTokens.todayTimeBlockPadding,
+    paddingHorizontal: listTokens.todayTimeBlockPadding,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  todayTime: {
+    color: listTokens.todayTimeBlockTextColor, // White text on green
+  },
+  todayInfo: {
     flex: 1,
-    marginLeft: 12,
+    paddingVertical: listTokens.todayRowPadding,
+    paddingHorizontal: spacing.md,
   },
-  departureLine: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000000',
+  todayLineName: {
+    color: colors.textPrimary,
+    fontWeight: '600',
   },
-  departureDirection: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
+  todayDirection: {
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
   },
 });
 

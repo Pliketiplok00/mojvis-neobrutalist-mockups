@@ -1,0 +1,1722 @@
+{
+  "version": 1,
+  "generatedAt": "2026-01-11T14:49:27.974Z",
+  "scope": [
+    "mobile/src/components",
+    "mobile/src/screens/click-fix",
+    "mobile/src/screens/events",
+    "mobile/src/screens/feedback",
+    "mobile/src/screens/home",
+    "mobile/src/screens/inbox",
+    "mobile/src/screens/onboarding",
+    "mobile/src/screens/pages",
+    "mobile/src/screens/settings",
+    "mobile/src/screens/transport"
+  ],
+  "violations": [
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 81,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 93,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 100,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 105,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 111,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 121,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 129,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 132,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 134,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx",
+      "line": 142,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixConfirmationScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 41,
+      "match": "#E3F2FD",
+      "lineText": "  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#E3F2FD::  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 41,
+      "match": "#1565C0",
+      "lineText": "  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#1565C0::  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 42,
+      "match": "#FFF3E0",
+      "lineText": "  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#FFF3E0::  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 42,
+      "match": "#E65100",
+      "lineText": "  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#E65100::  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 43,
+      "match": "#E8F5E9",
+      "lineText": "  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#E8F5E9::  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 43,
+      "match": "#2E7D32",
+      "lineText": "  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#2E7D32::  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 44,
+      "match": "#FFEBEE",
+      "lineText": "  odbijeno: { bg: '#FFEBEE', text: '#C62828' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#FFEBEE::  odbijeno: { bg: '#FFEBEE', text: '#C62828' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 44,
+      "match": "#C62828",
+      "lineText": "  odbijeno: { bg: '#FFEBEE', text: '#C62828' },",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#C62828::  odbijeno: { bg: '#FFEBEE', text: '#C62828' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 98,
+      "match": "#000000",
+      "lineText": "          <ActivityIndicator size=\"large\" color=\"#000000\" />",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::          <ActivityIndicator size=\"large\" color=\"#000000\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 235,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 252,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 262,
+      "match": "#856404",
+      "lineText": "    color: '#856404',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#856404::    color: '#856404',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 277,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 285,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 290,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 295,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 304,
+      "match": "#E0E0E0",
+      "lineText": "    borderTopColor: '#E0E0E0',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#E0E0E0::    borderTopColor: '#E0E0E0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 309,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 314,
+      "match": "#2E7D32",
+      "lineText": "    color: '#2E7D32',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#2E7D32::    color: '#2E7D32',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 323,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 334,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 341,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 347,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 351,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 353,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 367,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 372,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 376,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 392,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx",
+      "line": 400,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 236,
+      "match": "#999999",
+      "lineText": "              placeholderTextColor=\"#999999\"",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#999999::              placeholderTextColor=\"#999999\""
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 264,
+      "match": "#999999",
+      "lineText": "              placeholderTextColor=\"#999999\"",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#999999::              placeholderTextColor=\"#999999\""
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 309,
+      "match": "#000000",
+      "lineText": "                  <ActivityIndicator color=\"#000000\" />",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::                  <ActivityIndicator color=\"#000000\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 374,
+      "match": "#FFFFFF",
+      "lineText": "              <ActivityIndicator color=\"#FFFFFF\" />",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFFFFF::              <ActivityIndicator color=\"#FFFFFF\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 388,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 406,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 410,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 414,
+      "match": "#FFF3CD",
+      "lineText": "    backgroundColor: '#FFF3CD',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFF3CD::    backgroundColor: '#FFF3CD',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 421,
+      "match": "#856404",
+      "lineText": "    color: '#856404',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#856404::    color: '#856404',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 430,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 434,
+      "match": "#CC0000",
+      "lineText": "    color: '#CC0000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#CC0000::    color: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 438,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 443,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 444,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 447,
+      "match": "#CC0000",
+      "lineText": "    borderColor: '#CC0000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#CC0000::    borderColor: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 460,
+      "match": "#CC0000",
+      "lineText": "    color: '#CC0000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#CC0000::    color: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 465,
+      "match": "#999999",
+      "lineText": "    color: '#999999',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#999999::    color: '#999999',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 469,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 473,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 476,
+      "match": "#CC0000",
+      "lineText": "    borderColor: '#CC0000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#CC0000::    borderColor: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 481,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 488,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 492,
+      "match": "#E8F5E9",
+      "lineText": "    backgroundColor: '#E8F5E9',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#E8F5E9::    backgroundColor: '#E8F5E9',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 496,
+      "match": "#2E7D32",
+      "lineText": "    color: '#2E7D32',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#2E7D32::    color: '#2E7D32',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 502,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 507,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 524,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 533,
+      "match": "#CC0000",
+      "lineText": "    backgroundColor: '#CC0000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#CC0000::    backgroundColor: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 540,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 549,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 558,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 561,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx",
+      "line": 573,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/click-fix/ClickFixFormScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 140,
+      "match": "#000000",
+      "lineText": "          <ActivityIndicator size=\"large\" color=\"#000000\" />",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::          <ActivityIndicator size=\"large\" color=\"#000000\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 209,
+      "match": "#E0E0E0",
+      "lineText": "            trackColor={{ false: '#E0E0E0', true: '#000000' }}",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#E0E0E0::            trackColor={{ false: '#E0E0E0', true: '#000000' }}"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 209,
+      "match": "#000000",
+      "lineText": "            trackColor={{ false: '#E0E0E0', true: '#000000' }}",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::            trackColor={{ false: '#E0E0E0', true: '#000000' }}"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 210,
+      "match": "#FFFFFF",
+      "lineText": "            thumbColor=\"#FFFFFF\"",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#FFFFFF::            thumbColor=\"#FFFFFF\""
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 226,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 244,
+      "match": "#FF0000",
+      "lineText": "    color: '#FF0000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#FF0000::    color: '#FF0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 252,
+      "match": "#000000",
+      "lineText": "    borderBottomColor: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::    borderBottomColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 257,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 264,
+      "match": "#E0E0E0",
+      "lineText": "    borderBottomColor: '#E0E0E0',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#E0E0E0::    borderBottomColor: '#E0E0E0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 269,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 275,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 280,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 285,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 294,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 298,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 306,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 310,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 316,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventDetailScreen.tsx",
+      "line": 325,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/events/EventDetailScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 332,
+      "match": "#000000",
+      "lineText": "            <ActivityIndicator size=\"large\" color=\"#000000\" style={styles.loader} />",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::            <ActivityIndicator size=\"large\" color=\"#000000\" style={styles.loader} />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 357,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 372,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 377,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 382,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 389,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 394,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 408,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 413,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 424,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 438,
+      "match": "#E0E0E0",
+      "lineText": "    backgroundColor: '#E0E0E0',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#E0E0E0::    backgroundColor: '#E0E0E0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 442,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 447,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 450,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 459,
+      "match": "#FF0000",
+      "lineText": "    backgroundColor: '#FF0000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#FF0000::    backgroundColor: '#FF0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 466,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 468,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 480,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 488,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 493,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 497,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 507,
+      "match": "#FF0000",
+      "lineText": "    color: '#FF0000',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#FF0000::    color: '#FF0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 512,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/events/EventsScreen.tsx",
+      "line": 519,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/events/EventsScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 81,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 93,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 100,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 105,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 111,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 121,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 129,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 132,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 134,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx",
+      "line": 142,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 34,
+      "match": "#E3F2FD",
+      "lineText": "  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#E3F2FD::  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 34,
+      "match": "#1565C0",
+      "lineText": "  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#1565C0::  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 35,
+      "match": "#FFF3E0",
+      "lineText": "  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#FFF3E0::  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 35,
+      "match": "#E65100",
+      "lineText": "  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#E65100::  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 36,
+      "match": "#E8F5E9",
+      "lineText": "  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#E8F5E9::  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 36,
+      "match": "#2E7D32",
+      "lineText": "  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#2E7D32::  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 37,
+      "match": "#FFEBEE",
+      "lineText": "  odbijeno: { bg: '#FFEBEE', text: '#C62828' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#FFEBEE::  odbijeno: { bg: '#FFEBEE', text: '#C62828' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 37,
+      "match": "#C62828",
+      "lineText": "  odbijeno: { bg: '#FFEBEE', text: '#C62828' },",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#C62828::  odbijeno: { bg: '#FFEBEE', text: '#C62828' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 88,
+      "match": "#000000",
+      "lineText": "          <ActivityIndicator size=\"large\" color=\"#000000\" />",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#000000::          <ActivityIndicator size=\"large\" color=\"#000000\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 167,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 184,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 194,
+      "match": "#856404",
+      "lineText": "    color: '#856404',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#856404::    color: '#856404',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 209,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 217,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 222,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 227,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 236,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 241,
+      "match": "#F5F5F5",
+      "lineText": "    backgroundColor: '#F5F5F5',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#F5F5F5::    backgroundColor: '#F5F5F5',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 247,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 251,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 253,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 267,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 272,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx",
+      "line": 276,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackDetailScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 112,
+      "match": "#999999",
+      "lineText": "              placeholderTextColor=\"#999999\"",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#999999::              placeholderTextColor=\"#999999\""
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 140,
+      "match": "#999999",
+      "lineText": "              placeholderTextColor=\"#999999\"",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#999999::              placeholderTextColor=\"#999999\""
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 165,
+      "match": "#FFFFFF",
+      "lineText": "              <ActivityIndicator color=\"#FFFFFF\" />",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#FFFFFF::              <ActivityIndicator color=\"#FFFFFF\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 179,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 197,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 201,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 205,
+      "match": "#FFF3CD",
+      "lineText": "    backgroundColor: '#FFF3CD',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#FFF3CD::    backgroundColor: '#FFF3CD',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 212,
+      "match": "#856404",
+      "lineText": "    color: '#856404',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#856404::    color: '#856404',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 221,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 225,
+      "match": "#CC0000",
+      "lineText": "    color: '#CC0000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#CC0000::    color: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 229,
+      "match": "#000000",
+      "lineText": "    borderColor: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#000000::    borderColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 234,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 235,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 238,
+      "match": "#CC0000",
+      "lineText": "    borderColor: '#CC0000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#CC0000::    borderColor: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 251,
+      "match": "#CC0000",
+      "lineText": "    color: '#CC0000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#CC0000::    color: '#CC0000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 256,
+      "match": "#999999",
+      "lineText": "    color: '#999999',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#999999::    color: '#999999',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 259,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/feedback/FeedbackFormScreen.tsx",
+      "line": 271,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/feedback/FeedbackFormScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 123,
+      "match": "#000000",
+      "lineText": "          <ActivityIndicator size=\"large\" color=\"#000000\" />",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::          <ActivityIndicator size=\"large\" color=\"#000000\" />"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 239,
+      "match": "#E3F2FD",
+      "lineText": "    info: { backgroundColor: '#E3F2FD', borderColor: '#1565C0' },",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#E3F2FD::    info: { backgroundColor: '#E3F2FD', borderColor: '#1565C0' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 239,
+      "match": "#1565C0",
+      "lineText": "    info: { backgroundColor: '#E3F2FD', borderColor: '#1565C0' },",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#1565C0::    info: { backgroundColor: '#E3F2FD', borderColor: '#1565C0' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 240,
+      "match": "#FFF3CD",
+      "lineText": "    warning: { backgroundColor: '#FFF3CD', borderColor: '#856404' },",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#FFF3CD::    warning: { backgroundColor: '#FFF3CD', borderColor: '#856404' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 240,
+      "match": "#856404",
+      "lineText": "    warning: { backgroundColor: '#FFF3CD', borderColor: '#856404' },",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#856404::    warning: { backgroundColor: '#FFF3CD', borderColor: '#856404' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 241,
+      "match": "#D4EDDA",
+      "lineText": "    success: { backgroundColor: '#D4EDDA', borderColor: '#155724' },",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#D4EDDA::    success: { backgroundColor: '#D4EDDA', borderColor: '#155724' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 241,
+      "match": "#155724",
+      "lineText": "    success: { backgroundColor: '#D4EDDA', borderColor: '#155724' },",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#155724::    success: { backgroundColor: '#D4EDDA', borderColor: '#155724' },"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 413,
+      "match": "#FFFFFF",
+      "lineText": "    backgroundColor: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#FFFFFF::    backgroundColor: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 429,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 443,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 450,
+      "match": "#000000",
+      "lineText": "    backgroundColor: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    backgroundColor: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 454,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 463,
+      "match": "#E0E0E0",
+      "lineText": "    borderBottomColor: '#E0E0E0',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#E0E0E0::    borderBottomColor: '#E0E0E0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 475,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 480,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 491,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 497,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 509,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 515,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 520,
+      "match": "#F8F9FA",
+      "lineText": "    backgroundColor: '#F8F9FA',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#F8F9FA::    backgroundColor: '#F8F9FA',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 535,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 540,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 545,
+      "match": "#999999",
+      "lineText": "    color: '#999999',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#999999::    color: '#999999',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 557,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 565,
+      "match": "#E0E0E0",
+      "lineText": "    backgroundColor: '#E0E0E0',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#E0E0E0::    backgroundColor: '#E0E0E0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 573,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 577,
+      "match": "#F8F9FA",
+      "lineText": "    backgroundColor: '#F8F9FA',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#F8F9FA::    backgroundColor: '#F8F9FA',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 584,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 588,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 593,
+      "match": "#999999",
+      "lineText": "    color: '#999999',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#999999::    color: '#999999',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 600,
+      "match": "#F8F9FA",
+      "lineText": "    backgroundColor: '#F8F9FA',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#F8F9FA::    backgroundColor: '#F8F9FA',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 607,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 612,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 617,
+      "match": "#1565C0",
+      "lineText": "    color: '#1565C0',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#1565C0::    color: '#1565C0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 622,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 633,
+      "match": "#E0E0E0",
+      "lineText": "    borderBottomColor: '#E0E0E0',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#E0E0E0::    borderBottomColor: '#E0E0E0',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 638,
+      "match": "#000000",
+      "lineText": "    color: '#000000',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#000000::    color: '#000000',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 642,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 648,
+      "match": "#FFF3CD",
+      "lineText": "    backgroundColor: '#FFF3CD',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#FFF3CD::    backgroundColor: '#FFF3CD',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 656,
+      "match": "#FFE69C",
+      "lineText": "    borderBottomColor: '#FFE69C',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#FFE69C::    borderBottomColor: '#FFE69C',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 659,
+      "match": "#F8D7DA",
+      "lineText": "    backgroundColor: '#F8D7DA',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#F8D7DA::    backgroundColor: '#F8D7DA',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 664,
+      "match": "#DC3545",
+      "lineText": "    backgroundColor: '#DC3545',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#DC3545::    backgroundColor: '#DC3545',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 665,
+      "match": "#FFFFFF",
+      "lineText": "    color: '#FFFFFF',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#FFFFFF::    color: '#FFFFFF',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 676,
+      "match": "#333333",
+      "lineText": "    color: '#333333',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#333333::    color: '#333333',"
+    },
+    {
+      "rule": "hex",
+      "file": "mobile/src/screens/pages/StaticPageScreen.tsx",
+      "line": 680,
+      "match": "#666666",
+      "lineText": "    color: '#666666',",
+      "fingerprint": "mobile/src/screens/pages/StaticPageScreen.tsx::#666666::    color: '#666666',"
+    }
+  ]
+}

@@ -10,6 +10,7 @@
     "back": "Back",
     "send": "Send",
     "cancel": "Cancel",
+    "done": "Done",
     "save": "Save",
     "delete": "Delete",
     "confirm": "Confirm",
@@ -47,6 +48,7 @@
     "categories": "Categories",
     "upcomingEvents": "Upcoming Events",
     "eventsPlaceholder": "[Events will appear here]",
+    "viewAllEvents": "View all events",
     "feedback": {
       "title": "Have a suggestion?",
       "subtitle": "Send us your feedback"
@@ -130,7 +132,8 @@
     },
     "location": "Location",
     "time": "Time",
-    "description": "Description"
+    "description": "Description",
+    "share": "Share"
   },
   "transport": {
     "hub": {
@@ -164,6 +167,7 @@
       "SUN": "Sunday",
       "PRAZNIK": "Holiday"
     },
+    "note": "Timetables are updated automatically. For the latest information, check the official carrier websites.",
     "lineDetail": {
       "departures": "Departures",
       "route": "Route",
@@ -315,6 +319,7 @@
   },
   "banner": {
     "urgent": "URGENT",
+    "new": "NEW",
     "accessibilityHint": "Tap for more information"
   },
   "menu": {

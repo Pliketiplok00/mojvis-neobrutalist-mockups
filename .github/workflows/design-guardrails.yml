@@ -1,0 +1,36 @@
+name: Design Guardrails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'scripts/design-guard.mjs'
+      - 'package.json'
+      - 'docs/DESIGN_CI_RULES.md'
+      - '.github/workflows/design-guardrails.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - 'scripts/design-guard.mjs'
+      - 'package.json'
+      - 'docs/DESIGN_CI_RULES.md'
+      - '.github/workflows/design-guardrails.yml'
+
+jobs:
+  design-guard:
+    name: Design Guardrails
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run design guardrails
+        run: node scripts/design-guard.mjs all

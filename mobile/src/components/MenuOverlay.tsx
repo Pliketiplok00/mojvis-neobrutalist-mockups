@@ -9,12 +9,13 @@
  *
  * This replaces the DrawerNavigator approach which required
  * react-native-reanimated and caused native binary mismatch issues.
+ *
+ * Skin-pure: Uses Icon primitive and skin tokens (no emoji, no hardcoded hex).
  */
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Animated,
@@ -25,6 +26,9 @@ import {
 } from 'react-native';
 import { menuExtrasApi } from '../services/api';
 import type { MenuExtra } from '../types/menu-extras';
+import { Icon, type IconName } from '../ui/Icon';
+import { skin } from '../ui/skin';
+import { H1, Label, Meta } from '../ui/Text';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
@@ -32,7 +36,7 @@ const MENU_WIDTH = SCREEN_WIDTH * 0.75;
 interface MenuItem {
   label: string;
   labelEn: string;
-  icon: string;
+  icon: IconName;
   route: string;
 }
 
@@ -41,15 +45,15 @@ interface MenuItem {
  * DO NOT modify this array unless explicitly required.
  */
 const CORE_MENU_ITEMS: MenuItem[] = [
-  { label: 'Početna', labelEn: 'Home', icon: '🏠', route: 'Home' },
-  { label: 'Događaji', labelEn: 'Events', icon: '📅', route: 'Events' },
-  { label: 'Vozni redovi', labelEn: 'Timetables', icon: '🚌', route: 'TransportHub' },
-  { label: 'Flora i fauna', labelEn: 'Flora & Fauna', icon: '🌿', route: 'StaticPage:flora-fauna' },
-  { label: 'Info za posjetitelje', labelEn: 'Visitor info', icon: 'ℹ️', route: 'StaticPage:visitor-info' },
-  { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: '🔧', route: 'ClickFixForm' },
-  { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: '💬', route: 'FeedbackForm' },
-  { label: 'Važni kontakti', labelEn: 'Important contacts', icon: '📞', route: 'StaticPage:important-contacts' },
-  { label: 'Postavke', labelEn: 'Settings', icon: '⚙️', route: 'Settings' },
+  { label: 'Početna', labelEn: 'Home', icon: 'home', route: 'Home' },
+  { label: 'Događaji', labelEn: 'Events', icon: 'calendar', route: 'Events' },
+  { label: 'Vozni redovi', labelEn: 'Timetables', icon: 'bus', route: 'TransportHub' },
+  { label: 'Flora i fauna', labelEn: 'Flora & Fauna', icon: 'leaf', route: 'StaticPage:flora-fauna' },
+  { label: 'Info za posjetitelje', labelEn: 'Visitor info', icon: 'info', route: 'StaticPage:visitor-info' },
+  { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: 'wrench', route: 'ClickFixForm' },
+  { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: 'message-circle', route: 'FeedbackForm' },
+  { label: 'Važni kontakti', labelEn: 'Important contacts', icon: 'phone', route: 'StaticPage:important-contacts' },
+  { label: 'Postavke', labelEn: 'Settings', icon: 'settings', route: 'Settings' },
 ];
 
 interface MenuOverlayProps {
@@ -142,7 +146,7 @@ export function MenuOverlay({
   const extraMenuItems: MenuItem[] = extras.map((extra) => ({
     label: extra.labelHr,
     labelEn: extra.labelEn,
-    icon: '📄', // Default icon for extras (static page)
+    icon: 'file-text' as IconName, // Default icon for extras (static page)
     route: extra.target,
   }));
 
@@ -166,8 +170,8 @@ export function MenuOverlay({
         <SafeAreaView style={styles.menuContent}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>MOJ VIS</Text>
-            <Text style={styles.headerSubtitle}>Izbornik / Menu</Text>
+            <H1 style={styles.headerTitle}>MOJ VIS</H1>
+            <Meta style={styles.headerSubtitle}>Izbornik / Menu</Meta>
           </View>
 
           {/* Menu Items - Scrollable */}
@@ -184,12 +188,14 @@ export function MenuOverlay({
                   accessibilityLabel={`${item.label} (${item.labelEn})`}
                   accessibilityRole="button"
                 >
-                  <Text style={styles.menuIcon}>{item.icon}</Text>
+                  <View style={styles.menuIconContainer}>
+                    <Icon name={item.icon} size="md" colorToken="textPrimary" />
+                  </View>
                   <View style={styles.menuTextContainer}>
-                    <Text style={[styles.menuLabel, isActive && styles.menuLabelActive]}>
+                    <Label style={[styles.menuLabel, isActive && styles.menuLabelActive]}>
                       {item.label}
-                    </Text>
-                    <Text style={styles.menuLabelEn}>{item.labelEn}</Text>
+                    </Label>
+                    <Meta style={styles.menuLabelEn}>{item.labelEn}</Meta>
                   </View>
                 </TouchableOpacity>
               );
@@ -209,7 +215,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: skin.colors.overlay,
   },
   menuPanel: {
     position: 'absolute',
@@ -217,70 +223,58 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     width: MENU_WIDTH,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10,
+    backgroundColor: skin.colors.backgroundTertiary,
+    ...skin.shadows.soft,
   },
   menuContent: {
     flex: 1,
   },
   header: {
-    padding: 20,
-    paddingTop: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-    marginBottom: 8,
+    padding: skin.spacing.xl,
+    paddingTop: skin.spacing.lg,
+    borderBottomWidth: skin.borders.widthThin,
+    borderBottomColor: skin.colors.borderLight,
+    marginBottom: skin.spacing.sm,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: 14,
-    color: '#666666',
+    // Typography handled by Meta primitive
   },
   menuList: {
     flex: 1,
-    paddingHorizontal: 12,
-    paddingTop: 8,
+    paddingHorizontal: skin.spacing.md,
+    paddingTop: skin.spacing.sm,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    marginBottom: 4,
+    paddingHorizontal: skin.spacing.md,
+    borderRadius: skin.borders.radiusSmall,
+    marginBottom: skin.spacing.xs,
   },
   menuItemActive: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: skin.colors.backgroundSecondary,
   },
-  menuIcon: {
-    fontSize: 24,
-    marginRight: 16,
+  menuIconContainer: {
+    width: skin.icons.size.md,
+    marginRight: skin.spacing.lg,
+    alignItems: 'center',
   },
   menuTextContainer: {
     flex: 1,
   },
   menuLabel: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#000000',
+    // Typography handled by Label primitive
   },
   menuLabelActive: {
-    fontWeight: '600',
+    // Active state handled by component
   },
   menuLabelEn: {
-    fontSize: 12,
-    color: '#999999',
     marginTop: 2,
   },
-  // Footer styles removed per UI contract (2026-01-09)
 });
 
 export default MenuOverlay;

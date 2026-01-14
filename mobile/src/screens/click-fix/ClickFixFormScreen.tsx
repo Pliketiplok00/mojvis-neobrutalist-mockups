@@ -10,13 +10,13 @@
  * - Photos - optional, 0-3 images
  *
  * Municipality is derived from onboarding context.
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useCallback } from 'react';
 import {
   View,
-  Text,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
@@ -26,6 +26,8 @@ import {
   Image,
   Alert,
 } from 'react-native';
+import { Button } from '../../ui/Button';
+import { Input } from '../../ui/Input';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -41,6 +43,9 @@ import {
 } from '../../types/click-fix';
 import type { Location as LocationType, PhotoToUpload } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
+import { H1, H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -213,117 +218,105 @@ export function ClickFixFormScreen(): React.JSX.Element {
         >
           {/* Title */}
           <View style={styles.titleSection}>
-            <Text style={styles.title}>{t('clickFix.title')}</Text>
+            <H1>{t('clickFix.title')}</H1>
           </View>
 
           {/* Submit Error */}
           {submitError && (
             <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{submitError}</Text>
+              <Body style={styles.errorText}>{submitError}</Body>
             </View>
           )}
 
           {/* Subject Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('clickFix.titleField')} <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, errors.subject && styles.inputError]}
+            <H2 style={styles.label}>
+              {t('clickFix.titleField')} <Label style={styles.required}>*</Label>
+            </H2>
+            <Input
               value={subject}
               onChangeText={setSubject}
               placeholder={t('clickFix.titlePlaceholder')}
-              placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              editable={!isSubmitting}
+              disabled={isSubmitting}
+              error={!!errors.subject}
+              accessibilityLabel={t('clickFix.titleField')}
             />
             <View style={styles.fieldFooter}>
               {errors.subject && (
-                <Text style={styles.fieldError}>{t(errors.subject)}</Text>
+                <Label style={styles.fieldError}>{t(errors.subject)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {subject.length}/{VALIDATION_LIMITS.SUBJECT_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Description Field */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('clickFix.description')} <Text style={styles.required}>*</Text>
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                styles.textArea,
-                errors.description && styles.inputError,
-              ]}
+            <H2 style={styles.label}>
+              {t('clickFix.description')} <Label style={styles.required}>*</Label>
+            </H2>
+            <Input
               value={description}
               onChangeText={setDescription}
               placeholder={t('clickFix.descriptionPlaceholder')}
-              placeholderTextColor="#999999"
               maxLength={VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
               multiline
-              numberOfLines={6}
-              textAlignVertical="top"
-              editable={!isSubmitting}
+              height={120}
+              disabled={isSubmitting}
+              error={!!errors.description}
+              accessibilityLabel={t('clickFix.description')}
             />
             <View style={styles.fieldFooter}>
               {errors.description && (
-                <Text style={styles.fieldError}>{t(errors.description)}</Text>
+                <Label style={styles.fieldError}>{t(errors.description)}</Label>
               )}
-              <Text style={styles.charCount}>
+              <Meta style={styles.charCount}>
                 {description.length}/{VALIDATION_LIMITS.DESCRIPTION_MAX_LENGTH}
-              </Text>
+              </Meta>
             </View>
           </View>
 
           {/* Location Section */}
           <View style={styles.field}>
-            <Text style={styles.label}>
-              {t('clickFix.location')} <Text style={styles.required}>*</Text>
-            </Text>
+            <H2 style={styles.label}>
+              {t('clickFix.location')} <Label style={styles.required}>*</Label>
+            </H2>
             {location ? (
               <View style={styles.locationDisplay}>
-                <Text style={styles.locationText}>
+                <Body style={styles.locationText}>
                   {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
-                </Text>
+                </Body>
                 <TouchableOpacity
                   style={styles.changeLocationButton}
                   onPress={handleGetLocation}
                   disabled={isGettingLocation}
                 >
-                  <Text style={styles.changeLocationText}>{t('clickFix.locationActions.change')}</Text>
+                  <ButtonText style={styles.changeLocationText}>{t('clickFix.locationActions.change')}</ButtonText>
                 </TouchableOpacity>
               </View>
             ) : (
-              <TouchableOpacity
-                style={[
-                  styles.locationButton,
-                  errors.location && styles.locationButtonError,
-                ]}
+              <Button
+                variant="secondary"
                 onPress={handleGetLocation}
+                loading={isGettingLocation}
                 disabled={isGettingLocation || isSubmitting}
+                style={errors.location ? styles.locationButtonError : undefined}
               >
-                {isGettingLocation ? (
-                  <ActivityIndicator color="#000000" />
-                ) : (
-                  <Text style={styles.locationButtonText}>
-                    {t('clickFix.locationActions.getLocation')}
-                  </Text>
-                )}
-              </TouchableOpacity>
+                {t('clickFix.locationActions.getLocation')}
+              </Button>
             )}
             {errors.location && (
-              <Text style={styles.fieldError}>{t(errors.location)}</Text>
+              <Label style={styles.fieldError}>{t(errors.location)}</Label>
             )}
           </View>
 
           {/* Photos Section */}
           <View style={styles.field}>
-            <Text style={styles.label}>
+            <H2 style={styles.label}>
               {t('clickFix.photos')} ({photos.length}/{VALIDATION_LIMITS.MAX_PHOTOS})
-            </Text>
+            </H2>
 
             {/* Photo Thumbnails */}
             {photos.length > 0 && (
@@ -335,7 +328,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
                       style={styles.removePhotoButton}
                       onPress={() => handleRemovePhoto(index)}
                     >
-                      <Text style={styles.removePhotoText}>X</Text>
+                      <Icon name="close" size="sm" colorToken="background" />
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -350,32 +343,29 @@ export function ClickFixFormScreen(): React.JSX.Element {
                   onPress={handlePickPhotos}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.addPhotoText}>{t('clickFix.photoActions.pickFromGallery')}</Text>
+                  <ButtonText style={styles.addPhotoText}>{t('clickFix.photoActions.pickFromGallery')}</ButtonText>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.addPhotoButton}
                   onPress={handleTakePhoto}
                   disabled={isSubmitting}
                 >
-                  <Text style={styles.addPhotoText}>{t('clickFix.photoActions.takePhoto')}</Text>
+                  <ButtonText style={styles.addPhotoText}>{t('clickFix.photoActions.takePhoto')}</ButtonText>
                 </TouchableOpacity>
               </View>
             )}
           </View>
 
           {/* Submit Button */}
-          <TouchableOpacity
-            style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}
+          <Button
+            variant="primary"
             onPress={handleSubmit}
+            loading={isSubmitting}
             disabled={isSubmitting}
-            activeOpacity={0.7}
+            style={styles.submitButton}
           >
-            {isSubmitting ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Text style={styles.submitButtonText}>{t('clickFix.send')}</Text>
-            )}
-          </TouchableOpacity>
+            {t('clickFix.send')}
+          </Button>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -385,7 +375,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   keyboardView: {
     flex: 1,
@@ -394,124 +384,75 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   titleSection: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#000000',
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666666',
-    marginTop: 4,
+    marginBottom: skin.spacing.xxl,
   },
   errorContainer: {
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
+    backgroundColor: skin.colors.warningBackground,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.md,
+    marginBottom: skin.spacing.lg,
   },
   errorText: {
-    fontSize: 14,
-    color: '#856404',
+    color: skin.colors.warningAccent,
     textAlign: 'center',
   },
   field: {
-    marginBottom: 20,
+    marginBottom: skin.spacing.xl,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   required: {
-    color: '#CC0000',
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    fontSize: 16,
-    color: '#000000',
-    backgroundColor: '#FFFFFF',
-  },
-  inputError: {
-    borderColor: '#CC0000',
-  },
-  textArea: {
-    height: 120,
-    textAlignVertical: 'top',
+    color: skin.colors.errorText,
   },
   fieldFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: skin.spacing.xs,
   },
   fieldError: {
-    fontSize: 12,
-    color: '#CC0000',
+    color: skin.colors.errorText,
     flex: 1,
   },
   charCount: {
-    fontSize: 12,
-    color: '#999999',
-  },
-  locationButton: {
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    color: skin.colors.textDisabled,
   },
   locationButtonError: {
-    borderColor: '#CC0000',
-  },
-  locationButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    borderColor: skin.colors.errorText,
   },
   locationDisplay: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: '#E8F5E9',
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.md,
+    backgroundColor: skin.colors.successBackground,
   },
   locationText: {
-    fontSize: 14,
-    color: '#2E7D32',
+    color: skin.colors.successText,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   changeLocationButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#000000',
-    borderRadius: 4,
+    paddingHorizontal: skin.spacing.md,
+    paddingVertical: skin.spacing.sm,
+    backgroundColor: skin.colors.textPrimary,
+    borderRadius: skin.borders.radiusSmall,
   },
   changeLocationText: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: skin.colors.background,
   },
   photoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
+    gap: skin.spacing.sm,
+    marginBottom: skin.spacing.md,
   },
   photoItem: {
     position: 'relative',
@@ -519,9 +460,9 @@ const styles = StyleSheet.create({
   photoThumbnail: {
     width: 80,
     height: 80,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#000000',
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
   },
   removePhotoButton: {
     position: 'absolute',
@@ -530,47 +471,28 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#CC0000',
+    backgroundColor: skin.colors.errorText,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  removePhotoText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FFFFFF',
-  },
   photoButtons: {
     flexDirection: 'row',
-    gap: 12,
+    gap: skin.spacing.md,
   },
   addPhotoButton: {
     flex: 1,
-    borderWidth: 2,
-    borderColor: '#000000',
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
     borderStyle: 'dashed',
-    borderRadius: 8,
-    paddingVertical: 12,
+    borderRadius: skin.borders.radiusCard,
+    paddingVertical: skin.spacing.md,
     alignItems: 'center',
   },
   addPhotoText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000000',
+    color: skin.colors.textPrimary,
   },
   submitButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  submitButtonDisabled: {
-    opacity: 0.6,
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    marginTop: skin.spacing.lg,
   },
 });
 

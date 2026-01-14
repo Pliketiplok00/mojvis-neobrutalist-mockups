@@ -7,12 +7,14 @@
  * TODO: Replace this seed data with real imported datasets.
  *       This is for Phase 4 testing only.
  *
- * The seed format matches the final import format 1:1.
+ * The seed format uses human-readable IDs for cross-referencing.
+ * This script generates UUIDs and maintains a mapping.
  */
 
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { randomUUID } from 'crypto';
 import { Pool } from 'pg';
 import type {
   TransportSeedData,
@@ -20,11 +22,16 @@ import type {
   SeedRoute,
   SeedDeparture,
   SeasonType,
-  validateSeasonsNoOverlap,
 } from '../src/types/transport.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// ID mappings: seed ID -> actual UUID
+const stopIdMap = new Map<string, string>();
+const seasonIdMap = new Map<string, string>();
+const lineIdMap = new Map<string, string>();
+const routeIdMap = new Map<string, string>();
 
 // Database connection
 const pool = new Pool({
@@ -103,16 +110,19 @@ async function clearExistingData(): Promise<void> {
 }
 
 /**
- * Insert stops
+ * Insert stops (generates UUIDs and stores mapping)
  */
 async function insertStops(stops: TransportSeedData['stops']): Promise<void> {
   console.log(`[Seed] Inserting ${stops.length} stops...`);
 
   for (const stop of stops) {
+    const uuid = randomUUID();
+    stopIdMap.set(stop.id, uuid);
+
     await pool.query(
       `INSERT INTO transport_stops (id, name_hr, name_en, transport_type, latitude, longitude)
        VALUES ($1, $2, $3, $4, $5, $6)`,
-      [stop.id, stop.name_hr, stop.name_en, stop.transport_type, stop.latitude ?? null, stop.longitude ?? null]
+      [uuid, stop.name_hr, stop.name_en, stop.transport_type, stop.latitude ?? null, stop.longitude ?? null]
     );
   }
 
@@ -120,17 +130,22 @@ async function insertStops(stops: TransportSeedData['stops']): Promise<void> {
 }
 
 /**
- * Insert seasons
+ * Insert seasons (generates UUIDs and stores mapping)
  */
 async function insertSeasons(seasons: TransportSeedData['seasons']): Promise<void> {
   console.log(`[Seed] Inserting ${seasons.length} seasons...`);
 
   for (const season of seasons) {
+    const uuid = randomUUID();
+    seasonIdMap.set(season.id, uuid);
+    // Also map by season_type for lookup
+    seasonIdMap.set(`${season.season_type}-${season.year}`, uuid);
+
     await pool.query(
       `INSERT INTO transport_seasons (id, season_type, year, date_from, date_to, label_hr, label_en)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
-        season.id,
+        uuid,
         season.season_type,
         season.year,
         season.date_from,
@@ -145,19 +160,14 @@ async function insertSeasons(seasons: TransportSeedData['seasons']): Promise<voi
 }
 
 /**
- * Get season ID by type and year
+ * Get season UUID by type and year (from in-memory map)
  */
-async function getSeasonId(seasonType: SeasonType, year: number = 2026): Promise<string> {
-  const result = await pool.query<{ id: string }>(
-    `SELECT id FROM transport_seasons WHERE season_type = $1 AND year = $2`,
-    [seasonType, year]
-  );
-
-  if (result.rows.length === 0) {
-    throw new Error(`Season not found: ${seasonType} ${year}`);
+function getSeasonUuid(seasonType: SeasonType, year: number = 2026): string {
+  const uuid = seasonIdMap.get(`${seasonType}-${year}`);
+  if (!uuid) {
+    throw new Error(`Season not found in map: ${seasonType} ${year}`);
   }
-
-  return result.rows[0].id;
+  return uuid;
 }
 
 /**
@@ -166,12 +176,15 @@ async function getSeasonId(seasonType: SeasonType, year: number = 2026): Promise
 async function insertLine(line: SeedLine): Promise<void> {
   console.log(`[Seed] Inserting line: ${line.name_hr}`);
 
+  const lineUuid = randomUUID();
+  lineIdMap.set(line.id, lineUuid);
+
   // Insert line
   await pool.query(
     `INSERT INTO transport_lines (id, transport_type, name_hr, name_en, subtype_hr, subtype_en, display_order, is_active)
      VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)`,
     [
-      line.id,
+      lineUuid,
       line.transport_type,
       line.name_hr,
       line.name_en,
@@ -188,7 +201,7 @@ async function insertLine(line: SeedLine): Promise<void> {
       `INSERT INTO transport_line_contacts (line_id, operator_hr, operator_en, phone, email, website, display_order)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [
-        line.id,
+        lineUuid,
         contact.operator_hr,
         contact.operator_en,
         contact.phone ?? null,
@@ -201,7 +214,7 @@ async function insertLine(line: SeedLine): Promise<void> {
 
   // Insert routes
   for (const route of line.routes) {
-    await insertRoute(line.id, route);
+    await insertRoute(lineUuid, route);
   }
 
   console.log(`[Seed] Line inserted: ${line.name_hr}`);
@@ -210,52 +223,66 @@ async function insertLine(line: SeedLine): Promise<void> {
 /**
  * Insert a route with its stops and departures
  */
-async function insertRoute(lineId: string, route: SeedRoute): Promise<void> {
-  const routeId = `${lineId}-dir-${route.direction}`;
+async function insertRoute(lineUuid: string, route: SeedRoute): Promise<void> {
+  const routeUuid = randomUUID();
+  routeIdMap.set(`${lineUuid}-dir-${route.direction}`, routeUuid);
+
+  // Look up stop UUIDs
+  const originStopUuid = stopIdMap.get(route.origin_stop_id);
+  const destStopUuid = stopIdMap.get(route.destination_stop_id);
+
+  if (!originStopUuid || !destStopUuid) {
+    throw new Error(`Stop not found: origin=${route.origin_stop_id} dest=${route.destination_stop_id}`);
+  }
 
   // Insert route
   await pool.query(
     `INSERT INTO transport_routes (id, line_id, direction, direction_label_hr, direction_label_en, origin_stop_id, destination_stop_id, typical_duration_minutes)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
     [
-      routeId,
-      lineId,
+      routeUuid,
+      lineUuid,
       route.direction,
       route.direction_label_hr,
       route.direction_label_en,
-      route.origin_stop_id,
-      route.destination_stop_id,
+      originStopUuid,
+      destStopUuid,
       route.typical_duration_minutes ?? null,
     ]
   );
 
   // Insert route stops
   for (const stop of route.stops) {
+    const stopUuid = stopIdMap.get(stop.stop_id);
+    if (!stopUuid) {
+      throw new Error(`Route stop not found: ${stop.stop_id}`);
+    }
+
     await pool.query(
       `INSERT INTO transport_route_stops (route_id, stop_id, stop_order)
        VALUES ($1, $2, $3)`,
-      [routeId, stop.stop_id, stop.stop_order]
+      [routeUuid, stopUuid, stop.stop_order]
     );
   }
 
   // Insert departures
   for (const departure of route.departures) {
-    await insertDeparture(routeId, departure);
+    await insertDeparture(routeUuid, departure);
   }
 }
 
 /**
  * Insert a departure
  */
-async function insertDeparture(routeId: string, departure: SeedDeparture): Promise<void> {
-  const seasonId = await getSeasonId(departure.season_type);
+async function insertDeparture(routeUuid: string, departure: SeedDeparture): Promise<void> {
+  const seasonUuid = getSeasonUuid(departure.season_type);
 
   await pool.query(
     `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en)
      VALUES ($1, $2, $3, $4, $5, $6, $7)`,
     [
-      routeId,
-      seasonId,
+      routeUuid,
+      seasonUuid,
       departure.day_type,
       departure.departure_time,
       JSON.stringify(departure.stop_times),

@@ -8,19 +8,24 @@
  * - Shows event details
  * - Reminder toggle (subscribe/unsubscribe)
  * - Share functionality (OS share sheet)
+ *
+ * Design:
+ * - Yellow title slab (poster-style)
+ * - Info tiles with square icon boxes (Clock, MapPin, User)
+ * - Neobrut dual-layer shadows on CTAs
+ *
+ * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
-  TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
   Switch,
   Share,
   Alert,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -29,33 +34,14 @@ import { useTranslations } from '../../i18n';
 import { eventsApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { H1, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { LoadingState, ErrorState } from '../../ui/States';
+import { formatDateLocaleFull, formatTimeHrHR } from '../../utils/dateFormat';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
-
-/**
- * Format date for display (DD/MM/YYYY)
- */
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString('hr-HR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-/**
- * Format time for display (HH:mm)
- */
-function formatTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleTimeString('hr-HR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-}
 
 export function EventDetailScreen({ route }: Props): React.JSX.Element {
   const { eventId } = route.params;
@@ -123,7 +109,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     try {
       await Share.share({
         title: event.title,
-        message: `${event.title}\n${formatDate(event.start_datetime)}${
+        message: `${event.title}\n${formatDateLocaleFull(event.start_datetime)}${
           event.location ? `\n${event.location}` : ''
         }`,
       });
@@ -136,9 +122,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-        </View>
+        <LoadingState />
       </SafeAreaView>
     );
   }
@@ -147,9 +131,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('eventDetail.notFound')}</Text>
-        </View>
+        <ErrorState message={error || t('eventDetail.notFound')} />
       </SafeAreaView>
     );
   }
@@ -159,62 +141,102 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.scrollView}>
-        {/* Event Title */}
-        <View style={styles.header}>
-          <Text style={styles.title}>{event.title}</Text>
-        </View>
-
-        {/* Date & Time */}
-        <View style={styles.infoSection}>
-          <Text style={styles.infoLabel}>{t('eventDetail.time')}</Text>
-          <Text style={styles.infoValue}>{formatDate(event.start_datetime)}</Text>
-          {event.is_all_day ? (
-            <Text style={styles.infoValueSecondary}>{t('events.allDay')}</Text>
-          ) : (
-            <Text style={styles.infoValueSecondary}>
-              {formatTime(event.start_datetime)}
-              {event.end_datetime && ` - ${formatTime(event.end_datetime)}`}
-            </Text>
-          )}
-        </View>
-
-        {/* Location */}
-        {event.location && (
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>{t('eventDetail.location')}</Text>
-            <Text style={styles.infoValue}>{event.location}</Text>
-          </View>
+        {/* Hero Image (optional) */}
+        {event.image_url && (
+          <Image
+            source={{ uri: event.image_url }}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
         )}
+
+        {/* Event Title - Yellow Slab */}
+        <View style={styles.header}>
+          <H1 style={styles.title}>{event.title}</H1>
+        </View>
+
+        {/* Info Tiles */}
+        <View style={styles.infoTilesContainer}>
+          {/* Date & Time Tile */}
+          <View style={styles.infoTile}>
+            <View style={styles.infoTileIconBox}>
+              <Icon name="clock" size="md" colorToken="textPrimary" />
+            </View>
+            <View style={styles.infoTileContent}>
+              <Body style={styles.infoTileValue}>{formatDateLocaleFull(event.start_datetime)}</Body>
+              {event.is_all_day ? (
+                <Label style={styles.infoTileSecondary}>{t('events.allDay')}</Label>
+              ) : (
+                <Label style={styles.infoTileSecondary}>
+                  {formatTimeHrHR(event.start_datetime)}
+                  {event.end_datetime && ` - ${formatTimeHrHR(event.end_datetime)}`}
+                </Label>
+              )}
+            </View>
+          </View>
+
+          {/* Location Tile */}
+          {event.location && (
+            <View style={styles.infoTile}>
+              <View style={styles.infoTileIconBox}>
+                <Icon name="map-pin" size="md" colorToken="textPrimary" />
+              </View>
+              <View style={styles.infoTileContent}>
+                <Body style={styles.infoTileValue}>{event.location}</Body>
+              </View>
+            </View>
+          )}
+
+          {/* Organizer Tile */}
+          <View style={styles.infoTile}>
+            <View style={styles.infoTileIconBox}>
+              <Icon name="user" size="md" colorToken="textPrimary" />
+            </View>
+            <View style={styles.infoTileContent}>
+              <Body style={styles.infoTileValue}>{event.organizer}</Body>
+            </View>
+          </View>
+        </View>
 
         {/* Description */}
         {event.description && (
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>{t('eventDetail.description')}</Text>
-            <Text style={styles.description}>{event.description}</Text>
+          <View style={styles.descriptionSection}>
+            <Meta style={styles.descriptionLabel}>{t('eventDetail.description')}</Meta>
+            <Body style={styles.description}>{event.description}</Body>
           </View>
         )}
 
-        {/* Reminder Toggle */}
-        <View style={styles.reminderSection}>
-          <View style={styles.reminderInfo}>
-            <Text style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</Text>
-            <Text style={styles.reminderHint}>
-              {t('eventDetail.reminder.active')}
-            </Text>
+        {/* Reminder Toggle - Dual-layer CTA */}
+        <View style={styles.reminderWrapper}>
+          {/* Shadow layer */}
+          <View style={styles.ctaShadowLayer} />
+          {/* Main card */}
+          <View style={styles.reminderSection}>
+            <View style={styles.reminderInfo}>
+              <ButtonText style={styles.reminderLabel}>{t('eventDetail.reminder.set')}</ButtonText>
+              <Meta style={styles.reminderHint}>
+                {t('eventDetail.reminder.active')}
+              </Meta>
+            </View>
+            <Switch
+              value={subscribed}
+              onValueChange={handleToggleReminder}
+              disabled={subscribing}
+              trackColor={{ false: skin.colors.borderLight, true: skin.colors.textPrimary }}
+              thumbColor={skin.colors.background}
+            />
           </View>
-          <Switch
-            value={subscribed}
-            onValueChange={handleToggleReminder}
-            disabled={subscribing}
-            trackColor={{ false: '#E0E0E0', true: '#000000' }}
-            thumbColor="#FFFFFF"
-          />
         </View>
 
-        {/* Share Button */}
-        <TouchableOpacity style={styles.shareButton} onPress={handleShare}>
-          <Text style={styles.shareButtonText}>Podijeli dogadaj</Text>
-        </TouchableOpacity>
+        {/* Share Button - Dual-layer CTA */}
+        <View style={styles.shareWrapper}>
+          {/* Shadow layer */}
+          <View style={styles.ctaShadowLayerButton} />
+          {/* Main button */}
+          <Button variant="secondary" onPress={handleShare} style={styles.shareButton}>
+            {t('eventDetail.share')}
+          </Button>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -223,106 +245,130 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#FF0000',
-    textAlign: 'center',
+
+  // V1 Poster: Hero image (optional, skin-token driven)
+  heroImage: {
+    width: '100%',
+    aspectRatio: skin.components.events.detail.heroImageAspectRatio,
+    borderBottomWidth: skin.components.events.detail.heroImageBorderWidth,
+    borderBottomColor: skin.components.events.detail.heroImageBorderColor,
   },
 
-  // Header
+  // V1 Poster: Title header (yellow slab with heavy bottom rule)
   header: {
-    padding: 16,
-    borderBottomWidth: 2,
-    borderBottomColor: '#000000',
+    padding: skin.components.events.detail.titlePadding,
+    borderBottomWidth: skin.components.events.detail.titleBorderWidth,
+    borderBottomColor: skin.components.events.detail.titleBorderColor,
+    backgroundColor: skin.components.events.detail.titleBackground,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
+    // Inherited from H1 primitive
   },
 
-  // Info sections
-  infoSection: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+  // Info Tiles Container
+  infoTilesContainer: {
+    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
+    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
   },
-  infoLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666666',
+
+  // Info Tile Row (icon box + content)
+  infoTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: skin.components.events.detail.infoTilePadding,
+    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
+    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
+    gap: skin.components.events.detail.infoTileGap,
+  },
+  infoTileIconBox: {
+    width: skin.components.events.detail.infoTileIconBoxSize,
+    height: skin.components.events.detail.infoTileIconBoxSize,
+    backgroundColor: skin.components.events.detail.infoTileIconBoxBackground,
+    borderWidth: skin.components.events.detail.infoTileIconBoxBorderWidth,
+    borderColor: skin.components.events.detail.infoTileIconBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  infoTileContent: {
+    flex: 1,
+  },
+  infoTileValue: {
+    color: skin.colors.textPrimary,
+  },
+  infoTileSecondary: {
+    marginTop: skin.components.events.detail.secondaryValueMarginTop,
+    color: skin.colors.textSecondary,
+  },
+
+  // Description Section
+  descriptionSection: {
+    padding: skin.components.events.detail.infoSectionPadding,
+    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
+    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
+  },
+  descriptionLabel: {
     textTransform: 'uppercase',
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontSize: 16,
-    color: '#000000',
-    textTransform: 'capitalize',
-  },
-  infoValueSecondary: {
-    fontSize: 14,
-    color: '#333333',
-    marginTop: 2,
+    marginBottom: skin.components.events.detail.infoLabelMarginBottom,
   },
   description: {
-    fontSize: 15,
-    color: '#333333',
-    lineHeight: 22,
+    lineHeight: skin.components.events.detail.descriptionLineHeight,
   },
 
-  // Reminder section
+  // Reminder CTA with dual-layer shadow
+  reminderWrapper: {
+    margin: skin.spacing.lg,
+    position: 'relative',
+  },
+  ctaShadowLayer: {
+    position: 'absolute',
+    top: skin.components.events.detail.ctaShadowOffsetY,
+    left: skin.components.events.detail.ctaShadowOffsetX,
+    right: -skin.components.events.detail.ctaShadowOffsetX,
+    bottom: -skin.components.events.detail.ctaShadowOffsetY,
+    backgroundColor: skin.components.events.detail.ctaShadowColor,
+    borderRadius: skin.components.events.detail.reminderCardRadius,
+  },
   reminderSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#F5F5F5',
-    margin: 16,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#000000',
+    padding: skin.components.events.detail.reminderCardPadding,
+    backgroundColor: skin.components.events.detail.reminderCardBackground,
+    borderRadius: skin.components.events.detail.reminderCardRadius,
+    borderWidth: skin.components.events.detail.reminderCardBorderWidth,
+    borderColor: skin.components.events.detail.reminderCardBorderColor,
   },
   reminderInfo: {
     flex: 1,
   },
   reminderLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    // Inherited from ButtonText primitive
   },
   reminderHint: {
-    fontSize: 12,
-    color: '#666666',
-    marginTop: 2,
+    marginTop: skin.components.events.detail.reminderHintMarginTop,
   },
 
-  // Share button
-  shareButton: {
-    backgroundColor: '#000000',
-    margin: 16,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
+  // Share Button with dual-layer shadow
+  shareWrapper: {
+    marginHorizontal: skin.spacing.lg,
+    marginBottom: skin.spacing.lg,
+    position: 'relative',
   },
-  shareButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+  ctaShadowLayerButton: {
+    position: 'absolute',
+    top: skin.components.events.detail.ctaShadowOffsetY,
+    left: skin.components.events.detail.ctaShadowOffsetX,
+    right: -skin.components.events.detail.ctaShadowOffsetX,
+    bottom: -skin.components.events.detail.ctaShadowOffsetY,
+    backgroundColor: skin.components.events.detail.ctaShadowColor,
+    borderRadius: skin.borders.radiusCard,
+  },
+  shareButton: {
+    // Button styling handled by Button component
   },
 });
 

@@ -8,27 +8,39 @@
  * - Uses back navigation (child screen)
  * - Marks message as read on open
  * - Shows urgent badge for hitno messages
+ *
+ * REFACTORED: Now uses UI primitives from src/ui/
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
-  TouchableOpacity,
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
-import { GlobalHeader } from '../../components/GlobalHeader';
 import { useUnread } from '../../contexts/UnreadContext';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
+
+// UI Primitives
+import {
+  skin,
+  Header,
+  Button,
+  Badge,
+  H1,
+  Body,
+  Meta,
+  Icon,
+} from '../../ui';
+import { formatDateTimeSlash } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'InboxDetail'>;
 
@@ -70,10 +82,10 @@ export function InboxDetailScreen(): React.JSX.Element {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <GlobalHeader type="inbox" />
+        <Header type="inbox" />
         <View style={styles.loadingState}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
+          <ActivityIndicator size="large" color={skin.colors.textPrimary} />
+          <Meta style={styles.loadingText}>{t('common.loading')}</Meta>
         </View>
       </SafeAreaView>
     );
@@ -82,15 +94,15 @@ export function InboxDetailScreen(): React.JSX.Element {
   if (error || !message) {
     return (
       <SafeAreaView style={styles.container}>
-        <GlobalHeader type="inbox" />
+        <Header type="inbox" />
         <View style={styles.errorState}>
-          <Text style={styles.errorIcon}>⚠️</Text>
-          <Text style={styles.errorTitle}>
+          <View style={styles.errorIconContainer}>
+            <Icon name="alert-triangle" size="xl" colorToken="errorText" />
+          </View>
+          <Body style={styles.errorTitle}>
             {error || t('inboxDetail.notFound')}
-          </Text>
-          <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
-            <Text style={styles.retryText}>{t('common.retry')}</Text>
-          </TouchableOpacity>
+          </Body>
+          <Button onPress={handleRetry}>{t('common.retry')}</Button>
         </View>
       </SafeAreaView>
     );
@@ -98,14 +110,14 @@ export function InboxDetailScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={styles.container}>
-      <GlobalHeader type="inbox" />
+      <Header type="inbox" />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
         {/* Urgent badge */}
         {message.is_urgent && (
-          <View style={styles.urgentBadge}>
-            <Text style={styles.urgentText}>{t('banner.urgent')}</Text>
-          </View>
+          <Badge variant="urgent" style={styles.urgentBadge}>
+            {t('banner.urgent')}
+          </Badge>
         )}
 
         {/* Tags - defensive: ensure tags is always an array */}
@@ -116,22 +128,26 @@ export function InboxDetailScreen(): React.JSX.Element {
           return (
             <View style={styles.tagsContainer}>
               {visibleTags.map((tag) => (
-                <View key={tag} style={styles.tag}>
-                  <Text style={styles.tagText}>{formatTag(tag)}</Text>
-                </View>
+                <Badge
+                  key={tag}
+                  backgroundColor={skin.colors.backgroundSecondary}
+                  textColor={skin.colors.textMuted}
+                >
+                  {formatTag(tag)}
+                </Badge>
               ))}
             </View>
           );
         })()}
 
         {/* Title */}
-        <Text style={styles.title}>{message.title}</Text>
+        <H1 style={styles.title}>{message.title}</H1>
 
         {/* Date */}
-        <Text style={styles.date}>{formatDateTime(message.created_at)}</Text>
+        <Meta style={styles.date}>{formatDateTimeSlash(message.created_at)}</Meta>
 
         {/* Body */}
-        <Text style={styles.body}>{message.body}</Text>
+        <Body style={styles.body}>{message.body}</Body>
       </ScrollView>
     </SafeAreaView>
   );
@@ -152,30 +168,17 @@ function formatTag(tag: string): string {
   return tagLabels[tag] || tag;
 }
 
-/**
- * Format date and time for display
- */
-function formatDateTime(isoString: string): string {
-  const date = new Date(isoString);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, '0');
-  const minutes = date.getMinutes().toString().padStart(2, '0');
-  return `${day}/${month}/${year}, ${hours}:${minutes}`;
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   loadingState: {
     flex: 1,
@@ -183,81 +186,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
+    marginTop: skin.spacing.md,
   },
   errorState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
-  errorIcon: {
-    fontSize: 48,
-    marginBottom: 16,
+  errorIconContainer: {
+    marginBottom: skin.spacing.lg,
   },
   errorTitle: {
-    fontSize: 16,
-    color: '#333333',
     textAlign: 'center',
-    marginBottom: 16,
-  },
-  retryButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    backgroundColor: '#000000',
-    borderRadius: 8,
-  },
-  retryText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    marginBottom: skin.spacing.lg,
   },
   urgentBadge: {
-    backgroundColor: '#DC3545',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 4,
     alignSelf: 'flex-start',
-    marginBottom: 12,
-  },
-  urgentText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: 'bold',
+    marginBottom: skin.spacing.md,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
-  tag: {
-    backgroundColor: '#F0F0F0',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  tagText: {
-    fontSize: 12,
-    color: '#666666',
+    gap: skin.spacing.sm,
+    marginBottom: skin.spacing.md,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   date: {
-    fontSize: 14,
-    color: '#999999',
-    marginBottom: 24,
+    marginBottom: skin.spacing.xxl,
   },
   body: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333333',
+    lineHeight: skin.typography.fontSize.lg * skin.typography.lineHeight.relaxed,
   },
 });
 

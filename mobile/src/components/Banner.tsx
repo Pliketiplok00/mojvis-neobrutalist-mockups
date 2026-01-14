@@ -8,15 +8,28 @@
  * - Clicking a banner ALWAYS opens Inbox message detail
  * - Banners never open external links, filtered lists, or custom screens
  * - Banners are derived from Inbox messages (no separate content)
+ *
+ * V1 Poster Style:
+ * - Edge-to-edge (no inset)
+ * - No gaps between banners, only bottom rule separation
+ * - Only bottom border, not full outline
+ * - No shadow
+ * - Warm yellow/orange fill
+ * - Red accents for icon box + tags
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useTranslations } from '../i18n';
 import type { InboxMessage } from '../types/inbox';
 import type { MainStackParamList } from '../navigation/types';
+import { skin } from '../ui/skin';
+import { Icon } from '../ui/Icon';
+import { Label, Meta } from '../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -28,7 +41,8 @@ interface BannerProps {
 }
 
 /**
- * Single banner item
+ * Single banner item - V1 Poster Style
+ * Edge-to-edge slab with warm yellow fill, red icon box, bottom border only
  * Clicking opens the inbox message detail
  */
 export function Banner({ message }: BannerProps): React.JSX.Element {
@@ -48,26 +62,43 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
       onPress={handlePress}
       accessibilityLabel={`${isUrgent ? `${t('banner.urgent')}: ` : ''}${message.title}`}
       accessibilityHint={t('banner.accessibilityHint')}
+      activeOpacity={0.8}
     >
-      {/* Urgent indicator */}
-      {isUrgent && (
-        <View style={styles.urgentBadge}>
-          <Text style={styles.urgentText}>{t('banner.urgent')}</Text>
-        </View>
-      )}
+      {/* Icon box on left - red accent */}
+      <View style={styles.iconBox}>
+        <Icon
+          name="alert-triangle"
+          size="md"
+          color="white"
+          stroke="strong"
+        />
+      </View>
 
-      {/* Title */}
-      <Text style={[styles.title, isUrgent && styles.titleUrgent]} numberOfLines={1}>
-        {message.title}
-      </Text>
+      {/* Text content */}
+      <View style={styles.textContent}>
+        <Label style={styles.title} numberOfLines={1}>
+          {message.title}
+        </Label>
+        <Meta style={styles.preview} numberOfLines={1}>
+          {message.body}
+        </Meta>
+      </View>
 
-      {/* Preview */}
-      <Text style={styles.preview} numberOfLines={1}>
-        {message.body}
-      </Text>
+      {/* Tag badge - red accent */}
+      <View style={styles.tagBadge}>
+        <Meta style={styles.tagBadgeText}>
+          {isUrgent ? t('banner.urgent') : t('banner.new')}
+        </Meta>
+      </View>
 
       {/* Arrow indicator */}
-      <Text style={styles.arrow}>›</Text>
+      <View style={styles.arrowContainer}>
+        <Icon
+          name="chevron-right"
+          size="md"
+          colorToken="textPrimary"
+        />
+      </View>
     </TouchableOpacity>
   );
 }
@@ -111,54 +142,60 @@ export function BannerList({ banners }: BannerListProps): React.JSX.Element | nu
 }
 
 const styles = StyleSheet.create({
+  // V1 Poster: No gaps between banners, only bottom rule separation
   listContainer: {
-    gap: 8,
-    marginBottom: 16,
+    gap: 0,
   },
+  // V1 Poster: Edge-to-edge, amber fill (midpoint yellow-orange), only bottom border
   container: {
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    padding: 12,
+    backgroundColor: skin.colors.amber, // Midpoint between warningAccent and orange
+    borderBottomWidth: skin.borders.widthHeavy,
+    borderBottomColor: skin.colors.border,
+    padding: skin.spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFC107',
+    gap: skin.spacing.md,
   },
   containerUrgent: {
-    backgroundColor: '#F8D7DA',
-    borderLeftColor: '#DC3545',
+    backgroundColor: skin.colors.orange, // Warmer orange for urgent
   },
-  urgentBadge: {
-    backgroundColor: '#DC3545',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-    marginRight: 8,
+  // V1 Poster: Icon box with red accent
+  iconBox: {
+    width: 44,
+    height: 44,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    backgroundColor: skin.colors.urgent, // Red accent
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  urgentText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: 'bold',
+  // Text content
+  textContent: {
+    flex: 1,
   },
   title: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#856404',
-  },
-  titleUrgent: {
-    color: '#721C24',
+    color: skin.colors.textPrimary,
+    fontWeight: '700',
   },
   preview: {
-    flex: 2,
-    fontSize: 12,
-    color: '#666666',
-    marginLeft: 8,
+    color: skin.colors.textMuted,
+    marginTop: skin.spacing.xs,
   },
-  arrow: {
-    fontSize: 20,
-    color: '#999999',
-    marginLeft: 8,
+  // V1 Poster: Tag badge with red accent
+  tagBadge: {
+    backgroundColor: skin.colors.urgent, // Red accent
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    paddingHorizontal: skin.spacing.sm,
+    paddingVertical: skin.spacing.xs,
+  },
+  tagBadgeText: {
+    color: 'white',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  arrowContainer: {
+    // Icon handles sizing
   },
 });
 
