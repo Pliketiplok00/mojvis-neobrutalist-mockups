@@ -20,8 +20,12 @@ import {
   Switch,
   Alert,
   Platform,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
@@ -29,8 +33,13 @@ import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
 import { H2, Label, Body, Meta } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import type { MainStackParamList } from '../../navigation/types';
+
+type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 export function SettingsScreen(): React.JSX.Element {
+  const navigation = useNavigation<NavigationProp>();
   const { data, resetOnboarding } = useOnboarding();
   const { isOptIn, isRegistered, isLoading, setOptIn } = usePush();
   const { t } = useTranslations();
@@ -152,6 +161,26 @@ export function SettingsScreen(): React.JSX.Element {
           </Button>
         </View>
 
+        {/* Dev Tools Section (DEV ONLY) */}
+        {__DEV__ && (
+          <View style={styles.section}>
+            <H2 style={styles.sectionTitle}>Developer Tools</H2>
+            <TouchableOpacity
+              style={styles.devRow}
+              onPress={() => navigation.navigate('UiInventory')}
+              activeOpacity={0.7}
+            >
+              <View style={styles.devRowContent}>
+                <Label style={styles.devRowLabel}>UI Inventory (DEV)</Label>
+                <Body style={styles.devRowDescription}>
+                  View all UI components and tokens
+                </Body>
+              </View>
+              <Icon name="chevron-right" size="md" colorToken="chevron" />
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Version Info */}
         <View style={styles.versionContainer}>
           <Meta style={styles.versionText}>MOJ VIS v1.0.0</Meta>
@@ -225,6 +254,22 @@ const styles = StyleSheet.create({
   },
   versionText: {
     color: skin.colors.textDisabled,
+  },
+  // Dev tools
+  devRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: skin.spacing.md,
+  },
+  devRowContent: {
+    flex: 1,
+  },
+  devRowLabel: {
+    color: skin.colors.textPrimary,
+    marginBottom: skin.spacing.xs,
+  },
+  devRowDescription: {
+    color: skin.colors.textMuted,
   },
 });
 

@@ -18,7 +18,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   SafeAreaView,
   RefreshControl,
@@ -40,18 +40,41 @@ import {
   Header,
   Button,
   Badge,
-  ListRow,
-  H2,
   Label,
   Body,
   Meta,
+  ButtonText,
   Icon,
   LoadingState,
   EmptyState,
   ErrorState,
 } from '../../ui';
+import type { IconName } from '../../ui/Icon';
 import { STATUS_COLORS } from '../../ui/utils/statusColors';
 import { formatDateShort } from '../../utils/dateFormat';
+import type { InboxTag } from '../../types/inbox';
+
+// Inbox component tokens
+const { inbox: inboxTokens } = skin.components;
+
+/**
+ * Get icon and background color for message based on tags
+ */
+function getMessageIconConfig(tags: InboxTag[], isUrgent: boolean): { icon: IconName; background: string } {
+  if (isUrgent) {
+    return { icon: 'alert-triangle', background: inboxTokens.listItem.iconSlabBackgroundUrgent };
+  }
+  if (tags.includes('promet')) {
+    return { icon: 'ship', background: inboxTokens.listItem.iconSlabBackgroundTransport };
+  }
+  if (tags.includes('kultura')) {
+    return { icon: 'calendar', background: inboxTokens.listItem.iconSlabBackgroundCulture };
+  }
+  if (tags.includes('opcenito')) {
+    return { icon: 'message-circle', background: inboxTokens.listItem.iconSlabBackgroundGeneral };
+  }
+  return { icon: 'mail', background: inboxTokens.listItem.iconSlabBackgroundDefault };
+}
 
 // Combined sent item type
 interface CombinedSentItem {
@@ -192,39 +215,52 @@ export function InboxListScreen(): React.JSX.Element {
 
   const renderMessage = ({ item }: { item: InboxMessage }): React.JSX.Element => {
     const unread = isUnread(item.id);
+    const { icon, background } = getMessageIconConfig(item.tags, item.is_urgent);
 
     return (
-      <ListRow
+      <Pressable
         onPress={() => handleMessagePress(item)}
-        highlighted={unread}
-        rightAccessory={
-          <>
-            {unread && <View style={styles.unreadDot} />}
-            <Icon name="chevron-right" size="sm" colorToken="chevron" />
-          </>
-        }
+        style={styles.bannerItem}
       >
-        {/* Urgent indicator */}
-        {item.is_urgent && (
-          <Badge variant="urgent" style={styles.badgeMargin}>{t('inbox.badges.urgent')}</Badge>
-        )}
+        {/* Left icon slab */}
+        <View style={[styles.iconSlab, { backgroundColor: background }]}>
+          <Icon
+            name={icon}
+            size="md"
+            colorToken={item.is_urgent ? 'primaryText' : 'textPrimary'}
+          />
+        </View>
 
-        {/* Title */}
-        <Body
-          style={unread ? [styles.messageTitle, styles.messageTitleUnread] : styles.messageTitle}
-          numberOfLines={1}
-        >
-          {item.title}
-        </Body>
+        {/* Content block */}
+        <View style={styles.messageContent}>
+          {/* Title - ALL CAPS */}
+          <ButtonText style={styles.messageTitle} numberOfLines={1}>
+            {item.title}
+          </ButtonText>
 
-        {/* Preview of body */}
-        <Body color={skin.colors.textMuted} numberOfLines={2} style={styles.messagePreview}>
-          {item.body}
-        </Body>
+          {/* Preview snippet */}
+          <Body
+            color={skin.colors.textMuted}
+            numberOfLines={2}
+            style={styles.messagePreview}
+          >
+            {item.body}
+          </Body>
 
-        {/* Date */}
-        <Meta>{formatDateShort(item.created_at)}</Meta>
-      </ListRow>
+          {/* Date */}
+          <Meta>{formatDateShort(item.created_at)}</Meta>
+        </View>
+
+        {/* Right section: NEW badge + chevron */}
+        <View style={styles.messageRight}>
+          {unread && (
+            <View style={styles.newBadge}>
+              <Label style={styles.newBadgeText}>NEW</Label>
+            </View>
+          )}
+          <Icon name="chevron-right" size="md" colorToken="chevron" />
+        </View>
+      </Pressable>
     );
   };
 
@@ -247,35 +283,56 @@ export function InboxListScreen(): React.JSX.Element {
   const renderSentItem = ({ item }: { item: CombinedSentItem }): React.JSX.Element => {
     const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.zaprimljeno;
     const isClickFix = item.type === 'click_fix';
+    const iconName: IconName = isClickFix ? 'camera' : 'send';
+    const iconBackground = isClickFix
+      ? skin.colors.orange
+      : skin.colors.lavender;
 
     return (
-      <ListRow onPress={() => handleSentItemPress(item)}>
-        {/* Type and Status badges */}
-        <View style={styles.badgeRow}>
-          {isClickFix && (
-            <Badge variant="type" style={styles.badgeMargin}>{t('inbox.badges.report')}</Badge>
-          )}
-          <Badge
-            backgroundColor={statusColor.bg}
-            textColor={statusColor.text}
-          >
-            {item.status_label}
-          </Badge>
+      <Pressable
+        onPress={() => handleSentItemPress(item)}
+        style={styles.bannerItem}
+      >
+        {/* Left icon slab */}
+        <View style={[styles.iconSlab, { backgroundColor: iconBackground }]}>
+          <Icon name={iconName} size="md" colorToken="textPrimary" />
         </View>
 
-        {/* Subject */}
-        <Body style={styles.messageTitle} numberOfLines={1}>
-          {item.subject}
-        </Body>
+        {/* Content block */}
+        <View style={styles.messageContent}>
+          {/* Subject - ALL CAPS */}
+          <ButtonText style={styles.messageTitle} numberOfLines={1}>
+            {item.subject}
+          </ButtonText>
 
-        {/* Photo count for Click & Fix */}
-        {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
-          <Meta style={styles.photoCount}>{item.photo_count} {t('inbox.photoCount')}</Meta>
-        )}
+          {/* Status badge row */}
+          <View style={styles.badgeRow}>
+            {isClickFix && (
+              <Badge variant="type" style={styles.badgeMargin}>
+                {t('inbox.badges.report')}
+              </Badge>
+            )}
+            <Badge backgroundColor={statusColor.bg} textColor={statusColor.text}>
+              {item.status_label}
+            </Badge>
+          </View>
 
-        {/* Date */}
-        <Meta>{formatDateShort(item.created_at)}</Meta>
-      </ListRow>
+          {/* Photo count for Click & Fix */}
+          {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
+            <Meta style={styles.photoCount}>
+              {item.photo_count} {t('inbox.photoCount')}
+            </Meta>
+          )}
+
+          {/* Date */}
+          <Meta>{formatDateShort(item.created_at)}</Meta>
+        </View>
+
+        {/* Right section: chevron */}
+        <View style={styles.messageRight}>
+          <Icon name="chevron-right" size="md" colorToken="chevron" />
+        </View>
+      </Pressable>
     );
   };
 
@@ -299,12 +356,17 @@ export function InboxListScreen(): React.JSX.Element {
     <SafeAreaView style={styles.container}>
       <Header type="inbox" />
 
-      {/* Tabs */}
+      {/* Poster-style Tabs */}
       <View style={styles.tabBar}>
-        <TouchableOpacity
+        <Pressable
           style={[styles.tab, activeTab === 'received' && styles.tabActive]}
           onPress={() => setActiveTab('received')}
         >
+          <Icon
+            name="inbox"
+            size="sm"
+            colorToken={activeTab === 'received' ? 'primaryText' : 'textPrimary'}
+          />
           <Label
             style={[
               styles.tabText,
@@ -313,11 +375,16 @@ export function InboxListScreen(): React.JSX.Element {
           >
             {t('inbox.tabs.received')}
           </Label>
-        </TouchableOpacity>
-        <TouchableOpacity
+        </Pressable>
+        <Pressable
           style={[styles.tab, activeTab === 'sent' && styles.tabActive]}
           onPress={() => setActiveTab('sent')}
         >
+          <Icon
+            name="send"
+            size="sm"
+            colorToken={activeTab === 'sent' ? 'primaryText' : 'textPrimary'}
+          />
           <Label
             style={[
               styles.tabText,
@@ -326,7 +393,7 @@ export function InboxListScreen(): React.JSX.Element {
           >
             {t('inbox.tabs.sent')}
           </Label>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Content */}
@@ -386,53 +453,111 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: skin.colors.background,
   },
+
+  // Poster-style tabs
   tabBar: {
     flexDirection: 'row',
-    borderBottomWidth: skin.borders.widthThin,
-    borderBottomColor: skin.colors.border,
+    borderBottomWidth: inboxTokens.tabs.borderBottomWidth,
+    borderBottomColor: inboxTokens.tabs.borderBottomColor,
   },
   tab: {
     flex: 1,
-    paddingVertical: skin.components.tab.paddingVertical,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: inboxTokens.tabs.iconGap,
+    paddingVertical: inboxTokens.tabs.tabPadding,
+    backgroundColor: inboxTokens.tabs.inactiveBackground,
+    borderWidth: inboxTokens.tabs.inactiveBorderWidth,
+    borderColor: inboxTokens.tabs.inactiveBorderColor,
+    borderBottomWidth: 0,
   },
   tabActive: {
-    borderBottomWidth: skin.components.tab.borderBottomWidth,
-    borderBottomColor: skin.components.tab.borderBottomColor,
+    backgroundColor: inboxTokens.tabs.activeBackground,
+    borderWidth: inboxTokens.tabs.activeBorderWidth,
+    borderColor: inboxTokens.tabs.activeBorderColor,
+    borderBottomWidth: 0,
   },
   tabText: {
-    color: skin.components.tab.inactiveColor,
+    color: inboxTokens.tabs.inactiveTextColor,
+    fontFamily: inboxTokens.tabs.labelFontFamily,
+    fontSize: inboxTokens.tabs.labelFontSize,
+    textTransform: 'uppercase',
   },
   tabTextActive: {
-    color: skin.components.tab.activeColor,
+    color: inboxTokens.tabs.activeTextColor,
   },
+
   listEmpty: {
     flexGrow: 1,
   },
+
+  // Banner list item (full-width, bottom border only, no shadow)
+  bannerItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: inboxTokens.listItem.background,
+    borderBottomWidth: inboxTokens.listItem.borderBottomWidth,
+    borderBottomColor: inboxTokens.listItem.borderBottomColor,
+    paddingVertical: inboxTokens.listItem.paddingVertical,
+    paddingHorizontal: inboxTokens.listItem.paddingHorizontal,
+  },
+
+  // Left icon slab
+  iconSlab: {
+    width: inboxTokens.listItem.iconSlabSize,
+    height: inboxTokens.listItem.iconSlabSize,
+    borderWidth: inboxTokens.listItem.iconSlabBorderWidth,
+    borderColor: inboxTokens.listItem.iconSlabBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: inboxTokens.listItem.iconSlabGap,
+  },
+
+  // Content block
+  messageContent: {
+    flex: 1,
+  },
+  messageTitle: {
+    marginBottom: inboxTokens.listItem.titleMarginBottom,
+    textTransform: 'uppercase',
+  },
+  messagePreview: {
+    marginBottom: inboxTokens.listItem.snippetMarginBottom,
+  },
+
+  // Right section - badge stacked above chevron
+  messageRight: {
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    marginLeft: skin.spacing.sm,
+  },
+
+  // NEW badge
+  newBadge: {
+    backgroundColor: inboxTokens.listItem.newBadgeBackground,
+    paddingHorizontal: inboxTokens.listItem.newBadgePadding,
+    paddingVertical: inboxTokens.listItem.newBadgePadding,
+    borderWidth: inboxTokens.listItem.newBadgeBorderWidth,
+    borderColor: inboxTokens.listItem.newBadgeBorderColor,
+    marginBottom: skin.spacing.sm,
+  },
+  newBadgeText: {
+    color: inboxTokens.listItem.newBadgeTextColor,
+    fontSize: skin.typography.fontSize.xs,
+  },
+
+  // Badge row for sent items
   badgeRow: {
     flexDirection: 'row',
     gap: skin.spacing.sm,
     marginBottom: skin.spacing.xs,
   },
   badgeMargin: {
-    marginBottom: skin.spacing.xs,
+    marginRight: skin.spacing.xs,
   },
-  messageTitle: {
-    marginBottom: skin.spacing.xs,
-  },
-  messageTitleUnread: {
-    color: skin.colors.textPrimary,
-  },
-  messagePreview: {
-    marginBottom: skin.spacing.xs,
-  },
-  unreadDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: skin.colors.unreadIndicator,
-    marginRight: skin.spacing.sm,
-  },
+
   sentContainer: {
     flex: 1,
   },
@@ -441,7 +566,7 @@ const styles = StyleSheet.create({
   },
   newFeedbackContainer: {
     padding: skin.spacing.lg,
-    borderTopWidth: skin.borders.widthThin,
+    borderTopWidth: skin.borders.widthCard,
     borderTopColor: skin.colors.border,
     backgroundColor: skin.colors.background,
   },

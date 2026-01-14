@@ -11,7 +11,7 @@ type ShadowStyle = {
 };
 
 type ShadowToken = {
-  ios: Omit<ShadowStyle, 'elevation'>;
+  ios: Omit<ShadowStyle, "elevation">;
   android: { elevation: number };
 };
 
@@ -157,9 +157,15 @@ const hardShadow = (offset: number, color: string = borders.color): ShadowToken 
 });
 
 const platformShadow = (token: ShadowToken): ShadowStyle | Record<string, never> =>
-  Platform.OS === 'ios'
+  Platform.OS === "ios"
     ? token.ios
-    : { shadowColor: 'transparent', shadowOpacity: 0, shadowRadius: 0, shadowOffset: { width: 0, height: 0 }, ...token.android };
+    : {
+        shadowColor: "transparent",
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        shadowOffset: { width: 0, height: 0 },
+        ...token.android,
+      };
 
 // ---- Colors (include aliases expected by existing primitives/screens) ----
 export const colors = {
@@ -285,6 +291,19 @@ export const components = {
     borderBottomColor: colors.border,
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
+    // Inbox badge (unread indicator)
+    inboxBadge: {
+      backgroundColor: palette.destructive, // Terracotta red for urgency
+      borderWidth: bordersToken.widthHairline,
+      borderColor: colors.border,
+      textColor: colors.primaryText,
+      minSize: 20,
+      offsetTop: -6,
+      offsetRight: -6,
+      paddingHorizontal: spacing.xs,
+      fontSize: typography.fontSize.xs,
+      fontFamily: typography.fontFamily.body.bold,
+    },
   },
 
   screen: {
@@ -384,7 +403,7 @@ export const components = {
   // Calendar component tokens (V1 poster style)
   calendar: {
     // Container background (transparent - matches screen background per V1 mockup)
-    containerBackground: 'transparent',
+    containerBackground: "transparent",
     // Day tile outline - for colored tiles (has-events, today, selected)
     dayTileBorderWidth: bordersToken.widthThin,
     dayTileBorderColor: colors.border,
@@ -413,10 +432,25 @@ export const components = {
     // Empty state (dotted outline box per V1 mockup)
     emptyStateBorderWidth: bordersToken.widthThin,
     emptyStateBorderColor: colors.borderMuted,
-    emptyStateBorderStyle: 'dotted' as const,
-    emptyStateBackground: 'transparent',
+    emptyStateBorderStyle: "dotted" as const,
+    emptyStateBackground: "transparent",
     emptyStatePadding: spacing.xxl,
     emptyStateBorderRadius: bordersToken.radiusSharp,
+
+    // Event list card (clickable poster box)
+    card: {
+      // Border styling (matches canonical clickable box)
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      background: colors.background,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      // Dual-layer offset shadow (poster style)
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+    },
 
     // Event Detail screen tokens (V1 poster style)
     detail: {
@@ -463,6 +497,7 @@ export const components = {
       descriptionLineHeight: 22, // Keep same value, now tokenized
     },
   },
+
   // Transport Hub screen component tokens (V1 poster style)
   transport: {
     // Banner container - full-bleed (edge-to-edge)
@@ -499,6 +534,8 @@ export const components = {
 
       // Text styling
       tileTitleColor: colors.primaryText, // White text on colored bg
+      tileTitleFontSize: typography.fontSize.xl, // 18px - stronger title
+      tileTitleFontFamily: typography.fontFamily.body.bold, // Bold weight
       tileSubtitleColor: colors.primaryTextMuted, // White at 85% opacity
 
       // Icon on colored surface
@@ -539,7 +576,7 @@ export const components = {
 
       // Text styling (white on colored background)
       titleColor: colors.primaryText,
-      subtitleColor: 'rgba(255, 255, 255, 0.85)',
+      subtitleColor: "rgba(255, 255, 255, 0.85)",
     },
 
     // Section header (poster-style with bottom rule)
@@ -640,7 +677,7 @@ export const components = {
 
       // Header text
       headerTitleColor: colors.primaryText, // White on colored bg
-      headerMetaColor: 'rgba(255, 255, 255, 0.85)',
+      headerMetaColor: "rgba(255, 255, 255, 0.85)",
 
       // Date selector card (YELLOW poster button per mockup)
       dateSelectorPadding: spacing.lg,
@@ -706,6 +743,62 @@ export const components = {
       contactCardBorderColor: colors.border,
       contactCardBackground: colors.background,
       contactCardRadius: bordersToken.radiusSharp,
+    },
+  },
+
+  // Inbox screen component tokens (V1 banner list style)
+  inbox: {
+    // Banner-style tabs (stronger typography hierarchy)
+    tabs: {
+      borderBottomWidth: bordersToken.widthCard,
+      borderBottomColor: colors.border,
+      // Active tab (filled)
+      activeBackground: palette.primary,
+      activeTextColor: colors.primaryText,
+      activeBorderWidth: bordersToken.widthCard,
+      activeBorderColor: colors.border,
+      // Inactive tab
+      inactiveBackground: colors.background,
+      inactiveTextColor: colors.textPrimary,
+      inactiveBorderWidth: bordersToken.widthCard,
+      inactiveBorderColor: colors.border,
+      // Layout
+      tabPadding: spacing.md,
+      tabGap: spacing.sm,
+      iconGap: spacing.sm,
+      // Tab label typography (BOLD - must outrank row titles)
+      labelFontFamily: typography.fontFamily.body.bold,
+      labelFontSize: typography.fontSize.md,
+    },
+
+    // Banner list item (full-width, bottom border only, no shadow)
+    listItem: {
+      // Container - full width banners
+      background: colors.background,
+      borderBottomWidth: bordersToken.widthCard,
+      borderBottomColor: colors.border,
+      paddingVertical: spacing.md,
+      paddingHorizontal: spacing.lg,
+      // Icon slab (left)
+      iconSlabSize: 44,
+      iconSlabBorderWidth: bordersToken.widthThin,
+      iconSlabBorderColor: colors.border,
+      iconSlabGap: spacing.md,
+      // Icon slab backgrounds by type
+      iconSlabBackgroundDefault: colors.backgroundSecondary,
+      iconSlabBackgroundUrgent: palette.destructive,
+      iconSlabBackgroundTransport: palette.primary,
+      iconSlabBackgroundCulture: palette.lavender,
+      iconSlabBackgroundGeneral: palette.secondary,
+      // Text styling
+      titleMarginBottom: spacing.xs,
+      snippetMarginBottom: spacing.xs,
+      // NEW badge
+      newBadgeBackground: palette.primary,
+      newBadgeTextColor: colors.primaryText,
+      newBadgePadding: spacing.xs,
+      newBadgeBorderWidth: bordersToken.widthThin,
+      newBadgeBorderColor: colors.border,
     },
   },
 } as const;

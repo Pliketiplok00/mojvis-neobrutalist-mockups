@@ -24,6 +24,7 @@ import {
   View,
   ScrollView,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
@@ -177,39 +178,49 @@ function Calendar({
 }
 
 /**
- * Event list item - V1 Poster style with icons
+ * Event list item - V1 Poster style with icons and dual-layer shadow
+ * Uses Pressable to avoid opacity dimming; shadow hides on press.
  */
 function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
 
   return (
-    <TouchableOpacity
-      style={styles.eventItem}
-      onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
-    >
-      <View style={styles.eventContent}>
-        <ButtonText style={styles.eventTitle} numberOfLines={2}>
-          {event.title}
-        </ButtonText>
-        {/* V1 Poster: Time row with clock icon */}
-        <View style={styles.eventMetaRow}>
-          <Icon name="clock" size="xs" colorToken="textMuted" />
-          <Meta style={styles.eventMetaText} numberOfLines={1}>
-            {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
-          </Meta>
-        </View>
-        {/* V1 Poster: Location row with map-pin icon */}
-        {event.location && (
-          <View style={styles.eventMetaRow}>
-            <Icon name="map-pin" size="xs" colorToken="textMuted" />
-            <Meta style={styles.eventMetaText} numberOfLines={1}>
-              {event.location}
-            </Meta>
-          </View>
+    <View style={styles.eventItemWrapper}>
+      <Pressable
+        onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
+      >
+        {({ pressed }) => (
+          <>
+            {/* V1 Poster: Offset shadow layer - hidden when pressed */}
+            {!pressed && <View style={styles.eventItemShadow} />}
+            <View style={styles.eventItem}>
+              <View style={styles.eventContent}>
+                <ButtonText style={styles.eventTitle} numberOfLines={2}>
+                  {event.title}
+                </ButtonText>
+                {/* V1 Poster: Time row with clock icon */}
+                <View style={styles.eventMetaRow}>
+                  <Icon name="clock" size="xs" colorToken="textMuted" />
+                  <Meta style={styles.eventMetaText} numberOfLines={1}>
+                    {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
+                  </Meta>
+                </View>
+                {/* V1 Poster: Location row with map-pin icon */}
+                {event.location && (
+                  <View style={styles.eventMetaRow}>
+                    <Icon name="map-pin" size="xs" colorToken="textMuted" />
+                    <Meta style={styles.eventMetaText} numberOfLines={1}>
+                      {event.location}
+                    </Meta>
+                  </View>
+                )}
+              </View>
+              <Icon name="chevron-right" size="sm" colorToken="chevron" />
+            </View>
+          </>
         )}
-      </View>
-      <Icon name="chevron-right" size="sm" colorToken="chevron" />
-    </TouchableOpacity>
+      </Pressable>
+    </View>
   );
 }
 
@@ -541,22 +552,36 @@ const styles = StyleSheet.create({
     backgroundColor: skin.colors.calendarEventIndicator,
   },
 
-  // V1 Poster: Event cards with thick borders
+  // V1 Poster: Event cards with thick borders and dual-layer shadow
+  eventItemWrapper: {
+    position: 'relative',
+    marginBottom: skin.components.events.card.marginBottom,
+  },
+  // Offset shadow layer (poster-style dual-layer effect)
+  eventItemShadow: {
+    position: 'absolute',
+    top: skin.components.events.card.shadowOffsetY,
+    left: skin.components.events.card.shadowOffsetX,
+    right: -skin.components.events.card.shadowOffsetX,
+    bottom: -skin.components.events.card.shadowOffsetY,
+    backgroundColor: skin.components.events.card.shadowColor,
+    borderRadius: skin.components.events.card.borderRadius,
+  },
   eventItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthCard, // Thick: 3px
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard, // Sharp: 0
-    padding: skin.spacing.md,
-    marginBottom: skin.spacing.md,
+    backgroundColor: skin.components.events.card.background,
+    borderWidth: skin.components.events.card.borderWidth,
+    borderColor: skin.components.events.card.borderColor,
+    borderRadius: skin.components.events.card.borderRadius,
+    padding: skin.components.events.card.padding,
   },
   eventContent: {
     flex: 1,
   },
   eventTitle: {
     marginBottom: skin.spacing.sm,
+    textTransform: 'uppercase',
   },
   // V1 Poster: Meta row with icon + text (horizontal layout)
   eventMetaRow: {
