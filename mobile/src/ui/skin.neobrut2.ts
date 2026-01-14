@@ -766,6 +766,22 @@ export const components = {
       tabPadding: spacing.md,
       tabGap: spacing.sm,
       iconGap: spacing.sm,
+    },
+
+    // List item (poster-style row)
+    listItem: {
+      // Container
+      background: colors.background,
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      padding: spacing.md,
+      marginBottom: spacing.md,
+      marginHorizontal: spacing.lg,
+      // Dual-layer shadow
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
       // Tab label typography (BOLD - must outrank row titles)
       labelFontFamily: typography.fontFamily.body.bold,
       labelFontSize: typography.fontSize.md,
@@ -799,6 +815,11 @@ export const components = {
       newBadgePadding: spacing.xs,
       newBadgeBorderWidth: bordersToken.widthThin,
       newBadgeBorderColor: colors.border,
+      // Chevron box
+      chevronBoxSize: 32,
+      chevronBoxBackground: colors.backgroundSecondary,
+      chevronBoxBorderWidth: bordersToken.widthThin,
+      chevronBoxBorderColor: colors.border,
     },
   },
 } as const;

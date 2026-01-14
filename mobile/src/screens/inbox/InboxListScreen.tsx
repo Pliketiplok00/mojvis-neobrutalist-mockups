@@ -218,49 +218,58 @@ export function InboxListScreen(): React.JSX.Element {
     const { icon, background } = getMessageIconConfig(item.tags, item.is_urgent);
 
     return (
-      <Pressable
-        onPress={() => handleMessagePress(item)}
-        style={styles.bannerItem}
-      >
-        {/* Left icon slab */}
-        <View style={[styles.iconSlab, { backgroundColor: background }]}>
-          <Icon
-            name={icon}
-            size="md"
-            colorToken={item.is_urgent ? 'primaryText' : 'textPrimary'}
-          />
-        </View>
+      <View style={styles.messageItemWrapper}>
+        <Pressable onPress={() => handleMessagePress(item)}>
+          {({ pressed }) => (
+            <>
+              {/* Dual-layer shadow - hidden when pressed */}
+              {!pressed && <View style={styles.messageItemShadow} />}
+              <View style={styles.messageItem}>
+                {/* Left icon slab */}
+                <View style={[styles.iconSlab, { backgroundColor: background }]}>
+                  <Icon
+                    name={icon}
+                    size="md"
+                    colorToken={item.is_urgent ? 'primaryText' : 'textPrimary'}
+                  />
+                </View>
 
-        {/* Content block */}
-        <View style={styles.messageContent}>
-          {/* Title - ALL CAPS */}
-          <ButtonText style={styles.messageTitle} numberOfLines={1}>
-            {item.title}
-          </ButtonText>
+                {/* Content block */}
+                <View style={styles.messageContent}>
+                  {/* Title - ALL CAPS */}
+                  <ButtonText style={styles.messageTitle} numberOfLines={1}>
+                    {item.title}
+                  </ButtonText>
 
-          {/* Preview snippet */}
-          <Body
-            color={skin.colors.textMuted}
-            numberOfLines={2}
-            style={styles.messagePreview}
-          >
-            {item.body}
-          </Body>
+                  {/* Preview snippet */}
+                  <Body
+                    color={skin.colors.textMuted}
+                    numberOfLines={2}
+                    style={styles.messagePreview}
+                  >
+                    {item.body}
+                  </Body>
 
-          {/* Date */}
-          <Meta>{formatDateShort(item.created_at)}</Meta>
-        </View>
+                  {/* Date */}
+                  <Meta>{formatDateShort(item.created_at)}</Meta>
+                </View>
 
-        {/* Right section: NEW badge + chevron */}
-        <View style={styles.messageRight}>
-          {unread && (
-            <View style={styles.newBadge}>
-              <Label style={styles.newBadgeText}>NEW</Label>
-            </View>
+                {/* Right section: NEW badge + chevron */}
+                <View style={styles.messageRight}>
+                  {unread && (
+                    <View style={styles.newBadge}>
+                      <Label style={styles.newBadgeText}>NEW</Label>
+                    </View>
+                  )}
+                  <View style={styles.chevronBox}>
+                    <Icon name="chevron-right" size="sm" colorToken="chevron" />
+                  </View>
+                </View>
+              </View>
+            </>
           )}
-          <Icon name="chevron-right" size="md" colorToken="chevron" />
-        </View>
-      </Pressable>
+        </Pressable>
+      </View>
     );
   };
 
@@ -289,50 +298,59 @@ export function InboxListScreen(): React.JSX.Element {
       : skin.colors.lavender;
 
     return (
-      <Pressable
-        onPress={() => handleSentItemPress(item)}
-        style={styles.bannerItem}
-      >
-        {/* Left icon slab */}
-        <View style={[styles.iconSlab, { backgroundColor: iconBackground }]}>
-          <Icon name={iconName} size="md" colorToken="textPrimary" />
-        </View>
+      <View style={styles.messageItemWrapper}>
+        <Pressable onPress={() => handleSentItemPress(item)}>
+          {({ pressed }) => (
+            <>
+              {/* Dual-layer shadow - hidden when pressed */}
+              {!pressed && <View style={styles.messageItemShadow} />}
+              <View style={styles.messageItem}>
+                {/* Left icon slab */}
+                <View style={[styles.iconSlab, { backgroundColor: iconBackground }]}>
+                  <Icon name={iconName} size="md" colorToken="textPrimary" />
+                </View>
 
-        {/* Content block */}
-        <View style={styles.messageContent}>
-          {/* Subject - ALL CAPS */}
-          <ButtonText style={styles.messageTitle} numberOfLines={1}>
-            {item.subject}
-          </ButtonText>
+                {/* Content block */}
+                <View style={styles.messageContent}>
+                  {/* Subject - ALL CAPS */}
+                  <ButtonText style={styles.messageTitle} numberOfLines={1}>
+                    {item.subject}
+                  </ButtonText>
 
-          {/* Status badge row */}
-          <View style={styles.badgeRow}>
-            {isClickFix && (
-              <Badge variant="type" style={styles.badgeMargin}>
-                {t('inbox.badges.report')}
-              </Badge>
-            )}
-            <Badge backgroundColor={statusColor.bg} textColor={statusColor.text}>
-              {item.status_label}
-            </Badge>
-          </View>
+                  {/* Status badge row */}
+                  <View style={styles.badgeRow}>
+                    {isClickFix && (
+                      <Badge variant="type" style={styles.badgeMargin}>
+                        {t('inbox.badges.report')}
+                      </Badge>
+                    )}
+                    <Badge backgroundColor={statusColor.bg} textColor={statusColor.text}>
+                      {item.status_label}
+                    </Badge>
+                  </View>
 
-          {/* Photo count for Click & Fix */}
-          {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
-            <Meta style={styles.photoCount}>
-              {item.photo_count} {t('inbox.photoCount')}
-            </Meta>
+                  {/* Photo count for Click & Fix */}
+                  {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
+                    <Meta style={styles.photoCount}>
+                      {item.photo_count} {t('inbox.photoCount')}
+                    </Meta>
+                  )}
+
+                  {/* Date */}
+                  <Meta>{formatDateShort(item.created_at)}</Meta>
+                </View>
+
+                {/* Right section: chevron */}
+                <View style={styles.messageRight}>
+                  <View style={styles.chevronBox}>
+                    <Icon name="chevron-right" size="sm" colorToken="chevron" />
+                  </View>
+                </View>
+              </View>
+            </>
           )}
-
-          {/* Date */}
-          <Meta>{formatDateShort(item.created_at)}</Meta>
-        </View>
-
-        {/* Right section: chevron */}
-        <View style={styles.messageRight}>
-          <Icon name="chevron-right" size="md" colorToken="chevron" />
-        </View>
-      </Pressable>
+        </Pressable>
+      </View>
     );
   };
 
@@ -480,8 +498,6 @@ const styles = StyleSheet.create({
   },
   tabText: {
     color: inboxTokens.tabs.inactiveTextColor,
-    fontFamily: inboxTokens.tabs.labelFontFamily,
-    fontSize: inboxTokens.tabs.labelFontSize,
     textTransform: 'uppercase',
   },
   tabTextActive: {
@@ -492,15 +508,29 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  // Banner list item (full-width, bottom border only, no shadow)
-  bannerItem: {
+  // Message item poster card
+  messageItemWrapper: {
+    position: 'relative',
+    marginBottom: inboxTokens.listItem.marginBottom,
+    marginHorizontal: inboxTokens.listItem.marginHorizontal,
+  },
+  messageItemShadow: {
+    position: 'absolute',
+    top: inboxTokens.listItem.shadowOffsetY,
+    left: inboxTokens.listItem.shadowOffsetX,
+    right: -inboxTokens.listItem.shadowOffsetX,
+    bottom: -inboxTokens.listItem.shadowOffsetY,
+    backgroundColor: inboxTokens.listItem.shadowColor,
+    borderRadius: inboxTokens.listItem.borderRadius,
+  },
+  messageItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: inboxTokens.listItem.background,
-    borderBottomWidth: inboxTokens.listItem.borderBottomWidth,
-    borderBottomColor: inboxTokens.listItem.borderBottomColor,
-    paddingVertical: inboxTokens.listItem.paddingVertical,
-    paddingHorizontal: inboxTokens.listItem.paddingHorizontal,
+    borderWidth: inboxTokens.listItem.borderWidth,
+    borderColor: inboxTokens.listItem.borderColor,
+    borderRadius: inboxTokens.listItem.borderRadius,
+    padding: inboxTokens.listItem.padding,
   },
 
   // Left icon slab
@@ -526,11 +556,10 @@ const styles = StyleSheet.create({
     marginBottom: inboxTokens.listItem.snippetMarginBottom,
   },
 
-  // Right section - badge stacked above chevron
+  // Right section
   messageRight: {
     alignItems: 'flex-end',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
+    justifyContent: 'space-between',
     marginLeft: skin.spacing.sm,
   },
 
@@ -546,6 +575,17 @@ const styles = StyleSheet.create({
   newBadgeText: {
     color: inboxTokens.listItem.newBadgeTextColor,
     fontSize: skin.typography.fontSize.xs,
+  },
+
+  // Chevron box
+  chevronBox: {
+    width: inboxTokens.listItem.chevronBoxSize,
+    height: inboxTokens.listItem.chevronBoxSize,
+    backgroundColor: inboxTokens.listItem.chevronBoxBackground,
+    borderWidth: inboxTokens.listItem.chevronBoxBorderWidth,
+    borderColor: inboxTokens.listItem.chevronBoxBorderColor,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // Badge row for sent items
