@@ -74,14 +74,11 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
         />
       </View>
 
-      {/* Text content */}
+      {/* Text content - title only, 2-line clamp */}
       <View style={styles.textContent}>
-        <Label style={styles.title} numberOfLines={1}>
+        <Label style={styles.title} numberOfLines={2} ellipsizeMode="tail">
           {message.title}
         </Label>
-        <Meta style={styles.preview} numberOfLines={1}>
-          {message.body}
-        </Meta>
       </View>
 
       {/* Tag badge - red accent */}
@@ -176,10 +173,6 @@ const styles = StyleSheet.create({
   title: {
     color: skin.colors.textPrimary,
     fontWeight: '700',
-  },
-  preview: {
-    color: skin.colors.textMuted,
-    marginTop: skin.spacing.xs,
   },
   // V1 Poster: Tag badge with red accent
   tagBadge: {
