@@ -152,3 +152,30 @@ export interface LineContactsResponse {
   line_name: string;
   contacts: ContactInfo[];
 }
+
+// ============================================================
+// Seed Data Types (for reference/documentation)
+// ============================================================
+// These types mirror the backend seed schema.
+// Mobile app consumes API responses, not seed data directly.
+// Included here for type parity and documentation.
+
+export type SeasonType = 'OFF' | 'PRE' | 'HIGH' | 'POST';
+
+/**
+ * Seed departure format (for reference)
+ * Describes the shape of departure data in transport-seed.json
+ */
+export interface SeedDeparture {
+  day_type: DayType;
+  season_type: SeasonType;
+  departure_time: string; // HH:MM
+  stop_times: (string | null)[]; // aligned to route stops
+  notes_hr?: string;
+  notes_en?: string;
+  // Date-based exception fields (all optional, backward-compatible)
+  date_from?: string; // YYYY-MM-DD - departure valid from this date
+  date_to?: string; // YYYY-MM-DD - departure valid until this date
+  include_dates?: string[]; // YYYY-MM-DD[] - departure valid ONLY on these dates
+  exclude_dates?: string[]; // YYYY-MM-DD[] - departure NOT valid on these dates (overrides all)
+}

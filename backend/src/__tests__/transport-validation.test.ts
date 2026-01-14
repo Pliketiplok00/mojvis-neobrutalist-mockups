@@ -200,6 +200,197 @@ describe('Season Overlap Validation', () => {
   });
 });
 
+describe('Date Exception Filtering', () => {
+  /**
+   * Helper to create a minimal departure object for testing date exception logic.
+   * Note: This tests the filtering logic directly, not through the repository.
+   */
+  interface TestDeparture {
+    date_from: string | null;
+    date_to: string | null;
+    include_dates: string[] | null;
+    exclude_dates: string[] | null;
+  }
+
+  /**
+   * Replicates the isDepartureValidForDate logic for testing.
+   * This is a direct copy of the logic from repositories/transport.ts
+   * to allow unit testing without database dependency.
+   */
+  function isDepartureValidForDate(departure: TestDeparture, dateStr: string): boolean {
+    // Rule 1: exclude_dates always removes service
+    if (departure.exclude_dates && departure.exclude_dates.length > 0) {
+      if (departure.exclude_dates.includes(dateStr)) {
+        return false;
+      }
+    }
+
+    // Rule 2: If include_dates is present and non-empty, date must be in the list
+    const hasIncludeDates = departure.include_dates && departure.include_dates.length > 0;
+    if (hasIncludeDates) {
+      if (!departure.include_dates!.includes(dateStr)) {
+        return false;
+      }
+    }
+
+    // Rule 3: If date_from/date_to is set, date must be within range
+    if (departure.date_from !== null && dateStr < departure.date_from) {
+      return false;
+    }
+    if (departure.date_to !== null && dateStr > departure.date_to) {
+      return false;
+    }
+
+    return true;
+  }
+
+  describe('exclude_dates', () => {
+    it('should remove service on excluded dates (e.g. Christmas)', () => {
+      const departure: TestDeparture = {
+        date_from: null,
+        date_to: null,
+        include_dates: null,
+        exclude_dates: ['2026-12-25', '2026-01-01'],
+      };
+
+      expect(isDepartureValidForDate(departure, '2026-12-25')).toBe(false);
+      expect(isDepartureValidForDate(departure, '2026-01-01')).toBe(false);
+      expect(isDepartureValidForDate(departure, '2026-12-24')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-06-15')).toBe(true);
+    });
+
+    it('should override include_dates and date range', () => {
+      const departure: TestDeparture = {
+        date_from: '2026-01-01',
+        date_to: '2026-12-31',
+        include_dates: ['2026-12-25'],
+        exclude_dates: ['2026-12-25'],
+      };
+
+      // Even though 12-25 is in include_dates and within range, exclude wins
+      expect(isDepartureValidForDate(departure, '2026-12-25')).toBe(false);
+    });
+  });
+
+  describe('include_dates (one-off service)', () => {
+    it('should allow service ONLY on included dates', () => {
+      const departure: TestDeparture = {
+        date_from: null,
+        date_to: null,
+        include_dates: ['2026-07-04', '2026-08-05'],
+        exclude_dates: null,
+      };
+
+      expect(isDepartureValidForDate(departure, '2026-07-04')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-08-05')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-07-05')).toBe(false);
+      expect(isDepartureValidForDate(departure, '2026-06-01')).toBe(false);
+    });
+
+    it('should work with date_from/date_to as additional constraint', () => {
+      const departure: TestDeparture = {
+        date_from: '2026-07-01',
+        date_to: '2026-07-31',
+        include_dates: ['2026-06-15', '2026-07-15'], // June date is outside range
+        exclude_dates: null,
+      };
+
+      // 06-15 is in include_dates but outside date range -> invalid
+      expect(isDepartureValidForDate(departure, '2026-06-15')).toBe(false);
+      // 07-15 is in include_dates AND within range -> valid
+      expect(isDepartureValidForDate(departure, '2026-07-15')).toBe(true);
+    });
+  });
+
+  describe('date_from/date_to (date range)', () => {
+    it('should constrain departure to date range', () => {
+      const departure: TestDeparture = {
+        date_from: '2026-06-01',
+        date_to: '2026-08-31',
+        include_dates: null,
+        exclude_dates: null,
+      };
+
+      expect(isDepartureValidForDate(departure, '2026-05-31')).toBe(false);
+      expect(isDepartureValidForDate(departure, '2026-06-01')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-07-15')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-08-31')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-09-01')).toBe(false);
+    });
+
+    it('should handle open-ended ranges (only date_from)', () => {
+      const departure: TestDeparture = {
+        date_from: '2026-06-01',
+        date_to: null,
+        include_dates: null,
+        exclude_dates: null,
+      };
+
+      expect(isDepartureValidForDate(departure, '2026-05-31')).toBe(false);
+      expect(isDepartureValidForDate(departure, '2026-06-01')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2030-12-31')).toBe(true);
+    });
+
+    it('should handle open-ended ranges (only date_to)', () => {
+      const departure: TestDeparture = {
+        date_from: null,
+        date_to: '2026-08-31',
+        include_dates: null,
+        exclude_dates: null,
+      };
+
+      expect(isDepartureValidForDate(departure, '2020-01-01')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-08-31')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-09-01')).toBe(false);
+    });
+  });
+
+  describe('no constraints (backward compatibility)', () => {
+    it('should allow all dates when no exception fields are set', () => {
+      const departure: TestDeparture = {
+        date_from: null,
+        date_to: null,
+        include_dates: null,
+        exclude_dates: null,
+      };
+
+      expect(isDepartureValidForDate(departure, '2020-01-01')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2026-06-15')).toBe(true);
+      expect(isDepartureValidForDate(departure, '2030-12-31')).toBe(true);
+    });
+
+    it('should treat empty arrays as no constraint', () => {
+      const departure: TestDeparture = {
+        date_from: null,
+        date_to: null,
+        include_dates: [],
+        exclude_dates: [],
+      };
+
+      expect(isDepartureValidForDate(departure, '2026-06-15')).toBe(true);
+    });
+  });
+
+  describe('combined rules', () => {
+    it('should handle all constraints together', () => {
+      // Complex scenario: range + include + exclude
+      const departure: TestDeparture = {
+        date_from: '2026-07-01',
+        date_to: '2026-07-31',
+        include_dates: ['2026-07-04', '2026-07-14'],
+        exclude_dates: ['2026-07-04'], // 4th excluded even though it's in include
+      };
+
+      // 07-04: in include, in range, but in exclude -> false
+      expect(isDepartureValidForDate(departure, '2026-07-04')).toBe(false);
+      // 07-14: in include, in range, not excluded -> true
+      expect(isDepartureValidForDate(departure, '2026-07-14')).toBe(true);
+      // 07-15: not in include -> false (include_dates is primary allow-list)
+      expect(isDepartureValidForDate(departure, '2026-07-15')).toBe(false);
+    });
+  });
+});
+
 describe('Seed Data Validation Integration', () => {
   it('should validate actual seed data has no overlapping seasons', async () => {
     // This test reads the actual seed data and validates it

@@ -120,6 +120,11 @@ export interface TransportDeparture {
   stop_times: (string | null)[]; // Array of HH:MM or null (null = skipped)
   notes_hr: string | null;
   notes_en: string | null;
+  // Date-based exception fields (all optional, backward-compatible)
+  date_from: string | null; // YYYY-MM-DD
+  date_to: string | null; // YYYY-MM-DD
+  include_dates: string[] | null; // YYYY-MM-DD[]
+  exclude_dates: string[] | null; // YYYY-MM-DD[]
   created_at: Date;
   updated_at: Date;
 }
@@ -366,6 +371,11 @@ export interface SeedDeparture {
   stop_times: (string | null)[]; // aligned to route stops
   notes_hr?: string;
   notes_en?: string;
+  // Date-based exception fields (all optional, backward-compatible)
+  date_from?: string; // YYYY-MM-DD - departure valid from this date
+  date_to?: string; // YYYY-MM-DD - departure valid until this date
+  include_dates?: string[]; // YYYY-MM-DD[] - departure valid ONLY on these dates
+  exclude_dates?: string[]; // YYYY-MM-DD[] - departure NOT valid on these dates (overrides all)
 }
 
 export interface SeedRoute {

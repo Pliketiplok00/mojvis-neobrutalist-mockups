@@ -84,6 +84,11 @@ interface DepartureRow {
   stop_times: string; // JSONB stored as string
   notes_hr: string | null;
   notes_en: string | null;
+  // Date exception fields
+  date_from: string | null; // DATE stored as string
+  date_to: string | null; // DATE stored as string
+  include_dates: string | null; // JSONB stored as string
+  exclude_dates: string | null; // JSONB stored as string
   created_at: Date;
   updated_at: Date;
 }
@@ -304,6 +309,7 @@ export async function getSeasonsForYear(year: number): Promise<TransportSeason[]
 /**
  * Get departures for a route on a specific date
  * Automatically determines season and day type
+ * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
  */
 export async function getDeparturesForRouteAndDate(
   routeId: string,
@@ -322,7 +328,12 @@ export async function getDeparturesForRouteAndDate(
     `SELECT id, route_id, season_id, day_type,
             departure_time::TEXT as departure_time,
             stop_times::TEXT as stop_times,
-            notes_hr, notes_en, created_at, updated_at
+            notes_hr, notes_en,
+            date_from::TEXT as date_from,
+            date_to::TEXT as date_to,
+            include_dates::TEXT as include_dates,
+            exclude_dates::TEXT as exclude_dates,
+            created_at, updated_at
      FROM transport_departures
      WHERE route_id = $1
        AND season_id = $2
@@ -331,8 +342,14 @@ export async function getDeparturesForRouteAndDate(
     [routeId, season.id, dayType]
   );
 
+  // Convert rows to departures and apply date exception filtering
+  const allDepartures = result.rows.map(rowToDeparture);
+  const filteredDepartures = allDepartures.filter((dep) =>
+    isDepartureValidForDate(dep, dateStr)
+  );
+
   return {
-    departures: result.rows.map(rowToDeparture),
+    departures: filteredDepartures,
     dayType,
     isHoliday,
   };
@@ -340,6 +357,7 @@ export async function getDeparturesForRouteAndDate(
 
 /**
  * Get today's departures for a transport type (aggregated across all lines)
+ * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
  */
 export async function getTodaysDepartures(
   transportType: TransportType,
@@ -368,6 +386,7 @@ export async function getTodaysDepartures(
     return { departures: [], dayType, isHoliday };
   }
 
+  // Extended query to include date exception fields for filtering
   const result = await query<{
     departure_time: string;
     line_id: string;
@@ -378,6 +397,11 @@ export async function getTodaysDepartures(
     direction_label_en: string;
     destination_hr: string;
     destination_en: string;
+    // Date exception fields for filtering
+    date_from: string | null;
+    date_to: string | null;
+    include_dates: string | null;
+    exclude_dates: string | null;
   }>(
     `SELECT
        d.departure_time::TEXT as departure_time,
@@ -388,7 +412,11 @@ export async function getTodaysDepartures(
        r.direction_label_hr,
        r.direction_label_en,
        dest.name_hr as destination_hr,
-       dest.name_en as destination_en
+       dest.name_en as destination_en,
+       d.date_from::TEXT as date_from,
+       d.date_to::TEXT as date_to,
+       d.include_dates::TEXT as include_dates,
+       d.exclude_dates::TEXT as exclude_dates
      FROM transport_departures d
      JOIN transport_routes r ON d.route_id = r.id
      JOIN transport_lines l ON r.line_id = l.id
@@ -401,8 +429,33 @@ export async function getTodaysDepartures(
     [transportType, season.id, dayType]
   );
 
+  // Apply date exception filtering
+  const filteredRows = result.rows.filter((row) => {
+    // Create a minimal departure object for filtering
+    const departure: Pick<TransportDeparture, 'date_from' | 'date_to' | 'include_dates' | 'exclude_dates'> = {
+      date_from: row.date_from,
+      date_to: row.date_to,
+      include_dates: row.include_dates ? (JSON.parse(row.include_dates) as string[]) : null,
+      exclude_dates: row.exclude_dates ? (JSON.parse(row.exclude_dates) as string[]) : null,
+    };
+    return isDepartureValidForDate(departure as TransportDeparture, dateStr);
+  });
+
+  // Map to response format (without date exception fields)
+  const departures = filteredRows.map((row) => ({
+    departure_time: row.departure_time,
+    line_id: row.line_id,
+    line_name_hr: row.line_name_hr,
+    line_name_en: row.line_name_en,
+    route_id: row.route_id,
+    direction_label_hr: row.direction_label_hr,
+    direction_label_en: row.direction_label_en,
+    destination_hr: row.destination_hr,
+    destination_en: row.destination_en,
+  }));
+
   return {
-    departures: result.rows,
+    departures,
     dayType,
     isHoliday,
   };
@@ -435,6 +488,50 @@ function formatDate(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+/**
+ * Check if a departure is valid for a given date based on date exception rules.
+ *
+ * Rules (in order of evaluation):
+ * 1. If exclude_dates contains the date, departure is NOT valid (overrides all).
+ * 2. If include_dates is non-empty, departure is valid ONLY if date is in include_dates.
+ * 3. If date_from/date_to is set, date must be within the range [date_from, date_to].
+ * 4. If both include_dates AND date_from/date_to exist:
+ *    - include_dates is the primary allow-list (must match)
+ *    - date_from/date_to is an additional constraint (must also match)
+ *
+ * @param departure The departure to check
+ * @param dateStr The date to check against (YYYY-MM-DD format)
+ * @returns true if the departure is valid for the date
+ */
+function isDepartureValidForDate(departure: TransportDeparture, dateStr: string): boolean {
+  // Rule 1: exclude_dates always removes service
+  if (departure.exclude_dates && departure.exclude_dates.length > 0) {
+    if (departure.exclude_dates.includes(dateStr)) {
+      return false;
+    }
+  }
+
+  // Rule 2: If include_dates is present and non-empty, date must be in the list
+  const hasIncludeDates = departure.include_dates && departure.include_dates.length > 0;
+  if (hasIncludeDates) {
+    if (!departure.include_dates!.includes(dateStr)) {
+      return false;
+    }
+  }
+
+  // Rule 3: If date_from/date_to is set, date must be within range
+  // Using string comparison for YYYY-MM-DD format (lexicographically correct)
+  if (departure.date_from !== null && dateStr < departure.date_from) {
+    return false;
+  }
+  if (departure.date_to !== null && dateStr > departure.date_to) {
+    return false;
+  }
+
+  // All rules passed
+  return true;
 }
 
 function rowToLine(row: LineRow): TransportLine {
@@ -503,6 +600,11 @@ function rowToDeparture(row: DepartureRow): TransportDeparture {
     stop_times: JSON.parse(row.stop_times) as (string | null)[],
     notes_hr: row.notes_hr,
     notes_en: row.notes_en,
+    // Date exception fields
+    date_from: row.date_from,
+    date_to: row.date_to,
+    include_dates: row.include_dates ? (JSON.parse(row.include_dates) as string[]) : null,
+    exclude_dates: row.exclude_dates ? (JSON.parse(row.exclude_dates) as string[]) : null,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
