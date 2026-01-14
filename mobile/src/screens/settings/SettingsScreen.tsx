@@ -20,7 +20,6 @@ import {
   Switch,
   Alert,
   Platform,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
