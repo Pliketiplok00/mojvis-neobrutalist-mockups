@@ -29,7 +29,7 @@ import type { InboxMessage } from '../types/inbox';
 import type { MainStackParamList } from '../navigation/types';
 import { skin } from '../ui/skin';
 import { Icon } from '../ui/Icon';
-import { Label, Meta } from '../ui/Text';
+import { Label } from '../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -79,13 +79,6 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
         <Label style={styles.title} numberOfLines={2} ellipsizeMode="tail">
           {message.title}
         </Label>
-      </View>
-
-      {/* Tag badge - red accent */}
-      <View style={styles.tagBadge}>
-        <Meta style={styles.tagBadgeText}>
-          {isUrgent ? t('banner.urgent') : t('banner.new')}
-        </Meta>
       </View>
 
       {/* Arrow indicator */}
@@ -173,19 +166,6 @@ const styles = StyleSheet.create({
   title: {
     color: skin.colors.textPrimary,
     fontWeight: '700',
-  },
-  // V1 Poster: Tag badge with red accent
-  tagBadge: {
-    backgroundColor: skin.colors.urgent, // Red accent
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    paddingHorizontal: skin.spacing.sm,
-    paddingVertical: skin.spacing.xs,
-  },
-  tagBadgeText: {
-    color: 'white',
-    fontWeight: '700',
-    textTransform: 'uppercase',
   },
   arrowContainer: {
     // Icon handles sizing
