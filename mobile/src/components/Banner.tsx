@@ -79,7 +79,7 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
         <Label style={styles.title} numberOfLines={1}>
           {message.title}
         </Label>
-        <Meta style={styles.preview} numberOfLines={1}>
+        <Meta style={styles.preview} numberOfLines={2} ellipsizeMode="tail">
           {message.body}
         </Meta>
       </View>
@@ -175,10 +175,11 @@ const styles = StyleSheet.create({
   },
   title: {
     color: skin.colors.textPrimary,
-    fontWeight: '700',
+    fontFamily: skin.typography.fontFamily.display.semiBold,
+    fontWeight: skin.typography.fontWeight.semiBold,
   },
   preview: {
-    color: skin.colors.textMuted,
+    color: skin.colors.primaryText, // White for readability on amber/orange background
     marginTop: skin.spacing.xs,
   },
   // V1 Poster: Tag badge with red accent
