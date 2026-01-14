@@ -13,9 +13,11 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminAuthApi } from '../services/api';
+import { useAuth } from '../services/AuthContext';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { refreshAuth } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +38,7 @@ export function LoginPage() {
       const result = await adminAuthApi.login(username, password);
 
       if (result.ok) {
+        await refreshAuth();
         navigate('/dashboard');
       } else {
         setError(result.error || 'Pogrešno korisničko ime ili lozinka');

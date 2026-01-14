@@ -16,7 +16,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Animated,
@@ -29,6 +28,7 @@ import { menuExtrasApi } from '../services/api';
 import type { MenuExtra } from '../types/menu-extras';
 import { Icon, type IconName } from '../ui/Icon';
 import { skin } from '../ui/skin';
+import { H1, Label, Meta } from '../ui/Text';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const MENU_WIDTH = SCREEN_WIDTH * 0.75;
@@ -53,6 +53,7 @@ const CORE_MENU_ITEMS: MenuItem[] = [
   { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: 'wrench', route: 'ClickFixForm' },
   { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: 'message-circle', route: 'FeedbackForm' },
   { label: 'Važni kontakti', labelEn: 'Important contacts', icon: 'phone', route: 'StaticPage:important-contacts' },
+  { label: 'Postavke', labelEn: 'Settings', icon: 'settings', route: 'Settings' },
 ];
 
 interface MenuOverlayProps {
@@ -169,8 +170,8 @@ export function MenuOverlay({
         <SafeAreaView style={styles.menuContent}>
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>MOJ VIS</Text>
-            <Text style={styles.headerSubtitle}>Izbornik / Menu</Text>
+            <H1 style={styles.headerTitle}>MOJ VIS</H1>
+            <Meta style={styles.headerSubtitle}>Izbornik / Menu</Meta>
           </View>
 
           {/* Menu Items - Scrollable */}
@@ -191,10 +192,10 @@ export function MenuOverlay({
                     <Icon name={item.icon} size="md" colorToken="textPrimary" />
                   </View>
                   <View style={styles.menuTextContainer}>
-                    <Text style={[styles.menuLabel, isActive && styles.menuLabelActive]}>
+                    <Label style={[styles.menuLabel, isActive && styles.menuLabelActive]}>
                       {item.label}
-                    </Text>
-                    <Text style={styles.menuLabelEn}>{item.labelEn}</Text>
+                    </Label>
+                    <Meta style={styles.menuLabelEn}>{item.labelEn}</Meta>
                   </View>
                 </TouchableOpacity>
               );
@@ -236,16 +237,10 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.sm,
   },
   headerTitle: {
-    fontSize: skin.typography.fontSize.xxl,
-    fontWeight: skin.typography.fontWeight.bold,
-    fontFamily: skin.typography.fontFamily.display.bold,
-    color: skin.colors.textPrimary,
     marginBottom: skin.spacing.xs,
   },
   headerSubtitle: {
-    fontSize: skin.typography.fontSize.md,
-    fontFamily: skin.typography.fontFamily.body.regular,
-    color: skin.colors.textMuted,
+    // Typography handled by Meta primitive
   },
   menuList: {
     flex: 1,
@@ -272,19 +267,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   menuLabel: {
-    fontSize: skin.typography.fontSize.lg,
-    fontWeight: skin.typography.fontWeight.medium,
-    fontFamily: skin.typography.fontFamily.body.regular,
-    color: skin.colors.textPrimary,
+    // Typography handled by Label primitive
   },
   menuLabelActive: {
-    fontWeight: skin.typography.fontWeight.semiBold,
-    fontFamily: skin.typography.fontFamily.body.bold,
+    // Active state handled by component
   },
   menuLabelEn: {
-    fontSize: skin.typography.fontSize.sm,
-    fontFamily: skin.typography.fontFamily.body.regular,
-    color: skin.colors.textMuted,
     marginTop: 2,
   },
 });

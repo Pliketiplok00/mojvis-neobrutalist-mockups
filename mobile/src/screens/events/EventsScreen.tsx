@@ -9,14 +9,22 @@
  * - Days with events are visually marked
  * - Selected day shows event list below
  * - Events ordered chronologically
+ *
+ * V1 Poster Style:
+ * - Hero slab (matches Home exactly)
+ * - Sharp calendar tiles (no circles/pills)
+ * - Thick borders on calendar and cards
+ * - Poster-style event cards
+ *
+ * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
@@ -32,23 +40,12 @@ import { eventsApi, inboxApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { InboxMessage } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { formatEventTime } from '../../utils/dateFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
-
-/**
- * Format date for display (DD/MM/YYYY, HH:mm)
- */
-function formatDateTime(dateStr: string, isAllDay: boolean, allDayText: string): string {
-  const date = new Date(dateStr);
-  if (isAllDay) {
-    return allDayText;
-  }
-  return date.toLocaleTimeString('hr-HR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  });
-}
 
 /**
  * Get date string in YYYY-MM-DD format
@@ -98,7 +95,11 @@ function Calendar({
 
     // Empty cells for days before first day of month
     for (let i = 0; i < startDay; i++) {
-      days.push(<View key={`empty-${i}`} style={styles.calendarDay} />);
+      days.push(
+        <View key={`empty-${i}`} style={styles.calendarDayWrapper}>
+          <View style={styles.calendarDayEmpty} />
+        </View>
+      );
     }
 
     // Days of the month
@@ -109,26 +110,37 @@ function Calendar({
       const isSelected = dateStr === selected;
       const hasEvents = eventDates.has(dateStr);
 
+      // V1 Poster: State priority: selected > today > hasEvents
+      // All colored tiles (hasEvents, today, selected) get outlines
+      // ONLY selected day gets neobrut offset shadow layer
       days.push(
-        <TouchableOpacity
-          key={day}
-          style={[
-            styles.calendarDay,
-            isSelected && styles.calendarDaySelected,
-            isToday && styles.calendarDayToday,
-          ]}
-          onPress={() => onSelectDate(date)}
-        >
-          <Text
+        <View key={day} style={styles.calendarDayWrapper}>
+          {/* V1 Poster: Offset shadow layer ONLY for selected day */}
+          {isSelected && <View style={styles.calendarDayShadow} />}
+          <TouchableOpacity
             style={[
-              styles.calendarDayText,
-              isSelected && styles.calendarDayTextSelected,
+              styles.calendarDay,
+              // Fill + outline (priority: selected > today > hasEvents)
+              // Each colored state includes its own outline
+              hasEvents && !isSelected && !isToday && styles.calendarDayHasEvents,
+              isToday && !isSelected && styles.calendarDayToday,
+              isSelected && styles.calendarDaySelected,
             ]}
+            onPress={() => onSelectDate(date)}
           >
-            {day}
-          </Text>
-          {hasEvents && <View style={styles.eventDot} />}
-        </TouchableOpacity>
+            <Label
+              style={[
+                styles.calendarDayText,
+                isSelected && styles.calendarDayTextSelected,
+                isToday && !isSelected && styles.calendarDayTextToday,
+              ]}
+            >
+              {day}
+            </Label>
+            {/* V1 Poster: Show blue square indicator for days with events (except when selected) */}
+            {hasEvents && !isSelected && <View style={styles.eventIndicator} />}
+          </TouchableOpacity>
+        </View>
       );
     }
 
@@ -137,59 +149,78 @@ function Calendar({
 
   return (
     <View style={styles.calendar}>
+      {/* V1 Poster: Month header with square nav buttons */}
       <View style={styles.calendarHeader}>
-        <TouchableOpacity onPress={prevMonth} style={styles.calendarNav}>
-          <Text style={styles.calendarNavText}>{'<'}</Text>
+        <TouchableOpacity onPress={prevMonth} style={styles.calendarNavButton}>
+          <Icon name="chevron-left" size="md" colorToken="textPrimary" />
         </TouchableOpacity>
-        <Text style={styles.calendarTitle}>
-          {monthNames[month]} {year}
-        </Text>
-        <TouchableOpacity onPress={nextMonth} style={styles.calendarNav}>
-          <Text style={styles.calendarNavText}>{'>'}</Text>
+        <H2 style={styles.calendarTitle}>
+          {monthNames[month].toUpperCase()} {year}
+        </H2>
+        <TouchableOpacity onPress={nextMonth} style={styles.calendarNavButton}>
+          <Icon name="chevron-right" size="md" colorToken="textPrimary" />
         </TouchableOpacity>
       </View>
 
+      {/* Day names header */}
       <View style={styles.calendarDayNames}>
         {dayNames.map((name) => (
-          <Text key={name} style={styles.calendarDayName}>
+          <Label key={name} style={styles.calendarDayName}>
             {name}
-          </Text>
+          </Label>
         ))}
       </View>
 
+      {/* Calendar grid */}
       <View style={styles.calendarGrid}>{renderDays()}</View>
     </View>
   );
 }
 
 /**
- * Event list item
+ * Event list item - V1 Poster style with icons and dual-layer shadow
+ * Uses Pressable to avoid opacity dimming; shadow hides on press.
  */
 function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
 
   return (
-    <TouchableOpacity
-      style={styles.eventItem}
-      onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
-    >
-      <View style={styles.eventTime}>
-        <Text style={styles.eventTimeText}>
-          {formatDateTime(event.start_datetime, event.is_all_day, allDayText)}
-        </Text>
-      </View>
-      <View style={styles.eventContent}>
-        <Text style={styles.eventTitle} numberOfLines={2}>
-          {event.title}
-        </Text>
-        {event.location && (
-          <Text style={styles.eventLocation} numberOfLines={1}>
-            {event.location}
-          </Text>
+    <View style={styles.eventItemWrapper}>
+      <Pressable
+        onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
+      >
+        {({ pressed }) => (
+          <>
+            {/* V1 Poster: Offset shadow layer - hidden when pressed */}
+            {!pressed && <View style={styles.eventItemShadow} />}
+            <View style={styles.eventItem}>
+              <View style={styles.eventContent}>
+                <ButtonText style={styles.eventTitle} numberOfLines={2}>
+                  {event.title}
+                </ButtonText>
+                {/* V1 Poster: Time row with clock icon */}
+                <View style={styles.eventMetaRow}>
+                  <Icon name="clock" size="xs" colorToken="textMuted" />
+                  <Meta style={styles.eventMetaText} numberOfLines={1}>
+                    {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
+                  </Meta>
+                </View>
+                {/* V1 Poster: Location row with map-pin icon */}
+                {event.location && (
+                  <View style={styles.eventMetaRow}>
+                    <Icon name="map-pin" size="xs" colorToken="textMuted" />
+                    <Meta style={styles.eventMetaText} numberOfLines={1}>
+                      {event.location}
+                    </Meta>
+                  </View>
+                )}
+              </View>
+              <Icon name="chevron-right" size="sm" colorToken="chevron" />
+            </View>
+          </>
         )}
-      </View>
-      <Text style={styles.eventArrow}>{'>'}</Text>
-    </TouchableOpacity>
+      </Pressable>
+    </View>
   );
 }
 
@@ -296,16 +327,16 @@ export function EventsScreen(): React.JSX.Element {
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView}>
-        {/* Banners */}
+        {/* Banners - V1 Poster: edge-to-edge */}
         {banners.length > 0 && (
           <View style={styles.bannerSection}>
             <BannerList banners={banners} />
           </View>
         )}
 
-        {/* Section title */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('events.title')}</Text>
+        {/* Hero Slab - V1 Poster: matches Home exactly */}
+        <View style={styles.heroSection}>
+          <H1 style={styles.heroTitle}>{t('events.title').toUpperCase()}</H1>
         </View>
 
         {/* Calendar */}
@@ -317,28 +348,30 @@ export function EventsScreen(): React.JSX.Element {
           dayNames={dayNames}
         />
 
-        {/* Selected day events */}
-        <View style={styles.section}>
-          <Text style={styles.selectedDateTitle}>
-            {selectedDate.toLocaleDateString('hr-HR', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </Text>
+        {/* Selected day events - V1 Poster: heavy divider above */}
+        <View style={styles.dayEventsSection}>
+          <View style={styles.dayHeader}>
+            <Label style={styles.selectedDateTitle}>
+              {selectedDate.toLocaleDateString('hr-HR', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              }).toUpperCase()}
+            </Label>
+          </View>
 
           {loading && (
-            <ActivityIndicator size="large" color="#000000" style={styles.loader} />
+            <ActivityIndicator size="large" color={skin.colors.textPrimary} style={styles.loader} />
           )}
 
-          {error && <Text style={styles.errorText}>{error}</Text>}
+          {error && <Label style={styles.errorText}>{error}</Label>}
 
           {!loading && !error && events.length === 0 && (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>
+              <Label style={styles.emptyStateText}>
                 {t('events.noEvents')}
-              </Text>
+              </Label>
             </View>
           )}
 
@@ -354,169 +387,236 @@ export function EventsScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   bannerSection: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-  },
-  section: {
-    padding: 16,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: '#666666',
-  },
-  selectedDateTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 16,
-    textTransform: 'capitalize',
+    // V1 Poster: Banners edge-to-edge, no padding
   },
 
-  // Calendar styles
+  // V1 Poster: Hero slab matches Home exactly
+  heroSection: {
+    backgroundColor: skin.colors.primary,
+    paddingHorizontal: skin.spacing.xl,
+    paddingVertical: skin.spacing.xxl,
+    borderBottomWidth: skin.borders.widthHeavy,
+    borderBottomColor: skin.colors.border,
+  },
+  heroTitle: {
+    color: 'white',
+    marginBottom: skin.spacing.sm,
+  },
+
+  section: {
+    padding: skin.spacing.lg,
+  },
+  sectionTitle: {
+    marginBottom: skin.spacing.xs,
+  },
+  sectionSubtitle: {
+    // Inherited from Meta primitive
+  },
+
+  // V1 Poster: Day events section with heavy divider above
+  dayEventsSection: {
+    padding: skin.spacing.lg,
+    borderTopWidth: skin.borders.widthHeavy,
+    borderTopColor: skin.colors.border,
+  },
+  dayHeader: {
+    marginBottom: skin.spacing.lg,
+  },
+  selectedDateTitle: {
+    // Inherited from Label primitive
+  },
+
+  // V1 Poster: Calendar container (transparent background per mockup)
   calendar: {
-    backgroundColor: '#F5F5F5',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#000000',
+    backgroundColor: skin.components.calendar.containerBackground,
+    margin: skin.spacing.lg,
+    padding: skin.spacing.lg,
+    borderRadius: skin.borders.radiusCard, // Sharp: 0
+    // No container border - only day tiles have outlines
   },
   calendarHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
-  calendarNav: {
-    padding: 8,
-  },
-  calendarNavText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
+  // V1 Poster: Square nav buttons with thick borders
+  calendarNavButton: {
+    width: 44,
+    height: 44,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    backgroundColor: skin.colors.background,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   calendarTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+    // Inherited from H2 primitive
   },
   calendarDayNames: {
     flexDirection: 'row',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
+  // V1 Poster: Bold weekday labels
   calendarDayName: {
     flex: 1,
     textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#666666',
+    fontWeight: skin.components.calendar.weekdayFontWeight,
   },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    // V1 Poster: Gutters between tiles (not glued together)
+    columnGap: skin.components.calendar.dayTileGap,
+    rowGap: skin.components.calendar.dayTileGapY,
   },
-  calendarDay: {
-    width: '14.28%',
+  // V1 Poster: Wrapper for day tile + shadow layer
+  calendarDayWrapper: {
+    // 7 columns with gaps - use flex basis to account for gaps
+    flexBasis: '13%',
+    flexGrow: 1,
+    maxWidth: '14.28%',
     aspectRatio: 1,
+    minHeight: skin.sizes.calendarDayMinHeight,
+    position: 'relative',
+  },
+  // V1 Poster: Empty cell (no border, no fill)
+  calendarDayEmpty: {
+    flex: 1,
+  },
+  // V1 Poster: Offset shadow layer for selected day (neobrut double-layer)
+  calendarDayShadow: {
+    position: 'absolute',
+    top: skin.components.calendar.selectedShadowOffsetY,
+    left: skin.components.calendar.selectedShadowOffsetX,
+    right: -skin.components.calendar.selectedShadowOffsetX,
+    bottom: -skin.components.calendar.selectedShadowOffsetY,
+    backgroundColor: skin.components.calendar.selectedShadowColor,
+  },
+  // V1 Poster: Calendar day tile (no outline by default, matches screen bg)
+  calendarDay: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    // No border by default - only colored tiles (has-events/today/selected) get outline
+    backgroundColor: skin.colors.background,
+    padding: skin.components.calendar.dayTilePadding,
+    // Ensure indicator is not clipped
+    overflow: 'visible',
   },
+  // V1 Poster: Yellow fill for today (with outline)
   calendarDayToday: {
-    backgroundColor: '#E0E0E0',
-    borderRadius: 20,
+    backgroundColor: skin.colors.calendarToday,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
+  // V1 Poster: Blue fill for selected (with outline)
   calendarDaySelected: {
-    backgroundColor: '#000000',
-    borderRadius: 20,
+    backgroundColor: skin.colors.calendarSelected,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
   },
+  // V1 Poster: Days with events get outline + green-ish fill
+  calendarDayHasEvents: {
+    backgroundColor: skin.colors.calendarHasEvents,
+    borderWidth: skin.components.calendar.dayTileBorderWidth,
+    borderColor: skin.components.calendar.dayTileBorderColor,
+  },
+  // V1 Poster: Bold day numbers (all states)
   calendarDayText: {
-    fontSize: 14,
-    color: '#000000',
+    color: skin.components.calendar.dayNumberColor,
+    fontWeight: skin.components.calendar.dayNumberFontWeight,
   },
+  // V1 Poster: Selected day = white text (same bold weight)
   calendarDayTextSelected: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+    color: skin.components.calendar.selectedDayNumberColor,
   },
-  eventDot: {
-    position: 'absolute',
-    bottom: 4,
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FF0000',
+  // V1 Poster: Today tile text (same as default)
+  calendarDayTextToday: {
+    color: skin.components.calendar.dayNumberColor,
+  },
+  // V1 Poster: Blue square indicator for days with events
+  eventIndicator: {
+    // Positioned below day number with gap
+    marginTop: skin.components.calendar.eventIndicatorMarginTop,
+    width: skin.sizes.calendarEventIndicator,
+    height: skin.sizes.calendarEventIndicator,
+    // Sharp square (no borderRadius)
+    backgroundColor: skin.colors.calendarEventIndicator,
   },
 
-  // Event list styles
+  // V1 Poster: Event cards with thick borders and dual-layer shadow
+  eventItemWrapper: {
+    position: 'relative',
+    marginBottom: skin.components.events.card.marginBottom,
+  },
+  // Offset shadow layer (poster-style dual-layer effect)
+  eventItemShadow: {
+    position: 'absolute',
+    top: skin.components.events.card.shadowOffsetY,
+    left: skin.components.events.card.shadowOffsetX,
+    right: -skin.components.events.card.shadowOffsetX,
+    bottom: -skin.components.events.card.shadowOffsetY,
+    backgroundColor: skin.components.events.card.shadowColor,
+    borderRadius: skin.components.events.card.borderRadius,
+  },
   eventItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  eventTime: {
-    width: 60,
-    marginRight: 12,
-  },
-  eventTimeText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#000000',
+    backgroundColor: skin.components.events.card.background,
+    borderWidth: skin.components.events.card.borderWidth,
+    borderColor: skin.components.events.card.borderColor,
+    borderRadius: skin.components.events.card.borderRadius,
+    padding: skin.components.events.card.padding,
   },
   eventContent: {
     flex: 1,
   },
   eventTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.sm,
+    textTransform: 'uppercase',
   },
-  eventLocation: {
-    fontSize: 12,
-    color: '#666666',
+  // V1 Poster: Meta row with icon + text (horizontal layout)
+  eventMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.sm, // Increased gap for better readability
+    marginTop: skin.spacing.xs,
   },
-  eventArrow: {
-    fontSize: 18,
-    color: '#000000',
-    marginLeft: 8,
+  eventMetaText: {
+    flex: 1,
+    // Ensure text doesn't push icon to new line
+    flexShrink: 1,
   },
 
   // States
   loader: {
-    marginTop: 24,
+    marginTop: skin.spacing.xxl,
   },
   errorText: {
-    fontSize: 14,
-    color: '#FF0000',
     textAlign: 'center',
-    marginTop: 16,
+    marginTop: skin.spacing.lg,
+    color: skin.colors.errorText,
   },
+  // V1 Poster: Empty state with dotted outline (no fill)
   emptyState: {
-    backgroundColor: '#F5F5F5',
-    padding: 24,
-    borderRadius: 8,
+    backgroundColor: skin.components.events.emptyStateBackground,
+    padding: skin.components.events.emptyStatePadding,
+    borderRadius: skin.components.events.emptyStateBorderRadius,
+    borderWidth: skin.components.events.emptyStateBorderWidth,
+    borderColor: skin.components.events.emptyStateBorderColor,
+    borderStyle: skin.components.events.emptyStateBorderStyle,
     alignItems: 'center',
   },
   emptyStateText: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
 });
 

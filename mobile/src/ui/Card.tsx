@@ -21,9 +21,11 @@ interface CardProps {
   /** Disable press interaction */
   disabled?: boolean;
   /** Card variant */
-  variant?: 'default' | 'outlined' | 'filled';
+  variant?: 'default' | 'outlined' | 'filled' | 'selection';
   /** Background color override */
   backgroundColor?: string;
+  /** Accessibility label */
+  accessibilityLabel?: string;
   /** Additional style */
   style?: ViewStyle;
 }
@@ -34,12 +36,24 @@ export function Card({
   disabled,
   variant = 'outlined',
   backgroundColor,
+  accessibilityLabel,
   style,
 }: CardProps): React.JSX.Element {
+  const getVariantStyle = () => {
+    switch (variant) {
+      case 'filled':
+        return styles.filled;
+      case 'selection':
+        return styles.selection;
+      case 'outlined':
+      default:
+        return styles.outlined;
+    }
+  };
+
   const cardStyle = [
     styles.base,
-    variant === 'outlined' && styles.outlined,
-    variant === 'filled' && styles.filled,
+    getVariantStyle(),
     backgroundColor && { backgroundColor },
     style,
   ];
@@ -51,6 +65,8 @@ export function Card({
         onPress={onPress}
         disabled={disabled}
         activeOpacity={0.7}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
       >
         {children}
       </TouchableOpacity>
@@ -75,6 +91,12 @@ const styles = StyleSheet.create({
   filled: {
     backgroundColor: colors.backgroundSecondary,
     borderWidth: 0,
+  },
+  selection: {
+    backgroundColor: colors.backgroundSecondary,
+    borderWidth: borders.widthThin,
+    borderColor: colors.borderLight,
+    borderRadius: borders.radiusCard,
   },
 });
 

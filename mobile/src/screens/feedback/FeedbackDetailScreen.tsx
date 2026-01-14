@@ -7,15 +7,15 @@
  * - Subject + body (original)
  * - Current status label
  * - Replies list (chronological)
+ *
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,16 +26,13 @@ import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import type { FeedbackDetailResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { STATUS_COLORS } from '../../ui/utils/statusColors';
+import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
+import { LoadingState, ErrorState } from '../../ui/States';
+import { formatDateTimeCroatian } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'FeedbackDetail'>;
-
-// Status colors
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },
-  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },
-  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },
-  odbijeno: { bg: '#FFEBEE', text: '#C62828' },
-};
 
 export function FeedbackDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
@@ -70,24 +67,11 @@ export function FeedbackDetailScreen(): React.JSX.Element {
     void fetchFeedback();
   }, [fetchFeedback]);
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day}.${month}.${year}. ${hours}:${minutes}`;
-  };
-
   if (loading) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
-        </View>
+        <LoadingState message={t('common.loading')} />
       </SafeAreaView>
     );
   }
@@ -96,9 +80,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('feedback.detail.error')}</Text>
-        </View>
+        <ErrorState message={error || t('feedback.detail.error')} />
       </SafeAreaView>
     );
   }
@@ -120,38 +102,38 @@ export function FeedbackDetailScreen(): React.JSX.Element {
         <View
           style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}
         >
-          <Text style={[styles.statusText, { color: statusColor.text }]}>
+          <ButtonText style={[styles.statusText, { color: statusColor.text }]}>
             {feedback.status_label}
-          </Text>
+          </ButtonText>
         </View>
 
         {/* Original Message */}
         <View style={styles.messageCard}>
-          <Text style={styles.subject}>{feedback.subject}</Text>
-          <Text style={styles.date}>{formatDate(feedback.created_at)}</Text>
-          <Text style={styles.body}>{feedback.body}</Text>
+          <H2 style={styles.subject}>{feedback.subject}</H2>
+          <Meta style={styles.date}>{formatDateTimeCroatian(feedback.created_at)}</Meta>
+          <Body style={styles.body}>{feedback.body}</Body>
         </View>
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <Text style={styles.sectionTitle}>{t('feedback.detail.replies')}</Text>
+          <H2 style={styles.sectionTitle}>{t('feedback.detail.replies')}</H2>
 
           {feedback.replies.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
+              <Body style={styles.emptyText}>
                 {t('feedback.detail.noReplies')}
-              </Text>
+              </Body>
             </View>
           ) : (
             feedback.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Text style={styles.replyLabel}>Odgovor</Text>
-                  <Text style={styles.replyDate}>
-                    {formatDate(reply.created_at)}
-                  </Text>
+                  <Label style={styles.replyLabel}>Odgovor</Label>
+                  <Meta style={styles.replyDate}>
+                    {formatDateTimeCroatian(reply.created_at)}
+                  </Meta>
                 </View>
-                <Text style={styles.replyBody}>{reply.body}</Text>
+                <Body style={styles.replyBody}>{reply.body}</Body>
               </View>
             ))
           )}
@@ -164,116 +146,77 @@ export function FeedbackDetailScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#856404',
-    textAlign: 'center',
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   statusBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 16,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.sm,
+    borderRadius: skin.borders.radiusPill,
+    marginBottom: skin.spacing.lg,
   },
   statusText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   messageCard: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
+    backgroundColor: skin.colors.backgroundSecondary,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.xxl,
   },
   subject: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   date: {
-    fontSize: 12,
-    color: '#666666',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   body: {
-    fontSize: 16,
-    color: '#333333',
+    color: skin.colors.textSecondary,
     lineHeight: 24,
   },
   repliesSection: {
     flex: 1,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    marginBottom: skin.spacing.md,
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: skin.spacing.xxl,
+    backgroundColor: skin.colors.backgroundSecondary,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
     textAlign: 'center',
   },
   replyCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.md,
   },
   replyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#000000',
     textTransform: 'uppercase',
   },
   replyDate: {
-    fontSize: 12,
-    color: '#666666',
   },
   replyBody: {
-    fontSize: 14,
-    color: '#333333',
+    color: skin.colors.textSecondary,
     lineHeight: 22,
   },
 });

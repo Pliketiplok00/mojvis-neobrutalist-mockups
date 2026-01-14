@@ -58,6 +58,22 @@ const API_BASE_URL = __DEV__
   : 'https://api.mojvis.hr';
 
 /**
+ * Get the full URL for a relative API path (e.g., for uploaded images)
+ * @param path - Relative path like "/uploads/click-fix/abc.jpg"
+ * @returns Full URL like "http://localhost:3000/uploads/click-fix/abc.jpg"
+ */
+export function getFullApiUrl(path: string): string {
+  if (!path) return '';
+  // If already absolute URL, return as-is
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  // Ensure path starts with /
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  return `${API_BASE_URL}${normalizedPath}`;
+}
+
+/**
  * Get device ID for anonymous identification
  * TODO: Store persistently using AsyncStorage
  */

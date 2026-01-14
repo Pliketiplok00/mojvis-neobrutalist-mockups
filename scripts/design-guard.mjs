@@ -3,9 +3,18 @@ import path from "path";
 
 const repoRoot = process.cwd();
 const targetRoots = [
+  // Shared components
   path.join(repoRoot, "mobile", "src", "components"),
-  path.join(repoRoot, "mobile", "src", "screens", "transport"),
+  // Screen folders (alphabetical)
+  path.join(repoRoot, "mobile", "src", "screens", "click-fix"),
+  path.join(repoRoot, "mobile", "src", "screens", "events"),
+  path.join(repoRoot, "mobile", "src", "screens", "feedback"),
+  path.join(repoRoot, "mobile", "src", "screens", "home"),
   path.join(repoRoot, "mobile", "src", "screens", "inbox"),
+  path.join(repoRoot, "mobile", "src", "screens", "onboarding"),
+  path.join(repoRoot, "mobile", "src", "screens", "pages"),
+  path.join(repoRoot, "mobile", "src", "screens", "settings"),
+  path.join(repoRoot, "mobile", "src", "screens", "transport"),
 ];
 
 const allowedExtensions = new Set([".ts", ".tsx", ".js", ".jsx"]);

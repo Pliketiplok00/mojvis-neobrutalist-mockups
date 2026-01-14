@@ -32,6 +32,8 @@ import { adminFeedbackRoutes } from './routes/admin-feedback.js';
 import { clickFixRoutes } from './routes/click-fix.js';
 import { adminClickFixRoutes } from './routes/admin-click-fix.js';
 import { deviceRoutes } from './routes/device.js';
+import { menuExtrasRoutes } from './routes/menu-extras.js';
+import { adminMenuExtrasRoutes } from './routes/admin-menu-extras.js';
 import { adminAuthRoutes } from './routes/admin-auth.js';
 import { adminAuthHook } from './middleware/auth.js';
 
@@ -122,6 +124,10 @@ async function registerPlugins(): Promise<void> {
 
   // Device routes (Phase 7) - push token registration
   await fastify.register(deviceRoutes);
+
+  // Menu extras routes (Phase 8) - dynamic menu items
+  await fastify.register(menuExtrasRoutes);
+  await fastify.register(adminMenuExtrasRoutes);
 }
 
 /**

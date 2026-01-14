@@ -10,6 +10,11 @@
  * - Active notices show as banners
  * - No deep linking bypasses this hub
  *
+ * Design (V1 poster style):
+ * - Full-bleed banners (edge-to-edge)
+ * - Poster tiles with colored backgrounds and icon boxes
+ * - Bottom note info box
+ *
  * Phase 3C: Migrated to skin primitives (100% skin-adopted).
  */
 
@@ -18,14 +23,14 @@ import {
   View,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
-import { Card } from '../../ui/Card';
-import { H1, Label, Meta } from '../../ui/Text';
+import { H1, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { skin } from '../../ui/skin';
 import { useMenu } from '../../contexts/MenuContext';
@@ -37,7 +42,8 @@ import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
-const { colors, spacing, typography } = skin;
+const { colors, spacing, components } = skin;
+const { tiles, note } = components.transport;
 
 export function TransportHubScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -69,7 +75,7 @@ export function TransportHubScreen(): React.JSX.Element {
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView}>
-        {/* Banners */}
+        {/* Banners - Full-bleed */}
         {banners.length > 0 && (
           <View style={styles.bannerSection}>
             <BannerList banners={banners} />
@@ -81,39 +87,70 @@ export function TransportHubScreen(): React.JSX.Element {
           <H1>{t('transport.hub.title')}</H1>
         </View>
 
-        {/* Transport Type Selection */}
-        <View style={styles.optionsContainer}>
-          <Card
-            onPress={() => navigation.navigate('RoadTransport')}
-            style={styles.optionCard}
-          >
-            <View style={styles.optionContent}>
-              <View style={styles.optionIconContainer}>
-                <Icon name="bus" size="lg" colorToken="textPrimary" />
+        {/* Transport Type Selection - Poster Slab Tiles */}
+        <View style={styles.tilesContainer}>
+          {/* Road Transport Tile */}
+          <View style={styles.tileWrapper}>
+            <View style={styles.tileShadow} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('RoadTransport')}
+              activeOpacity={0.8}
+              style={[styles.tile, styles.tileRoad]}
+              accessibilityRole="button"
+              accessibilityLabel={t('transport.hub.road')}
+            >
+              {/* Left icon slab */}
+              <View style={styles.tileIconSlab}>
+                <Icon name="bus" size="lg" colorToken="primaryText" />
               </View>
-              <View style={styles.optionTextContainer}>
-                <Label style={styles.optionTitle}>{t('transport.hub.road')}</Label>
-                <Meta>{t('transport.hub.roadDescription')}</Meta>
+              {/* Vertical divider */}
+              <View style={styles.tileDivider} />
+              {/* Content slab */}
+              <View style={styles.tileContent}>
+                <Label style={styles.tileTitle}>{t('transport.hub.road')}</Label>
+                <Meta style={styles.tileSubtitle}>{t('transport.hub.roadDescription')}</Meta>
               </View>
-              <Icon name="chevron-right" size="md" colorToken="chevron" />
-            </View>
-          </Card>
+              {/* Chevron */}
+              <View style={styles.tileChevron}>
+                <Icon name="chevron-right" size="md" colorToken="primaryTextMuted" />
+              </View>
+            </TouchableOpacity>
+          </View>
 
-          <Card
-            onPress={() => navigation.navigate('SeaTransport')}
-            style={styles.optionCard}
-          >
-            <View style={styles.optionContent}>
-              <View style={styles.optionIconContainer}>
-                <Icon name="ship" size="lg" colorToken="textPrimary" />
+          {/* Sea Transport Tile */}
+          <View style={styles.tileWrapper}>
+            <View style={styles.tileShadow} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate('SeaTransport')}
+              activeOpacity={0.8}
+              style={[styles.tile, styles.tileSea]}
+              accessibilityRole="button"
+              accessibilityLabel={t('transport.hub.sea')}
+            >
+              {/* Left icon slab */}
+              <View style={styles.tileIconSlab}>
+                <Icon name="ship" size="lg" colorToken="primaryText" />
               </View>
-              <View style={styles.optionTextContainer}>
-                <Label style={styles.optionTitle}>{t('transport.hub.sea')}</Label>
-                <Meta>{t('transport.hub.seaDescription')}</Meta>
+              {/* Vertical divider */}
+              <View style={styles.tileDivider} />
+              {/* Content slab */}
+              <View style={styles.tileContent}>
+                <Label style={styles.tileTitle}>{t('transport.hub.sea')}</Label>
+                <Meta style={styles.tileSubtitle}>{t('transport.hub.seaDescription')}</Meta>
               </View>
-              <Icon name="chevron-right" size="md" colorToken="chevron" />
-            </View>
-          </Card>
+              {/* Chevron */}
+              <View style={styles.tileChevron}>
+                <Icon name="chevron-right" size="md" colorToken="primaryTextMuted" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Bottom Note Info Box */}
+        <View style={styles.noteContainer}>
+          <View style={styles.noteBox}>
+            <Body style={styles.noteText}>{t('transport.note')}</Body>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -128,35 +165,115 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
   },
+
+  // V1 Poster: Full-bleed banners (edge-to-edge)
   bannerSection: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.lg,
+    paddingHorizontal: components.transport.bannerContainerPaddingHorizontal,
+    paddingTop: components.transport.bannerContainerPaddingTop,
   },
+
   section: {
     padding: spacing.lg,
   },
-  optionsContainer: {
-    padding: spacing.lg,
-    gap: spacing.md,
+
+  // Poster Slab Tiles Container
+  tilesContainer: {
+    paddingHorizontal: spacing.lg,
+    gap: tiles.tileGap,
   },
-  optionCard: {
-    padding: spacing.lg,
+
+  // Tile wrapper for shadow layer
+  tileWrapper: {
+    position: 'relative',
   },
-  optionContent: {
+
+  // Offset shadow (dual-layer poster effect)
+  tileShadow: {
+    position: 'absolute',
+    top: tiles.tileShadowOffsetY,
+    left: tiles.tileShadowOffsetX,
+    right: -tiles.tileShadowOffsetX,
+    bottom: -tiles.tileShadowOffsetY,
+    backgroundColor: tiles.tileShadowColor,
+    borderRadius: tiles.tileRadius,
+  },
+
+  // Base Tile Style (poster slab)
+  tile: {
     flexDirection: 'row',
+    alignItems: 'stretch',
+    borderWidth: tiles.tileBorderWidth,
+    borderColor: tiles.tileBorderColor,
+    borderRadius: tiles.tileRadius,
+    overflow: 'hidden',
+  },
+
+  // Road Transport Tile (Green)
+  tileRoad: {
+    backgroundColor: tiles.tileRoadBackground,
+  },
+
+  // Sea Transport Tile (Blue)
+  tileSea: {
+    backgroundColor: tiles.tileSeaBackground,
+  },
+
+  // Left icon slab (full height)
+  tileIconSlab: {
+    width: tiles.tileIconSlabWidth,
     alignItems: 'center',
+    justifyContent: 'center',
+    padding: tiles.tileIconSlabPadding,
   },
-  optionIconContainer: {
-    marginRight: spacing.lg,
+
+  // Vertical divider between icon and content
+  tileDivider: {
+    width: tiles.tileDividerWidth,
+    backgroundColor: tiles.tileDividerColor,
   },
-  optionTextContainer: {
+
+  // Content slab (text + chevron area)
+  tileContent: {
     flex: 1,
+    justifyContent: 'center',
+    padding: tiles.tileContentPadding,
   },
-  optionTitle: {
-    fontSize: typography.fontSize.xl,
-    fontFamily: typography.fontFamily.body.bold,
-    color: colors.textPrimary,
+
+  tileTitle: {
+    color: tiles.tileTitleColor,
+    fontSize: tiles.tileTitleFontSize,
+    fontFamily: tiles.tileTitleFontFamily,
+    textTransform: 'uppercase',
     marginBottom: spacing.xs,
+  },
+
+  tileSubtitle: {
+    color: tiles.tileSubtitleColor,
+  },
+
+  // Chevron container
+  tileChevron: {
+    justifyContent: 'center',
+    paddingRight: tiles.tileChevronPaddingRight,
+  },
+
+  // Bottom Note Info Box
+  noteContainer: {
+    padding: spacing.lg,
+    paddingTop: spacing.xxl,
+  },
+
+  noteBox: {
+    borderWidth: note.noteBorderWidth,
+    borderColor: note.noteBorderColor,
+    backgroundColor: note.noteBackground,
+    borderRadius: note.noteRadius,
+    padding: note.notePadding,
+  },
+
+  noteText: {
+    color: note.noteTextColor,
+    textAlign: 'center',
   },
 });
 

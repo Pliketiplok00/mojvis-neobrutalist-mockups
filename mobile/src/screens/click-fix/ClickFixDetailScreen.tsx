@@ -9,15 +9,15 @@
  * - Current status label
  * - Photos (if any)
  * - Replies list (chronological)
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   RefreshControl,
   Image,
   TouchableOpacity,
@@ -30,19 +30,17 @@ import { useRoute } from '@react-navigation/native';
 import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useTranslations } from '../../i18n';
-import { clickFixApi } from '../../services/api';
+import { clickFixApi, getFullApiUrl } from '../../services/api';
 import type { ClickFixDetailResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { STATUS_COLORS } from '../../ui/utils/statusColors';
+import { Icon } from '../../ui/Icon';
+import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
+import { LoadingState, ErrorState } from '../../ui/States';
+import { formatDateTimeCroatian } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'ClickFixDetail'>;
-
-// Status colors
-const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
-  zaprimljeno: { bg: '#E3F2FD', text: '#1565C0' },
-  u_razmatranju: { bg: '#FFF3E0', text: '#E65100' },
-  prihvaceno: { bg: '#E8F5E9', text: '#2E7D32' },
-  odbijeno: { bg: '#FFEBEE', text: '#C62828' },
-};
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -80,24 +78,11 @@ export function ClickFixDetailScreen(): React.JSX.Element {
     void fetchClickFix();
   }, [fetchClickFix]);
 
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${day}.${month}.${year}. ${hours}:${minutes}`;
-  };
-
   if (loading) {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000000" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
-        </View>
+        <LoadingState message={t('common.loading')} />
       </SafeAreaView>
     );
   }
@@ -106,9 +91,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
     return (
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error || t('clickFix.detail.notFound')}</Text>
-        </View>
+        <ErrorState message={error || t('clickFix.detail.notFound')} />
       </SafeAreaView>
     );
   }
@@ -130,30 +113,30 @@ export function ClickFixDetailScreen(): React.JSX.Element {
         <View
           style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}
         >
-          <Text style={[styles.statusText, { color: statusColor.text }]}>
+          <ButtonText style={[styles.statusText, { color: statusColor.text }]}>
             {clickFix.status_label}
-          </Text>
+          </ButtonText>
         </View>
 
         {/* Original Message */}
         <View style={styles.messageCard}>
-          <Text style={styles.subject}>{clickFix.subject}</Text>
-          <Text style={styles.date}>{formatDate(clickFix.created_at)}</Text>
-          <Text style={styles.description}>{clickFix.description}</Text>
+          <H2 style={styles.subject}>{clickFix.subject}</H2>
+          <Meta style={styles.date}>{formatDateTimeCroatian(clickFix.created_at)}</Meta>
+          <Body style={styles.description}>{clickFix.description}</Body>
 
           {/* Location */}
           <View style={styles.locationSection}>
-            <Text style={styles.locationLabel}>{t('clickFix.detail.location')}:</Text>
-            <Text style={styles.locationText}>
+            <ButtonText style={styles.locationLabel}>{t('clickFix.detail.location')}:</ButtonText>
+            <Body style={styles.locationText}>
               {clickFix.location.lat.toFixed(6)}, {clickFix.location.lng.toFixed(6)}
-            </Text>
+            </Body>
           </View>
         </View>
 
         {/* Photos Section */}
         {clickFix.photos.length > 0 && (
           <View style={styles.photosSection}>
-            <Text style={styles.sectionTitle}>{t('clickFix.detail.photos')} ({clickFix.photos.length})</Text>
+            <H2 style={styles.sectionTitle}>{t('clickFix.detail.photos')} ({clickFix.photos.length})</H2>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -166,7 +149,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
                   activeOpacity={0.8}
                 >
                   <Image
-                    source={{ uri: photo.url }}
+                    source={{ uri: getFullApiUrl(photo.url) }}
                     style={styles.photoThumbnail}
                     resizeMode="cover"
                   />
@@ -178,24 +161,24 @@ export function ClickFixDetailScreen(): React.JSX.Element {
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <Text style={styles.sectionTitle}>{t('clickFix.detail.replies')}</Text>
+          <H2 style={styles.sectionTitle}>{t('clickFix.detail.replies')}</H2>
 
           {clickFix.replies.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>
+              <Body style={styles.emptyText}>
                 {t('clickFix.detail.noReplies')}
-              </Text>
+              </Body>
             </View>
           ) : (
             clickFix.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Text style={styles.replyLabel}>{t('clickFix.detail.reply')}</Text>
-                  <Text style={styles.replyDate}>
-                    {formatDate(reply.created_at)}
-                  </Text>
+                  <Label style={styles.replyLabel}>{t('clickFix.detail.reply')}</Label>
+                  <Meta style={styles.replyDate}>
+                    {formatDateTimeCroatian(reply.created_at)}
+                  </Meta>
                 </View>
-                <Text style={styles.replyBody}>{reply.body}</Text>
+                <Body style={styles.replyBody}>{reply.body}</Body>
               </View>
             ))
           )}
@@ -214,11 +197,11 @@ export function ClickFixDetailScreen(): React.JSX.Element {
             style={styles.modalCloseButton}
             onPress={() => setSelectedPhotoIndex(null)}
           >
-            <Text style={styles.modalCloseText}>X</Text>
+            <Icon name="close" size="md" colorToken="textPrimary" />
           </TouchableOpacity>
           {selectedPhotoIndex !== null && clickFix.photos[selectedPhotoIndex] && (
             <Image
-              source={{ uri: clickFix.photos[selectedPhotoIndex].url }}
+              source={{ uri: getFullApiUrl(clickFix.photos[selectedPhotoIndex].url) }}
               style={styles.modalImage}
               resizeMode="contain"
             />
@@ -232,153 +215,111 @@ export function ClickFixDetailScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   scrollView: {
     flex: 1,
   },
   content: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: '#666666',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  errorText: {
-    fontSize: 16,
-    color: '#856404',
-    textAlign: 'center',
+    padding: skin.spacing.lg,
+    paddingBottom: skin.spacing.xxxl,
   },
   statusBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 16,
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.sm,
+    borderRadius: skin.borders.radiusPill,
+    marginBottom: skin.spacing.lg,
   },
   statusText: {
-    fontSize: 14,
-    fontWeight: '600',
   },
   messageCard: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
+    backgroundColor: skin.colors.backgroundSecondary,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.xxl,
   },
   subject: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   date: {
-    fontSize: 12,
-    color: '#666666',
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   description: {
-    fontSize: 16,
-    color: '#333333',
+    color: skin.colors.textSecondary,
     lineHeight: 24,
-    marginBottom: 16,
+    marginBottom: skin.spacing.lg,
   },
   locationSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 12,
+    paddingTop: skin.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
+    borderTopColor: skin.colors.borderLight,
   },
   locationLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#666666',
-    marginRight: 8,
+    color: skin.colors.textMuted,
+    marginRight: skin.spacing.sm,
   },
   locationText: {
-    fontSize: 14,
-    color: '#2E7D32',
+    color: skin.colors.successText,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   photosSection: {
-    marginBottom: 24,
+    marginBottom: skin.spacing.xxl,
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 12,
+    marginBottom: skin.spacing.md,
   },
   photosScroll: {
-    gap: 12,
+    gap: skin.spacing.md,
   },
   photoThumbnail: {
     width: 120,
     height: 120,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#000000',
+    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
   },
   repliesSection: {
     flex: 1,
   },
   emptyState: {
-    padding: 24,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
+    padding: skin.spacing.xxl,
+    backgroundColor: skin.colors.backgroundSecondary,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
   },
   emptyText: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
     textAlign: 'center',
   },
   replyCard: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
+    padding: skin.spacing.lg,
+    marginBottom: skin.spacing.md,
   },
   replyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#000000',
     textTransform: 'uppercase',
   },
   replyDate: {
-    fontSize: 12,
-    color: '#666666',
   },
   replyBody: {
-    fontSize: 14,
-    color: '#333333',
+    color: skin.colors.textSecondary,
     lineHeight: 22,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    backgroundColor: skin.colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -389,15 +330,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
-  },
-  modalCloseText: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#000000',
   },
   modalImage: {
     width: screenWidth - 32,

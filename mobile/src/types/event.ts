@@ -15,7 +15,9 @@ export interface Event {
   start_datetime: string;
   end_datetime: string | null;
   location: string | null;
+  organizer: string;
   is_all_day: boolean;
+  image_url: string | null;
   created_at: string;
 }
 

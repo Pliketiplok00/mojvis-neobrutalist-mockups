@@ -9,16 +9,19 @@
  * - Only one municipality can be active at a time
  * - Can be changed later in Settings
  *
- * Phase 0: UI skeleton only, no logic.
- * Phase 5.1: Added onboarding completion for locals.
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
+import { Card } from '../../ui/Card';
+import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'MunicipalitySelection'>;
@@ -48,42 +51,45 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Text style={styles.backButtonText}>← Natrag / Back</Text>
+          <Icon name="chevron-left" size="sm" colorToken="textMuted" />
+          <Body style={styles.backButtonText}>Natrag / Back</Body>
         </TouchableOpacity>
 
-        <Text style={styles.title}>Odaberite općinu</Text>
-        <Text style={styles.subtitle}>Select your municipality</Text>
+        <H2 style={styles.title}>Odaberite općinu</H2>
+        <Body style={styles.subtitle}>Select your municipality</Body>
 
         <View style={styles.optionsContainer}>
-          <TouchableOpacity
-            style={styles.municipalityCard}
+          <Card
+            variant="selection"
             onPress={() => void handleMunicipalitySelect('vis')}
             accessibilityLabel="Vis"
-          >
-            <Text style={styles.municipalityName}>Vis</Text>
-            <Text style={styles.municipalityDescription}>
-              Grad Vis i okolica
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
             style={styles.municipalityCard}
+          >
+            <H1 style={styles.municipalityName}>Vis</H1>
+            <Label style={styles.municipalityDescription}>
+              Grad Vis i okolica
+            </Label>
+          </Card>
+
+          <Card
+            variant="selection"
             onPress={() => void handleMunicipalitySelect('komiza')}
             accessibilityLabel="Komiza"
+            style={styles.municipalityCard}
           >
-            <Text style={styles.municipalityName}>Komiža</Text>
-            <Text style={styles.municipalityDescription}>
+            <H1 style={styles.municipalityName}>Komiža</H1>
+            <Label style={styles.municipalityDescription}>
               Grad Komiža i okolica
-            </Text>
-          </TouchableOpacity>
+            </Label>
+          </Card>
         </View>
 
-        <Text style={styles.hint}>
+        <Meta style={styles.hint}>
           Ovo određuje koje općinske obavijesti primate.
-        </Text>
-        <Text style={styles.hintEn}>
+        </Meta>
+        <Meta style={styles.hintEn}>
           This determines which municipal notifications you receive.
-        </Text>
+        </Meta>
       </View>
     </SafeAreaView>
   );
@@ -92,59 +98,45 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   backButton: {
-    marginBottom: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.xs,
+    marginBottom: skin.spacing.xxl,
   },
   backButtonText: {
-    fontSize: 16,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 4,
+    marginBottom: skin.spacing.xs,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginBottom: 32,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.xxxl,
   },
   optionsContainer: {
-    gap: 16,
+    gap: skin.spacing.lg,
   },
   municipalityCard: {
-    backgroundColor: '#F5F5F5',
-    padding: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
+    padding: skin.spacing.xxl,
   },
   municipalityName: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
   },
   municipalityDescription: {
-    fontSize: 14,
-    color: '#666666',
+    color: skin.colors.textMuted,
   },
   hint: {
-    fontSize: 14,
-    color: '#999999',
     textAlign: 'center',
-    marginTop: 32,
+    marginTop: skin.spacing.xxxl,
   },
   hintEn: {
-    fontSize: 14,
-    color: '#BBBBBB',
     textAlign: 'center',
     fontStyle: 'italic',
   },

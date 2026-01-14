@@ -18,6 +18,7 @@ import {
   Calendar,
   Bus,
   Ship,
+  Anchor,
   Leaf,
   Info,
   Wrench,
@@ -36,6 +37,10 @@ import {
   Send,
   MailOpen,
   Camera,
+  Check,
+  Clock,
+  MapPin,
+  User,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -55,6 +60,7 @@ export type IconName =
   | 'calendar'
   | 'bus'
   | 'ship'
+  | 'anchor'
   | 'leaf'
   | 'info'
   | 'wrench'
@@ -72,7 +78,11 @@ export type IconName =
   | 'close'
   | 'alert-triangle'
   | 'send'
-  | 'camera';
+  | 'camera'
+  | 'check'
+  | 'clock'
+  | 'map-pin'
+  | 'user';
 
 /**
  * Icon size tokens from skin.
@@ -100,6 +110,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'calendar': Calendar,
   'bus': Bus,
   'ship': Ship,
+  'anchor': Anchor,
   'leaf': Leaf,
   'info': Info,
   'wrench': Wrench,
@@ -118,6 +129,10 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'alert-triangle': AlertTriangle,
   'send': Send,
   'camera': Camera,
+  'check': Check,
+  'clock': Clock,
+  'map-pin': MapPin,
+  'user': User,
 };
 
 interface IconProps {

@@ -12,7 +12,8 @@
     "design:guard": "node scripts/design-guard.mjs all",
     "design:guard:hex": "node scripts/design-guard.mjs hex",
     "design:guard:lucide": "node scripts/design-guard.mjs lucide",
-    "design:guard:emoji": "node scripts/design-guard.mjs emoji"
+    "design:guard:emoji": "node scripts/design-guard.mjs emoji",
+    "typecheck": "pnpm --dir backend typecheck && pnpm --dir admin exec tsc -b --noEmit && pnpm --dir mobile exec tsc --noEmit"
   },
   "dependencies": {
     "@fontsource/space-grotesk": "^5.2.10",

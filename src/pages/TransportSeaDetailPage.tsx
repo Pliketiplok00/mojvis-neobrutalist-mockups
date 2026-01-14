@@ -240,7 +240,7 @@ export default function TransportSeaDetailPage() {
             <PopoverTrigger asChild>
               <button className="w-full bg-accent neo-border-heavy p-4 flex items-center justify-between neo-hover">
                 <span className="font-display font-bold">
-                  {format(selectedDate, "EEEE, d. MMMM yyyy.", { locale: hr }).toUpperCase()}
+                  {format(selectedDate, "EEE., dd.MM.yyyy.", { locale: hr }).toUpperCase()}
                 </span>
                 <CalendarIcon size={20} strokeWidth={2.5} />
               </button>

@@ -2,13 +2,13 @@
  * Feedback Confirmation Screen
  *
  * Phase 5: Simple "sent" confirmation after feedback submission.
+ *
+ * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
 import React from 'react';
 import {
   View,
-  Text,
-  TouchableOpacity,
   StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,6 +18,10 @@ import type { RouteProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useTranslations } from '../../i18n';
 import type { MainStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Icon } from '../../ui/Icon';
+import { Button } from '../../ui/Button';
+import { H1, Body } from '../../ui/Text';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 type ConfirmationRouteProp = RouteProp<MainStackParamList, 'FeedbackConfirmation'>;
@@ -43,32 +47,24 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
       <View style={styles.content}>
         {/* Success Icon */}
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>✓</Text>
+          <Icon name="check" size="xl" colorToken="background" />
         </View>
 
         {/* Success Message */}
-        <Text style={styles.title}>{t('feedback.confirmation.title')}</Text>
-        <Text style={styles.message}>
+        <H1 style={styles.title}>{t('feedback.confirmation.title')}</H1>
+        <Body style={styles.message}>
           {t('feedback.confirmation.message')}
-        </Text>
+        </Body>
 
         {/* Actions */}
         <View style={styles.actions}>
-          <TouchableOpacity
-            style={styles.primaryButton}
-            onPress={handleViewFeedback}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.primaryButtonText}>{t('feedback.confirmation.backToInbox')}</Text>
-          </TouchableOpacity>
+          <Button variant="primary" onPress={handleViewFeedback}>
+            {t('feedback.confirmation.backToInbox')}
+          </Button>
 
-          <TouchableOpacity
-            style={styles.secondaryButton}
-            onPress={handleGoHome}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.secondaryButtonText}>{t('navigation.back')}</Text>
-          </TouchableOpacity>
+          <Button variant="secondary" onPress={handleGoHome}>
+            {t('navigation.back')}
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -78,68 +74,36 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32,
+    padding: skin.spacing.xxxl,
   },
   iconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#000000',
+    backgroundColor: skin.colors.textPrimary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 24,
-  },
-  icon: {
-    fontSize: 40,
-    color: '#FFFFFF',
+    marginBottom: skin.spacing.xxl,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#000000',
-    marginBottom: 12,
+    marginBottom: skin.spacing.md,
     textAlign: 'center',
   },
   message: {
-    fontSize: 16,
-    color: '#666666',
+    color: skin.colors.textMuted,
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: 32,
+    marginBottom: skin.spacing.xxxl,
   },
   actions: {
     width: '100%',
-    gap: 12,
-  },
-  primaryButton: {
-    backgroundColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  primaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  secondaryButton: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 2,
-    borderColor: '#000000',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
+    gap: skin.spacing.md,
   },
 });
 

@@ -65,6 +65,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: components.badge.paddingHorizontal,
     paddingVertical: components.badge.paddingVertical,
     borderRadius: components.badge.borderRadius,
+    borderWidth: components.badge.borderWidth,
+    borderColor: components.badge.borderColor,
   },
   text: {
     fontSize: components.badge.fontSize,

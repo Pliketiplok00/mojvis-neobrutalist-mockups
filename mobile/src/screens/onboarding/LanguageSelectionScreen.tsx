@@ -8,14 +8,16 @@
  * - Selected language is stored locally
  * - Language can be changed later in Settings
  *
- * Phase 0: UI skeleton only, no logic.
- * Phase 5.1: Added navigation with language param.
+ * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/types';
+import { skin } from '../../ui/skin';
+import { Button } from '../../ui/Button';
+import { H1, H2, Body } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'LanguageSelection'>;
@@ -33,28 +35,28 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
       <View style={styles.content}>
         {/* Logo placeholder */}
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>MOJ VIS</Text>
+          <H1>MOJ VIS</H1>
         </View>
 
-        <Text style={styles.title}>Dobrodošli / Welcome</Text>
-        <Text style={styles.subtitle}>Odaberite jezik / Select language</Text>
+        <H2 style={styles.title}>Dobrodošli / Welcome</H2>
+        <Body style={styles.subtitle}>Odaberite jezik / Select language</Body>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.languageButton}
+          <Button
+            variant="primary"
             onPress={() => handleLanguageSelect('hr')}
             accessibilityLabel="Hrvatski"
           >
-            <Text style={styles.languageButtonText}>Hrvatski</Text>
-          </TouchableOpacity>
+            Hrvatski
+          </Button>
 
-          <TouchableOpacity
-            style={styles.languageButton}
+          <Button
+            variant="primary"
             onPress={() => handleLanguageSelect('en')}
             accessibilityLabel="English"
           >
-            <Text style={styles.languageButtonText}>English</Text>
-          </TouchableOpacity>
+            English
+          </Button>
         </View>
       </View>
     </SafeAreaView>
@@ -64,50 +66,29 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: skin.colors.background,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: skin.spacing.xxl,
   },
   logoContainer: {
-    marginBottom: 48,
-  },
-  logoText: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#000000',
+    marginBottom: skin.spacing.xxxl,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#000000',
-    marginBottom: 8,
+    marginBottom: skin.spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666666',
-    marginBottom: 48,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.xxxl,
     textAlign: 'center',
   },
   buttonContainer: {
     width: '100%',
-    gap: 16,
-  },
-  languageButton: {
-    backgroundColor: '#000000',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  languageButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
+    gap: skin.spacing.lg,
   },
 });
 

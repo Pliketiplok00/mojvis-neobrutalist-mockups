@@ -17,11 +17,16 @@
  */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMenu } from '../contexts/MenuContext';
+import { useUnread } from '../contexts/UnreadContext';
 import { Icon } from '../ui/Icon';
 import { skin } from '../ui/skin';
+import { H2 } from '../ui/Text';
+
+// Header badge tokens
+const { inboxBadge } = skin.components.header;
 
 export type HeaderType = 'root' | 'child' | 'inbox';
 
@@ -44,17 +49,17 @@ interface GlobalHeaderProps {
   onMenuPress?: () => void;
 
   /**
-   * Optional: Number of unread inbox messages (shows badge)
+   * @deprecated unreadCount is now sourced from UnreadContext automatically
    */
   unreadCount?: number;
 }
 
 export function GlobalHeader({
   type,
-  unreadCount = 0,
 }: GlobalHeaderProps): React.JSX.Element {
   const navigation = useNavigation();
   const { openMenu } = useMenu();
+  const { unreadCount } = useUnread();
 
   // ALWAYS open menu - no back button behavior
   const handleLeftPress = (): void => {
@@ -71,21 +76,23 @@ export function GlobalHeader({
 
   return (
     <View style={styles.container}>
-      {/* Left: ALWAYS Hamburger Menu (back navigation via iOS swipe) */}
+      {/* Left: Hamburger Menu in yellow box (V1 poster style) */}
       <TouchableOpacity
         style={styles.leftButton}
         onPress={handleLeftPress}
         accessibilityLabel="Open menu"
       >
-        <Icon name="menu" size="md" colorToken="textPrimary" />
+        <View style={styles.menuIconBox}>
+          <Icon name="menu" size="md" colorToken="textPrimary" />
+        </View>
       </TouchableOpacity>
 
       {/* Center: Always "MOJ VIS" */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>MOJ VIS</Text>
+        <H2 style={styles.title}>MOJ VIS</H2>
       </View>
 
-      {/* Right: Inbox (hidden on inbox screens) */}
+      {/* Right: Inbox in blue box (hidden on inbox screens) */}
       <TouchableOpacity
         style={[styles.rightButton, !showInboxIcon && styles.hidden]}
         onPress={handleInboxPress}
@@ -93,8 +100,8 @@ export function GlobalHeader({
         disabled={!showInboxIcon}
       >
         {showInboxIcon && (
-          <View>
-            <Icon name="inbox" size="md" colorToken="textPrimary" />
+          <View style={styles.inboxIconBox}>
+            <Icon name="inbox" size="md" color="white" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>
@@ -114,53 +121,68 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 56,
-    paddingHorizontal: skin.spacing.lg,
-    backgroundColor: skin.colors.backgroundTertiary,
-    borderBottomWidth: skin.borders.widthThin,
-    borderBottomColor: skin.colors.borderLight,
+    height: skin.components.header.height,
+    paddingHorizontal: skin.components.header.paddingHorizontal,
+    backgroundColor: skin.components.header.backgroundColor,
+    borderBottomWidth: skin.components.header.borderBottomWidth,
+    borderBottomColor: skin.components.header.borderBottomColor,
   },
   leftButton: {
-    width: 44,
-    height: 44,
     justifyContent: 'center',
     alignItems: 'flex-start',
+  },
+  // Yellow icon box for menu (V1 poster style - squared tile with thick border)
+  menuIconBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: skin.colors.warningAccent, // Yellow
+    borderWidth: skin.borders.widthCard, // Thick border per poster
+    borderColor: skin.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleContainer: {
     flex: 1,
     alignItems: 'center',
   },
   title: {
-    fontSize: skin.typography.fontSize.xl,
-    fontWeight: skin.typography.fontWeight.bold,
-    fontFamily: skin.typography.fontFamily.display.bold,
     color: skin.colors.textPrimary,
   },
   rightButton: {
-    width: 44,
-    height: 44,
     justifyContent: 'center',
     alignItems: 'flex-end',
+  },
+  // Blue icon box for inbox (V1 poster style - squared tile with thick border)
+  inboxIconBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: skin.colors.primary, // Blue
+    borderWidth: skin.borders.widthCard, // Thick border per poster
+    borderColor: skin.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   hidden: {
     opacity: 0,
   },
+  // Badge - square style for poster look (skin tokens)
   badge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: skin.colors.urgent,
-    borderRadius: skin.borders.radiusPill,
-    minWidth: 20,
-    height: 20,
+    top: inboxBadge.offsetTop,
+    right: inboxBadge.offsetRight,
+    backgroundColor: inboxBadge.backgroundColor,
+    borderWidth: inboxBadge.borderWidth,
+    borderColor: inboxBadge.borderColor,
+    minWidth: inboxBadge.minSize,
+    height: inboxBadge.minSize,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: skin.spacing.xs,
+    paddingHorizontal: inboxBadge.paddingHorizontal,
   },
   badgeText: {
-    color: skin.colors.urgentText,
-    fontSize: skin.typography.fontSize.sm,
-    fontWeight: skin.typography.fontWeight.bold,
+    color: inboxBadge.textColor,
+    fontSize: inboxBadge.fontSize,
+    fontFamily: inboxBadge.fontFamily,
   },
 });
 
