@@ -33,6 +33,18 @@
       "transport_type": "sea",
       "latitude": 43.0614,
       "longitude": 16.1839
+    },
+    {
+      "id": "stop-vis-port",
+      "name_hr": "Vis (luka)",
+      "name_en": "Vis (port)",
+      "transport_type": "sea"
+    },
+    {
+      "id": "stop-split-port",
+      "name_hr": "Split (luka)",
+      "name_en": "Split (port)",
+      "transport_type": "sea"
     }
   ],
 
@@ -754,6 +766,84 @@
               "notes_hr": "Praznik - blagdanski vozni red",
               "notes_en": "Holiday schedule"
             }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "line-602",
+      "transport_type": "sea",
+      "name_hr": "Trajekt 602 Vis – Split",
+      "name_en": "Ferry 602 Vis – Split",
+      "subtype_hr": "Trajekt",
+      "subtype_en": "Ferry",
+      "display_order": 10,
+      "contacts": [
+        {
+          "operator_hr": "Jadrolinija",
+          "operator_en": "Jadrolinija",
+          "phone": null,
+          "email": null,
+          "website": "https://www.jadrolinija.hr"
+        }
+      ],
+      "routes": [
+        {
+          "direction": 0,
+          "direction_label_hr": "Vis → Split",
+          "direction_label_en": "Vis → Split",
+          "origin_stop_id": "stop-vis-port",
+          "destination_stop_id": "stop-split-port",
+          "typical_duration_minutes": 140,
+          "stops": [
+            { "stop_id": "stop-vis-port", "stop_order": 0 },
+            { "stop_id": "stop-split-port", "stop_order": 1 }
+          ],
+          "departures": [
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "05:30", "stop_times": ["05:30", "07:50"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "09:50"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "05:30", "stop_times": ["05:30", "07:50"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "09:50"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "05:30", "stop_times": ["05:30", "07:50"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "09:50"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "05:30", "stop_times": ["05:30", "07:50"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "09:50"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "05:30", "stop_times": ["05:30", "07:50"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "09:50"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "15:30", "stop_times": ["15:30", "17:50"], "notes_hr": "Petkom posebni polazak", "notes_en": "Friday special departure" },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "16:30", "stop_times": ["16:30", "18:30"], "date_from": "2026-01-01", "date_to": "2026-02-22", "notes_hr": "Blagdani (01.01–22.02)", "notes_en": "Holidays (Jan 1–Feb 22)" },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "16:30", "stop_times": ["16:30", "18:30"], "date_from": "2026-12-06", "date_to": "2026-12-31", "notes_hr": "Blagdani (06.12–31.12)", "notes_en": "Holidays (Dec 6–Dec 31)" },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "16:30", "stop_times": ["16:30", "18:30"], "date_from": "2026-01-01", "date_to": "2026-02-22", "notes_hr": "Nedjelja (01.01–22.02)", "notes_en": "Sunday (Jan 1–Feb 22)" },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "16:30", "stop_times": ["16:30", "18:30"], "date_from": "2026-12-06", "date_to": "2026-12-31", "notes_hr": "Nedjelja (06.12–31.12)", "notes_en": "Sunday (Dec 6–Dec 31)" }
+          ]
+        },
+        {
+          "direction": 1,
+          "direction_label_hr": "Split → Vis",
+          "direction_label_en": "Split → Vis",
+          "origin_stop_id": "stop-split-port",
+          "destination_stop_id": "stop-vis-port",
+          "typical_duration_minutes": 140,
+          "stops": [
+            { "stop_id": "stop-split-port", "stop_order": 0 },
+            { "stop_id": "stop-vis-port", "stop_order": 1 }
+          ],
+          "departures": [
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "13:20"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "18:30", "stop_times": ["18:30", "20:50"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "13:20"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "18:30", "stop_times": ["18:30", "20:50"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "13:20"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "18:30", "stop_times": ["18:30", "20:50"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "13:20"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "18:30", "stop_times": ["18:30", "20:50"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "13:20"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "18:30", "stop_times": ["18:30", "20:50"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "14:00", "stop_times": ["14:00", "16:20"], "notes_hr": "Petkom posebni polazak", "notes_en": "Friday special departure" },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "19:00", "stop_times": ["19:00", "20:50"], "date_from": "2026-01-01", "date_to": "2026-02-22", "notes_hr": "Blagdani (01.01–22.02)", "notes_en": "Holidays (Jan 1–Feb 22)" },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "19:00", "stop_times": ["19:00", "20:50"], "date_from": "2026-12-06", "date_to": "2026-12-31", "notes_hr": "Blagdani (06.12–31.12)", "notes_en": "Holidays (Dec 6–Dec 31)" },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "19:00", "stop_times": ["19:00", "20:50"], "date_from": "2026-01-01", "date_to": "2026-02-22", "notes_hr": "Nedjelja (01.01–22.02)", "notes_en": "Sunday (Jan 1–Feb 22)" },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "19:00", "stop_times": ["19:00", "20:50"], "date_from": "2026-12-06", "date_to": "2026-12-31", "notes_hr": "Nedjelja (06.12–31.12)", "notes_en": "Sunday (Dec 6–Dec 31)" }
           ]
         }
       ]
