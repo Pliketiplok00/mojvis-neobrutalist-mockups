@@ -278,8 +278,8 @@ async function insertDeparture(routeUuid: string, departure: SeedDeparture): Pro
   const seasonUuid = getSeasonUuid(departure.season_type);
 
   await pool.query(
-    `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en, date_from, date_to, include_dates, exclude_dates)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
     [
       routeUuid,
       seasonUuid,
@@ -288,6 +288,10 @@ async function insertDeparture(routeUuid: string, departure: SeedDeparture): Pro
       JSON.stringify(departure.stop_times),
       departure.notes_hr ?? null,
       departure.notes_en ?? null,
+      departure.date_from ?? null,
+      departure.date_to ?? null,
+      departure.include_dates ? JSON.stringify(departure.include_dates) : null,
+      departure.exclude_dates ? JSON.stringify(departure.exclude_dates) : null,
     ]
   );
 }
