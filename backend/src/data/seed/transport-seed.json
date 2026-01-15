@@ -1,6 +1,5 @@
 {
-  "_comment": "TODO: Replace this seed data with real imported datasets. This is for Phase 4 testing only.",
-  "_format_version": "1.0",
+  "version": "1.0",
 
   "stops": [
     {
@@ -39,20 +38,20 @@
 
   "seasons": [
     {
-      "id": "season-2026-off",
+      "id": "season-2026-off-a",
       "season_type": "OFF",
       "year": 2026,
       "date_from": "2026-01-01",
-      "date_to": "2026-03-31",
-      "label_hr": "Izvan sezone",
-      "label_en": "Off season"
+      "date_to": "2026-05-28",
+      "label_hr": "Izvan sezone (zima)",
+      "label_en": "Off season (winter)"
     },
     {
       "id": "season-2026-pre",
       "season_type": "PRE",
       "year": 2026,
-      "date_from": "2026-04-01",
-      "date_to": "2026-06-14",
+      "date_from": "2026-05-29",
+      "date_to": "2026-07-02",
       "label_hr": "Predsezone",
       "label_en": "Pre-season"
     },
@@ -60,8 +59,8 @@
       "id": "season-2026-high",
       "season_type": "HIGH",
       "year": 2026,
-      "date_from": "2026-06-15",
-      "date_to": "2026-09-15",
+      "date_from": "2026-07-03",
+      "date_to": "2026-09-20",
       "label_hr": "Sezona",
       "label_en": "High season"
     },
@@ -69,10 +68,19 @@
       "id": "season-2026-post",
       "season_type": "POST",
       "year": 2026,
-      "date_from": "2026-09-16",
-      "date_to": "2026-12-31",
+      "date_from": "2026-09-21",
+      "date_to": "2026-09-27",
       "label_hr": "Postsezona",
       "label_en": "Post-season"
+    },
+    {
+      "id": "season-2026-off-b",
+      "season_type": "OFF",
+      "year": 2026,
+      "date_from": "2026-09-28",
+      "date_to": "2026-12-31",
+      "label_hr": "Izvan sezone (jesen)",
+      "label_en": "Off season (autumn)"
     }
   ],
 
