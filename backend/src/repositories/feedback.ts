@@ -310,46 +310,32 @@ export async function createFeedbackReply(
 
 /**
  * Get paginated feedback list for admin
- * Filtered by municipality scope
+ *
+ * NOTE: All admins see ALL Feedback submissions regardless of municipality.
+ * Municipality filtering was removed to enable global moderation visibility.
+ * The adminMunicipality parameter is kept for API compatibility but ignored.
  */
 export async function getFeedbackListAdmin(
   page: number = 1,
   pageSize: number = 20,
-  adminMunicipality: Municipality = null
+  _adminMunicipality: Municipality = null
 ): Promise<{ feedback: (Feedback & { reply_count: number })[]; total: number }> {
   const offset = (page - 1) * pageSize;
 
-  // Build WHERE clause based on admin scope
-  // Admin with municipality can see:
-  // - Feedback from their municipality
-  // - Feedback from visitors (municipality IS NULL)
-  // TODO: Confirm visitor visibility scope
-  let whereClause = '';
-  const params: unknown[] = [pageSize, offset];
-
-  if (adminMunicipality) {
-    whereClause = `WHERE (municipality = $3 OR municipality IS NULL)`;
-    params.push(adminMunicipality);
-  }
-
-  // Get total count (uses $1 for municipality since it's a separate query)
-  const countWhereClause = adminMunicipality ? `WHERE (municipality = $1 OR municipality IS NULL)` : '';
-  const countSql = `SELECT COUNT(*) as count FROM feedback ${countWhereClause}`;
+  // Get total count (no municipality filtering - admins see all)
   const countResult = await query<{ count: string }>(
-    countSql,
-    adminMunicipality ? [adminMunicipality] : []
+    `SELECT COUNT(*) as count FROM feedback`
   );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-  // Get paginated feedback with reply count
+  // Get paginated feedback with reply count (no municipality filtering - admins see all)
   const result = await query<FeedbackWithReplyCountRow>(
     `SELECT f.*,
             (SELECT COUNT(*) FROM feedback_replies WHERE feedback_id = f.id) as reply_count
      FROM feedback f
-     ${whereClause}
      ORDER BY f.created_at DESC
      LIMIT $1 OFFSET $2`,
-    params
+    [pageSize, offset]
   );
 
   return {

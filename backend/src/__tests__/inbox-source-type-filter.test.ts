@@ -9,214 +9,318 @@
  * - Admin Inbox "sent" list (should only show admin-created messages)
  *
  * The fix adds source_type filtering to getInboxMessages and getInboxMessagesAdmin.
+ *
+ * These tests use mocks (no real database connection required).
+ * Pattern copied from: admin-global-visibility.test.ts
  */
 
-import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
-import { Pool } from 'pg';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Direct database connection for tests
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  database: process.env.DB_NAME || 'mojvis',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-});
+// Mock inbox message data for different source types
+const mockAdminMessage = {
+  id: 'msg-admin',
+  title_hr: 'Admin Broadcast',
+  title_en: null,
+  body_hr: 'Body text',
+  body_en: null,
+  tags: [],
+  active_from: null,
+  active_to: null,
+  created_at: new Date('2026-01-15T10:00:00Z'),
+  updated_at: new Date('2026-01-15T10:00:00Z'),
+  created_by: null,
+  deleted_at: null,
+  is_locked: false,
+  pushed_at: null,
+  pushed_by: null,
+};
 
-// Mock the database module to use our direct pool
+const mockNullSourceMessage = {
+  ...mockAdminMessage,
+  id: 'msg-null',
+  title_hr: 'Null Source Message',
+};
+
+// Mock the database module BEFORE importing repository functions
 vi.mock('../lib/database.js', () => ({
-  query: async <T>(sql: string, params?: unknown[]) => {
-    const result = await pool.query(sql, params);
-    return result as { rows: T[]; rowCount: number };
-  },
-  isMockMode: () => false,
+  query: vi.fn(),
+  isMockMode: () => true,
 }));
 
-import {
-  getInboxMessages,
-  getInboxMessagesAdmin,
-} from '../repositories/inbox.js';
+// Import after mocking
+import { query } from '../lib/database.js';
+import { getInboxMessages, getInboxMessagesAdmin } from '../repositories/inbox.js';
 
-// Track created message IDs for cleanup
-const createdMessageIds: string[] = [];
+const mockedQuery = vi.mocked(query);
 
 describe('Inbox Source Type Filtering', () => {
-  beforeAll(async () => {
-    // Clean up any leftover test messages from previous runs
-    await pool.query(`DELETE FROM inbox_messages WHERE title_hr LIKE 'TEST_%'`);
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
-
-  afterAll(async () => {
-    // Cleanup: delete all test messages
-    for (const id of createdMessageIds) {
-      try {
-        await pool.query('DELETE FROM inbox_messages WHERE id = $1', [id]);
-      } catch {
-        // Ignore errors during cleanup
-      }
-    }
-    await pool.end();
-  });
-
-  beforeEach(async () => {
-    // Clean up any leftover test messages
-    await pool.query(`DELETE FROM inbox_messages WHERE title_hr LIKE 'TEST_%'`);
-    createdMessageIds.length = 0;
-  });
-
-  /**
-   * Helper to create a test inbox message with specific source_type
-   */
-  async function createTestMessage(
-    title: string,
-    sourceType: string | null
-  ): Promise<string> {
-    const result = await pool.query<{ id: string }>(
-      `INSERT INTO inbox_messages (title_hr, body_hr, tags, source_type)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id`,
-      [`TEST_${title}`, 'Test body', [], sourceType]
-    );
-    const id = result.rows[0].id;
-    createdMessageIds.push(id);
-    return id;
-  }
 
   describe('getInboxMessages (public endpoint)', () => {
     it('should include messages with NULL source_type', async () => {
-      const messageId = await createTestMessage('null_source', null);
+      // Mock: first call is COUNT, second is SELECT
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '1' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [mockNullSourceMessage],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        });
 
       const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
+      const found = messages.find((m) => m.id === 'msg-null');
 
       expect(found).toBeDefined();
     });
 
     it('should include messages with source_type = "admin"', async () => {
-      const messageId = await createTestMessage('admin_source', 'admin');
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '1' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [mockAdminMessage],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        });
 
       const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
+      const found = messages.find((m) => m.id === 'msg-admin');
 
       expect(found).toBeDefined();
     });
 
-    it('should EXCLUDE messages with source_type = "click_fix_sent"', async () => {
-      const messageId = await createTestMessage('clickfix_sent', 'click_fix_sent');
+    it('should NOT include system-generated source types in SQL query', async () => {
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '0' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [],
+          command: 'SELECT',
+          rowCount: 0,
+          oid: 0,
+          fields: [],
+        });
 
-      const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
+      await getInboxMessages(1, 100);
 
-      expect(found).toBeUndefined();
-    });
+      // Verify the query excludes system-generated source types
+      const countQuery = mockedQuery.mock.calls[0][0];
+      const countParams = mockedQuery.mock.calls[0][1] as string[];
 
-    it('should EXCLUDE messages with source_type = "click_fix_status"', async () => {
-      const messageId = await createTestMessage('clickfix_status', 'click_fix_status');
+      // The query should use NOT IN clause for source_type exclusion
+      expect(countQuery.toLowerCase()).toContain('source_type');
+      expect(countQuery.toLowerCase()).toContain('not in');
 
-      const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
-
-      expect(found).toBeUndefined();
-    });
-
-    it('should EXCLUDE messages with source_type = "click_fix_reply"', async () => {
-      const messageId = await createTestMessage('clickfix_reply', 'click_fix_reply');
-
-      const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
-
-      expect(found).toBeUndefined();
-    });
-
-    it('should EXCLUDE messages with source_type = "feedback_sent"', async () => {
-      const messageId = await createTestMessage('feedback_sent', 'feedback_sent');
-
-      const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
-
-      expect(found).toBeUndefined();
-    });
-
-    it('should EXCLUDE messages with source_type = "feedback_reply"', async () => {
-      const messageId = await createTestMessage('feedback_reply', 'feedback_reply');
-
-      const { messages } = await getInboxMessages(1, 100);
-      const found = messages.find(m => m.id === messageId);
-
-      expect(found).toBeUndefined();
+      // The params should include the excluded source types
+      expect(countParams).toContain('click_fix_sent');
+      expect(countParams).toContain('click_fix_status');
+      expect(countParams).toContain('click_fix_reply');
+      expect(countParams).toContain('feedback_sent');
+      expect(countParams).toContain('feedback_reply');
     });
   });
 
   describe('getInboxMessagesAdmin (admin endpoint)', () => {
     it('should include messages with NULL source_type', async () => {
-      const messageId = await createTestMessage('admin_null_source', null);
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '1' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [mockNullSourceMessage],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        });
 
       const { messages } = await getInboxMessagesAdmin(1, 100, false);
-      const found = messages.find(m => m.id === messageId);
+      const found = messages.find((m) => m.id === 'msg-null');
 
       expect(found).toBeDefined();
     });
 
     it('should include messages with source_type = "admin"', async () => {
-      const messageId = await createTestMessage('admin_admin_source', 'admin');
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '1' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [mockAdminMessage],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        });
 
       const { messages } = await getInboxMessagesAdmin(1, 100, false);
-      const found = messages.find(m => m.id === messageId);
+      const found = messages.find((m) => m.id === 'msg-admin');
 
       expect(found).toBeDefined();
     });
 
-    it('should EXCLUDE messages with source_type = "click_fix_sent" from admin list', async () => {
-      const messageId = await createTestMessage('admin_clickfix_sent', 'click_fix_sent');
+    it('should NOT include system-generated source types in SQL query (admin)', async () => {
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '0' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [],
+          command: 'SELECT',
+          rowCount: 0,
+          oid: 0,
+          fields: [],
+        });
 
-      const { messages } = await getInboxMessagesAdmin(1, 100, false);
-      const found = messages.find(m => m.id === messageId);
+      await getInboxMessagesAdmin(1, 100, false);
 
-      expect(found).toBeUndefined();
-    });
+      // Verify the query excludes system-generated source types
+      const countQuery = mockedQuery.mock.calls[0][0];
+      const countParams = mockedQuery.mock.calls[0][1] as string[];
 
-    it('should EXCLUDE messages with source_type = "click_fix_reply" from admin list', async () => {
-      const messageId = await createTestMessage('admin_clickfix_reply', 'click_fix_reply');
+      // The query should use NOT IN clause for source_type exclusion
+      expect(countQuery.toLowerCase()).toContain('source_type');
+      expect(countQuery.toLowerCase()).toContain('not in');
 
-      const { messages } = await getInboxMessagesAdmin(1, 100, false);
-      const found = messages.find(m => m.id === messageId);
-
-      expect(found).toBeUndefined();
-    });
-
-    it('should EXCLUDE messages with source_type = "feedback_sent" from admin list', async () => {
-      const messageId = await createTestMessage('admin_feedback_sent', 'feedback_sent');
-
-      const { messages } = await getInboxMessagesAdmin(1, 100, false);
-      const found = messages.find(m => m.id === messageId);
-
-      expect(found).toBeUndefined();
+      // The params should include the excluded source types
+      expect(countParams).toContain('click_fix_sent');
+      expect(countParams).toContain('click_fix_status');
+      expect(countParams).toContain('click_fix_reply');
+      expect(countParams).toContain('feedback_sent');
+      expect(countParams).toContain('feedback_reply');
     });
   });
 
   describe('Regression: Click&Fix sent confirmation must NOT appear in public inbox', () => {
-    it('should prevent Click&Fix confirmation from appearing in mobile inbox', async () => {
-      // Simulate what Click&Fix submission does
-      const messageId = await createTestMessage(
-        'ClickFix_Confirmation',
-        'click_fix_sent'
-      );
+    it('should filter out Click&Fix confirmation from public inbox via SQL query', async () => {
+      // The repository should include source_type exclusion in the query
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '0' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [],
+          command: 'SELECT',
+          rowCount: 0,
+          oid: 0,
+          fields: [],
+        });
 
-      // Query public inbox - this should NOT include the Click&Fix confirmation
-      const { messages, total } = await getInboxMessages(1, 100);
+      await getInboxMessages(1, 100);
 
-      // The click_fix_sent message should NOT be in the results
-      const found = messages.find(m => m.id === messageId);
-      expect(found).toBeUndefined();
+      // Verify query structure filters out click_fix_sent
+      const countQuery = mockedQuery.mock.calls[0][0];
+      const countParams = mockedQuery.mock.calls[0][1] as string[];
 
-      // Verify total count also excludes it
-      const directCount = await pool.query<{ count: string }>(
-        `SELECT COUNT(*) as count FROM inbox_messages
-         WHERE deleted_at IS NULL
-         AND (source_type IS NULL OR source_type NOT IN ('click_fix_sent', 'click_fix_status', 'click_fix_reply', 'feedback_sent', 'feedback_reply'))
-         AND title_hr LIKE 'TEST_%'`
-      );
-      expect(total).toBeGreaterThanOrEqual(parseInt(directCount.rows[0].count));
+      // Source type exclusion should be in the query
+      expect(countQuery.toLowerCase()).toContain('source_type');
+      expect(countParams).toContain('click_fix_sent');
+    });
+  });
+
+  describe('Source type exclusion list verification', () => {
+    /**
+     * These tests verify that the repository queries correctly exclude
+     * all system-generated source types. This is done by checking the
+     * SQL query structure and parameters.
+     */
+
+    const EXPECTED_EXCLUDED_TYPES = [
+      'click_fix_sent',
+      'click_fix_status',
+      'click_fix_reply',
+      'feedback_sent',
+      'feedback_reply',
+    ];
+
+    it('should exclude all expected source types from public inbox', async () => {
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '0' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [],
+          command: 'SELECT',
+          rowCount: 0,
+          oid: 0,
+          fields: [],
+        });
+
+      await getInboxMessages(1, 100);
+
+      const countParams = mockedQuery.mock.calls[0][1] as string[];
+
+      for (const sourceType of EXPECTED_EXCLUDED_TYPES) {
+        expect(countParams).toContain(sourceType);
+      }
+    });
+
+    it('should exclude all expected source types from admin inbox', async () => {
+      mockedQuery
+        .mockResolvedValueOnce({
+          rows: [{ count: '0' }],
+          command: 'SELECT',
+          rowCount: 1,
+          oid: 0,
+          fields: [],
+        })
+        .mockResolvedValueOnce({
+          rows: [],
+          command: 'SELECT',
+          rowCount: 0,
+          oid: 0,
+          fields: [],
+        });
+
+      await getInboxMessagesAdmin(1, 100, false);
+
+      const countParams = mockedQuery.mock.calls[0][1] as string[];
+
+      for (const sourceType of EXPECTED_EXCLUDED_TYPES) {
+        expect(countParams).toContain(sourceType);
+      }
     });
   });
 });

@@ -430,48 +430,36 @@ export async function createClickFixReply(
 
 /**
  * Get paginated Click & Fix list for admin
- * Filtered by municipality scope
+ *
+ * NOTE: All admins see ALL Click&Fix submissions regardless of municipality.
+ * Municipality filtering was removed to enable global moderation visibility.
+ * The adminMunicipality parameter is kept for API compatibility but ignored.
  */
 export async function getClickFixListAdmin(
   page: number = 1,
   pageSize: number = 20,
-  adminMunicipality: Municipality = null
+  _adminMunicipality: Municipality = null
 ): Promise<{
   items: (ClickFix & { photo_count: number; reply_count: number })[];
   total: number;
 }> {
   const offset = (page - 1) * pageSize;
 
-  // Build WHERE clause based on admin scope
-  let whereClause = '';
-  const countParams: unknown[] = [];
-  const params: unknown[] = [pageSize, offset];
-
-  if (adminMunicipality) {
-    whereClause = `WHERE (municipality = $1 OR municipality IS NULL)`;
-    countParams.push(adminMunicipality);
-    params.push(adminMunicipality);
-  }
-
-  // Get total count
-  const countSql = `SELECT COUNT(*) as count FROM click_fix ${whereClause}`;
-  const countResult = await query<{ count: string }>(countSql, countParams);
+  // Get total count (no municipality filtering - admins see all)
+  const countResult = await query<{ count: string }>(
+    `SELECT COUNT(*) as count FROM click_fix`
+  );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-  // Get paginated items with counts
-  const whereWithOffset = adminMunicipality
-    ? `WHERE (municipality = $3 OR municipality IS NULL)`
-    : '';
-
+  // Get paginated items with counts (no municipality filtering - admins see all)
   const result = await query<ClickFixWithCountsRow>(
     `SELECT cf.*,
             (SELECT COUNT(*) FROM click_fix_photos WHERE click_fix_id = cf.id) as photo_count,
             (SELECT COUNT(*) FROM click_fix_replies WHERE click_fix_id = cf.id) as reply_count
      FROM click_fix cf
-     ${whereWithOffset}
      ORDER BY cf.created_at DESC
      LIMIT $1 OFFSET $2`,
-    params
+    [pageSize, offset]
   );
 
   return {
