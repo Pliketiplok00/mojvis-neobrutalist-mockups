@@ -27,11 +27,32 @@ interface InboxMessageRow {
   pushed_by: string | null;
 }
 
+// Source types that should NOT appear in public inbox list
+// These are system-generated messages (confirmations, status updates, replies)
+const EXCLUDED_SOURCE_TYPES_PUBLIC = [
+  'click_fix_sent',
+  'click_fix_status',
+  'click_fix_reply',
+  'feedback_sent',
+  'feedback_reply',
+];
+
+// Source types that should NOT appear in admin inbox list
+// Admin inbox shows admin-managed broadcast messages only
+const EXCLUDED_SOURCE_TYPES_ADMIN = [
+  'click_fix_sent',
+  'click_fix_status',
+  'click_fix_reply',
+  'feedback_sent',
+  'feedback_reply',
+];
+
 /**
  * Get paginated list of inbox messages (excludes soft-deleted)
  * Ordered by created_at descending (newest first)
  *
  * NOTE: This is for PUBLIC endpoints. Soft-deleted messages are excluded.
+ * NOTE: System-generated messages (Click&Fix, Feedback confirmations/replies) are excluded.
  */
 export async function getInboxMessages(
   page: number = 1,
@@ -39,22 +60,26 @@ export async function getInboxMessages(
 ): Promise<{ messages: InboxMessage[]; total: number }> {
   const offset = (page - 1) * pageSize;
 
-  // Get total count (excluding soft-deleted)
+  // Build exclusion clause for source_type
+  const excludeClause = `(source_type IS NULL OR source_type NOT IN (${EXCLUDED_SOURCE_TYPES_PUBLIC.map((_, i) => `$${i + 1}`).join(', ')}))`;
+
+  // Get total count (excluding soft-deleted and system-generated)
   const countResult = await query<{ count: string }>(
-    'SELECT COUNT(*) as count FROM inbox_messages WHERE deleted_at IS NULL'
+    `SELECT COUNT(*) as count FROM inbox_messages WHERE deleted_at IS NULL AND ${excludeClause}`,
+    EXCLUDED_SOURCE_TYPES_PUBLIC
   );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-  // Get paginated messages (excluding soft-deleted)
+  // Get paginated messages (excluding soft-deleted and system-generated)
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
-     WHERE deleted_at IS NULL
+     WHERE deleted_at IS NULL AND ${excludeClause}
      ORDER BY created_at DESC
-     LIMIT $1 OFFSET $2`,
-    [pageSize, offset]
+     LIMIT $${EXCLUDED_SOURCE_TYPES_PUBLIC.length + 1} OFFSET $${EXCLUDED_SOURCE_TYPES_PUBLIC.length + 2}`,
+    [...EXCLUDED_SOURCE_TYPES_PUBLIC, pageSize, offset]
   );
 
   return {
@@ -259,6 +284,9 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
  *   - true: only archived (deleted_at IS NOT NULL)
  *   - false: only active (deleted_at IS NULL)
  *   - undefined: all messages
+ *
+ * NOTE: System-generated messages (Click&Fix, Feedback confirmations/replies) are excluded.
+ * These appear in their respective admin sections (Click&Fix, Feedback).
  */
 export async function getInboxMessagesAdmin(
   page: number = 1,
@@ -267,18 +295,23 @@ export async function getInboxMessagesAdmin(
 ): Promise<{ messages: InboxMessage[]; total: number }> {
   const offset = (page - 1) * pageSize;
 
+  // Build exclusion clause for source_type
+  const excludeClause = `(source_type IS NULL OR source_type NOT IN (${EXCLUDED_SOURCE_TYPES_ADMIN.map((_, i) => `$${i + 1}`).join(', ')}))`;
+  const excludeParams = [...EXCLUDED_SOURCE_TYPES_ADMIN];
+
   // Build WHERE clause based on archived filter
-  let whereClause = '';
+  let archivedClause = '';
   if (archived === true) {
-    whereClause = 'WHERE deleted_at IS NOT NULL';
+    archivedClause = 'AND deleted_at IS NOT NULL';
   } else if (archived === false) {
-    whereClause = 'WHERE deleted_at IS NULL';
+    archivedClause = 'AND deleted_at IS NULL';
   }
-  // If undefined, no WHERE clause (returns all)
+  // If undefined, no archived filter (returns all)
 
   // Get total count
   const countResult = await query<{ count: string }>(
-    `SELECT COUNT(*) as count FROM inbox_messages ${whereClause}`
+    `SELECT COUNT(*) as count FROM inbox_messages WHERE ${excludeClause} ${archivedClause}`,
+    excludeParams
   );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
@@ -288,10 +321,10 @@ export async function getInboxMessagesAdmin(
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
             is_locked, pushed_at, pushed_by
      FROM inbox_messages
-     ${whereClause}
+     WHERE ${excludeClause} ${archivedClause}
      ORDER BY created_at DESC
-     LIMIT $1 OFFSET $2`,
-    [pageSize, offset]
+     LIMIT $${excludeParams.length + 1} OFFSET $${excludeParams.length + 2}`,
+    [...excludeParams, pageSize, offset]
   );
 
   return {
