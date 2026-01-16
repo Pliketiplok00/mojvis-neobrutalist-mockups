@@ -6,27 +6,36 @@
  *
  * Previously, admins could only see items from their own municipality.
  * This was changed to allow global moderation visibility for all admins.
+ *
+ * NOTE: These are integration tests that require a running PostgreSQL database.
+ * They are automatically skipped in CI where PostgreSQL is not available.
  */
 
 import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
 import { Pool } from 'pg';
 
-// Direct database connection for tests
-const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  database: process.env.DB_NAME || 'mojvis',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-});
+// Check if PostgreSQL is available (skip in CI where DB_PATH=:memory: is set)
+const isPostgresAvailable = !process.env.DB_PATH;
+
+// Direct database connection for tests (only created if PostgreSQL is available)
+const pool = isPostgresAvailable
+  ? new Pool({
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432', 10),
+      database: process.env.DB_NAME || 'mojvis',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+    })
+  : (null as unknown as Pool);
 
 // Mock the database module to use our direct pool
 vi.mock('../lib/database.js', () => ({
   query: async <T>(sql: string, params?: unknown[]) => {
+    if (!pool) throw new Error('PostgreSQL not available');
     const result = await pool.query(sql, params);
     return result as { rows: T[]; rowCount: number };
   },
-  isMockMode: () => false,
+  isMockMode: () => !isPostgresAvailable,
 }));
 
 import { getClickFixListAdmin } from '../repositories/click-fix.js';
@@ -36,7 +45,7 @@ import { getFeedbackListAdmin } from '../repositories/feedback.js';
 const createdClickFixIds: string[] = [];
 const createdFeedbackIds: string[] = [];
 
-describe('Admin Global Visibility', () => {
+describe.skipIf(!isPostgresAvailable)('Admin Global Visibility', () => {
   beforeAll(async () => {
     // Clean up any leftover test data from previous runs
     await pool.query(`DELETE FROM click_fix WHERE subject LIKE 'TEST_GLOBAL_%'`);
