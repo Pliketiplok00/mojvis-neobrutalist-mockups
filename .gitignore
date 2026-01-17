@@ -29,3 +29,7 @@ admin/e2e-report/
 admin/playwright-report/
 backend/uploads/
 **/.expo/
+
+# Local database backups
+transport-safe-*.sql
+transport-safe-*.sql.sha256
