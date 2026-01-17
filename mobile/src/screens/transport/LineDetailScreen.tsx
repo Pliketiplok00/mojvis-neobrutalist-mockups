@@ -354,15 +354,23 @@ export function LineDetailScreen({
               <ActivityIndicator size="small" color={colors.textSecondary} />
             </View>
           ) : departures && departures.departures.length > 0 ? (
-            <View style={styles.departuresList}>
-              {departures.departures.map((dep) => (
-                <DepartureItem
-                  key={dep.id}
-                  departure={dep}
-                  transportType={transportType}
-                />
-              ))}
-            </View>
+            <>
+              <View style={styles.departuresList}>
+                {departures.departures.map((dep) => (
+                  <DepartureItem
+                    key={dep.id}
+                    departure={dep}
+                    transportType={transportType}
+                  />
+                ))}
+              </View>
+              {/* Marker Note (displayed below departures list) */}
+              {departures.marker_note && (
+                <View style={styles.markerNoteContainer}>
+                  <Meta style={styles.markerNoteText}>{departures.marker_note}</Meta>
+                </View>
+              )}
+            </>
           ) : (
             <View style={styles.emptyState}>
               <Icon name="calendar" size="lg" colorToken="textMuted" />
@@ -672,6 +680,14 @@ const styles = StyleSheet.create({
   },
   departuresList: {
     gap: lineDetail.departureRowGap,
+  },
+  markerNoteContainer: {
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.sm,
+  },
+  markerNoteText: {
+    color: colors.textSecondary,
+    fontStyle: 'italic',
   },
   emptyState: {
     padding: spacing.xxl,

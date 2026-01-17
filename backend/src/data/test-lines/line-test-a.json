@@ -48,6 +48,8 @@
           "origin_stop_id": "stop-test-a1",
           "destination_stop_id": "stop-test-a2",
           "typical_duration_minutes": 30,
+          "marker_note_hr": "* samo radnim danom",
+          "marker_note_en": "* weekdays only",
           "stops": [
             { "stop_id": "stop-test-a1", "stop_order": 0 },
             { "stop_id": "stop-test-a2", "stop_order": 1 }
@@ -57,7 +59,8 @@
               "day_type": "MON",
               "season_type": "OFF",
               "departure_time": "08:00",
-              "stop_times": ["08:00", "08:30"]
+              "stop_times": ["08:00", "08:30"],
+              "marker": "*"
             },
             {
               "day_type": "TUE",

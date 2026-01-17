@@ -63,6 +63,7 @@ export interface RouteInfo {
   destination: string;
   stops: StopInfo[];
   typical_duration_minutes: number | null;
+  marker_note: string | null; // Explanation of markers (localized)
 }
 
 /**
@@ -104,6 +105,7 @@ export interface DepartureResponse {
   destination: string;
   duration_minutes: number | null;
   notes: string | null;
+  marker: string | null; // Optional marker symbol (e.g., "*", "†")
   stop_times: DepartureStopTime[];
 }
 
@@ -119,6 +121,7 @@ export interface DeparturesListResponse {
   date: string;
   day_type: DayType;
   is_holiday: boolean;
+  marker_note: string | null; // Route-level explanation of markers
   departures: DepartureResponse[];
 }
 
@@ -132,6 +135,7 @@ export interface TodayDepartureItem {
   route_id: string;
   direction_label: string;
   destination: string;
+  marker: string | null; // Optional marker symbol (e.g., "*", "†")
 }
 
 /**

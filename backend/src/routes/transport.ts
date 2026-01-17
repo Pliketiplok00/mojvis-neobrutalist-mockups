@@ -161,6 +161,10 @@ function createTransportRoutes(transportType: TransportType) {
                   order: i,
                 })),
                 typical_duration_minutes: route.typical_duration_minutes,
+                marker_note:
+                  language === 'en'
+                    ? route.marker_note_en
+                    : route.marker_note_hr,
               };
             })
           );
@@ -271,6 +275,7 @@ function createTransportRoutes(transportType: TransportType) {
             destination,
             duration_minutes: durationMinutes ?? route.typical_duration_minutes,
             notes: language === 'en' ? dep.notes_en : dep.notes_hr,
+            marker: dep.marker ?? null,
             stop_times: stopTimes,
           };
         });
@@ -287,6 +292,10 @@ function createTransportRoutes(transportType: TransportType) {
           date: dateStr,
           day_type: dayType,
           is_holiday: holiday,
+          marker_note:
+            language === 'en'
+              ? route.marker_note_en
+              : route.marker_note_hr,
           departures: departureResponses,
         };
 
@@ -337,6 +346,7 @@ function createTransportRoutes(transportType: TransportType) {
                   : dep.direction_label_hr,
               destination:
                 language === 'en' ? dep.destination_en : dep.destination_hr,
+              marker: dep.marker ?? null,
             })),
           };
 

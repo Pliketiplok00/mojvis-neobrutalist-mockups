@@ -64,6 +64,8 @@ interface RouteRow {
   origin_stop_id: string;
   destination_stop_id: string;
   typical_duration_minutes: number | null;
+  marker_note_hr: string | null;
+  marker_note_en: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -84,6 +86,7 @@ interface DepartureRow {
   stop_times: string; // JSONB stored as string
   notes_hr: string | null;
   notes_en: string | null;
+  marker: string | null; // Optional marker symbol (e.g., "*")
   // Date exception fields
   date_from: string | null; // DATE stored as string
   date_to: string | null; // DATE stored as string
@@ -328,7 +331,7 @@ export async function getDeparturesForRouteAndDate(
     `SELECT id, route_id, season_id, day_type,
             departure_time::TEXT as departure_time,
             stop_times::TEXT as stop_times,
-            notes_hr, notes_en,
+            notes_hr, notes_en, marker,
             date_from::TEXT as date_from,
             date_to::TEXT as date_to,
             include_dates::TEXT as include_dates,
@@ -373,6 +376,7 @@ export async function getTodaysDepartures(
     direction_label_en: string;
     destination_hr: string;
     destination_en: string;
+    marker: string | null;
   }>;
   dayType: DayType;
   isHoliday: boolean;
@@ -397,6 +401,7 @@ export async function getTodaysDepartures(
     direction_label_en: string;
     destination_hr: string;
     destination_en: string;
+    marker: string | null;
     // Date exception fields for filtering
     date_from: string | null;
     date_to: string | null;
@@ -413,6 +418,7 @@ export async function getTodaysDepartures(
        r.direction_label_en,
        dest.name_hr as destination_hr,
        dest.name_en as destination_en,
+       d.marker,
        d.date_from::TEXT as date_from,
        d.date_to::TEXT as date_to,
        d.include_dates::TEXT as include_dates,
@@ -452,6 +458,7 @@ export async function getTodaysDepartures(
     direction_label_en: row.direction_label_en,
     destination_hr: row.destination_hr,
     destination_en: row.destination_en,
+    marker: row.marker,
   }));
 
   return {
@@ -572,6 +579,8 @@ function rowToRoute(row: RouteRow): TransportRoute {
     origin_stop_id: row.origin_stop_id,
     destination_stop_id: row.destination_stop_id,
     typical_duration_minutes: row.typical_duration_minutes,
+    marker_note_hr: row.marker_note_hr,
+    marker_note_en: row.marker_note_en,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
@@ -600,6 +609,7 @@ function rowToDeparture(row: DepartureRow): TransportDeparture {
     stop_times: JSON.parse(row.stop_times) as (string | null)[],
     notes_hr: row.notes_hr,
     notes_en: row.notes_en,
+    marker: row.marker,
     // Date exception fields
     date_from: row.date_from,
     date_to: row.date_to,

@@ -89,6 +89,8 @@ export interface TransportRoute {
   origin_stop_id: string;
   destination_stop_id: string;
   typical_duration_minutes: number | null;
+  marker_note_hr: string | null; // Explanation of markers (e.g., "* samo radnim danom")
+  marker_note_en: string | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -120,6 +122,7 @@ export interface TransportDeparture {
   stop_times: (string | null)[]; // Array of HH:MM or null (null = skipped)
   notes_hr: string | null;
   notes_en: string | null;
+  marker: string | null; // Optional marker symbol (e.g., "*", "†")
   // Date-based exception fields (all optional, backward-compatible)
   date_from: string | null; // YYYY-MM-DD
   date_to: string | null; // YYYY-MM-DD
@@ -172,6 +175,7 @@ export interface RouteInfo {
   destination: string;
   stops: StopInfo[];
   typical_duration_minutes: number | null;
+  marker_note: string | null; // Explanation of markers (localized)
 }
 
 /**
@@ -212,6 +216,7 @@ export interface DepartureResponse {
   destination: string;
   duration_minutes: number | null;
   notes: string | null;
+  marker: string | null; // Optional marker symbol (e.g., "*", "†")
   // Only stops where vessel STOPS (no null times, no placeholders)
   stop_times: DepartureStopTime[];
 }
@@ -228,6 +233,7 @@ export interface DeparturesListResponse {
   date: string; // YYYY-MM-DD
   day_type: DayType;
   is_holiday: boolean;
+  marker_note: string | null; // Route-level explanation of markers (localized)
   departures: DepartureResponse[];
 }
 
@@ -241,6 +247,7 @@ export interface TodayDepartureItem {
   route_id: string;
   direction_label: string;
   destination: string;
+  marker: string | null; // Optional marker symbol (e.g., "*", "†")
 }
 
 /**
@@ -371,6 +378,7 @@ export interface SeedDeparture {
   stop_times: (string | null)[]; // aligned to route stops
   notes_hr?: string;
   notes_en?: string;
+  marker?: string; // Optional marker symbol (e.g., "*", "†")
   // Date-based exception fields (all optional, backward-compatible)
   date_from?: string; // YYYY-MM-DD - departure valid from this date
   date_to?: string; // YYYY-MM-DD - departure valid until this date
@@ -385,6 +393,8 @@ export interface SeedRoute {
   origin_stop_id: string;
   destination_stop_id: string;
   typical_duration_minutes?: number;
+  marker_note_hr?: string; // Explanation of markers (e.g., "* samo radnim danom")
+  marker_note_en?: string;
   stops: SeedRouteStop[];
   departures: SeedDeparture[];
 }
