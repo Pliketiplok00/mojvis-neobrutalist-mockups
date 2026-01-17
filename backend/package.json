@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "purge:inbox": "tsx scripts/purge-inbox-dev.ts"
+    "purge:inbox": "tsx scripts/purge-inbox-dev.ts",
+    "transport:import": "tsx scripts/transport-import.ts"
   },
   "keywords": [
     "mojvis",

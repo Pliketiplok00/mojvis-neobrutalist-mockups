@@ -1,0 +1,66 @@
+{
+  "stops": [
+    {
+      "id": "stop-test-b1",
+      "name_hr": "Test Stop B1",
+      "name_en": "Test Stop B1",
+      "transport_type": "sea"
+    },
+    {
+      "id": "stop-test-b2",
+      "name_hr": "Test Stop B2",
+      "name_en": "Test Stop B2",
+      "transport_type": "sea"
+    }
+  ],
+  "seasons": [
+    {
+      "id": "season-test-off-2026",
+      "season_type": "OFF",
+      "year": 2026,
+      "date_from": "2026-01-01",
+      "date_to": "2026-05-28",
+      "label_hr": "Test Izvan sezone",
+      "label_en": "Test Off season"
+    }
+  ],
+  "lines": [
+    {
+      "id": "line-test-b",
+      "transport_type": "sea",
+      "name_hr": "Test Linija B",
+      "name_en": "Test Line B",
+      "subtype_hr": "Test",
+      "subtype_en": "Test",
+      "display_order": 101,
+      "contacts": [
+        {
+          "operator_hr": "Test Operator B",
+          "operator_en": "Test Operator B"
+        }
+      ],
+      "routes": [
+        {
+          "direction": 0,
+          "direction_label_hr": "B1 → B2",
+          "direction_label_en": "B1 → B2",
+          "origin_stop_id": "stop-test-b1",
+          "destination_stop_id": "stop-test-b2",
+          "typical_duration_minutes": 45,
+          "stops": [
+            { "stop_id": "stop-test-b1", "stop_order": 0 },
+            { "stop_id": "stop-test-b2", "stop_order": 1 }
+          ],
+          "departures": [
+            {
+              "day_type": "MON",
+              "season_type": "OFF",
+              "departure_time": "10:00",
+              "stop_times": ["10:00", "10:45"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
