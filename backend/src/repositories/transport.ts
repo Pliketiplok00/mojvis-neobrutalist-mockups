@@ -391,6 +391,7 @@ export async function getTodaysDepartures(
   }
 
   // Extended query to include date exception fields for filtering
+  // Filter: only island-origin departures (origin stop = Vis)
   const result = await query<{
     departure_time: string;
     line_id: string;
@@ -427,10 +428,12 @@ export async function getTodaysDepartures(
      JOIN transport_routes r ON d.route_id = r.id
      JOIN transport_lines l ON r.line_id = l.id
      JOIN transport_stops dest ON r.destination_stop_id = dest.id
+     JOIN transport_stops origin ON r.origin_stop_id = origin.id
      WHERE l.transport_type = $1
        AND l.is_active = TRUE
        AND d.season_id = $2
        AND d.day_type = $3
+       AND origin.name_hr = 'Vis'
      ORDER BY d.departure_time`,
     [transportType, season.id, dayType]
   );
