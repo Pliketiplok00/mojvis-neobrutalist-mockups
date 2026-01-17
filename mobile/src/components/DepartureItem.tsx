@@ -90,6 +90,12 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
   const hasStopTimes = departure.stop_times.length > 0;
   const departureTimeFormatted = formatTime(departure.departure_time);
 
+  // Derive origin from first stop, destination from last stop or explicit destination field
+  const origin = hasStopTimes ? departure.stop_times[0].stop_name : null;
+  const destination = departure.destination;
+  // Format as "Origin → Destination" if origin is available, otherwise just destination
+  const directionLabel = origin ? `${origin} → ${destination}` : destination;
+
   // Get transport-type-specific colors
   const timeBlockBackground = transportType === 'sea'
     ? lineDetail.timeBlockBackgroundSea
@@ -121,7 +127,7 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
           {/* Info Section */}
           <View style={styles.infoSection}>
             <Label style={styles.destination} numberOfLines={1}>
-              {departure.destination}
+              {directionLabel}
             </Label>
             <View style={styles.metaRow}>
               {departure.duration_minutes && (
