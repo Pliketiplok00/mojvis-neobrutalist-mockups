@@ -752,8 +752,8 @@ async function importLine(
     const destUuid = seedIdToUuid(route.destination_stop_id);
 
     await client.query(
-      `INSERT INTO transport_routes (id, line_id, direction, direction_label_hr, direction_label_en, origin_stop_id, destination_stop_id, typical_duration_minutes)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      `INSERT INTO transport_routes (id, line_id, direction, direction_label_hr, direction_label_en, origin_stop_id, destination_stop_id, typical_duration_minutes, marker_note_hr, marker_note_en)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
         routeUuid,
         lineUuid,
@@ -763,6 +763,8 @@ async function importLine(
         originUuid,
         destUuid,
         route.typical_duration_minutes ?? null,
+        route.marker_note_hr ?? null,
+        route.marker_note_en ?? null,
       ]
     );
 
@@ -791,8 +793,8 @@ async function importLine(
       const seasonUuid = seasonResult.rows[0].id;
 
       await client.query(
-        `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en, date_from, date_to, include_dates, exclude_dates)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+        `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en, marker, date_from, date_to, include_dates, exclude_dates)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
         [
           routeUuid,
           seasonUuid,
@@ -801,6 +803,7 @@ async function importLine(
           JSON.stringify(dep.stop_times),
           dep.notes_hr ?? null,
           dep.notes_en ?? null,
+          dep.marker ?? null,
           dep.date_from ?? null,
           dep.date_to ?? null,
           dep.include_dates ? JSON.stringify(dep.include_dates) : null,

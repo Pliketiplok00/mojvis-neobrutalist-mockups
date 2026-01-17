@@ -112,7 +112,10 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
         <View style={styles.header}>
           {/* Time Block */}
           <View style={[styles.timeBlock, { backgroundColor: timeBlockBackground }]}>
-            <H2 style={styles.departureTime}>{departureTimeFormatted}</H2>
+            <H2 style={styles.departureTime}>
+              {departureTimeFormatted}
+              {departure.marker ? ` ${departure.marker}` : ''}
+            </H2>
           </View>
 
           {/* Info Section */}
