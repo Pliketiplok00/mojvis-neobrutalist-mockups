@@ -8,15 +8,15 @@ interface MainMenuProps {
 }
 
 const menuItems = [
-  { icon: Home, labelKey: "menu.home", path: "/home", color: "bg-accent" },
-  { icon: Calendar, labelKey: "menu.events", path: "/events", color: "bg-primary" },
-  { icon: Clock, labelKey: "menu.timetables", path: "/transport", color: "bg-secondary" },
-  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", color: "bg-lavender" },
-  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", color: "bg-destructive" },
-  { icon: Leaf, labelKey: "menu.flora", path: "/flora", color: "bg-primary" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", color: "bg-secondary" },
-  { icon: Info, labelKey: "menu.info", path: "/info", color: "bg-accent" },
-  { icon: Settings, labelKey: "menu.settings", path: "/settings", color: "bg-muted" },
+  { icon: Home, labelKey: "menu.home", path: "/home", hoverColor: "group-hover:bg-accent" },
+  { icon: Calendar, labelKey: "menu.events", path: "/events", hoverColor: "group-hover:bg-primary" },
+  { icon: Clock, labelKey: "menu.timetables", path: "/transport", hoverColor: "group-hover:bg-secondary" },
+  { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", hoverColor: "group-hover:bg-lavender" },
+  { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", hoverColor: "group-hover:bg-destructive" },
+  { icon: Leaf, labelKey: "menu.flora", path: "/flora", hoverColor: "group-hover:bg-primary" },
+  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", hoverColor: "group-hover:bg-secondary" },
+  { icon: Info, labelKey: "menu.info", path: "/info", hoverColor: "group-hover:bg-accent" },
+  { icon: Settings, labelKey: "menu.settings", path: "/settings", hoverColor: "group-hover:bg-muted" },
 ];
 
 export function MainMenu({ isOpen, onClose }: MainMenuProps) {
@@ -82,11 +82,11 @@ export function MainMenu({ isOpen, onClose }: MainMenuProps) {
                   <div className={`absolute inset-0 translate-x-1.5 translate-y-1.5 ${isActive ? 'bg-primary' : 'bg-foreground/20'}`} />
                   <button
                     onClick={() => handleNavigation(item.path)}
-                    className={`relative flex w-full items-center gap-3 border-2 border-foreground p-3 text-left transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1 ${
+                    className={`group relative flex w-full items-center gap-3 border-2 border-foreground p-3 text-left transition-transform hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-1 active:translate-y-1 ${
                       isActive ? "bg-accent" : "bg-background"
                     }`}
                   >
-                    <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground ${item.color} shrink-0`}>
+                    <div className={`flex h-10 w-10 items-center justify-center border-2 border-foreground bg-background shrink-0 transition-colors ${item.hoverColor}`}>
                       <item.icon className="h-5 w-5 text-foreground" strokeWidth={2} />
                     </div>
                     <span className="flex-1 font-display text-sm font-bold uppercase tracking-tight">
