@@ -31,6 +31,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Meta } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
@@ -233,7 +234,7 @@ export function SeaTransportScreen(): React.JSX.Element {
                 <View style={styles.lineCardShadow} />
                 {/* Main card - 2-part structure */}
                 <View style={styles.lineCard}>
-                  {/* TOP: Colored header slab with icon + title */}
+                  {/* TOP: Colored header slab with icon + title + badge */}
                   <View style={[
                     styles.lineCardHeader,
                     { backgroundColor: getSeaHeaderBackground(line.subtype) }
@@ -248,6 +249,11 @@ export function SeaTransportScreen(): React.JSX.Element {
                     <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
                       {line.name}
                     </H2>
+                    {line.subtype && (
+                      <Badge variant="transport" size="compact" style={styles.lineSubtypeBadge}>
+                        {line.subtype}
+                      </Badge>
+                    )}
                   </View>
                   {/* BOTTOM: White body with meta + chevron */}
                   <View style={styles.lineCardBody}>
@@ -310,6 +316,12 @@ export function SeaTransportScreen(): React.JSX.Element {
                         {dep.direction_label}
                       </Meta>
                     </View>
+                    {/* Subtype badge - cast needed until TodayDepartureItem type updated */}
+                    {(dep as unknown as { subtype?: string }).subtype && (
+                      <Badge variant="transport" size="compact" style={styles.todaySubtypeBadge}>
+                        {(dep as unknown as { subtype: string }).subtype}
+                      </Badge>
+                    )}
                   </Pressable>
                 ))}
               </View>
@@ -456,6 +468,10 @@ const styles = StyleSheet.create({
     flex: 1,
     color: listTokens.lineCardHeaderTitleColor,
   },
+  // Position-only: Badge component handles appearance
+  lineSubtypeBadge: {
+    marginLeft: spacing.sm,
+  },
   // BOTTOM: White body with meta + chevron
   lineCardBody: {
     flexDirection: 'row',
@@ -545,6 +561,11 @@ const styles = StyleSheet.create({
   todayDirection: {
     color: colors.textSecondary,
     marginTop: spacing.xs,
+  },
+  // Position-only: Badge component handles appearance
+  todaySubtypeBadge: {
+    alignSelf: 'center',
+    marginRight: spacing.md,
   },
 });
 
