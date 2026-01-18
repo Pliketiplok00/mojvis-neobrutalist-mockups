@@ -229,11 +229,10 @@ export default function ClickFixPage() {
           )}
 
           {/* Submit */}
-          <div className="relative pb-1 pr-1">
-            <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground pointer-events-none" />
+          <div className="relative">
             <Button 
               size="lg" 
-              className="relative z-10 w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+              className="relative w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 shadow-[4px_4px_0_0_hsl(var(--foreground))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
               onClick={handleSubmit}
               disabled={!isValid}
             >
