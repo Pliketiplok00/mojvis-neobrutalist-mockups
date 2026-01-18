@@ -446,6 +446,7 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',
     fontSize: skin.typography.fontSize.xs,
+    marginTop: -2, // Reduce gap to prevent clipping
   },
   eventContent: {
     flex: 1,
