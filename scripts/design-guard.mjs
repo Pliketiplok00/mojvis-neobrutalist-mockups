@@ -32,10 +32,17 @@ const emojiAllowlist = [
 const emojiSet = ["📭", "📤", "⚠️", "🚌", "🚢", "⚙️", "🔧", "💬", "🏠", "📅", "✅", "❌"];
 const baselinePath = path.join(repoRoot, "docs", "design-guard-baseline.json");
 
-// PosterButton guard: must use ButtonText, not raw Text
+// Button primitive guards: must use ButtonText, not raw Text
+const buttonPath = path.join(repoRoot, "mobile", "src", "ui", "Button.tsx");
 const posterButtonPath = path.join(repoRoot, "mobile", "src", "ui", "PosterButton.tsx");
 
-const scanModes = new Set(["all", "hex", "lucide", "emoji", "poster"]);
+// Transport screens for badge guard
+const transportScreens = [
+  path.join(repoRoot, "mobile", "src", "screens", "transport", "SeaTransportScreen.tsx"),
+  path.join(repoRoot, "mobile", "src", "screens", "transport", "RoadTransportScreen.tsx"),
+];
+
+const scanModes = new Set(["all", "hex", "lucide", "emoji", "poster", "button", "badge"]);
 const args = process.argv.slice(2);
 let mode = "all";
 let writeBaseline = false;
@@ -230,6 +237,113 @@ function scanPosterButton() {
   return matches;
 }
 
+/**
+ * Button.tsx typography guard.
+ * Checks that Button.tsx:
+ * - Imports ButtonText from './Text'
+ * - Does NOT use raw <Text> for button labels
+ */
+function scanButton() {
+  const matches = [];
+  if (!fs.existsSync(buttonPath)) {
+    matches.push({
+      filePath: buttonPath,
+      lineNumber: 0,
+      match: "Button.tsx not found",
+      lineText: "",
+    });
+    return matches;
+  }
+
+  const content = fs.readFileSync(buttonPath, "utf8");
+  const lines = content.split(/\r?\n/);
+
+  // Check for ButtonText import
+  const hasButtonTextImport = lines.some(
+    (line) => /import.*\{[^}]*ButtonText[^}]*\}.*from\s+['"]\.\/Text['"]/.test(line)
+  );
+  if (!hasButtonTextImport) {
+    matches.push({
+      filePath: buttonPath,
+      lineNumber: 1,
+      match: "Missing ButtonText import from './Text'",
+      lineText: "Button must import ButtonText from './Text'",
+    });
+  }
+
+  // Check for raw Text import from react-native (should not have it for label rendering)
+  lines.forEach((line, index) => {
+    if (/import\s*\{[^}]*\bText\b[^}]*\}\s*from\s+['"]react-native['"]/.test(line)) {
+      matches.push({
+        filePath: buttonPath,
+        lineNumber: index + 1,
+        match: "Raw Text import from react-native",
+        lineText: line.trim(),
+      });
+    }
+  });
+
+  // Check for <Text> usage in JSX (should use <ButtonText> instead)
+  lines.forEach((line, index) => {
+    // Match <Text but not <ButtonText (excluding comments)
+    if (/<Text[\s>]/.test(line) && !/<ButtonText/.test(line) && !line.trim().startsWith("//") && !line.trim().startsWith("*")) {
+      matches.push({
+        filePath: buttonPath,
+        lineNumber: index + 1,
+        match: "Raw <Text> usage (should use <ButtonText>)",
+        lineText: line.trim(),
+      });
+    }
+  });
+
+  return matches;
+}
+
+/**
+ * Badge guard: Transport screens should use Badge component, not inline View+Meta
+ * Detects patterns like:
+ * - lineSubtypeBadge with inline styles (background, border, padding)
+ * - todaySubtypeBadge with inline styles
+ */
+function scanBadgePatterns() {
+  const matches = [];
+
+  for (const screenPath of transportScreens) {
+    if (!fs.existsSync(screenPath)) {
+      continue;
+    }
+
+    const content = fs.readFileSync(screenPath, "utf8");
+    const lines = content.split(/\r?\n/);
+
+    // Detect inline badge styling patterns that should use Badge component
+    lines.forEach((line, index) => {
+      // Check for inline badge styles with hardcoded styling (background/padding)
+      // This would catch patterns like: lineSubtypeBadge: { backgroundColor: 'rgba(...)'
+      if (/SubtypeBadge.*backgroundColor.*rgba|SubtypeText.*fontSize.*\d+/.test(line)) {
+        matches.push({
+          filePath: screenPath,
+          lineNumber: index + 1,
+          match: "Inline badge styling (should use Badge component)",
+          lineText: line.trim(),
+        });
+      }
+
+      // Check for <View style={styles.xxxSubtypeBadge}><Meta
+      if (/<View\s+style=\{styles\.\w*SubtypeBadge\}\s*>\s*<Meta/.test(line)) {
+        matches.push({
+          filePath: screenPath,
+          lineNumber: index + 1,
+          match: "Inline badge pattern (should use <Badge variant='transport'>)",
+          lineText: line.trim(),
+        });
+      }
+    });
+  }
+
+  return matches;
+}
+
 function formatMatches(matches) {
   return matches
     .map((match) => `${relativePath(match.filePath)}:${match.lineNumber}: ${match.match}`)
@@ -294,6 +408,22 @@ if (mode === "all" || mode === "poster") {
     ...matches.map((match) => ({ rule: "poster", ...match, fingerprint: fingerprint(match) }))
   );
   ok = reportMatches("PosterButton typography violation", matches, baselineSet) && ok;
+}
+
+if (mode === "all" || mode === "button") {
+  const matches = scanButton();
+  violations.push(
+    ...matches.map((match) => ({ rule: "button", ...match, fingerprint: fingerprint(match) }))
+  );
+  ok = reportMatches("Button typography violation", matches, baselineSet) && ok;
+}
+
+if (mode === "all" || mode === "badge") {
+  const matches = scanBadgePatterns();
+  violations.push(
+    ...matches.map((match) => ({ rule: "badge", ...match, fingerprint: fingerprint(match) }))
+  );
+  ok = reportMatches("Inline badge pattern (use Badge component)", matches, baselineSet) && ok;
 }
 
 if (writeBaseline) {

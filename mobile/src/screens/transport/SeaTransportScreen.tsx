@@ -47,6 +47,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
+import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { H1, H2, Label, Meta } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
@@ -265,9 +266,9 @@ export function SeaTransportScreen(): React.JSX.Element {
                       {line.name}
                     </H2>
                     {line.subtype && (
-                      <View style={styles.lineSubtypeBadge}>
-                        <Meta style={styles.lineSubtypeText}>{line.subtype}</Meta>
-                      </View>
+                      <Badge variant="transport" size="compact" style={styles.lineSubtypeBadge}>
+                        {line.subtype}
+                      </Badge>
                     )}
                   </View>
                   {/* BOTTOM: White body with meta + chevron */}
@@ -333,9 +334,9 @@ export function SeaTransportScreen(): React.JSX.Element {
                     </View>
                     {/* Badge: right-aligned */}
                     {dep.subtype && (
-                      <View style={styles.todaySubtypeBadge}>
-                        <Meta style={styles.todaySubtypeText}>{dep.subtype}</Meta>
-                      </View>
+                      <Badge variant="transport" size="compact" style={styles.todaySubtypeBadge}>
+                        {dep.subtype}
+                      </Badge>
                     )}
                   </Pressable>
                 ))}
@@ -484,20 +485,9 @@ const styles = StyleSheet.create({
     flex: 1, // Takes available space between icon and badge
     color: listTokens.lineCardHeaderTitleColor,
   },
+  // Position-only: Badge component handles appearance
   lineSubtypeBadge: {
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 0, // Neobrutalist: no rounded corners
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
-    marginLeft: spacing.sm, // Gap before badge
-  },
-  lineSubtypeText: {
-    color: colors.textPrimary,
-    fontSize: 10,
-    fontWeight: '600',
-    textTransform: 'uppercase',
+    marginLeft: spacing.sm,
   },
   // BOTTOM: White body with meta + chevron
   lineCardBody: {
@@ -587,20 +577,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   // TRANSPORT_UI_LOCK: Today badge MUST be outside todayInfo, right-aligned
+  // Position-only: Badge component handles appearance
   todaySubtypeBadge: {
-    alignSelf: 'center', // Vertically centered in row
-    backgroundColor: colors.backgroundTertiary,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 0, // LOCKED: Neobrutalist sharp corners
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
-    marginRight: spacing.md, // Right padding for badge
-  },
-  todaySubtypeText: {
-    color: colors.textSecondary,
-    fontSize: 11,
-    textTransform: 'uppercase',
+    alignSelf: 'center',
+    marginRight: spacing.md,
   },
   todayDirection: {
     color: colors.textSecondary,

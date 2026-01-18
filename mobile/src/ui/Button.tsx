@@ -2,17 +2,18 @@
  * Button Primitive
  *
  * Primary and secondary button variants.
+ * Uses ButtonText primitive for consistent typography (Space Mono Bold).
  */
 
 import React from 'react';
 import {
   TouchableOpacity,
-  Text,
   StyleSheet,
   ActivityIndicator,
   type ViewStyle,
 } from 'react-native';
 import { skin } from './skin';
+import { ButtonText } from './Text';
 
 interface ButtonProps {
   /** Button label */
@@ -51,25 +52,14 @@ export function Button({
     }
   };
 
-  const getTextStyle = () => {
+  const getTextColor = () => {
     switch (variant) {
       case 'secondary':
-        return styles.secondaryText;
+        return components.button.secondary.textColor;
       case 'danger':
-        return styles.dangerText;
+        return components.button.danger.textColor;
       default:
-        return styles.primaryText;
-    }
-  };
-
-  const getLoadingColor = () => {
-    switch (variant) {
-      case 'secondary':
-        return skin.colors.textPrimary;
-      case 'danger':
-        return skin.colors.errorText;
-      default:
-        return skin.colors.primaryText;
+        return components.button.primary.textColor;
     }
   };
 
@@ -83,15 +73,15 @@ export function Button({
       accessibilityRole="button"
     >
       {loading ? (
-        <ActivityIndicator size="small" color={getLoadingColor()} />
+        <ActivityIndicator size="small" color={getTextColor()} />
       ) : (
-        <Text style={getTextStyle()}>{children}</Text>
+        <ButtonText color={getTextColor()}>{children}</ButtonText>
       )}
     </TouchableOpacity>
   );
 }
 
-const { components, colors } = skin;
+const { components } = skin;
 
 const styles = StyleSheet.create({
   base: {
@@ -114,21 +104,6 @@ const styles = StyleSheet.create({
     backgroundColor: components.button.danger.backgroundColor,
     borderWidth: components.button.danger.borderWidth,
     borderColor: components.button.danger.borderColor,
-  },
-  primaryText: {
-    fontSize: components.button.fontSize,
-    fontWeight: components.button.fontWeight,
-    color: components.button.primary.textColor,
-  },
-  secondaryText: {
-    fontSize: components.button.fontSize,
-    fontWeight: components.button.fontWeight,
-    color: components.button.secondary.textColor,
-  },
-  dangerText: {
-    fontSize: components.button.fontSize,
-    fontWeight: components.button.fontWeight,
-    color: components.button.danger.textColor,
   },
   disabled: {
     opacity: components.button.disabledOpacity,
