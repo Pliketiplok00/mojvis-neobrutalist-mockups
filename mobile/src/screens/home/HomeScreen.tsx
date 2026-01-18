@@ -440,13 +440,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '700',
     fontSize: skin.typography.fontSize.xl,
-    lineHeight: skin.typography.fontSize.xl,
+    lineHeight: Math.round(skin.typography.fontSize.xl * skin.typography.lineHeight.tight),
   },
   dateBadgeMonth: {
     color: 'rgba(255, 255, 255, 0.85)',
     textTransform: 'uppercase',
     fontSize: skin.typography.fontSize.xs,
-    marginTop: -2, // Reduce gap to prevent clipping
+    marginTop: -2, // Tighten gap between day and month
   },
   eventContent: {
     flex: 1,
