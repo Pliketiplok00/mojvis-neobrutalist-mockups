@@ -143,11 +143,11 @@ export default function FeedbackPage() {
           </div>
 
           {/* Submit */}
-          <div className="relative">
-            <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground" />
+          <div className="relative pb-1 pr-1">
+            <div className="absolute inset-0 translate-x-2 translate-y-2 bg-foreground pointer-events-none" />
             <Button 
               size="lg" 
-              className="relative w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
+              className="relative z-10 w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all"
               onClick={handleSubmit}
               disabled={!isValid}
             >
