@@ -429,16 +429,16 @@ const styles = StyleSheet.create({
     ],
   },
   // TOP: Colored header slab with icon + title (GREEN for road)
-  // Icon bottom edge aligns with tag bottom edge (neobrutalist alignment)
+  // Icon spans full height: top aligns with title, bottom aligns with tag
   lineCardHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-end', // Bottom-align icon with tag
+    alignItems: 'stretch', // Icon stretches to match title+tag stack height
     padding: listTokens.lineCardHeaderPadding,
     backgroundColor: listTokens.lineCardHeaderBackgroundRoad,
   },
   lineCardHeaderIconBox: {
     width: listTokens.lineCardHeaderIconBoxSize,
-    height: listTokens.lineCardHeaderIconBoxSize,
+    // height is auto (stretches to match text stack via alignItems: 'stretch')
     backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
     borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
     borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
