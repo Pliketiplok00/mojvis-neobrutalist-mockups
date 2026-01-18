@@ -214,7 +214,7 @@ export function RoadTransportScreen(): React.JSX.Element {
                 <View style={styles.lineCardShadow} />
                 {/* Main card - 2-part structure */}
                 <View style={styles.lineCard}>
-                  {/* TOP: Colored header slab with icon + title */}
+                  {/* TOP: Colored header slab with [ICON] [TITLE] [TAG] horizontal */}
                   <View style={styles.lineCardHeader}>
                     <View style={styles.lineCardHeaderIconBox}>
                       <Icon
@@ -223,16 +223,14 @@ export function RoadTransportScreen(): React.JSX.Element {
                         colorToken="textPrimary"
                       />
                     </View>
-                    <View style={styles.lineCardHeaderText}>
-                      <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
-                        {line.name}
-                      </H2>
-                      {line.subtype && (
-                        <View style={styles.lineSubtypeBadge}>
-                          <Meta style={styles.lineSubtypeText}>{line.subtype}</Meta>
-                        </View>
-                      )}
-                    </View>
+                    <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
+                      {line.name}
+                    </H2>
+                    {line.subtype && (
+                      <View style={styles.lineSubtypeBadge}>
+                        <Meta style={styles.lineSubtypeText}>{line.subtype}</Meta>
+                      </View>
+                    )}
                   </View>
                   {/* BOTTOM: White body with meta + chevron */}
                   <View style={styles.lineCardBody}>
@@ -286,22 +284,21 @@ export function RoadTransportScreen(): React.JSX.Element {
                         {formatTime(dep.departure_time)}
                       </H2>
                     </View>
-                    {/* Info */}
+                    {/* Info: title + direction (flex: 1) */}
                     <View style={styles.todayInfo}>
-                      <View style={styles.todayLineRow}>
-                        <Label style={styles.todayLineName} numberOfLines={1}>
-                          {dep.line_name}
-                        </Label>
-                        {dep.subtype && (
-                          <View style={styles.todaySubtypeBadge}>
-                            <Meta style={styles.todaySubtypeText}>{dep.subtype}</Meta>
-                          </View>
-                        )}
-                      </View>
+                      <Label style={styles.todayLineName} numberOfLines={1}>
+                        {dep.line_name}
+                      </Label>
                       <Meta style={styles.todayDirection} numberOfLines={1}>
                         {dep.direction_label}
                       </Meta>
                     </View>
+                    {/* Badge: right-aligned */}
+                    {dep.subtype && (
+                      <View style={styles.todaySubtypeBadge}>
+                        <Meta style={styles.todaySubtypeText}>{dep.subtype}</Meta>
+                      </View>
+                    )}
                   </Pressable>
                 ))}
               </View>
@@ -428,17 +425,16 @@ const styles = StyleSheet.create({
       { translateY: listTokens.lineCardPressedOffsetY },
     ],
   },
-  // TOP: Colored header slab with icon + title (GREEN for road)
-  // Icon spans full height: top aligns with title, bottom aligns with tag
+  // TOP: Colored header slab with [ICON] [TITLE] [TAG] horizontal layout (GREEN for road)
   lineCardHeader: {
     flexDirection: 'row',
-    alignItems: 'stretch', // Icon stretches to match title+tag stack height
+    alignItems: 'center', // Vertical center alignment
     padding: listTokens.lineCardHeaderPadding,
     backgroundColor: listTokens.lineCardHeaderBackgroundRoad,
   },
   lineCardHeaderIconBox: {
     width: listTokens.lineCardHeaderIconBoxSize,
-    // height is auto (stretches to match text stack via alignItems: 'stretch')
+    height: listTokens.lineCardHeaderIconBoxSize, // MUST be square
     backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
     borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
     borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
@@ -446,21 +442,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: listTokens.lineCardHeaderIconGap,
   },
-  lineCardHeaderText: {
-    flex: 1,
-  },
   lineCardHeaderTitle: {
+    flex: 1, // Takes available space between icon and badge
     color: listTokens.lineCardHeaderTitleColor,
   },
   lineSubtypeBadge: {
-    alignSelf: 'flex-start',
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 0, // Neobrutalist: no rounded corners
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
-    marginTop: spacing.xs,
+    marginLeft: spacing.sm, // Gap before badge
   },
   lineSubtypeText: {
     color: colors.textPrimary,
@@ -548,25 +541,22 @@ const styles = StyleSheet.create({
   todayInfo: {
     flex: 1,
     paddingVertical: listTokens.todayRowPadding,
-    paddingHorizontal: spacing.md,
-  },
-  todayLineRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: spacing.xs,
+    paddingLeft: spacing.md,
+    paddingRight: spacing.sm, // Smaller gap before badge
   },
   todayLineName: {
     color: colors.textPrimary,
     fontWeight: '600',
   },
   todaySubtypeBadge: {
+    alignSelf: 'center', // Vertically centered in row
     backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
     borderColor: colors.border,
     borderRadius: 0, // Neobrutalist: no rounded corners
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
+    marginRight: spacing.md, // Right padding for badge
   },
   todaySubtypeText: {
     color: colors.textSecondary,
