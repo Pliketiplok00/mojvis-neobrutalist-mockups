@@ -359,8 +359,15 @@ export async function getDeparturesForRouteAndDate(
 }
 
 /**
+ * Known mainland stop names - departures from these origins are excluded from "today" view.
+ * The "Polasci danas" feature shows only departures that START ON THE ISLAND.
+ */
+const MAINLAND_STOP_NAMES = ['Split'];
+
+/**
  * Get today's departures for a transport type (aggregated across all lines)
  * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
+ * IMPORTANT: Only returns island-origin departures (excludes Split-origin routes)
  */
 export async function getTodaysDepartures(
   transportType: TransportType,
@@ -427,12 +434,14 @@ export async function getTodaysDepartures(
      JOIN transport_routes r ON d.route_id = r.id
      JOIN transport_lines l ON r.line_id = l.id
      JOIN transport_stops dest ON r.destination_stop_id = dest.id
+     JOIN transport_stops origin ON r.origin_stop_id = origin.id
      WHERE l.transport_type = $1
        AND l.is_active = TRUE
        AND d.season_id = $2
        AND d.day_type = $3
+       AND origin.name_hr NOT IN (${MAINLAND_STOP_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
      ORDER BY d.departure_time`,
-    [transportType, season.id, dayType]
+    [transportType, season.id, dayType, ...MAINLAND_STOP_NAMES]
   );
 
   // Apply date exception filtering

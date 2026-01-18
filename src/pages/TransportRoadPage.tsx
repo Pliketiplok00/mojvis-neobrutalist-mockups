@@ -167,8 +167,8 @@ export default function TransportRoadPage() {
                     <span className="font-display font-bold text-sm text-primary-foreground">{departure.time}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-display font-bold text-sm">{departure.line}</p>
-                    <p className="font-body text-xs text-muted-foreground">{departure.direction}</p>
+                    {/* Direction only - line name hidden per spec */}
+                    <p className="font-display font-bold text-sm">{departure.direction}</p>
                   </div>
                 </div>
               ))}

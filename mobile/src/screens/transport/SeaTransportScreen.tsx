@@ -307,14 +307,11 @@ export function SeaTransportScreen(): React.JSX.Element {
                         {formatTime(dep.departure_time)}
                       </H2>
                     </View>
-                    {/* Info */}
+                    {/* Info - direction only, line name hidden per spec */}
                     <View style={styles.todayInfo}>
                       <Label style={styles.todayLineName} numberOfLines={1}>
-                        {dep.line_name}
-                      </Label>
-                      <Meta style={styles.todayDirection} numberOfLines={1}>
                         {dep.direction_label}
-                      </Meta>
+                      </Label>
                     </View>
                     {/* Subtype badge - cast needed until TodayDepartureItem type updated */}
                     {(dep as unknown as { subtype?: string }).subtype && (

@@ -174,8 +174,8 @@ export default function TransportSeaPage() {
                     <span className="font-display font-bold text-sm text-primary-foreground">{departure.time}</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-display font-bold text-sm">{departure.line}</p>
-                    <p className="font-body text-xs text-muted-foreground">{departure.direction}</p>
+                    {/* Direction only - line name hidden per spec */}
+                    <p className="font-display font-bold text-sm">{departure.direction}</p>
                   </div>
                   <span className={`px-2 py-1 text-[10px] font-display font-bold uppercase border-2 border-foreground ${
                     departure.type === "ferry" ? "bg-primary/20" : "bg-teal/20"
