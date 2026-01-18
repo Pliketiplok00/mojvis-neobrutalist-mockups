@@ -244,6 +244,7 @@ export interface TodayDepartureItem {
   departure_time: string;
   line_id: string;
   line_name: string;
+  subtype: string | null; // e.g., "Trajekt", "Katamaran", "Autobus"
   route_id: string;
   direction_label: string;
   destination: string;

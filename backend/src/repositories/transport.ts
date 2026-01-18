@@ -371,6 +371,8 @@ export async function getTodaysDepartures(
     line_id: string;
     line_name_hr: string;
     line_name_en: string;
+    subtype_hr: string | null;
+    subtype_en: string | null;
     route_id: string;
     direction_label_hr: string;
     direction_label_en: string;
@@ -391,12 +393,14 @@ export async function getTodaysDepartures(
   }
 
   // Extended query to include date exception fields for filtering
-  // Filter: only island-origin departures (origin stop = Vis)
+  // Filter: only island-origin departures (origin stop = Vis or Komiža)
   const result = await query<{
     departure_time: string;
     line_id: string;
     line_name_hr: string;
     line_name_en: string;
+    subtype_hr: string | null;
+    subtype_en: string | null;
     route_id: string;
     direction_label_hr: string;
     direction_label_en: string;
@@ -414,6 +418,8 @@ export async function getTodaysDepartures(
        l.id as line_id,
        l.name_hr as line_name_hr,
        l.name_en as line_name_en,
+       l.subtype_hr,
+       l.subtype_en,
        r.id as route_id,
        r.direction_label_hr,
        r.direction_label_en,
@@ -433,7 +439,7 @@ export async function getTodaysDepartures(
        AND l.is_active = TRUE
        AND d.season_id = $2
        AND d.day_type = $3
-       AND origin.name_hr = 'Vis'
+       AND origin.name_hr IN ('Vis', 'Komiža')
      ORDER BY d.departure_time`,
     [transportType, season.id, dayType]
   );
@@ -456,6 +462,8 @@ export async function getTodaysDepartures(
     line_id: row.line_id,
     line_name_hr: row.line_name_hr,
     line_name_en: row.line_name_en,
+    subtype_hr: row.subtype_hr,
+    subtype_en: row.subtype_en,
     route_id: row.route_id,
     direction_label_hr: row.direction_label_hr,
     direction_label_en: row.direction_label_en,
