@@ -768,7 +768,7 @@ export const components = {
       iconGap: spacing.sm,
     },
 
-    // List item (poster-style row)
+    // List item (poster-style row with icon slab)
     listItem: {
       // Container
       background: colors.background,
@@ -785,16 +785,6 @@ export const components = {
       // Tab label typography (BOLD - must outrank row titles)
       labelFontFamily: typography.fontFamily.body.bold,
       labelFontSize: typography.fontSize.md,
-    },
-
-    // Banner list item (full-width, bottom border only, no shadow)
-    listItem: {
-      // Container - full width banners
-      background: colors.background,
-      borderBottomWidth: bordersToken.widthCard,
-      borderBottomColor: colors.border,
-      paddingVertical: spacing.md,
-      paddingHorizontal: spacing.lg,
       // Icon slab (left)
       iconSlabSize: 44,
       iconSlabBorderWidth: bordersToken.widthThin,
