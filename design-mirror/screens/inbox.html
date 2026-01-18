@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inbox - MOJ VIS Design Mirror</title>
+  <link rel="stylesheet" href="../css/skin.base.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/icons.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="inbox.css">
+</head>
+<body class="screen screen--inbox">
+  <!-- Header -->
+  <div class="header">
+    <div class="header__left">
+      <span class="header__icon icon">
+        <img src="../assets/icons/lucide/chevron-left.svg" alt="Back">
+      </span>
+      <span class="header__title">OBAVIJESTI</span>
+    </div>
+    <div class="header__right">
+      <span class="header__icon icon">
+        <img src="../assets/icons/lucide/check.svg" alt="Mark all read">
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main main--flush">
+    <!-- Unread Messages -->
+    <div class="inbox-section">
+      <div class="inbox-section__header">
+        <span class="text-label">NEPROČITANO</span>
+        <span class="badge">3</span>
+      </div>
+
+      <div class="inbox-item inbox-item--unread">
+        <div class="inbox-item__indicator"></div>
+        <div class="inbox-item__icon icon icon-lg">
+          <img src="../assets/icons/lucide/alert-triangle.svg" alt="">
+        </div>
+        <div class="inbox-item__content">
+          <div class="inbox-item__title">Hitno: Promjena reda plovidbe</div>
+          <div class="inbox-item__preview">Trajekt za Split danas kasni 30 minuta zbog...</div>
+          <div class="inbox-item__meta">
+            <span class="icon icon-sm">
+              <img src="../assets/icons/lucide/clock.svg" alt="">
+            </span>
+            <span>Prije 15 min</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inbox-item inbox-item--unread">
+        <div class="inbox-item__indicator"></div>
+        <div class="inbox-item__icon icon icon-lg">
+          <img src="../assets/icons/lucide/calendar.svg" alt="">
+        </div>
+        <div class="inbox-item__content">
+          <div class="inbox-item__title">Novi događaj: Koncert na trgu</div>
+          <div class="inbox-item__preview">Pridružite nam se 20. siječnja na trgu Sv. Jurja...</div>
+          <div class="inbox-item__meta">
+            <span class="icon icon-sm">
+              <img src="../assets/icons/lucide/clock.svg" alt="">
+            </span>
+            <span>Prije 2 sata</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inbox-item inbox-item--unread">
+        <div class="inbox-item__indicator"></div>
+        <div class="inbox-item__icon icon icon-lg">
+          <img src="../assets/icons/lucide/wrench.svg" alt="">
+        </div>
+        <div class="inbox-item__content">
+          <div class="inbox-item__title">Vaša prijava je riješena</div>
+          <div class="inbox-item__preview">Problem s javnom rasvjetom na adresi Ulica...</div>
+          <div class="inbox-item__meta">
+            <span class="icon icon-sm">
+              <img src="../assets/icons/lucide/clock.svg" alt="">
+            </span>
+            <span>Prije 5 sati</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Read Messages -->
+    <div class="inbox-section">
+      <div class="inbox-section__header">
+        <span class="text-label">RANIJE</span>
+      </div>
+
+      <div class="inbox-item">
+        <div class="inbox-item__icon icon icon-lg icon-muted">
+          <img src="../assets/icons/lucide/bell.svg" alt="">
+        </div>
+        <div class="inbox-item__content">
+          <div class="inbox-item__title">Podsjetnik: Ljeto u gradu</div>
+          <div class="inbox-item__preview">Ne propustite ovotjedne aktivnosti na...</div>
+          <div class="inbox-item__meta">
+            <span class="icon icon-sm">
+              <img src="../assets/icons/lucide/clock.svg" alt="">
+            </span>
+            <span>Jučer</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inbox-item">
+        <div class="inbox-item__icon icon icon-lg icon-muted">
+          <img src="../assets/icons/lucide/info.svg" alt="">
+        </div>
+        <div class="inbox-item__content">
+          <div class="inbox-item__title">Ažuriranje aplikacije</div>
+          <div class="inbox-item__preview">Nova verzija MOJ VIS aplikacije je dostupna...</div>
+          <div class="inbox-item__meta">
+            <span class="icon icon-sm">
+              <img src="../assets/icons/lucide/clock.svg" alt="">
+            </span>
+            <span>Prije 3 dana</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="inbox-item">
+        <div class="inbox-item__icon icon icon-lg icon-muted">
+          <img src="../assets/icons/lucide/ship.svg" alt="">
+        </div>
+        <div class="inbox-item__content">
+          <div class="inbox-item__title">Zimski red plovidbe</div>
+          <div class="inbox-item__preview">Od 1. studenog primjenjuje se novi red...</div>
+          <div class="inbox-item__meta">
+            <span class="icon icon-sm">
+              <img src="../assets/icons/lucide/clock.svg" alt="">
+            </span>
+            <span>Prije tjedan dana</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+  </main>
+</body>
+</html>

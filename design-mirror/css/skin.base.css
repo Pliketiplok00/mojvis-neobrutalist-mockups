@@ -1,8 +1,11 @@
 /**
- * skin.base.css - Design Token Foundation
+ * skin.base.css - Design Token Foundation (TOKENS ONLY)
  *
- * All color, spacing, typography, and border tokens.
+ * This file contains ONLY CSS custom properties (tokens).
+ * No selectors, no rules - just the raw design system values.
+ *
  * Edit these values to change the entire design system.
+ * Changes here propagate to all components and screens.
  */
 
 :root {
@@ -54,11 +57,14 @@
   --spacing-xxxl: 48px;
 
   /* ========================================
-     TYPOGRAPHY
+     TYPOGRAPHY - Font Families
      ======================================== */
   --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
   --font-body: 'Space Mono', 'SF Mono', 'Monaco', monospace;
 
+  /* ========================================
+     TYPOGRAPHY - Font Sizes
+     ======================================== */
   --font-size-xs: 10px;
   --font-size-sm: 12px;
   --font-size-md: 14px;
@@ -67,11 +73,17 @@
   --font-size-xxl: 24px;
   --font-size-xxxl: 28px;
 
+  /* ========================================
+     TYPOGRAPHY - Font Weights
+     ======================================== */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
+  /* ========================================
+     TYPOGRAPHY - Line Heights
+     ======================================== */
   --line-height-tight: 1.2;
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
@@ -88,13 +100,25 @@
   --border-radius-none: 0;
   --border-radius-small: 2px;
   --border-radius-medium: 4px;
-  --border-radius-card: 0; /* Neobrutalist: sharp corners */
+  --border-radius-card: 0;
 
   /* ========================================
      SHADOWS (Poster Pattern)
      ======================================== */
   --shadow-offset: 4px;
   --shadow-color: var(--color-border);
+
+  /* ========================================
+     ICONS
+     ======================================== */
+  --icon-size-sm: 16px;
+  --icon-size-md: 20px;
+  --icon-size-lg: 24px;
+  --icon-size-xl: 32px;
+
+  --icon-stroke-light: 1.5;
+  --icon-stroke-regular: 2;
+  --icon-stroke-strong: 2.5;
 
   /* ========================================
      COMPONENT TOKENS
@@ -134,67 +158,4 @@
   --date-badge-size: 48px;
   --date-badge-day-size: var(--font-size-xl);
   --date-badge-month-size: var(--font-size-xs);
-}
-
-/* ========================================
-   BASE RESET & TYPOGRAPHY
-   ======================================== */
-
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-body);
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-primary);
-  background-color: var(--color-background);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  color: var(--color-text-primary);
-}
-
-h1 {
-  font-size: var(--font-size-xxxl);
-}
-
-h2 {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-semibold);
-}
-
-p {
-  color: var(--color-text-secondary);
-}
-
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-/* Utility: uppercase section label */
-.section-label {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-text-muted);
-  margin-bottom: var(--spacing-md);
 }

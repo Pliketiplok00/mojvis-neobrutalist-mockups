@@ -1,0 +1,213 @@
+/**
+ * info.css - Info Screen Styles
+ */
+
+.screen--info {
+  background-color: var(--color-background);
+}
+
+/* ========================================
+   INFO GRID
+   ======================================== */
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.info-card {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.info-card__shadow {
+  position: absolute;
+  top: var(--shadow-offset);
+  left: var(--shadow-offset);
+  width: 100%;
+  height: 100%;
+  background-color: var(--shadow-color);
+  z-index: 0;
+}
+
+.info-card__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--color-surface);
+  border: var(--border-width-medium) solid var(--color-border);
+  cursor: pointer;
+  z-index: 1;
+  transition: transform 0.1s ease;
+}
+
+.info-card__content:hover {
+  transform: translate(-2px, -2px);
+}
+
+.info-card__icon {
+  color: var(--color-text-primary);
+}
+
+.info-card__label {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+  color: var(--color-text-primary);
+}
+
+/* Variants */
+.info-card--urgent .info-card__content {
+  background-color: var(--color-urgent);
+}
+
+.info-card--urgent .info-card__label {
+  color: var(--color-primary-text);
+}
+
+.info-card--primary .info-card__content {
+  background-color: var(--color-primary);
+}
+
+.info-card--primary .info-card__label {
+  color: var(--color-primary-text);
+}
+
+/* ========================================
+   CONTACT LIST
+   ======================================== */
+
+.contact-list {
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-decoration: none;
+  color: inherit;
+  border-bottom: var(--border-width-thin) solid var(--color-border-light);
+  transition: background-color 0.15s ease;
+}
+
+.contact-row:last-child {
+  border-bottom: none;
+}
+
+.contact-row:hover {
+  background-color: var(--color-background);
+}
+
+.contact-row--urgent {
+  background-color: var(--color-error-bg);
+}
+
+.contact-row--urgent:hover {
+  background-color: var(--color-error-bg);
+}
+
+.contact-row__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-urgent);
+  border: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.contact-row__icon--default {
+  background-color: var(--color-background);
+}
+
+.contact-row__icon--default .icon {
+  color: var(--color-text-primary);
+}
+
+.contact-row__icon--primary {
+  background-color: var(--color-primary);
+}
+
+.contact-row__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-row__name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.contact-row__number {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: 2px;
+}
+
+.contact-row__arrow {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}
+
+/* ========================================
+   ABOUT CARD
+   ======================================== */
+
+.about-card {
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.about-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.about-card__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.about-card__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-lg);
+}
+
+.about-card__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.about-card__link {
+  font-size: var(--font-size-sm);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.about-card__link:hover {
+  text-decoration: underline;
+}

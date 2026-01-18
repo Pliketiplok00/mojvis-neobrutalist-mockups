@@ -1,0 +1,111 @@
+/**
+ * fauna.css - Fauna Screen Styles
+ */
+
+.screen--fauna {
+  background-color: var(--color-background);
+}
+
+/* ========================================
+   FAUNA HERO
+   ======================================== */
+
+.fauna-hero {
+  padding: var(--spacing-xxl) var(--spacing-lg);
+  background-color: var(--color-primary);
+  border-bottom: var(--border-width-heavy) solid var(--color-border);
+}
+
+.fauna-hero__content {
+  max-width: 300px;
+}
+
+.fauna-hero__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-text);
+  margin-bottom: var(--spacing-sm);
+}
+
+.fauna-hero__subtitle {
+  font-size: var(--font-size-md);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ========================================
+   FAUNA LIST
+   ======================================== */
+
+.fauna-list {
+  background-color: var(--color-surface);
+}
+
+.fauna-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-bottom: var(--border-width-thin) solid var(--color-border-light);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.fauna-item:hover {
+  background-color: var(--color-background);
+}
+
+.fauna-item__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background-color: var(--color-background);
+  border: var(--border-width-thin) solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.fauna-item__image .icon {
+  color: var(--color-text-secondary);
+}
+
+.fauna-item__image--sea {
+  background-color: rgba(37, 99, 235, 0.1);
+}
+
+.fauna-item__image--sea .icon {
+  color: var(--color-primary);
+}
+
+.fauna-item__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.fauna-item__name {
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.fauna-item__latin {
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.fauna-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.fauna-item__arrow {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+}

@@ -1,0 +1,126 @@
+/**
+ * feedback.css - Feedback Screen Styles
+ */
+
+.screen--feedback {
+  background-color: var(--color-background);
+}
+
+/* ========================================
+   FEEDBACK INTRO
+   ======================================== */
+
+.feedback-intro {
+  padding: var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* ========================================
+   FEEDBACK TYPE SELECTION
+   ======================================== */
+
+.feedback-types {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.feedback-type {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg) var(--spacing-md);
+  background-color: var(--color-surface);
+  border: var(--border-width-medium) solid var(--color-border);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.feedback-type:hover {
+  background-color: var(--color-background);
+}
+
+.feedback-type--active {
+  background-color: var(--color-primary);
+  border-color: var(--color-border);
+}
+
+.feedback-type--active .feedback-type__icon,
+.feedback-type--active .feedback-type__label {
+  color: var(--color-primary-text);
+}
+
+.feedback-type__icon {
+  color: var(--color-text-primary);
+}
+
+.feedback-type__label {
+  font-family: var(--font-display);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   CONTACT OPTIONS
+   ======================================== */
+
+.contact-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.contact-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.15s ease;
+}
+
+.contact-option:hover {
+  background-color: var(--color-background);
+}
+
+.contact-option__icon {
+  flex-shrink: 0;
+  color: var(--color-text-primary);
+}
+
+.contact-option__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-option__label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.contact-option__value {
+  font-family: var(--font-display);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   FEEDBACK ACTIONS
+   ======================================== */
+
+.feedback-actions {
+  margin-top: var(--spacing-xl);
+}
+
+.feedback-actions .btn {
+  width: 100%;
+}

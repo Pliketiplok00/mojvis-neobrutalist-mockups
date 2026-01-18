@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback - MOJ VIS Design Mirror</title>
+  <link rel="stylesheet" href="../css/skin.base.css">
+  <link rel="stylesheet" href="../css/typography.css">
+  <link rel="stylesheet" href="../css/icons.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="feedback.css">
+</head>
+<body class="screen screen--feedback">
+  <!-- Header -->
+  <div class="header">
+    <div class="header__left">
+      <span class="header__icon icon">
+        <img src="../assets/icons/lucide/chevron-left.svg" alt="Back">
+      </span>
+      <span class="header__title">POVRATNA INFORMACIJA</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Intro Text -->
+    <div class="feedback-intro">
+      <p class="text-body">Vaše mišljenje nam je važno! Pomozite nam poboljšati aplikaciju MOJ VIS.</p>
+    </div>
+
+    <!-- Feedback Type Selection -->
+    <section class="section">
+      <p class="text-label mb-md">VRSTA POVRATNE INFORMACIJE</p>
+      <div class="feedback-types">
+        <button class="feedback-type feedback-type--active">
+          <span class="feedback-type__icon icon icon-lg">
+            <img src="../assets/icons/lucide/message-circle.svg" alt="">
+          </span>
+          <span class="feedback-type__label">Prijedlog</span>
+        </button>
+        <button class="feedback-type">
+          <span class="feedback-type__icon icon icon-lg">
+            <img src="../assets/icons/lucide/alert-triangle.svg" alt="">
+          </span>
+          <span class="feedback-type__label">Problem</span>
+        </button>
+        <button class="feedback-type">
+          <span class="feedback-type__icon icon icon-lg">
+            <img src="../assets/icons/lucide/info.svg" alt="">
+          </span>
+          <span class="feedback-type__label">Pitanje</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Feedback Form -->
+    <section class="section">
+      <!-- Subject -->
+      <div class="input-group">
+        <label class="input-label">
+          Naslov
+          <span class="input-label__required">*</span>
+        </label>
+        <input type="text" class="input" placeholder="Ukratko opišite temu">
+      </div>
+
+      <!-- Message -->
+      <div class="input-group">
+        <label class="input-label">
+          Poruka
+          <span class="input-label__required">*</span>
+        </label>
+        <textarea class="input textarea" placeholder="Opišite detaljnije..."></textarea>
+        <div class="input-helper">
+          <span></span>
+          <span class="input-helper__count">0 / 500</span>
+        </div>
+      </div>
+
+      <!-- Email (Optional) -->
+      <div class="input-group">
+        <label class="input-label">
+          Email (neobavezno)
+        </label>
+        <input type="email" class="input" placeholder="za odgovor">
+        <div class="input-helper">
+          <span class="text-caption">Ostavite email ako želite odgovor na vašu poruku</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Options -->
+    <section class="section">
+      <p class="text-label mb-md">ILI NAS KONTAKTIRAJTE DIREKTNO</p>
+
+      <div class="contact-options">
+        <a href="tel:+385123456789" class="contact-option">
+          <span class="contact-option__icon icon icon-lg">
+            <img src="../assets/icons/lucide/phone.svg" alt="">
+          </span>
+          <span class="contact-option__text">
+            <span class="contact-option__label">Telefon</span>
+            <span class="contact-option__value">+385 123 456 789</span>
+          </span>
+        </a>
+
+        <a href="mailto:info@mojvis.hr" class="contact-option">
+          <span class="contact-option__icon icon icon-lg">
+            <img src="../assets/icons/lucide/mail.svg" alt="">
+          </span>
+          <span class="contact-option__text">
+            <span class="contact-option__label">Email</span>
+            <span class="contact-option__value">info@mojvis.hr</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Submit Button -->
+    <div class="feedback-actions">
+      <div class="btn-poster">
+        <div class="btn-poster__shadow"></div>
+        <button class="btn btn--primary btn-poster__button">
+          <span class="icon icon-white">
+            <img src="../assets/icons/lucide/send.svg" alt="">
+          </span>
+          <span class="text-button text-white">POŠALJI</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="bottom-spacer"></div>
+  </main>
+</body>
+</html>

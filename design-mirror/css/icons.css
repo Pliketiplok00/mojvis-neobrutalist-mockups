@@ -1,0 +1,248 @@
+/**
+ * icons.css - Icon Styling & Utilities
+ *
+ * Styles for Lucide SVG icons
+ * Uses mask-image for color control via currentColor
+ */
+
+/* ========================================
+   BASE ICON STYLES
+   ======================================== */
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+.icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: var(--icon-stroke-regular);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ========================================
+   ICON SIZES
+   ======================================== */
+
+.icon-sm {
+  width: var(--icon-size-sm);
+  height: var(--icon-size-sm);
+}
+
+.icon-md {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+}
+
+.icon-lg {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.icon-xl {
+  width: var(--icon-size-xl);
+  height: var(--icon-size-xl);
+}
+
+/* ========================================
+   ICON STROKE WEIGHTS
+   ======================================== */
+
+.icon-stroke-light svg {
+  stroke-width: var(--icon-stroke-light);
+}
+
+.icon-stroke-regular svg {
+  stroke-width: var(--icon-stroke-regular);
+}
+
+.icon-stroke-strong svg {
+  stroke-width: var(--icon-stroke-strong);
+}
+
+/* ========================================
+   ICON COLORS
+   ======================================== */
+
+.icon-primary {
+  color: var(--color-text-primary);
+}
+
+.icon-secondary {
+  color: var(--color-text-secondary);
+}
+
+.icon-muted {
+  color: var(--color-text-muted);
+}
+
+.icon-white {
+  color: #ffffff;
+}
+
+.icon-success {
+  color: var(--color-success);
+}
+
+.icon-warning {
+  color: var(--color-warning);
+}
+
+.icon-error {
+  color: var(--color-error);
+}
+
+.icon-urgent {
+  color: var(--color-urgent);
+}
+
+/* ========================================
+   ICON IN BUTTONS
+   ======================================== */
+
+.btn .icon {
+  margin-right: var(--spacing-sm);
+}
+
+.btn .icon:last-child {
+  margin-right: 0;
+  margin-left: var(--spacing-sm);
+}
+
+.btn .icon:only-child {
+  margin: 0;
+}
+
+/* ========================================
+   ICON IN LIST ROWS
+   ======================================== */
+
+.list-row .icon {
+  flex-shrink: 0;
+}
+
+.list-row-icon {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+  color: var(--color-text-primary);
+}
+
+.list-row-chevron {
+  width: var(--icon-size-md);
+  height: var(--icon-size-md);
+  color: var(--color-text-muted);
+}
+
+/* ========================================
+   ICON IN HEADERS
+   ======================================== */
+
+.header .icon {
+  width: var(--icon-size-lg);
+  height: var(--icon-size-lg);
+}
+
+.header-action .icon {
+  color: var(--color-text-primary);
+}
+
+/* ========================================
+   INLINE ICONS (with text)
+   ======================================== */
+
+.icon-inline {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-right: var(--spacing-xs);
+}
+
+.icon-inline:last-child {
+  margin-right: 0;
+  margin-left: var(--spacing-xs);
+}
+
+/* ========================================
+   BADGE/NOTIFICATION ICONS
+   ======================================== */
+
+.icon-badge {
+  position: relative;
+}
+
+.icon-badge::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-urgent);
+  border-radius: 50%;
+  border: 2px solid var(--color-surface);
+}
+
+/* ========================================
+   ICON CONTAINERS
+   ======================================== */
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-background);
+  border: var(--border-width-medium) solid var(--color-border);
+}
+
+.icon-container-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.icon-container-lg {
+  width: 48px;
+  height: 48px;
+}
+
+/* ========================================
+   ROTATING/ANIMATED ICONS
+   ======================================== */
+
+.icon-spin {
+  animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ========================================
+   ICON UTILITY: IMG-BASED ICONS
+   ======================================== */
+
+.icon-img {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
