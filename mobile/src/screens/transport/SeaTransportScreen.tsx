@@ -245,9 +245,16 @@ export function SeaTransportScreen(): React.JSX.Element {
                         colorToken="textPrimary"
                       />
                     </View>
-                    <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
-                      {line.name}
-                    </H2>
+                    <View style={styles.lineCardHeaderText}>
+                      <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
+                        {line.name}
+                      </H2>
+                      {line.subtype && (
+                        <View style={styles.lineSubtypeBadge}>
+                          <Meta style={styles.lineSubtypeText}>{line.subtype}</Meta>
+                        </View>
+                      )}
+                    </View>
                   </View>
                   {/* BOTTOM: White body with meta + chevron */}
                   <View style={styles.lineCardBody}>
@@ -303,9 +310,16 @@ export function SeaTransportScreen(): React.JSX.Element {
                     </View>
                     {/* Info */}
                     <View style={styles.todayInfo}>
-                      <Label style={styles.todayLineName} numberOfLines={1}>
-                        {dep.line_name}
-                      </Label>
+                      <View style={styles.todayLineRow}>
+                        <Label style={styles.todayLineName} numberOfLines={1}>
+                          {dep.line_name}
+                        </Label>
+                        {dep.subtype && (
+                          <View style={styles.todaySubtypeBadge}>
+                            <Meta style={styles.todaySubtypeText}>{dep.subtype}</Meta>
+                          </View>
+                        )}
+                      </View>
                       <Meta style={styles.todayDirection} numberOfLines={1}>
                         {dep.direction_label}
                       </Meta>
@@ -452,9 +466,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: listTokens.lineCardHeaderIconGap,
   },
-  lineCardHeaderTitle: {
+  lineCardHeaderText: {
     flex: 1,
+  },
+  lineCardHeaderTitle: {
     color: listTokens.lineCardHeaderTitleColor,
+  },
+  lineSubtypeBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 4,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+    marginTop: spacing.xs,
+  },
+  lineSubtypeText: {
+    color: colors.textPrimary,
+    fontSize: 10,
+    fontWeight: '600',
+    textTransform: 'uppercase',
   },
   // BOTTOM: White body with meta + chevron
   lineCardBody: {
@@ -538,9 +570,28 @@ const styles = StyleSheet.create({
     paddingVertical: listTokens.todayRowPadding,
     paddingHorizontal: spacing.md,
   },
+  todayLineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
   todayLineName: {
     color: colors.textPrimary,
     fontWeight: '600',
+  },
+  todaySubtypeBadge: {
+    backgroundColor: colors.backgroundTertiary,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 4,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+  },
+  todaySubtypeText: {
+    color: colors.textSecondary,
+    fontSize: 11,
+    textTransform: 'uppercase',
   },
   todayDirection: {
     color: colors.textSecondary,
