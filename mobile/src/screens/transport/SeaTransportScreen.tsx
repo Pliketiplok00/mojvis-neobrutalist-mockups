@@ -15,6 +15,22 @@
  *
  * Phase 4F: Aligned with LineDetail poster system - colored time blocks,
  *           2-part line cards with header slab + icon.
+ *
+ * ============================================================
+ * TRANSPORT_UI_LOCK - DO NOT MODIFY LAYOUT WITHOUT UPDATING TESTS
+ * ============================================================
+ * Canonical stable point: UI_TRANSPORT_STABLE_2026-01-18 (commit 1207a92)
+ * See: docs/TRANSPORT_UI_LOCK.md
+ *
+ * LOCKED LAYOUTS:
+ * - Line card header: [ICON] [TITLE] [TAG] horizontal
+ * - Today row: [TIME] [INFO] [TAG] horizontal
+ * - All badges: borderRadius: 0 (sharp corners)
+ *
+ * Changes require updating:
+ * - backend/src/__tests__/transport-ui-lock.test.ts
+ * - docs/TRANSPORT_UI_LOCK.md
+ * ============================================================
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -447,7 +463,8 @@ const styles = StyleSheet.create({
       { translateY: listTokens.lineCardPressedOffsetY },
     ],
   },
-  // TOP: Colored header slab with [ICON] [TITLE] [TAG] horizontal layout
+  // TRANSPORT_UI_LOCK: Line card header layout [ICON][TITLE][TAG]
+  // DO NOT change to stacked or inline layouts
   lineCardHeader: {
     flexDirection: 'row',
     alignItems: 'center', // Vertical center alignment
@@ -569,12 +586,13 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontWeight: '600',
   },
+  // TRANSPORT_UI_LOCK: Today badge MUST be outside todayInfo, right-aligned
   todaySubtypeBadge: {
     alignSelf: 'center', // Vertically centered in row
     backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 0, // Neobrutalist: no rounded corners
+    borderRadius: 0, // LOCKED: Neobrutalist sharp corners
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
     marginRight: spacing.md, // Right padding for badge

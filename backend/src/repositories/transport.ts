@@ -11,6 +11,22 @@
  * - Seasons: getSeasonForDate
  * - Departures: getDeparturesForRouteAndDate, getTodaysDepartures
  * - Contacts: getContactsForLine (BY LINE, not global)
+ *
+ * ============================================================
+ * TRANSPORT_UI_LOCK - DO NOT MODIFY QUERY WITHOUT UPDATING TESTS
+ * ============================================================
+ * Canonical stable point: UI_TRANSPORT_STABLE_2026-01-18 (commit 1207a92)
+ * See: docs/TRANSPORT_UI_LOCK.md
+ *
+ * LOCKED QUERY FIELDS:
+ * - getTodaysDepartures MUST include l.subtype_hr, l.subtype_en
+ * - Origin filter MUST include only island origins (Vis, Komiža)
+ *
+ * Changes require updating:
+ * - backend/src/__tests__/transport-subtype-contract.test.ts
+ * - backend/src/__tests__/transport-ui-lock.test.ts
+ * - docs/TRANSPORT_UI_LOCK.md
+ * ============================================================
  */
 
 import { query } from '../lib/database.js';
@@ -361,6 +377,11 @@ export async function getDeparturesForRouteAndDate(
 /**
  * Get today's departures for a transport type (aggregated across all lines)
  * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
+ *
+ * TRANSPORT_UI_LOCK: This query MUST include:
+ * - l.subtype_hr and l.subtype_en (for badge display)
+ * - Origin filter: s.name IN ('Vis', 'Komiža') for sea transport
+ * DO NOT remove these fields without updating tests.
  */
 export async function getTodaysDepartures(
   transportType: TransportType,
