@@ -57,13 +57,13 @@ for (const arg of args) {
     continue;
   }
   console.error(`Unknown option: ${arg}`);
-  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji] [--write-baseline]");
+  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji|poster|button|badge] [--write-baseline]");
   process.exit(1);
 }
 
 if (!scanModes.has(mode)) {
   console.error(`Unknown mode: ${mode}`);
-  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji]");
+  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji|poster|button|badge]");
   process.exit(1);
 }
 
@@ -446,7 +446,8 @@ if (writeBaseline) {
 }
 
 if (!ok) {
+  console.error(`[mode: ${mode}]`);
   process.exit(1);
 }
 
-console.log("Design guard passed.");
+console.log(`Design guard passed. [mode: ${mode}]`);
