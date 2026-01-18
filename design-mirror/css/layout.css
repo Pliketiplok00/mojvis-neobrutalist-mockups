@@ -1,0 +1,451 @@
+/**
+ * layout.css - Structural Scaffolding
+ *
+ * Layout containers, sections, and structural patterns.
+ * All screens share these layout primitives.
+ */
+
+/* ========================================
+   SCREEN CONTAINER
+   ======================================== */
+
+.screen {
+  min-height: 100vh;
+  max-width: 414px; /* iPhone 11 Pro Max width */
+  margin: 0 auto;
+  background-color: var(--color-background);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Full-width mode (no max-width constraint) */
+.screen--full {
+  max-width: none;
+}
+
+/* ========================================
+   MAIN CONTENT AREA
+   ======================================== */
+
+.main {
+  padding: var(--spacing-lg);
+}
+
+.main--flush {
+  padding: 0;
+}
+
+/* ========================================
+   SECTION
+   ======================================== */
+
+.section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.section--flush {
+  margin-bottom: 0;
+}
+
+.section__header {
+  margin-bottom: var(--spacing-md);
+}
+
+.section__content {
+  /* Placeholder for section content */
+}
+
+/* ========================================
+   GRID LAYOUTS
+   ======================================== */
+
+/* 2-column grid */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+/* Quick actions row (2x2) */
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+.quick-action {
+  position: relative;
+  aspect-ratio: 1;
+}
+
+.quick-action__shadow {
+  position: absolute;
+  top: var(--shadow-offset);
+  left: var(--shadow-offset);
+  width: 100%;
+  height: 100%;
+  background-color: var(--shadow-color);
+  z-index: 0;
+}
+
+.quick-action__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-primary);
+  border: var(--border-width-thin) solid var(--color-border);
+  z-index: 1;
+}
+
+.quick-action__icon {
+  font-size: 32px;
+  color: var(--color-primary-text);
+}
+
+.quick-action__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-primary-text);
+  text-align: center;
+}
+
+/* Colored variants */
+.quick-action--green .quick-action__content {
+  background-color: var(--color-success);
+}
+
+.quick-action--yellow .quick-action__content {
+  background-color: var(--color-warning-accent);
+}
+
+.quick-action--yellow .quick-action__icon,
+.quick-action--yellow .quick-action__label {
+  color: var(--color-text-primary);
+}
+
+.quick-action--red .quick-action__content {
+  background-color: var(--color-urgent);
+}
+
+/* ========================================
+   FLEX UTILITIES
+   ======================================== */
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-sm {
+  gap: var(--spacing-sm);
+}
+
+.gap-md {
+  gap: var(--spacing-md);
+}
+
+.gap-lg {
+  gap: var(--spacing-lg);
+}
+
+/* ========================================
+   SPACING UTILITIES
+   ======================================== */
+
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+.mt-xl { margin-top: var(--spacing-xl); }
+
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+.mb-xl { margin-bottom: var(--spacing-xl); }
+
+.mx-lg { margin-left: var(--spacing-lg); margin-right: var(--spacing-lg); }
+
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+
+.px-lg { padding-left: var(--spacing-lg); padding-right: var(--spacing-lg); }
+.py-lg { padding-top: var(--spacing-lg); padding-bottom: var(--spacing-lg); }
+
+/* ========================================
+   LIST CONTAINER
+   ======================================== */
+
+.list {
+  background-color: var(--color-surface);
+  border-top: var(--border-width-thin) solid var(--color-border);
+}
+
+.list--bordered {
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+/* ========================================
+   BOTTOM SPACER
+   ======================================== */
+
+.bottom-spacer {
+  height: var(--spacing-xxxl);
+}
+
+/* ========================================
+   FILTER AREA (PLACEHOLDER)
+   ======================================== */
+
+.filter-area {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-surface);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  overflow-x: auto;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  background-color: var(--color-background);
+  border: var(--border-width-thin) solid var(--color-border);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.filter-chip--active {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+/* ========================================
+   CTA PANEL
+   ======================================== */
+
+.cta-panel {
+  position: relative;
+  margin: var(--spacing-lg);
+}
+
+.cta-panel__shadow {
+  position: absolute;
+  top: var(--shadow-offset);
+  left: var(--shadow-offset);
+  right: calc(-1 * var(--shadow-offset));
+  bottom: calc(-1 * var(--shadow-offset));
+  background-color: var(--shadow-color);
+}
+
+.cta-panel__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  background-color: var(--color-success);
+  border: var(--border-width-thin) solid var(--color-border);
+  z-index: 1;
+}
+
+.cta-panel__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: var(--border-width-thin) solid rgba(255, 255, 255, 0.3);
+}
+
+.cta-panel__text {
+  flex: 1;
+}
+
+.cta-panel__title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary-text);
+}
+
+.cta-panel__subtitle {
+  font-size: var(--font-size-sm);
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: var(--spacing-xs);
+}
+
+.cta-panel__arrow {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary-text);
+}
+
+/* ========================================
+   INFO TILES (Event Detail)
+   ======================================== */
+
+.info-tiles {
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.info-tile {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: var(--border-width-thin) solid var(--color-border-light);
+}
+
+.info-tile:last-child {
+  border-bottom: none;
+}
+
+.info-tile__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-surface);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.info-tile__content {
+  flex: 1;
+}
+
+.info-tile__value {
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+
+.info-tile__secondary {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ========================================
+   DESCRIPTION SECTION
+   ======================================== */
+
+.description-section {
+  padding: var(--spacing-lg);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.description-section__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-sm);
+}
+
+.description-section__text {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+}
+
+/* ========================================
+   REMINDER CARD
+   ======================================== */
+
+.reminder-card {
+  position: relative;
+  margin: var(--spacing-lg);
+}
+
+.reminder-card__shadow {
+  position: absolute;
+  top: var(--shadow-offset);
+  left: var(--shadow-offset);
+  right: calc(-1 * var(--shadow-offset));
+  bottom: calc(-1 * var(--shadow-offset));
+  background-color: var(--shadow-color);
+}
+
+.reminder-card__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg);
+  background-color: var(--color-warning-accent);
+  border: var(--border-width-card) solid var(--color-border);
+  z-index: 1;
+}
+
+.reminder-card__info {
+  flex: 1;
+}
+
+.reminder-card__label {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.reminder-card__hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: var(--spacing-xs);
+}
+
+/* ========================================
+   LOCATION DISPLAY
+   ======================================== */
+
+.location-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-success-bg);
+  border: var(--border-width-thin) solid var(--color-border);
+}
+
+.location-display__coords {
+  font-family: var(--font-body);
+  font-size: var(--font-size-md);
+  color: var(--color-success-text);
+}
+
+.location-display__change {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+  border: none;
+  cursor: pointer;
+}

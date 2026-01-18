@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MOJ VIS - Design Mirror</title>
+  <link rel="stylesheet" href="css/skin.base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <style>
+    .index-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--spacing-xxl);
+    }
+    .index-header {
+      margin-bottom: var(--spacing-xxl);
+      padding-bottom: var(--spacing-xl);
+      border-bottom: var(--border-width-heavy) solid var(--color-border);
+    }
+    .index-title {
+      font-size: 48px;
+      margin-bottom: var(--spacing-md);
+    }
+    .index-subtitle {
+      font-size: var(--font-size-xl);
+      color: var(--color-text-muted);
+    }
+    .screen-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+    }
+    .screen-link {
+      position: relative;
+      display: block;
+      text-decoration: none;
+    }
+    .screen-link__shadow {
+      position: absolute;
+      top: var(--shadow-offset);
+      left: var(--shadow-offset);
+      width: 100%;
+      height: 100%;
+      background-color: var(--shadow-color);
+    }
+    .screen-link__content {
+      position: relative;
+      padding: var(--spacing-lg);
+      background-color: var(--color-surface);
+      border: var(--border-width-card) solid var(--color-border);
+      z-index: 1;
+    }
+    .screen-link__title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--spacing-xs);
+    }
+    .screen-link__desc {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+    }
+    .screen-link:hover .screen-link__content {
+      background-color: var(--color-warning-accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="index-container">
+    <header class="index-header">
+      <h1 class="index-title">MOJ VIS</h1>
+      <p class="index-subtitle">Design Mirror - Static HTML/CSS Screens</p>
+    </header>
+
+    <section class="section">
+      <p class="section-label">Foundation</p>
+      <div class="screen-grid">
+        <a href="screens/ui-inventory.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">UI Inventory</div>
+            <div class="screen-link__desc">Component showcase</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <p class="section-label">App Screens</p>
+      <div class="screen-grid">
+        <a href="screens/home.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Home</div>
+            <div class="screen-link__desc">Main landing screen</div>
+          </div>
+        </a>
+        <a href="screens/transport-sea.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Transport (Sea)</div>
+            <div class="screen-link__desc">Ferry departures</div>
+          </div>
+        </a>
+        <a href="screens/transport-road.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Transport (Road)</div>
+            <div class="screen-link__desc">Bus departures</div>
+          </div>
+        </a>
+        <a href="screens/events.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Events</div>
+            <div class="screen-link__desc">Event listings</div>
+          </div>
+        </a>
+        <a href="screens/event-detail.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Event Detail</div>
+            <div class="screen-link__desc">Single event view</div>
+          </div>
+        </a>
+        <a href="screens/clickfix-form.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Click&Fix Form</div>
+            <div class="screen-link__desc">Issue report form</div>
+          </div>
+        </a>
+        <a href="screens/settings.html" class="screen-link">
+          <div class="screen-link__shadow"></div>
+          <div class="screen-link__content">
+            <div class="screen-link__title">Settings</div>
+            <div class="screen-link__desc">App preferences</div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="section mt-xl">
+      <p class="section-label">How to Edit</p>
+      <div class="poster-card">
+        <div class="poster-card__shadow"></div>
+        <div class="poster-card__content">
+          <p style="margin-bottom: var(--spacing-md);"><strong>1. Tokens:</strong> Edit <code>css/skin.base.css</code> for colors, spacing, typography</p>
+          <p style="margin-bottom: var(--spacing-md);"><strong>2. Components:</strong> Edit <code>css/components.css</code> for buttons, cards, badges</p>
+          <p style="margin-bottom: var(--spacing-md);"><strong>3. Layout:</strong> Edit <code>css/layout.css</code> for structural patterns</p>
+          <p><strong>4. Per-screen:</strong> Edit <code>screens/*.css</code> for screen-specific overrides</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

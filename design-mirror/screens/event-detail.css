@@ -1,0 +1,44 @@
+/**
+ * event-detail.css - Event Detail Screen Overrides
+ *
+ * Screen-specific styles for the single event view.
+ * Edit this file to customize the event detail appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--event-detail {
+  /* Add event-detail-specific variables or overrides here */
+}
+
+/* Event title slab (yellow header) */
+.event-title-slab {
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background-color: var(--color-warning-accent);
+  border-bottom: var(--border-width-heavy) solid var(--color-border);
+}
+
+.event-title-slab h1 {
+  font-size: var(--font-size-xxl);
+  color: var(--color-text-primary);
+}
+
+/* Info tiles customization */
+.screen--event-detail .info-tile {
+  /* Customize info tiles */
+}
+
+/* Description section */
+.screen--event-detail .description-section {
+  /* Customize description */
+}
+
+/* Reminder card */
+.screen--event-detail .reminder-card {
+  /* Customize reminder card */
+}
+
+/* Share button wrapper */
+.share-button-wrapper {
+  padding: 0 var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}

@@ -1,0 +1,31 @@
+/**
+ * settings.css - Settings Screen Overrides
+ *
+ * Screen-specific styles for the app settings screen.
+ * Edit this file to customize the settings appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--settings {
+  /* Add settings-specific variables or overrides here */
+}
+
+/* Settings cards customization */
+.screen--settings .settings-card {
+  /* Customize settings cards */
+}
+
+/* Toggle customization */
+.screen--settings .toggle {
+  /* Customize toggles */
+}
+
+/* Danger button styling */
+.screen--settings .btn--danger {
+  /* Customize danger button */
+}
+
+/* App info section */
+.screen--settings .section-label {
+  /* Customize section labels */
+}

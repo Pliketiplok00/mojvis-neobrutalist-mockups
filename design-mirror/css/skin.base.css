@@ -1,0 +1,200 @@
+/**
+ * skin.base.css - Design Token Foundation
+ *
+ * All color, spacing, typography, and border tokens.
+ * Edit these values to change the entire design system.
+ */
+
+:root {
+  /* ========================================
+     COLORS - Primary Palette
+     ======================================== */
+  --color-primary: #2563eb;
+  --color-primary-text: #ffffff;
+
+  /* Background & Surface */
+  --color-background: #fafaf9;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+
+  /* Text Hierarchy */
+  --color-text-primary: #1c1917;
+  --color-text-secondary: #57534e;
+  --color-text-muted: #78716c;
+  --color-text-disabled: #a8a29e;
+
+  /* Borders */
+  --color-border: #1c1917;
+  --color-border-light: #d6d3d1;
+
+  /* Semantic Colors */
+  --color-success: #16a34a;
+  --color-success-bg: #dcfce7;
+  --color-success-text: #166534;
+
+  --color-warning: #eab308;
+  --color-warning-bg: #fef9c3;
+  --color-warning-accent: #facc15;
+
+  --color-error: #dc2626;
+  --color-error-bg: #fef2f2;
+  --color-error-text: #b91c1c;
+
+  --color-urgent: #ef4444;
+
+  /* ========================================
+     SPACING
+     ======================================== */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+  --spacing-xxxl: 48px;
+
+  /* ========================================
+     TYPOGRAPHY
+     ======================================== */
+  --font-display: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --font-body: 'Space Mono', 'SF Mono', 'Monaco', monospace;
+
+  --font-size-xs: 10px;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-xxl: 24px;
+  --font-size-xxxl: 28px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* ========================================
+     BORDERS
+     ======================================== */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 3px;
+  --border-width-card: 2px;
+  --border-width-heavy: 4px;
+
+  --border-radius-none: 0;
+  --border-radius-small: 2px;
+  --border-radius-medium: 4px;
+  --border-radius-card: 0; /* Neobrutalist: sharp corners */
+
+  /* ========================================
+     SHADOWS (Poster Pattern)
+     ======================================== */
+  --shadow-offset: 4px;
+  --shadow-color: var(--color-border);
+
+  /* ========================================
+     COMPONENT TOKENS
+     ======================================== */
+
+  /* Buttons */
+  --btn-padding-y: var(--spacing-md);
+  --btn-padding-x: var(--spacing-lg);
+  --btn-min-height: 48px;
+  --btn-font-size: var(--font-size-lg);
+  --btn-font-weight: var(--font-weight-bold);
+
+  /* Inputs */
+  --input-padding-y: var(--spacing-md);
+  --input-padding-x: var(--spacing-lg);
+  --input-font-size: var(--font-size-lg);
+  --input-border-width: var(--border-width-thin);
+  --input-border-color: var(--color-border);
+  --input-bg: var(--color-surface);
+
+  /* Cards */
+  --card-padding: var(--spacing-lg);
+  --card-border-width: var(--border-width-card);
+  --card-border-color: var(--color-border);
+
+  /* Header */
+  --header-height: 56px;
+  --header-padding-x: var(--spacing-lg);
+  --header-border-width: var(--border-width-thick);
+
+  /* List rows */
+  --list-row-padding-y: var(--spacing-lg);
+  --list-row-padding-x: var(--spacing-lg);
+  --list-row-gap: var(--spacing-md);
+
+  /* Date badge */
+  --date-badge-size: 48px;
+  --date-badge-day-size: var(--font-size-xl);
+  --date-badge-month-size: var(--font-size-xs);
+}
+
+/* ========================================
+   BASE RESET & TYPOGRAPHY
+   ======================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: var(--font-size-xxxl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+p {
+  color: var(--color-text-secondary);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Utility: uppercase section label */
+.section-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+}

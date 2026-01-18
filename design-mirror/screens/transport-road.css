@@ -1,0 +1,26 @@
+/**
+ * transport-road.css - Road Transport Screen Overrides
+ *
+ * Screen-specific styles for the bus/road transport screen.
+ * Edit this file to customize the road transport appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--transport-road {
+  /* Add transport-road-specific variables or overrides here */
+}
+
+/* Time slab for road transport */
+.screen--transport-road .list-row__time-slab {
+  background-color: var(--color-success);
+}
+
+/* Override badge colors for road transport */
+.screen--transport-road .badge--road {
+  /* Customize road badges */
+}
+
+/* Lines section styling */
+.screen--transport-road .section:last-of-type {
+  /* Style lines section differently if needed */
+}

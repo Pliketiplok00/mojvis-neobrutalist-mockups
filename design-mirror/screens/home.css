@@ -1,0 +1,32 @@
+/**
+ * home.css - Home Screen Overrides
+ *
+ * Screen-specific styles for the home/landing screen.
+ * Edit this file to customize the home screen appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--home {
+  /* Add home-specific variables or overrides here */
+}
+
+/* Hero customization */
+.screen--home .hero-slab {
+  /* Override hero styles if needed */
+}
+
+/* Quick actions customization */
+.screen--home .quick-actions {
+  /* Adjust grid if needed */
+}
+
+/* Events section */
+.screen--home .event-card {
+  /* Customize event cards on home */
+}
+
+/* CTA panel */
+.screen--home .cta-panel {
+  margin-left: 0;
+  margin-right: 0;
+}

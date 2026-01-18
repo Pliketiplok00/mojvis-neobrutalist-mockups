@@ -1,0 +1,41 @@
+/**
+ * clickfix-form.css - Click&Fix Form Screen Overrides
+ *
+ * Screen-specific styles for the issue report form.
+ * Edit this file to customize the form appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--clickfix-form {
+  /* Add clickfix-form-specific variables or overrides here */
+}
+
+/* Input customizations */
+.screen--clickfix-form .input {
+  /* Customize inputs */
+}
+
+/* Photo buttons layout */
+.photo-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.photo-btn {
+  flex: 1;
+}
+
+/* Photo grid */
+.screen--clickfix-form .photo-grid {
+  /* Customize photo grid */
+}
+
+/* Location display */
+.screen--clickfix-form .location-display {
+  /* Customize location display */
+}
+
+/* Submit section */
+.submit-section {
+  margin-top: var(--spacing-xl);
+}

@@ -1,0 +1,26 @@
+/**
+ * transport-sea.css - Sea Transport Screen Overrides
+ *
+ * Screen-specific styles for the ferry/maritime transport screen.
+ * Edit this file to customize the sea transport appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--transport-sea {
+  /* Add transport-sea-specific variables or overrides here */
+}
+
+/* Time slab for sea transport */
+.screen--transport-sea .list-row__time-slab {
+  background-color: var(--color-primary);
+}
+
+/* Lines section styling */
+.screen--transport-sea .section:last-of-type {
+  /* Style lines section differently if needed */
+}
+
+/* Override badge colors for sea transport */
+.screen--transport-sea .badge--sea {
+  /* Customize sea badges */
+}

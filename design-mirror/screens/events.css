@@ -1,0 +1,26 @@
+/**
+ * events.css - Events List Screen Overrides
+ *
+ * Screen-specific styles for the events listing screen.
+ * Edit this file to customize the events appearance.
+ */
+
+/* Screen-specific customizations */
+.screen--events {
+  /* Add events-specific variables or overrides here */
+}
+
+/* Filter area customization */
+.screen--events .filter-area {
+  /* Customize filter chips */
+}
+
+/* Event cards customization */
+.screen--events .event-card {
+  /* Customize event cards */
+}
+
+/* Featured event styling */
+.screen--events .event-card--featured {
+  /* Additional featured styling */
+}
