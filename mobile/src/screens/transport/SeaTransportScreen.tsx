@@ -322,13 +322,13 @@ export function SeaTransportScreen(): React.JSX.Element {
                         {formatTime(dep.departure_time)}
                       </H2>
                     </View>
-                    {/* Info: title + direction (flex: 1) */}
+                    {/* Info: direction as title, line name as subtitle (flex: 1) */}
                     <View style={styles.todayInfo}>
                       <Label style={styles.todayLineName} numberOfLines={1}>
-                        {dep.line_name}
+                        {dep.direction_label || dep.line_name}
                       </Label>
                       <Meta style={styles.todayDirection} numberOfLines={1}>
-                        {dep.direction_label}
+                        {dep.line_name}
                       </Meta>
                     </View>
                     {/* Badge: right-aligned */}
