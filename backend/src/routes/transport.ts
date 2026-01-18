@@ -339,6 +339,8 @@ function createTransportRoutes(transportType: TransportType) {
               line_id: dep.line_id,
               line_name:
                 language === 'en' ? dep.line_name_en : dep.line_name_hr,
+              subtype:
+                language === 'en' ? dep.subtype_en : dep.subtype_hr,
               route_id: dep.route_id,
               direction_label:
                 language === 'en'

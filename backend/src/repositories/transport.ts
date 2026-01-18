@@ -371,6 +371,8 @@ export async function getTodaysDepartures(
     line_id: string;
     line_name_hr: string;
     line_name_en: string;
+    subtype_hr: string | null;
+    subtype_en: string | null;
     route_id: string;
     direction_label_hr: string;
     direction_label_en: string;
@@ -396,6 +398,8 @@ export async function getTodaysDepartures(
     line_id: string;
     line_name_hr: string;
     line_name_en: string;
+    subtype_hr: string | null;
+    subtype_en: string | null;
     route_id: string;
     direction_label_hr: string;
     direction_label_en: string;
@@ -413,6 +417,8 @@ export async function getTodaysDepartures(
        l.id as line_id,
        l.name_hr as line_name_hr,
        l.name_en as line_name_en,
+       l.subtype_hr,
+       l.subtype_en,
        r.id as route_id,
        r.direction_label_hr,
        r.direction_label_en,
@@ -453,6 +459,8 @@ export async function getTodaysDepartures(
     line_id: row.line_id,
     line_name_hr: row.line_name_hr,
     line_name_en: row.line_name_en,
+    subtype_hr: row.subtype_hr,
+    subtype_en: row.subtype_en,
     route_id: row.route_id,
     direction_label_hr: row.direction_label_hr,
     direction_label_en: row.direction_label_en,
