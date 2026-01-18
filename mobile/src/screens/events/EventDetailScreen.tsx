@@ -35,7 +35,7 @@ import { eventsApi } from '../../services/api';
 import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
-import { Button } from '../../ui/Button';
+import { PosterButton } from '../../ui/PosterButton';
 import { H1, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
@@ -228,15 +228,14 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
           </View>
         </View>
 
-        {/* Share Button - Dual-layer CTA */}
-        <View style={styles.shareWrapper}>
-          {/* Shadow layer */}
-          <View style={styles.ctaShadowLayerButton} />
-          {/* Main button */}
-          <Button variant="secondary" onPress={handleShare} style={styles.shareButton}>
-            {t('eventDetail.share')}
-          </Button>
-        </View>
+        {/* Share Button - Poster CTA */}
+        <PosterButton
+          variant="secondary"
+          onPress={handleShare}
+          style={styles.shareButton}
+        >
+          {t('eventDetail.share')}
+        </PosterButton>
       </ScrollView>
     </SafeAreaView>
   );
@@ -352,23 +351,10 @@ const styles = StyleSheet.create({
     marginTop: skin.components.events.detail.reminderHintMarginTop,
   },
 
-  // Share Button with dual-layer shadow
-  shareWrapper: {
+  // Share Button - uses PosterButton (includes shadow)
+  shareButton: {
     marginHorizontal: skin.spacing.lg,
     marginBottom: skin.spacing.lg,
-    position: 'relative',
-  },
-  ctaShadowLayerButton: {
-    position: 'absolute',
-    top: skin.components.events.detail.ctaShadowOffsetY,
-    left: skin.components.events.detail.ctaShadowOffsetX,
-    right: -skin.components.events.detail.ctaShadowOffsetX,
-    bottom: -skin.components.events.detail.ctaShadowOffsetY,
-    backgroundColor: skin.components.events.detail.ctaShadowColor,
-    borderRadius: skin.borders.radiusCard,
-  },
-  shareButton: {
-    // Button styling handled by Button component
   },
 });
 

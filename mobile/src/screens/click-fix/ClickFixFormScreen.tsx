@@ -25,8 +25,9 @@ import {
   Platform,
   Image,
   Alert,
+  Linking,
 } from 'react-native';
-import { Button } from '../../ui/Button';
+import { PosterButton } from '../../ui/PosterButton';
 import { Input } from '../../ui/Input';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -104,15 +105,32 @@ export function ClickFixFormScreen(): React.JSX.Element {
       return;
     }
 
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
+    // Request permission - handles both initial request and checking existing status
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    // Check if permission was denied (not granted and not limited)
+    if (permissionResult.status === 'denied') {
+      // Show alert with option to open Settings
       Alert.alert(
         t('clickFix.permissions.title'),
-        t('clickFix.permissions.galleryDenied')
+        t('clickFix.permissions.galleryDenied'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('clickFix.permissions.openSettings'),
+            onPress: () => Linking.openSettings(),
+          },
+        ]
       );
       return;
     }
 
+    // If status is 'undetermined', the permission dialog was dismissed without choosing
+    if (permissionResult.status !== 'granted') {
+      return;
+    }
+
+    // Permission granted (full or limited) - proceed with picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
@@ -128,7 +146,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
       }));
       setPhotos((prev) => [...prev, ...newPhotos].slice(0, VALIDATION_LIMITS.MAX_PHOTOS));
     }
-  }, [photos.length]);
+  }, [photos.length, t]);
 
   const handleTakePhoto = useCallback(async () => {
     if (photos.length >= VALIDATION_LIMITS.MAX_PHOTOS) {
@@ -139,15 +157,32 @@ export function ClickFixFormScreen(): React.JSX.Element {
       return;
     }
 
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
+    // Request camera permission
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+
+    // Check if permission was denied
+    if (permissionResult.status === 'denied') {
+      // Show alert with option to open Settings
       Alert.alert(
         t('clickFix.permissions.title'),
-        t('clickFix.permissions.cameraDenied')
+        t('clickFix.permissions.cameraDenied'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('clickFix.permissions.openSettings'),
+            onPress: () => Linking.openSettings(),
+          },
+        ]
       );
       return;
     }
 
+    // If status is 'undetermined', the permission dialog was dismissed without choosing
+    if (permissionResult.status !== 'granted') {
+      return;
+    }
+
+    // Permission granted - proceed with camera
     const result = await ImagePicker.launchCameraAsync({
       quality: 0.8,
     });
@@ -163,7 +198,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
         },
       ].slice(0, VALIDATION_LIMITS.MAX_PHOTOS));
     }
-  }, [photos.length]);
+  }, [photos.length, t]);
 
   const handleRemovePhoto = useCallback((index: number) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
@@ -297,7 +332,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
                 </TouchableOpacity>
               </View>
             ) : (
-              <Button
+              <PosterButton
                 variant="secondary"
                 onPress={handleGetLocation}
                 loading={isGettingLocation}
@@ -305,7 +340,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
                 style={errors.location ? styles.locationButtonError : undefined}
               >
                 {t('clickFix.locationActions.getLocation')}
-              </Button>
+              </PosterButton>
             )}
             {errors.location && (
               <Label style={styles.fieldError}>{t(errors.location)}</Label>
@@ -338,26 +373,28 @@ export function ClickFixFormScreen(): React.JSX.Element {
             {/* Add Photo Buttons */}
             {photos.length < VALIDATION_LIMITS.MAX_PHOTOS && (
               <View style={styles.photoButtons}>
-                <TouchableOpacity
-                  style={styles.addPhotoButton}
+                <PosterButton
+                  variant="secondary"
                   onPress={handlePickPhotos}
                   disabled={isSubmitting}
+                  style={styles.photoButton}
                 >
-                  <ButtonText style={styles.addPhotoText}>{t('clickFix.photoActions.pickFromGallery')}</ButtonText>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.addPhotoButton}
+                  {t('clickFix.photoActions.pickFromGallery')}
+                </PosterButton>
+                <PosterButton
+                  variant="secondary"
                   onPress={handleTakePhoto}
                   disabled={isSubmitting}
+                  style={styles.photoButton}
                 >
-                  <ButtonText style={styles.addPhotoText}>{t('clickFix.photoActions.takePhoto')}</ButtonText>
-                </TouchableOpacity>
+                  {t('clickFix.photoActions.takePhoto')}
+                </PosterButton>
               </View>
             )}
           </View>
 
           {/* Submit Button */}
-          <Button
+          <PosterButton
             variant="primary"
             onPress={handleSubmit}
             loading={isSubmitting}
@@ -365,7 +402,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
             style={styles.submitButton}
           >
             {t('clickFix.send')}
-          </Button>
+          </PosterButton>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -479,17 +516,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: skin.spacing.md,
   },
-  addPhotoButton: {
+  photoButton: {
     flex: 1,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderStyle: 'dashed',
-    borderRadius: skin.borders.radiusCard,
-    paddingVertical: skin.spacing.md,
-    alignItems: 'center',
-  },
-  addPhotoText: {
-    color: skin.colors.textPrimary,
   },
   submitButton: {
     marginTop: skin.spacing.lg,

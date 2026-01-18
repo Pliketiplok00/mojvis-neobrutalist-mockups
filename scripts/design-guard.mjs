@@ -32,7 +32,10 @@ const emojiAllowlist = [
 const emojiSet = ["📭", "📤", "⚠️", "🚌", "🚢", "⚙️", "🔧", "💬", "🏠", "📅", "✅", "❌"];
 const baselinePath = path.join(repoRoot, "docs", "design-guard-baseline.json");
 
-const scanModes = new Set(["all", "hex", "lucide", "emoji"]);
+// PosterButton guard: must use ButtonText, not raw Text
+const posterButtonPath = path.join(repoRoot, "mobile", "src", "ui", "PosterButton.tsx");
+
+const scanModes = new Set(["all", "hex", "lucide", "emoji", "poster"]);
 const args = process.argv.slice(2);
 let mode = "all";
 let writeBaseline = false;
@@ -165,6 +168,68 @@ function scanEmoji(files) {
   return matches;
 }
 
+/**
+ * PosterButton typography guard.
+ * Checks that PosterButton.tsx:
+ * - Imports ButtonText from './Text'
+ * - Does NOT import Text from 'react-native' for rendering labels
+ */
+function scanPosterButton() {
+  const matches = [];
+  if (!fs.existsSync(posterButtonPath)) {
+    matches.push({
+      filePath: posterButtonPath,
+      lineNumber: 0,
+      match: "PosterButton.tsx not found",
+      lineText: "",
+    });
+    return matches;
+  }
+
+  const content = fs.readFileSync(posterButtonPath, "utf8");
+  const lines = content.split(/\r?\n/);
+
+  // Check for ButtonText import
+  const hasButtonTextImport = lines.some(
+    (line) => /import.*\{[^}]*ButtonText[^}]*\}.*from\s+['"]\.\/Text['"]/.test(line)
+  );
+  if (!hasButtonTextImport) {
+    matches.push({
+      filePath: posterButtonPath,
+      lineNumber: 1,
+      match: "Missing ButtonText import from './Text'",
+      lineText: "PosterButton must import ButtonText from './Text'",
+    });
+  }
+
+  // Check for raw Text import from react-native (should not have it)
+  lines.forEach((line, index) => {
+    if (/import\s*\{[^}]*\bText\b[^}]*\}\s*from\s+['"]react-native['"]/.test(line)) {
+      matches.push({
+        filePath: posterButtonPath,
+        lineNumber: index + 1,
+        match: "Raw Text import from react-native",
+        lineText: line.trim(),
+      });
+    }
+  });
+
+  // Check for <Text> usage (should use <ButtonText> instead)
+  lines.forEach((line, index) => {
+    // Match <Text but not <ButtonText
+    if (/<Text[\s>]/.test(line) && !/<ButtonText/.test(line)) {
+      matches.push({
+        filePath: posterButtonPath,
+        lineNumber: index + 1,
+        match: "Raw <Text> usage (should use <ButtonText>)",
+        lineText: line.trim(),
+      });
+    }
+  });
+
+  return matches;
+}
+
 function formatMatches(matches) {
   return matches
     .map((match) => `${relativePath(match.filePath)}:${match.lineNumber}: ${match.match}`)
@@ -221,6 +286,14 @@ if (mode === "all" || mode === "emoji") {
     ...matches.map((match) => ({ rule: "emoji", ...match, fingerprint: fingerprint(match) }))
   );
   ok = reportMatches("emoji icons used as UI", matches, baselineSet) && ok;
+}
+
+if (mode === "all" || mode === "poster") {
+  const matches = scanPosterButton();
+  violations.push(
+    ...matches.map((match) => ({ rule: "poster", ...match, fingerprint: fingerprint(match) }))
+  );
+  ok = reportMatches("PosterButton typography violation", matches, baselineSet) && ok;
 }
 
 if (writeBaseline) {
