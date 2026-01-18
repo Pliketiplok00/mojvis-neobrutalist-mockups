@@ -1,0 +1,215 @@
+{
+  "stops": [
+    { "id": "stop-komiza-port", "name_hr": "Komiža", "name_en": "Komiza", "transport_type": "sea" },
+    { "id": "stop-mezuporat-port", "name_hr": "Mezuporat", "name_en": "Mezuporat", "transport_type": "sea" },
+    { "id": "stop-salbunara-port", "name_hr": "Salbunara", "name_en": "Salbunara", "transport_type": "sea" },
+    { "id": "stop-porat-bisevo-port", "name_hr": "Porat (Biševo)", "name_en": "Porat (Bisevo)", "transport_type": "sea" }
+  ],
+  "seasons": [
+    {
+      "id": "season-612-2026-off-a",
+      "season_type": "OFF",
+      "year": 2026,
+      "date_from": "2026-01-01",
+      "date_to": "2026-03-28",
+      "label_hr": "Izvan sezone",
+      "label_en": "Off season"
+    },
+    {
+      "id": "season-612-2026-pre-a",
+      "season_type": "PRE",
+      "year": 2026,
+      "date_from": "2026-03-29",
+      "date_to": "2026-05-28",
+      "label_hr": "Izvan sezone",
+      "label_en": "Off season"
+    },
+    {
+      "id": "season-612-2026-post-a",
+      "season_type": "POST",
+      "year": 2026,
+      "date_from": "2026-05-29",
+      "date_to": "2026-07-02",
+      "label_hr": "Niska sezona",
+      "label_en": "Low season"
+    },
+    {
+      "id": "season-612-2026-high",
+      "season_type": "HIGH",
+      "year": 2026,
+      "date_from": "2026-07-03",
+      "date_to": "2026-08-30",
+      "label_hr": "Visoka sezona",
+      "label_en": "High season"
+    },
+    {
+      "id": "season-612-2026-post-b",
+      "season_type": "POST",
+      "year": 2026,
+      "date_from": "2026-08-31",
+      "date_to": "2026-09-27",
+      "label_hr": "Niska sezona",
+      "label_en": "Low season"
+    },
+    {
+      "id": "season-612-2026-pre-b",
+      "season_type": "PRE",
+      "year": 2026,
+      "date_from": "2026-09-28",
+      "date_to": "2026-10-31",
+      "label_hr": "Izvan sezone",
+      "label_en": "Off season"
+    },
+    {
+      "id": "season-612-2026-off-b",
+      "season_type": "OFF",
+      "year": 2026,
+      "date_from": "2026-11-01",
+      "date_to": "2026-12-31",
+      "label_hr": "Izvan sezone",
+      "label_en": "Off season"
+    }
+  ],
+  "lines": [
+    {
+      "id": "612",
+      "transport_type": "sea",
+      "name_hr": "Komiža – Biševo",
+      "name_en": "Komiza – Bisevo",
+      "subtype_hr": "Brod",
+      "subtype_en": "Boat",
+      "display_order": 612,
+      "contacts": [],
+      "routes": [
+        {
+          "direction": 0,
+          "direction_label_hr": "Komiža → Mezuporat → Salbunara → Porat (Biševo)",
+          "direction_label_en": "Komiza → Mezuporat → Salbunara → Porat (Bisevo)",
+          "origin_stop_id": "stop-komiza-port",
+          "destination_stop_id": "stop-porat-bisevo-port",
+          "typical_duration_minutes": null,
+          "marker_note_hr": "Državna brodska linija br. 612 (Nautički centar Komiža). Red plovidbe podložan je promjenama.",
+          "marker_note_en": "State boat line 612 (Nauticki centar Komiza). Timetable subject to changes.",
+          "stops": [
+            { "stop_id": "stop-komiza-port", "stop_order": 0 },
+            { "stop_id": "stop-mezuporat-port", "stop_order": 1 },
+            { "stop_id": "stop-salbunara-port", "stop_order": 2 },
+            { "stop_id": "stop-porat-bisevo-port", "stop_order": 3 }
+          ],
+          "departures": [
+            /* OFF (01.01–28.03, 01.11–31.12): UTO + NED + PET; PET ima i rotaciju II */
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "14:30", "stop_times": ["14:30", "15:15–15:20", "15:30–15:35", "15:45"], "marker": null },
+
+            /* PRE (29.03–28.05, 28.09–31.10): UTO + NED + PET; PET ima i rotaciju II (15:30) */
+            { "day_type": "TUE", "season_type": "PRE", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "PRE", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "PRE", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "FRI", "season_type": "PRE", "departure_time": "15:30", "stop_times": ["15:30", "16:15–16:20", "16:30–16:35", "16:45"], "marker": null },
+
+            /* POST (Niska sezona 29.05–02.07 & 31.08–27.09): PON, UTO, SRI, PET, SUB, NED + PET rot II */
+            { "day_type": "MON", "season_type": "POST", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "TUE", "season_type": "POST", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "WED", "season_type": "POST", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "FRI", "season_type": "POST", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "SAT", "season_type": "POST", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "POST", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "POST", "departure_time": "15:30", "stop_times": ["15:30", "16:15–16:20", "16:30–16:35", "16:45"], "marker": null },
+
+            /* HIGH (03.07–30.08): PON–NED + PET rot II */
+            { "day_type": "MON", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "THU", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "SAT", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "HIGH", "departure_time": "08:00", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:15–16:20", "16:30–16:35", "16:45"], "marker": null },
+
+            /* IZNIMKE: 24.12 (posebna 2 putovanja) + 31.12 (posebno) + 06.04 (Uskrsni ponedjeljak) */
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "08:00", "date_from": "2026-12-24", "date_to": "2026-12-24", "stop_times": ["08:00", "08:45–08:50", "09:00–09:05", "09:15"], "marker": "EXCEPTION" },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "14:30", "date_from": "2026-12-24", "date_to": "2026-12-24", "stop_times": ["14:30", "15:15–15:20", "15:30–15:35", "15:45"], "marker": "EXCEPTION" },
+
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "09:00", "date_from": "2026-12-31", "date_to": "2026-12-31", "stop_times": ["09:00", "09:45–09:50", "10:00–10:05", "10:15"], "marker": "EXCEPTION" },
+
+            { "day_type": "MON", "season_type": "PRE", "departure_time": "09:00", "date_from": "2026-04-06", "date_to": "2026-04-06", "stop_times": ["09:00", "09:45–09:50", "10:00–10:05", "10:15"], "marker": "EXCEPTION" }
+          ]
+        },
+        {
+          "direction": 1,
+          "direction_label_hr": "Porat (Biševo) → Salbunara → Mezuporat → Komiža",
+          "direction_label_en": "Porat (Bisevo) → Salbunara → Mezuporat → Komiza",
+          "origin_stop_id": "stop-porat-bisevo-port",
+          "destination_stop_id": "stop-komiza-port",
+          "typical_duration_minutes": null,
+          "marker_note_hr": "Državna brodska linija br. 612 (Nautički centar Komiža).",
+          "marker_note_en": "State boat line 612 (Nauticki centar Komiza).",
+          "stops": [
+            { "stop_id": "stop-porat-bisevo-port", "stop_order": 0 },
+            { "stop_id": "stop-salbunara-port", "stop_order": 1 },
+            { "stop_id": "stop-mezuporat-port", "stop_order": 2 },
+            { "stop_id": "stop-komiza-port", "stop_order": 3 }
+          ],
+          "departures": [
+            /* OFF (01.01–28.03, 01.11–31.12) */
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "13:00", "stop_times": ["13:00", "13:10–13:15", "13:25–13:30", "14:15"], "marker": null },
+
+            /* OFF nedjelja: standard 14:30*, ali 27.12 je 13:00 (override) */
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "14:30", "date_from": "2026-01-01", "date_to": "2026-12-31", "stop_times": ["14:30", "14:40–14:45", "14:55–15:00", "15:45"], "marker": null },
+
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "13:00", "date_from": "2026-12-27", "date_to": "2026-12-27", "stop_times": ["13:00", "13:10–13:15", "13:25–13:30", "14:15"], "marker": "EXCEPTION" },
+
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "09:30", "stop_times": ["09:30", null, null, "10:30"], "marker": null },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "16:00", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:00"], "marker": null },
+
+            /* PRE (29.03–28.05, 28.09–31.10) */
+            { "day_type": "TUE", "season_type": "PRE", "departure_time": "13:00", "stop_times": ["13:00", "13:10–13:15", "13:25–13:30", "14:15"], "marker": null },
+
+            /* PRE nedjelja: nema 05.04 (Uskrs) */
+            { "day_type": "SUN", "season_type": "PRE", "departure_time": "16:00", "date_from": "2026-03-29", "date_to": "2026-04-04", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "PRE", "departure_time": "16:00", "date_from": "2026-04-06", "date_to": "2026-05-28", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "PRE", "departure_time": "09:30", "stop_times": ["09:30", null, null, "10:30"], "marker": null },
+            { "day_type": "FRI", "season_type": "PRE", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:00"], "marker": null },
+
+            /* POST (Niska sezona) */
+            { "day_type": "TUE", "season_type": "POST", "departure_time": "13:00", "stop_times": ["13:00", "13:10–13:15", "13:25–13:30", "14:15"], "marker": null },
+
+            { "day_type": "MON", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:15"], "marker": null },
+            { "day_type": "WED", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:15"], "marker": null },
+            { "day_type": "SAT", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "POST", "departure_time": "09:30", "stop_times": ["09:30", null, null, "10:30"], "marker": null },
+            { "day_type": "FRI", "season_type": "POST", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:00"], "marker": null },
+
+            /* HIGH (Visoka sezona) */
+            { "day_type": "MON", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:15"], "marker": null },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:15"], "marker": null },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:15"], "marker": null },
+            { "day_type": "THU", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:15"], "marker": null },
+            { "day_type": "SAT", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:15"], "marker": null },
+            { "day_type": "SUN", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:15"], "marker": null },
+
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "09:30", "stop_times": ["09:30", null, null, "10:30"], "marker": null },
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "17:00", "stop_times": ["17:00", "17:10–17:15", "17:25–17:30", "18:00"], "marker": null },
+
+            /* IZNIMKE: 24.12 povratak 09:30 i 16:00; 31.12 povratak 14:00; 06.04 povratak 13:00 */
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "09:30", "date_from": "2026-12-24", "date_to": "2026-12-24", "stop_times": ["09:30", "09:40–09:45", "09:55–10:00", "10:30"], "marker": "EXCEPTION" },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "16:00", "date_from": "2026-12-24", "date_to": "2026-12-24", "stop_times": ["16:00", "16:10–16:15", "16:25–16:30", "17:00"], "marker": "EXCEPTION" },
+
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "14:00", "date_from": "2026-12-31", "date_to": "2026-12-31", "stop_times": ["14:00", "14:10–14:15", "14:25–14:30", "15:15"], "marker": "EXCEPTION" },
+
+            { "day_type": "MON", "season_type": "PRE", "departure_time": "13:00", "date_from": "2026-04-06", "date_to": "2026-04-06", "stop_times": ["13:00", "13:10–13:15", "13:25–13:30", "14:15"], "marker": "EXCEPTION" }
+          ]
+        }
+      ]
+    }
+  ]
+}

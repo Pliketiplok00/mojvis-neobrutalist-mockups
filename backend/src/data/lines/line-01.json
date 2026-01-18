@@ -1,0 +1,180 @@
+{
+  "stops": [
+    { "id": "stop-vis", "name_hr": "Vis", "name_en": "Vis", "transport_type": "road" },
+    { "id": "stop-komiza", "name_hr": "Komiža", "name_en": "Komiza", "transport_type": "road" }
+  ],
+  "seasons": [
+    {
+      "id": "season-bus-off-2026-01-01_02-22",
+      "season_type": "OFF",
+      "year": 2026,
+      "date_from": "2026-01-01",
+      "date_to": "2026-02-22",
+      "label_hr": "Izvan sezone",
+      "label_en": "Off season"
+    }
+  ],
+  "lines": [
+    {
+      "id": "BUS_VIS_KOMIZA_2026_01_22",
+      "transport_type": "road",
+      "name_hr": "Vis – Komiža (direktno)",
+      "name_en": "Vis – Komiza (direct)",
+      "subtype_hr": "Autobus",
+      "subtype_en": "Bus",
+      "display_order": 10,
+      "contacts": [
+        {
+          "operator_hr": "NAUTIČKI CENTAR KOMIŽA d.o.o.",
+          "operator_en": "NAUTIČKI CENTAR KOMIŽA d.o.o.",
+          "phone": "+385912713011",
+          "email": "info@nauticka-komiza.com"
+        }
+      ],
+      "routes": [
+        {
+          "direction": 0,
+          "direction_label_hr": "Vis → Komiža",
+          "direction_label_en": "Vis → Komiza",
+          "origin_stop_id": "stop-vis",
+          "destination_stop_id": "stop-komiza",
+          "typical_duration_minutes": 30,
+          "marker_note_hr": "Polasci označeni sa * ovise o dolasku trajekta u luku Vis.",
+          "marker_note_en": "Departures marked with * depend on ferry arrival to Vis port.",
+          "stops": [
+            { "stop_id": "stop-vis", "stop_order": 0 },
+            { "stop_id": "stop-komiza", "stop_order": 1 }
+          ],
+          "departures": [
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "05:20", "stop_times": ["05:20", "05:50"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "15:05", "stop_times": ["15:05", "15:35"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"], "marker": "*" },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "20:50", "stop_times": ["20:50", "21:20"], "marker": "*" },
+
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "05:20", "stop_times": ["05:20", "05:50"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "15:05", "stop_times": ["15:05", "15:35"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "16:35", "stop_times": ["16:35", "17:05"], "marker": "*" },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "20:50", "stop_times": ["20:50", "21:20"], "marker": "*" },
+
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "05:20", "stop_times": ["05:20", "05:50"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "15:05", "stop_times": ["15:05", "15:35"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "16:30", "stop_times": ["16:30", "17:00"], "marker": "*" },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "20:50", "stop_times": ["20:50", "21:20"] },
+
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "05:20", "stop_times": ["05:20", "05:50"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "15:05", "stop_times": ["15:05", "15:35"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"], "marker": "*" },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "20:50", "stop_times": ["20:50", "21:20"] },
+
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "05:20", "stop_times": ["05:20", "05:50"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "12:20", "stop_times": ["12:20", "12:50"], "marker": "*" },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "13:50", "stop_times": ["13:50", "14:20"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "19:20", "stop_times": ["19:20", "19:50"], "marker": "*" },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "21:40", "stop_times": ["21:40", "22:10"], "marker": "*" },
+
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "05:20", "stop_times": ["05:20", "05:50"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "15:05", "stop_times": ["15:05", "15:35"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"], "marker": "*" },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "20:50", "stop_times": ["20:50", "21:20"], "marker": "*" },
+
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "08:00"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "21:10", "stop_times": ["21:10", "21:40"], "marker": "*" },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "21:40", "stop_times": ["21:40", "22:10"], "marker": "*" },
+
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "07:30", "stop_times": ["07:30", "08:00"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "13:20", "stop_times": ["13:20", "13:50"], "marker": "*" },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "21:10", "stop_times": ["21:10", "21:40"], "marker": "*" },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "21:40", "stop_times": ["21:40", "22:10"], "marker": "*" }
+          ]
+        },
+        {
+          "direction": 1,
+          "direction_label_hr": "Komiža → Vis",
+          "direction_label_en": "Komiza → Vis",
+          "origin_stop_id": "stop-komiza",
+          "destination_stop_id": "stop-vis",
+          "typical_duration_minutes": 30,
+          "marker_note_hr": "Polasci označeni sa * ovise o dolasku trajekta u luku Vis.",
+          "marker_note_en": "Departures marked with * depend on ferry arrival to Vis port.",
+          "stops": [
+            { "stop_id": "stop-komiza", "stop_order": 0 },
+            { "stop_id": "stop-vis", "stop_order": 1 }
+          ],
+          "departures": [
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "05:00", "stop_times": ["05:00", "05:30"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "06:30", "stop_times": ["06:30", "07:00"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "11:30"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "14:45", "stop_times": ["14:45", "15:15"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "15:45", "stop_times": ["15:45", "16:15"] },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "20:15", "stop_times": ["20:15", "20:45"] },
+
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "05:00", "stop_times": ["05:00", "05:30"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "06:30", "stop_times": ["06:30", "07:00"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "14:45", "stop_times": ["14:45", "15:15"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"] },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "20:15", "stop_times": ["20:15", "20:45"] },
+
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "05:00", "stop_times": ["05:00", "05:30"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "06:30", "stop_times": ["06:30", "07:00"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "11:00", "stop_times": ["11:00", "11:30"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "14:45", "stop_times": ["14:45", "15:15"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "16:10", "stop_times": ["16:10", "16:40"] },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "20:15", "stop_times": ["20:15", "20:45"] },
+
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "05:00", "stop_times": ["05:00", "05:30"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "06:30", "stop_times": ["06:30", "07:00"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "14:45", "stop_times": ["14:45", "15:15"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "15:45", "stop_times": ["15:45", "16:15"] },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "20:15", "stop_times": ["20:15", "20:45"] },
+
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "05:00", "stop_times": ["05:00", "05:30"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "06:30", "stop_times": ["06:30", "07:00"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "11:45", "stop_times": ["11:45", "12:15"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "13:15", "stop_times": ["13:15", "13:45"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "18:45", "stop_times": ["18:45", "19:15"] },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "21:20", "stop_times": ["21:20", "21:50"] },
+
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "05:00", "stop_times": ["05:00", "05:30"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "06:30", "stop_times": ["06:30", "07:00"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "14:45", "stop_times": ["14:45", "15:15"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "15:45", "stop_times": ["15:45", "16:15"] },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "20:15", "stop_times": ["20:15", "20:45"] },
+
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "15:45", "stop_times": ["15:45", "16:15"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "17:30", "stop_times": ["17:30", "18:00"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "20:45", "stop_times": ["20:45", "21:15"] },
+            { "day_type": "SUN", "season_type": "OFF", "departure_time": "21:20", "stop_times": ["21:20", "21:50"] },
+
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:30"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "12:45", "stop_times": ["12:45", "13:15"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "15:45", "stop_times": ["15:45", "16:15"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "17:30", "stop_times": ["17:30", "18:00"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "20:45", "stop_times": ["20:45", "21:15"] },
+            { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "21:20", "stop_times": ["21:20", "21:50"] }
+          ]
+        }
+      ]
+    }
+  ]
+}
