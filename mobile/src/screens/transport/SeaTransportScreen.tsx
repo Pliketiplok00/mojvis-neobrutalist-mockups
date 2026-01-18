@@ -451,9 +451,10 @@ const styles = StyleSheet.create({
     ],
   },
   // TOP: Colored header slab with icon + title
+  // Icon bottom edge aligns with tag bottom edge (neobrutalist alignment)
   lineCardHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end', // Bottom-align icon with tag
     padding: listTokens.lineCardHeaderPadding,
   },
   lineCardHeaderIconBox: {
@@ -477,7 +478,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 4,
+    borderRadius: 0, // Neobrutalist: no rounded corners
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
     marginTop: spacing.xs,
@@ -584,7 +585,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.backgroundTertiary,
     borderWidth: 1,
     borderColor: colors.border,
-    borderRadius: 4,
+    borderRadius: 0, // Neobrutalist: no rounded corners
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
   },
