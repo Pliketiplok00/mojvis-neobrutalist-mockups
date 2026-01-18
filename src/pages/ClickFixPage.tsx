@@ -232,7 +232,7 @@ export default function ClickFixPage() {
           <div className="relative">
             <Button 
               size="lg" 
-              className="relative w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 shadow-[4px_4px_0_0_hsl(var(--foreground))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+              className="relative w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 shadow-[4px_4px_0_0_hsl(var(--foreground))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_hsl(var(--foreground))]"
               onClick={handleSubmit}
               disabled={!isValid}
             >
