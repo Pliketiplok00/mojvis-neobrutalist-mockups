@@ -125,6 +125,25 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'ship',
     route: 'MirrorSeaLineDetail' as keyof MainStackParamList,
   },
+  // Phase 3G mirrors - Onboarding family (navigation registration pending)
+  {
+    title: 'Language Selection',
+    description: 'Mirror of LanguageSelectionScreen with HR/EN toggle',
+    icon: 'globe',
+    route: 'MirrorLanguageSelection' as keyof MainStackParamList,
+  },
+  {
+    title: 'User Mode Selection',
+    description: 'Mirror of UserModeSelectionScreen with visitor/local cards',
+    icon: 'user',
+    route: 'MirrorUserModeSelection' as keyof MainStackParamList,
+  },
+  {
+    title: 'Municipality Selection',
+    description: 'Mirror of MunicipalitySelectionScreen with Vis/Komiža',
+    icon: 'home',
+    route: 'MirrorMunicipalitySelection' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
