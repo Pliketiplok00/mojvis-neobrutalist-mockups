@@ -112,6 +112,19 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'info',
     route: 'MirrorEventDetail' as keyof MainStackParamList,
   },
+  // Phase 3F mirrors - Transport Detail family (navigation registration pending)
+  {
+    title: 'Road Line Detail',
+    description: 'Mirror of RoadLineDetailScreen with departures + timeline',
+    icon: 'bus',
+    route: 'MirrorRoadLineDetail' as keyof MainStackParamList,
+  },
+  {
+    title: 'Sea Line Detail',
+    description: 'Mirror of SeaLineDetailScreen with departures + timeline',
+    icon: 'ship',
+    route: 'MirrorSeaLineDetail' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
