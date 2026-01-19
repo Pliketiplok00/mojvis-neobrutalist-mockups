@@ -170,6 +170,25 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'user',
     route: 'MirrorContactDetail' as keyof MainStackParamList,
   },
+  // Phase 3C mirrors - Click & Fix family (navigation registration pending)
+  {
+    title: 'Click & Fix Form',
+    description: 'Mirror of ClickFixFormScreen with location + photos',
+    icon: 'alert-triangle',
+    route: 'MirrorClickFixForm' as keyof MainStackParamList,
+  },
+  {
+    title: 'Click & Fix Confirmation',
+    description: 'Mirror of ClickFixConfirmationScreen',
+    icon: 'check',
+    route: 'MirrorClickFixConfirmation' as keyof MainStackParamList,
+  },
+  {
+    title: 'Click & Fix Detail',
+    description: 'Mirror of ClickFixDetailScreen with photos + replies',
+    icon: 'map-pin',
+    route: 'MirrorClickFixDetail' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
