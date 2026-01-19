@@ -56,14 +56,14 @@ const CATEGORIES: Array<{
     key: 'events',
     icon: 'calendar',
     backgroundColor: skin.colors.primary,
-    textColor: 'white',
+    textColor: skin.colors.primaryText,
     route: 'Events',
   },
   {
     key: 'transport',
     icon: 'ship',
     backgroundColor: skin.colors.successAccent,
-    textColor: 'white',
+    textColor: skin.colors.primaryText,
     route: 'TransportHub',
   },
   {
@@ -77,7 +77,7 @@ const CATEGORIES: Array<{
     key: 'contacts',
     icon: 'phone',
     backgroundColor: skin.colors.urgent,
-    textColor: 'white',
+    textColor: skin.colors.primaryText,
     route: 'StaticPage',
   },
 ];
@@ -292,7 +292,7 @@ export function HomeScreen(): React.JSX.Element {
           <View style={styles.ctaPanel}>
             {/* Icon box */}
             <View style={styles.ctaIconBox}>
-              <Icon name="message-circle" size="lg" color="white" stroke="strong" />
+              <Icon name="message-circle" size="lg" colorToken="primaryText" stroke="strong" />
             </View>
             {/* Text */}
             <View style={styles.ctaTextContainer}>
@@ -303,7 +303,7 @@ export function HomeScreen(): React.JSX.Element {
             </View>
             {/* Arrow */}
             <View style={styles.ctaArrow}>
-              <Icon name="chevron-right" size="md" color="white" />
+              <Icon name="chevron-right" size="md" colorToken="primaryText" />
             </View>
           </View>
         </TouchableOpacity>
@@ -340,11 +340,11 @@ const styles = StyleSheet.create({
     borderBottomColor: skin.colors.border,
   },
   heroTitle: {
-    color: 'white',
+    color: skin.colors.primaryText,
     marginBottom: skin.spacing.sm,
   },
   heroSubtitle: {
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: skin.colors.primaryTextMuted,
   },
 
   // Grid Section
@@ -374,6 +374,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
     zIndex: 0,
   },
   categoryTile: {
@@ -381,6 +382,7 @@ const styles = StyleSheet.create({
     height: '100%',
     borderWidth: skin.borders.widthThin,
     borderColor: skin.colors.border,
+    borderRadius: skin.borders.radiusCard,
     alignItems: 'center',
     justifyContent: 'center',
     gap: skin.spacing.sm,
@@ -437,13 +439,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dateBadgeDay: {
-    color: 'white',
+    color: skin.colors.primaryText,
     fontWeight: '700',
     fontSize: skin.typography.fontSize.xl,
     lineHeight: skin.typography.fontSize.xl,
   },
   dateBadgeMonth: {
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: skin.colors.primaryTextMuted,
     textTransform: 'uppercase',
     fontSize: skin.typography.fontSize.xs,
   },
@@ -498,11 +500,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ctaTitle: {
-    color: 'white',
+    color: skin.colors.primaryText,
     fontWeight: '700',
   },
   ctaSubtitle: {
-    color: 'rgba(255, 255, 255, 0.85)',
+    color: skin.colors.primaryTextMuted,
     marginTop: skin.spacing.xs,
   },
   ctaArrow: {
