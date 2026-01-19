@@ -151,6 +151,25 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'home',
     route: 'MirrorHomeComposite' as keyof MainStackParamList,
   },
+  // Phase 3I mirrors - Info + Contacts family (navigation registration pending)
+  {
+    title: 'Info Hub',
+    description: 'Mirror of Info hub with categories + quick links',
+    icon: 'info',
+    route: 'MirrorInfoHub' as keyof MainStackParamList,
+  },
+  {
+    title: 'Contacts List',
+    description: 'Mirror of Contacts list with emergency + general contacts',
+    icon: 'phone',
+    route: 'MirrorContactsList' as keyof MainStackParamList,
+  },
+  {
+    title: 'Contact Detail',
+    description: 'Mirror of Contact detail with phone/email/web buttons',
+    icon: 'user',
+    route: 'MirrorContactDetail' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
