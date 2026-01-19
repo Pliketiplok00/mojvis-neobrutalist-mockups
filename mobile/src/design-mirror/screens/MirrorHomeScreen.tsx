@@ -67,6 +67,25 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'settings',
     route: 'MirrorSettings' as keyof MainStackParamList,
   },
+  // Phase 3B mirrors - Feedback family (navigation registration pending)
+  {
+    title: 'Feedback Form',
+    description: 'Mirror of FeedbackFormScreen with fixture data',
+    icon: 'message-circle',
+    route: 'MirrorFeedbackForm' as keyof MainStackParamList,
+  },
+  {
+    title: 'Feedback Confirmation',
+    description: 'Mirror of FeedbackConfirmationScreen',
+    icon: 'check',
+    route: 'MirrorFeedbackConfirmation' as keyof MainStackParamList,
+  },
+  {
+    title: 'Feedback Detail',
+    description: 'Mirror of FeedbackDetailScreen with replies',
+    icon: 'mail-open',
+    route: 'MirrorFeedbackDetail' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
