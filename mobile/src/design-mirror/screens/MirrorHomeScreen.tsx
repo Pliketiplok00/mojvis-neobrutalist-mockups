@@ -48,6 +48,25 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'bus',
     route: 'MirrorTransportRoad',
   },
+  // Phase 3A mirrors (navigation registration pending)
+  {
+    title: 'Transport Hub',
+    description: 'Mirror of TransportHubScreen with fixture banners',
+    icon: 'globe',
+    route: 'MirrorTransportHub' as keyof MainStackParamList,
+  },
+  {
+    title: 'Static Page',
+    description: 'Mirror of StaticPageScreen with all 8 block types',
+    icon: 'file-text',
+    route: 'MirrorStaticPage' as keyof MainStackParamList,
+  },
+  {
+    title: 'Settings',
+    description: 'Mirror of SettingsScreen with fixture state',
+    icon: 'settings',
+    route: 'MirrorSettings' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
