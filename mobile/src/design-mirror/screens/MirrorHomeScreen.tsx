@@ -99,6 +99,19 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'mail',
     route: 'MirrorInboxDetail' as keyof MainStackParamList,
   },
+  // Phase 3E mirrors - Events family (navigation registration pending)
+  {
+    title: 'Events Calendar',
+    description: 'Mirror of EventsScreen with calendar + event list',
+    icon: 'calendar',
+    route: 'MirrorEvents' as keyof MainStackParamList,
+  },
+  {
+    title: 'Event Detail',
+    description: 'Mirror of EventDetailScreen with info tiles + CTAs',
+    icon: 'info',
+    route: 'MirrorEventDetail' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
