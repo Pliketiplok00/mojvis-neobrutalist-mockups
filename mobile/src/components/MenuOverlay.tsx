@@ -170,8 +170,8 @@ export function MenuOverlay({
         <SafeAreaView style={styles.menuContent}>
           {/* Header */}
           <View style={styles.header}>
-            <H1 style={styles.headerTitle}>MOJ VIS</H1>
-            <Meta style={styles.headerSubtitle}>Izbornik / Menu</Meta>
+            <H1 style={styles.headerTitle} color={skin.colors.primaryText}>MOJ VIS</H1>
+            <Meta style={styles.headerSubtitle} color={skin.colors.primaryTextMuted}>Izbornik / Menu</Meta>
           </View>
 
           {/* Menu Items - Scrollable */}
@@ -195,7 +195,6 @@ export function MenuOverlay({
                     <Label style={[styles.menuLabel, isActive && styles.menuLabelActive]}>
                       {item.label}
                     </Label>
-                    <Meta style={styles.menuLabelEn}>{item.labelEn}</Meta>
                   </View>
                 </TouchableOpacity>
               );
@@ -224,7 +223,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: MENU_WIDTH,
     backgroundColor: skin.colors.backgroundTertiary,
-    ...skin.shadows.soft,
   },
   menuContent: {
     flex: 1,
@@ -232,8 +230,9 @@ const styles = StyleSheet.create({
   header: {
     padding: skin.spacing.xl,
     paddingTop: skin.spacing.lg,
-    borderBottomWidth: skin.borders.widthThin,
-    borderBottomColor: skin.colors.borderLight,
+    backgroundColor: skin.colors.primary,
+    borderBottomWidth: skin.borders.widthHeavy,
+    borderBottomColor: skin.colors.border,
     marginBottom: skin.spacing.sm,
   },
   headerTitle: {
@@ -244,19 +243,23 @@ const styles = StyleSheet.create({
   },
   menuList: {
     flex: 1,
-    paddingHorizontal: skin.spacing.md,
+    paddingHorizontal: skin.spacing.lg,
     paddingTop: skin.spacing.sm,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: skin.spacing.md,
-    borderRadius: skin.borders.radiusSmall,
-    marginBottom: skin.spacing.xs,
+    padding: skin.spacing.md,
+    borderRadius: skin.borders.radiusSharp,
+    borderWidth: skin.borders.widthThin,
+    borderColor: skin.colors.border,
+    backgroundColor: skin.colors.background,
+    marginBottom: skin.spacing.sm,
+    ...skin.shadows.menuItemBox.inactive,
   },
   menuItemActive: {
-    backgroundColor: skin.colors.backgroundSecondary,
+    backgroundColor: skin.colors.accent,
+    ...skin.shadows.menuItemBox.active,
   },
   menuIconContainer: {
     width: skin.icons.size.md,
@@ -267,13 +270,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   menuLabel: {
-    // Typography handled by Label primitive
+    textTransform: skin.typography.textTransform.uppercase,
+    fontFamily: skin.typography.fontFamily.body.bold,
+    color: skin.colors.textPrimary,
   },
   menuLabelActive: {
     // Active state handled by component
-  },
-  menuLabelEn: {
-    marginTop: 2,
   },
 });
 

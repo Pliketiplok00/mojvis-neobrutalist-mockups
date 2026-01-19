@@ -119,6 +119,10 @@ const typography = {
     normal: 1.4,
     relaxed: 1.6,
   },
+  textTransform: {
+    none: 'none' as const,
+    uppercase: 'uppercase' as const,
+  },
 } as const;
 
 // Icon tokens for lucide-react-native
@@ -233,6 +237,7 @@ export const colors = {
   calendarEventIndicator: palette.primary, // Blue square indicator
 
   // Extended Mediterranean (feature-specific)
+  accent: palette.accent, // Sun yellow - general accent/highlight
   lavender: palette.lavender, // Feedback section
   amber: palette.amber, // Banner fill (midpoint yellow-orange)
   orange: palette.orange, // Click-Fix section
@@ -280,6 +285,29 @@ export const shadows = {
     shadowOpacity: 0.25,
     shadowRadius: 10,
     elevation: 10,
+  },
+  /**
+   * Menu item box shadow - VISUAL BOXING ONLY, NOT a clickability indicator.
+   * Used to create the neobrutalist boxed appearance for menu items.
+   * Distinct from interaction.clickableShadow which signals pressable surfaces.
+   */
+  menuItemBox: {
+    // Inactive state: muted foreground shadow
+    inactive: {
+      shadowColor: borders.color,
+      shadowOffset: { width: 6, height: 6 },
+      shadowOpacity: 0.2,
+      shadowRadius: 0,
+      elevation: 3,
+    },
+    // Active state: primary color shadow
+    active: {
+      shadowColor: palette.primary,
+      shadowOffset: { width: 6, height: 6 },
+      shadowOpacity: 1,
+      shadowRadius: 0,
+      elevation: 3,
+    },
   },
 } as const;
 
