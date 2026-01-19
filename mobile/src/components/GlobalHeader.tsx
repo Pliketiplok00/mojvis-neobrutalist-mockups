@@ -101,7 +101,7 @@ export function GlobalHeader({
       >
         {showInboxIcon && (
           <View style={styles.inboxIconBox}>
-            <Icon name="inbox" size="md" color="white" />
+            <Icon name="inbox" size="md" colorToken="primaryText" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>
