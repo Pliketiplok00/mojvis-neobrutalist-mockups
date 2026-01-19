@@ -170,8 +170,8 @@ export function MenuOverlay({
         <SafeAreaView style={styles.menuContent}>
           {/* Header */}
           <View style={styles.header}>
-            <H1 style={styles.headerTitle} color={skin.colors.primaryText}>MOJ VIS</H1>
-            <Meta style={styles.headerSubtitle} color={skin.colors.primaryTextMuted}>Izbornik / Menu</Meta>
+            <H1 style={styles.headerTitle}>MOJ VIS</H1>
+            <Meta style={styles.headerSubtitle}>Izbornik / Menu</Meta>
           </View>
 
           {/* Menu Items - Scrollable */}
@@ -237,9 +237,10 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     marginBottom: skin.spacing.xs,
+    color: skin.colors.primaryText,
   },
   headerSubtitle: {
-    // Typography handled by Meta primitive
+    color: skin.colors.primaryTextMuted,
   },
   menuList: {
     flex: 1,

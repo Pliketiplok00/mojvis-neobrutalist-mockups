@@ -69,7 +69,7 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
         <Icon
           name="alert-triangle"
           size="md"
-          color="white"
+          colorToken="primaryText"
           stroke="strong"
         />
       </View>
