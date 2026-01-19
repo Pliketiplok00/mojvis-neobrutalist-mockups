@@ -1,8 +1,9 @@
 # Design Mirror Coverage Matrix
 
 > Generated: 2026-01-19
+> Updated: 2026-01-19 (Phase 3 - canonical inventory)
 > Scope: Mobile only (iOS + Android)
-> Branch: `chore/design-mirror-phase2-coverage`
+> Canonical source: See `DESIGN_MIRROR_SCREENLIST.md` for single source of truth
 
 ---
 
