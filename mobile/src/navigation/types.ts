@@ -54,6 +54,40 @@ export type MainStackParamList = {
 };
 
 /**
+ * Design Mirror Stack (dev-only)
+ * Routes for mirror screens used in visual auditing.
+ * These are NOT part of production navigation.
+ */
+export type MirrorStackParamList = {
+  MirrorHome: undefined;
+  MirrorMenuOverlay: undefined;
+  MirrorTransportSea: undefined;
+  MirrorTransportRoad: undefined;
+  MirrorTransportHub: undefined;
+  MirrorStaticPage: undefined;
+  MirrorSettings: undefined;
+  MirrorFeedbackForm: undefined;
+  MirrorFeedbackConfirmation: undefined;
+  MirrorFeedbackDetail: undefined;
+  MirrorInboxList: undefined;
+  MirrorInboxDetail: undefined;
+  MirrorEvents: undefined;
+  MirrorEventDetail: undefined;
+  MirrorRoadLineDetail: undefined;
+  MirrorSeaLineDetail: undefined;
+  MirrorLanguageSelection: undefined;
+  MirrorUserModeSelection: undefined;
+  MirrorMunicipalitySelection: undefined;
+  MirrorHomeComposite: undefined;
+  MirrorInfoHub: undefined;
+  MirrorContactsList: undefined;
+  MirrorContactDetail: undefined;
+  MirrorClickFixForm: undefined;
+  MirrorClickFixConfirmation: undefined;
+  MirrorClickFixDetail: undefined;
+};
+
+/**
  * Root Navigator
  * Switches between onboarding and main app.
  */

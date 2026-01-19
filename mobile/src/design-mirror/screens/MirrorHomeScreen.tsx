@@ -15,15 +15,15 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { skin } from '../../ui/skin';
 import { H1, H2, Label, Body, Meta } from '../../ui/Text';
 import { Icon, type IconName } from '../../ui/Icon';
-import type { MainStackParamList } from '../../navigation/types';
+import type { MirrorStackParamList } from '../../navigation/types';
 
-type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
+type NavigationProp = NativeStackNavigationProp<MirrorStackParamList>;
 
 interface MirrorLink {
   title: string;
   description: string;
   icon: IconName;
-  route: keyof MainStackParamList;
+  route: keyof MirrorStackParamList;
 }
 
 /**
@@ -48,153 +48,153 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'bus',
     route: 'MirrorTransportRoad',
   },
-  // Phase 3A mirrors (navigation registration pending)
+  // Phase 3A mirrors
   {
     title: 'Transport Hub',
     description: 'Mirror of TransportHubScreen with fixture banners',
     icon: 'globe',
-    route: 'MirrorTransportHub' as keyof MainStackParamList,
+    route: 'MirrorTransportHub',
   },
   {
     title: 'Static Page',
     description: 'Mirror of StaticPageScreen with all 8 block types',
     icon: 'file-text',
-    route: 'MirrorStaticPage' as keyof MainStackParamList,
+    route: 'MirrorStaticPage',
   },
   {
     title: 'Settings',
     description: 'Mirror of SettingsScreen with fixture state',
     icon: 'settings',
-    route: 'MirrorSettings' as keyof MainStackParamList,
+    route: 'MirrorSettings',
   },
-  // Phase 3B mirrors - Feedback family (navigation registration pending)
+  // Phase 3B mirrors - Feedback family
   {
     title: 'Feedback Form',
     description: 'Mirror of FeedbackFormScreen with fixture data',
     icon: 'message-circle',
-    route: 'MirrorFeedbackForm' as keyof MainStackParamList,
+    route: 'MirrorFeedbackForm',
   },
   {
     title: 'Feedback Confirmation',
     description: 'Mirror of FeedbackConfirmationScreen',
     icon: 'check',
-    route: 'MirrorFeedbackConfirmation' as keyof MainStackParamList,
+    route: 'MirrorFeedbackConfirmation',
   },
   {
     title: 'Feedback Detail',
     description: 'Mirror of FeedbackDetailScreen with replies',
     icon: 'mail-open',
-    route: 'MirrorFeedbackDetail' as keyof MainStackParamList,
+    route: 'MirrorFeedbackDetail',
   },
-  // Phase 3D mirrors - Inbox family (navigation registration pending)
+  // Phase 3D mirrors - Inbox family
   {
     title: 'Inbox List',
     description: 'Mirror of InboxListScreen with tabs + messages',
     icon: 'inbox',
-    route: 'MirrorInboxList' as keyof MainStackParamList,
+    route: 'MirrorInboxList',
   },
   {
     title: 'Inbox Detail',
     description: 'Mirror of InboxDetailScreen with tags + urgency',
     icon: 'mail',
-    route: 'MirrorInboxDetail' as keyof MainStackParamList,
+    route: 'MirrorInboxDetail',
   },
-  // Phase 3E mirrors - Events family (navigation registration pending)
+  // Phase 3E mirrors - Events family
   {
     title: 'Events Calendar',
     description: 'Mirror of EventsScreen with calendar + event list',
     icon: 'calendar',
-    route: 'MirrorEvents' as keyof MainStackParamList,
+    route: 'MirrorEvents',
   },
   {
     title: 'Event Detail',
     description: 'Mirror of EventDetailScreen with info tiles + CTAs',
     icon: 'info',
-    route: 'MirrorEventDetail' as keyof MainStackParamList,
+    route: 'MirrorEventDetail',
   },
-  // Phase 3F mirrors - Transport Detail family (navigation registration pending)
+  // Phase 3F mirrors - Transport Detail family
   {
     title: 'Road Line Detail',
     description: 'Mirror of RoadLineDetailScreen with departures + timeline',
     icon: 'bus',
-    route: 'MirrorRoadLineDetail' as keyof MainStackParamList,
+    route: 'MirrorRoadLineDetail',
   },
   {
     title: 'Sea Line Detail',
     description: 'Mirror of SeaLineDetailScreen with departures + timeline',
     icon: 'ship',
-    route: 'MirrorSeaLineDetail' as keyof MainStackParamList,
+    route: 'MirrorSeaLineDetail',
   },
-  // Phase 3G mirrors - Onboarding family (navigation registration pending)
+  // Phase 3G mirrors - Onboarding family
   {
     title: 'Language Selection',
     description: 'Mirror of LanguageSelectionScreen with HR/EN toggle',
     icon: 'globe',
-    route: 'MirrorLanguageSelection' as keyof MainStackParamList,
+    route: 'MirrorLanguageSelection',
   },
   {
     title: 'User Mode Selection',
     description: 'Mirror of UserModeSelectionScreen with visitor/local cards',
     icon: 'user',
-    route: 'MirrorUserModeSelection' as keyof MainStackParamList,
+    route: 'MirrorUserModeSelection',
   },
   {
     title: 'Municipality Selection',
     description: 'Mirror of MunicipalitySelectionScreen with Vis/Komiža',
     icon: 'home',
-    route: 'MirrorMunicipalitySelection' as keyof MainStackParamList,
+    route: 'MirrorMunicipalitySelection',
   },
-  // Phase 3H mirrors - Home Composite (navigation registration pending)
+  // Phase 3H mirrors - Home Composite
   {
     title: 'Home Composite',
     description: 'Mirror of HomeScreen with banners, events, categories + fixture switcher',
     icon: 'home',
-    route: 'MirrorHomeComposite' as keyof MainStackParamList,
+    route: 'MirrorHomeComposite',
   },
-  // Phase 3I mirrors - Info + Contacts family (navigation registration pending)
+  // Phase 3I mirrors - Info + Contacts family
   {
     title: 'Info Hub',
     description: 'Mirror of Info hub with categories + quick links',
     icon: 'info',
-    route: 'MirrorInfoHub' as keyof MainStackParamList,
+    route: 'MirrorInfoHub',
   },
   {
     title: 'Contacts List',
     description: 'Mirror of Contacts list with emergency + general contacts',
     icon: 'phone',
-    route: 'MirrorContactsList' as keyof MainStackParamList,
+    route: 'MirrorContactsList',
   },
   {
     title: 'Contact Detail',
     description: 'Mirror of Contact detail with phone/email/web buttons',
     icon: 'user',
-    route: 'MirrorContactDetail' as keyof MainStackParamList,
+    route: 'MirrorContactDetail',
   },
-  // Phase 3C mirrors - Click & Fix family (navigation registration pending)
+  // Phase 3C mirrors - Click & Fix family
   {
     title: 'Click & Fix Form',
     description: 'Mirror of ClickFixFormScreen with location + photos',
     icon: 'alert-triangle',
-    route: 'MirrorClickFixForm' as keyof MainStackParamList,
+    route: 'MirrorClickFixForm',
   },
   {
     title: 'Click & Fix Confirmation',
     description: 'Mirror of ClickFixConfirmationScreen',
     icon: 'check',
-    route: 'MirrorClickFixConfirmation' as keyof MainStackParamList,
+    route: 'MirrorClickFixConfirmation',
   },
   {
     title: 'Click & Fix Detail',
     description: 'Mirror of ClickFixDetailScreen with photos + replies',
     icon: 'map-pin',
-    route: 'MirrorClickFixDetail' as keyof MainStackParamList,
+    route: 'MirrorClickFixDetail',
   },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
 
-  const handleNavigate = (route: keyof MainStackParamList) => {
+  const handleNavigate = (route: keyof MirrorStackParamList) => {
     navigation.navigate(route as never);
   };
 
