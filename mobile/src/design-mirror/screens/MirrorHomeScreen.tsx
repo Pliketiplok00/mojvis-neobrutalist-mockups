@@ -144,6 +144,13 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'home',
     route: 'MirrorMunicipalitySelection' as keyof MainStackParamList,
   },
+  // Phase 3H mirrors - Home Composite (navigation registration pending)
+  {
+    title: 'Home Composite',
+    description: 'Mirror of HomeScreen with banners, events, categories + fixture switcher',
+    icon: 'home',
+    route: 'MirrorHomeComposite' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
