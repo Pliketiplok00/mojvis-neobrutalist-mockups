@@ -86,6 +86,19 @@ const MIRROR_LINKS: MirrorLink[] = [
     icon: 'mail-open',
     route: 'MirrorFeedbackDetail' as keyof MainStackParamList,
   },
+  // Phase 3D mirrors - Inbox family (navigation registration pending)
+  {
+    title: 'Inbox List',
+    description: 'Mirror of InboxListScreen with tabs + messages',
+    icon: 'inbox',
+    route: 'MirrorInboxList' as keyof MainStackParamList,
+  },
+  {
+    title: 'Inbox Detail',
+    description: 'Mirror of InboxDetailScreen with tags + urgency',
+    icon: 'mail',
+    route: 'MirrorInboxDetail' as keyof MainStackParamList,
+  },
 ];
 
 export function MirrorHomeScreen(): React.JSX.Element {
