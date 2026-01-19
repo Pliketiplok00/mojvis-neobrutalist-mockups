@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
     borderBottomColor: skin.colors.border,
   },
   heroTitle: {
-    color: 'white',
+    color: skin.colors.primaryText,
     marginBottom: skin.spacing.sm,
   },
 
