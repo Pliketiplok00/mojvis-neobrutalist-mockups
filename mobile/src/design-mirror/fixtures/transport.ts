@@ -7,6 +7,7 @@
  */
 
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
+import type { InboxMessage } from '../../types/inbox';
 
 /**
  * Sea transport lines fixture
@@ -181,3 +182,35 @@ export const menuItemsFixture = [
   { label: 'Vazni kontakti', labelEn: 'Important contacts', icon: 'phone' as const, route: 'StaticPage:important-contacts' },
   { label: 'Postavke', labelEn: 'Settings', icon: 'settings' as const, route: 'Settings' },
 ];
+
+/**
+ * Transport banners fixture (for TransportHub)
+ * Used by StaticBannerList in mirror screens
+ */
+export const bannersFixture: InboxMessage[] = [
+  {
+    id: 'banner-1-transport-delay',
+    title: 'Trajektna linija 602 kasni 30 minuta zbog vremenskih uvjeta',
+    body: 'Zbog jakog juga, trajekt iz Splita prema Visu kasni približno 30 minuta. Pratite obavijesti za daljnje informacije.',
+    tags: ['hitno', 'promet'],
+    active_from: '2026-01-19T06:00:00Z',
+    active_to: '2026-01-19T20:00:00Z',
+    created_at: '2026-01-19T05:30:00Z',
+    is_urgent: true,
+  },
+  {
+    id: 'banner-2-schedule-change',
+    title: 'Promjena voznog reda autobusa od ponedjeljka',
+    body: 'Od ponedjeljka 20.01. na snagu stupaju novi zimski vozni redovi za sve autobusne linije na otoku.',
+    tags: ['hitno', 'promet'],
+    active_from: '2026-01-17T00:00:00Z',
+    active_to: '2026-01-20T23:59:00Z',
+    created_at: '2026-01-17T08:00:00Z',
+    is_urgent: false,
+  },
+];
+
+/**
+ * Empty banners fixture (for testing no-banner state)
+ */
+export const emptyBannersFixture: InboxMessage[] = [];
