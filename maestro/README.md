@@ -1,0 +1,220 @@
+# Maestro Visual Baseline
+
+iOS Simulator screenshot capture and visual regression testing using [Maestro](https://maestro.mobile.dev/).
+
+## Why This Exists
+
+**iOS Simulator screenshots are the authoritative visual ground truth.**
+
+Expo web rendering is NOT authoritative for design parity checks. This system captures
+deterministic screenshots from the iOS Simulator to establish visual baselines that
+production screens must match.
+
+## Prerequisites
+
+### 1. Install Maestro CLI
+
+```bash
+brew install maestro
+```
+
+Verify installation:
+
+```bash
+maestro --version
+```
+
+### 2. Install ImageMagick (for diffs)
+
+```bash
+brew install imagemagick
+```
+
+### 3. Boot iOS Simulator
+
+```bash
+# List available simulators
+xcrun simctl list devices
+
+# Boot a specific simulator (e.g., iPhone 15 Pro)
+xcrun simctl boot "iPhone 15 Pro"
+```
+
+### 4. Build and Install App
+
+From the `mobile/` directory:
+
+```bash
+cd mobile
+
+# Install dependencies
+pnpm install
+
+# Build and run on iOS Simulator
+npx expo run:ios
+```
+
+Wait for the app to launch on the simulator.
+
+## Usage
+
+All commands should be run from the **repo root**.
+
+### Generate Baseline Screenshots
+
+Run all flows and save screenshots to `maestro/screenshots/baseline/`:
+
+```bash
+./maestro/scripts/baseline.sh
+```
+
+Run a specific flow:
+
+```bash
+./maestro/scripts/baseline.sh onboarding_language_selection
+```
+
+**Baseline screenshots should be committed to the repo.**
+
+### Generate Current Screenshots
+
+Run all flows and save screenshots to `maestro/screenshots/current/`:
+
+```bash
+./maestro/scripts/run.sh
+```
+
+Run a specific flow:
+
+```bash
+./maestro/scripts/run.sh onboarding_language_selection
+```
+
+Current screenshots are ignored by git.
+
+### Compare Screenshots (Diff)
+
+Compare current screenshots against baseline:
+
+```bash
+./maestro/scripts/diff.sh
+```
+
+Compare a specific screenshot:
+
+```bash
+./maestro/scripts/diff.sh onboarding_language_selection.png
+```
+
+This generates diff images in `maestro/screenshots/diff/` showing pixel differences.
+
+## Fresh App State
+
+The Language Selection screen is only shown on **fresh app launch** (no onboarding data).
+
+To ensure a fresh state:
+
+**Option A: Uninstall and reinstall**
+```bash
+xcrun simctl uninstall booted com.mojvis.app
+npx expo run:ios
+```
+
+**Option B: Let Maestro handle it**
+
+The flow uses `clearState: true` which clears app data before launching.
+
+## Folder Structure
+
+```
+maestro/
+├── README.md                 # This file
+├── .gitignore                # Ignore current/diff screenshots
+├── flows/                    # Maestro flow definitions
+│   └── onboarding_language_selection.yaml
+├── scripts/                  # Helper scripts
+│   ├── run.sh               # Generate current screenshots
+│   ├── baseline.sh          # Generate baseline screenshots
+│   └── diff.sh              # Compare current vs baseline
+└── screenshots/
+    ├── baseline/            # Committed baseline screenshots (ground truth)
+    ├── current/             # Generated during test runs (gitignored)
+    └── diff/                # Diff outputs (gitignored)
+```
+
+## Available Flows
+
+| Flow | Screenshot | Description |
+|------|------------|-------------|
+| `onboarding_language_selection` | `onboarding_language_selection.png` | Language Selection screen (first onboarding step) |
+
+## Adding New Flows
+
+1. Create a new YAML file in `maestro/flows/`:
+
+```yaml
+appId: com.mojvis.app
+---
+- clearState
+- launchApp:
+    clearState: true
+# Navigate to your screen...
+- assertVisible:
+    text: "Expected Text"
+- takeScreenshot: your_screenshot_name
+```
+
+2. Generate baseline:
+
+```bash
+./maestro/scripts/baseline.sh your_flow_name
+```
+
+3. Commit the baseline screenshot:
+
+```bash
+git add maestro/screenshots/baseline/your_screenshot_name.png
+git commit -m "chore(maestro): add baseline for your_flow_name"
+```
+
+## Troubleshooting
+
+### "No devices found"
+
+Ensure iOS Simulator is booted:
+
+```bash
+xcrun simctl list devices | grep Booted
+```
+
+### "App not installed"
+
+Build and install the app:
+
+```bash
+cd mobile && npx expo run:ios
+```
+
+### "Maestro command not found"
+
+Install Maestro:
+
+```bash
+brew install maestro
+```
+
+### Screenshots differ due to timestamps/dynamic content
+
+Ensure flows wait for stable UI state before capturing. Use `assertVisible` and
+`extendedWaitUntil` to wait for expected content.
+
+## Design Parity Workflow
+
+1. **Establish baseline**: Run `./maestro/scripts/baseline.sh` and commit screenshots
+2. **Make UI changes**: Modify production screens
+3. **Generate current**: Run `./maestro/scripts/run.sh`
+4. **Compare**: Run `./maestro/scripts/diff.sh`
+5. **Review**: If differences are intentional, update baseline; otherwise fix the regression
+
+The baseline screenshots in this repo represent the canonical iOS visual state.
+Production UI changes should match these baselines, not Expo web rendering.

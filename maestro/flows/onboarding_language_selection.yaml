@@ -1,0 +1,42 @@
+# Maestro Flow: Onboarding Language Selection
+#
+# Captures screenshot of the Language Selection screen on fresh app launch.
+# This is the first screen shown when the app has no onboarding data.
+#
+# Prerequisites:
+# - App must be in fresh state (uninstall/reinstall or clear data)
+# - iOS Simulator must be booted
+#
+# Output: onboarding_language_selection.png
+
+appId: com.mojvis.app
+
+---
+
+# Clear app state to ensure fresh onboarding
+- clearState
+
+# Launch the app
+- launchApp:
+    clearState: true
+
+# Wait for the Language Selection screen to appear
+# The screen shows "MOJ VIS" logo and "Dobrodošli / Welcome" title
+- assertVisible:
+    text: "Dobrodošli / Welcome"
+
+# Also verify the language buttons are visible
+- assertVisible:
+    text: "Hrvatski"
+
+- assertVisible:
+    text: "English"
+
+# Small delay to ensure UI is fully rendered
+- extendedWaitUntil:
+    visible:
+      text: "Odaberite jezik / Select language"
+    timeout: 5000
+
+# Take screenshot of the Language Selection screen
+- takeScreenshot: onboarding_language_selection
