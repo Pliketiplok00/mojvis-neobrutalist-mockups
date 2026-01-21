@@ -83,7 +83,11 @@ jobs:
           export PATH="$HOME/.maestro/bin:$PATH"
           maestro --version
 
-      - name: Install JS dependencies
+      - name: Install root JS dependencies
+        run: pnpm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
         run: pnpm install
 
       #########################################
