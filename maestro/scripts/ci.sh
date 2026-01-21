@@ -83,15 +83,24 @@ fi
 log_info "ImageMagick compare found: $(which compare)"
 
 # Check for booted simulator
+log_info "Checking simulator status..."
 if ! xcrun simctl list devices booted 2>/dev/null | grep -q "Booted"; then
   log_error "No iOS Simulator is booted."
   exit 1
 fi
-log_info "Simulator is booted"
+log_info "Simulator is booted:"
+xcrun simctl list devices booted 2>/dev/null | grep -E "iPhone|iPad" || true
 
-# Check if app is installed
-if ! xcrun simctl get_app_container booted com.mojvis.app &> /dev/null; then
-  log_warn "App com.mojvis.app not yet installed. Maestro will attempt to launch it."
+# Check if app is installed (should be installed by expo run:ios in CI)
+log_info "Checking app installation..."
+if xcrun simctl get_app_container booted com.mojvis.app &> /dev/null; then
+  log_info "App com.mojvis.app is installed"
+  APP_CONTAINER=$(xcrun simctl get_app_container booted com.mojvis.app)
+  log_info "App container: $APP_CONTAINER"
+else
+  log_error "App com.mojvis.app is NOT installed on the simulator."
+  log_error "The workflow should have installed it via 'expo run:ios'."
+  exit 1
 fi
 
 #######################################

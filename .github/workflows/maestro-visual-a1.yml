@@ -123,7 +123,7 @@ jobs:
           xcrun simctl list devices booted
 
       #########################################
-      # 6. Build iOS app
+      # 6. Build and install iOS app via Expo
       #########################################
       - name: Cache Expo prebuild
         uses: actions/cache@v4
@@ -135,45 +135,48 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-expo-ios-
 
-      - name: Build iOS app for simulator
+      - name: Build and install iOS app
         working-directory: mobile
         run: |
-          # Prebuild to generate native iOS project
-          npx expo prebuild --platform ios --clean
+          echo "=== Using Expo to build and install iOS app ==="
 
-          # Build the app using xcodebuild for better CI control
-          cd ios
+          # Show which simulator is booted
+          echo "Booted simulators:"
+          xcrun simctl list devices booted
 
-          # Find the workspace and scheme
-          WORKSPACE=$(ls -d *.xcworkspace | head -1)
-          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json | jq -r '.workspace.schemes[0]')
+          # Use expo run:ios which handles prebuild + build + install
+          # --no-bundler: don't start Metro bundler (we just need the app installed)
+          # The command will target the booted simulator automatically
+          echo "Running: npx expo run:ios --no-bundler --device \"iPhone 15 Pro\""
+          npx expo run:ios --no-bundler --device "iPhone 15 Pro"
 
-          echo "Building workspace: $WORKSPACE, scheme: $SCHEME"
+          echo "=== Expo build and install complete ==="
 
-          xcodebuild \
-            -workspace "$WORKSPACE" \
-            -scheme "$SCHEME" \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 15 Pro" \
-            -derivedDataPath build \
-            build \
-            | xcpretty || true  # Don't fail on xcpretty absence
-
-          # Find the built .app
-          APP_PATH=$(find build -name "*.app" -type d | head -1)
-          echo "Built app: $APP_PATH"
-          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
-
-      - name: Install app on simulator
-        working-directory: mobile
+      - name: Verify app installation
         run: |
-          # Install the app
-          xcrun simctl install booted "$APP_PATH"
+          echo "Verifying app installation..."
 
-          # Verify installation
-          xcrun simctl get_app_container booted com.mojvis.app
-          echo "App installed successfully"
+          # Check if app is installed
+          if xcrun simctl get_app_container booted com.mojvis.app; then
+            echo "App com.mojvis.app is installed"
+          else
+            echo "ERROR: App com.mojvis.app not found on simulator"
+            exit 1
+          fi
+
+          # List installed apps for debugging
+          echo "Installed apps on booted simulator:"
+          xcrun simctl listapps booted 2>/dev/null | grep -E "CFBundleIdentifier|CFBundleName" | head -20 || true
+
+      - name: Launch app for Maestro
+        run: |
+          echo "Launching app com.mojvis.app..."
+          xcrun simctl launch booted com.mojvis.app
+
+          # Give the app a moment to start
+          sleep 3
+
+          echo "App launched successfully"
 
       #########################################
       # 7. Run Maestro tests
