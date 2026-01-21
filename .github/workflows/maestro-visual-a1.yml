@@ -1,0 +1,233 @@
+name: Maestro Visual Baseline (A1)
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Enable debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+  pull_request:
+    branches: [main]
+    paths:
+      - 'maestro/**'
+      - 'mobile/**'
+      - '.github/workflows/maestro-visual-a1.yml'
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: maestro-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-baseline:
+    name: Visual Baseline Check
+    runs-on: macos-14  # Apple Silicon (M1) runner
+    timeout-minutes: 30
+
+    steps:
+      #########################################
+      # 1. Checkout
+      #########################################
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      #########################################
+      # 2. Setup Node.js and pnpm
+      #########################################
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      #########################################
+      # 3. Setup Java (required by Maestro)
+      #########################################
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      #########################################
+      # 4. Install dependencies
+      #########################################
+      - name: Install ImageMagick
+        run: brew install imagemagick
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Verify Maestro installation
+        run: |
+          export PATH="$HOME/.maestro/bin:$PATH"
+          maestro --version
+
+      - name: Install JS dependencies
+        run: pnpm install
+
+      #########################################
+      # 5. Setup iOS Simulator
+      #########################################
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: Boot iOS Simulator
+        run: |
+          # Use iPhone 15 Pro as it's available on macos-14 runners
+          DEVICE_NAME="iPhone 15 Pro"
+
+          # Get the UDID of the device
+          UDID=$(xcrun simctl list devices available -j | \
+            jq -r ".devices | to_entries[] | .value[] | select(.name == \"$DEVICE_NAME\" and .isAvailable == true) | .udid" | \
+            head -1)
+
+          if [ -z "$UDID" ]; then
+            echo "Device '$DEVICE_NAME' not found, listing available devices:"
+            xcrun simctl list devices available
+            exit 1
+          fi
+
+          echo "Booting $DEVICE_NAME (UDID: $UDID)..."
+          xcrun simctl boot "$UDID" || true  # May already be booted
+
+          # Wait for simulator to be fully booted
+          echo "Waiting for simulator to boot..."
+          xcrun simctl bootstatus "$UDID" -b
+
+          echo "Simulator booted successfully"
+          xcrun simctl list devices booted
+
+      #########################################
+      # 6. Build iOS app
+      #########################################
+      - name: Cache Expo prebuild
+        uses: actions/cache@v4
+        with:
+          path: |
+            mobile/ios
+            ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-expo-ios-${{ hashFiles('mobile/app.json', 'mobile/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-expo-ios-
+
+      - name: Build iOS app for simulator
+        working-directory: mobile
+        run: |
+          # Prebuild to generate native iOS project
+          npx expo prebuild --platform ios --clean
+
+          # Build the app using xcodebuild for better CI control
+          cd ios
+
+          # Find the workspace and scheme
+          WORKSPACE=$(ls -d *.xcworkspace | head -1)
+          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json | jq -r '.workspace.schemes[0]')
+
+          echo "Building workspace: $WORKSPACE, scheme: $SCHEME"
+
+          xcodebuild \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro" \
+            -derivedDataPath build \
+            build \
+            | xcpretty || true  # Don't fail on xcpretty absence
+
+          # Find the built .app
+          APP_PATH=$(find build -name "*.app" -type d | head -1)
+          echo "Built app: $APP_PATH"
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+
+      - name: Install app on simulator
+        working-directory: mobile
+        run: |
+          # Install the app
+          xcrun simctl install booted "$APP_PATH"
+
+          # Verify installation
+          xcrun simctl get_app_container booted com.mojvis.app
+          echo "App installed successfully"
+
+      #########################################
+      # 7. Run Maestro tests
+      #########################################
+      - name: Run Maestro visual baseline tests
+        id: maestro
+        continue-on-error: true  # Allow step to fail but continue to upload artifacts
+        run: |
+          export PATH="$HOME/.maestro/bin:$PATH"
+          ./maestro/scripts/ci.sh
+        env:
+          MAESTRO_DEBUG: ${{ github.event.inputs.debug_enabled == 'true' && '1' || '' }}
+
+      #########################################
+      # 8. Upload artifacts (always)
+      #########################################
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-visual-artifacts
+          path: maestro-artifacts.zip
+          retention-days: 14
+          if-no-files-found: warn
+
+      # Also upload individual folders for easier browsing
+      - name: Upload current screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots-current
+          path: maestro/screenshots/current/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload diff images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots-diff
+          path: maestro/screenshots/diff/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-logs
+          path: maestro/logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      #########################################
+      # 9. Report status
+      #########################################
+      - name: Check Maestro result
+        if: steps.maestro.outcome == 'failure'
+        run: |
+          echo "::error::Maestro visual baseline check failed. Download artifacts to review diffs."
+          exit 1

@@ -218,3 +218,85 @@ Ensure flows wait for stable UI state before capturing. Use `assertVisible` and
 
 The baseline screenshots in this repo represent the canonical iOS visual state.
 Production UI changes should match these baselines, not Expo web rendering.
+
+---
+
+## CI (A1) - GitHub Actions Visual Baseline
+
+Maestro visual baseline tests run automatically in CI on Apple Silicon macOS runners.
+
+### When CI Runs
+
+- **Automatically**: On pull requests that modify `maestro/**` or `mobile/**`
+- **Manually**: Via `workflow_dispatch` from the Actions tab
+
+### How to Trigger Manually
+
+1. Go to **Actions** → **Maestro Visual Baseline (A1)**
+2. Click **Run workflow**
+3. Optionally enable debug logging
+4. Click **Run workflow** (green button)
+
+### What CI Does
+
+1. Boots iOS Simulator (iPhone 15 Pro)
+2. Builds and installs the Expo iOS app
+3. Runs all Maestro flows from `maestro/flows/`
+4. Captures screenshots to `maestro/screenshots/current/`
+5. Compares against committed baselines in `maestro/screenshots/baseline/`
+6. Generates diff images for any pixel differences
+7. Uploads artifact ZIP with all outputs
+
+### Artifact Contents
+
+Download `maestro-visual-artifacts` from the workflow run:
+
+```
+maestro-visual-artifacts.zip
+├── screenshots/
+│   ├── current/     # Screenshots from this run
+│   └── diff/        # Diff images (red = changed pixels)
+├── logs/
+│   ├── maestro-run.log   # Maestro execution log
+│   ├── diff.log          # Diff comparison report
+│   └── README.txt        # How to interpret results
+```
+
+### Failure Conditions
+
+CI **fails** (exit 1) if:
+- Any screenshot differs from its baseline (pixel differences detected)
+- Any screenshot has no committed baseline (missing baseline)
+
+### Fixing Failures
+
+**If diff images show unintended changes:**
+1. Download artifact and review diff images
+2. Fix the UI regression in your code
+3. Push fixes and re-run CI
+
+**If changes are intentional:**
+1. Run locally on Apple Silicon Mac (or download current screenshots from artifact)
+2. Replace baseline: `cp current/<name>.png baseline/<name>.png`
+3. Commit updated baseline:
+   ```bash
+   git add maestro/screenshots/baseline/
+   git commit -m "chore(maestro): update baseline for <name>"
+   ```
+
+**If baseline is missing:**
+1. Download `current/<name>.png` from artifact
+2. Verify it looks correct
+3. Add to baseline:
+   ```bash
+   # Copy from downloaded artifact to repo
+   cp ~/Downloads/maestro-visual-artifacts/screenshots/current/<name>.png \
+      maestro/screenshots/baseline/<name>.png
+   git add maestro/screenshots/baseline/<name>.png
+   git commit -m "chore(maestro): add baseline for <name>"
+   ```
+
+### Local Intel Mac Limitation
+
+Maestro iOS testing does **not** work on Intel Macs (see `DEBUGGING_REPORT.md`).
+Use CI as the authoritative runner for visual baseline verification.
