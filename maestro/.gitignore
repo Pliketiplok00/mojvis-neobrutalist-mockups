@@ -1,0 +1,10 @@
+# Ignore current screenshots (generated during test runs)
+screenshots/current/*
+!screenshots/current/.gitkeep
+
+# Ignore diff outputs
+screenshots/diff/*
+!screenshots/diff/.gitkeep
+
+# Keep baseline screenshots tracked
+!screenshots/baseline/*
