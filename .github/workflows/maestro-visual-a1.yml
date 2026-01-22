@@ -103,6 +103,16 @@ jobs:
           export PATH="$HOME/.maestro/bin:$PATH"
           maestro --version
 
+      - name: Print environment versions
+        run: |
+          echo "=== Environment Versions ==="
+          echo "Node: $(node -v)"
+          echo "pnpm: $(pnpm -v)"
+          echo "Ruby: $(ruby -v)"
+          echo "CocoaPods: $(pod --version)"
+          echo "Xcode: $(xcodebuild -version | head -1)"
+          echo "macOS: $(sw_vers -productVersion)"
+
       - name: Install root JS dependencies
         run: pnpm install
 
@@ -249,24 +259,58 @@ jobs:
           fi
           echo "Workspace: $WORKSPACE"
 
-          # Get scheme from JSON output (more reliable than text parsing)
-          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null | \
-            jq -r '.workspace.schemes[0]' 2>/dev/null || echo "")
+          # Get ALL schemes and print them
+          echo ""
+          echo "=== All available schemes ==="
+          ALL_SCHEMES=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null | \
+            jq -r '.workspace.schemes[]' 2>/dev/null || echo "")
+          echo "$ALL_SCHEMES"
+          echo ""
 
-          # Fallback: try text parsing
-          if [ -z "$SCHEME" ] || [ "$SCHEME" = "null" ]; then
-            echo "JSON parsing failed, trying text parsing..."
+          # Find the main app scheme (should match app name, not Pods-*)
+          # The app name from app.json is "MOJ VIS" with slug "mojvis"
+          # Expo prebuild typically creates a scheme matching the project name
+          SCHEME=""
+
+          # Try to find a scheme that looks like the main app (not Pods-*)
+          for candidate in $ALL_SCHEMES; do
+            echo "Checking scheme: $candidate"
+            # Skip Pods schemes
+            if [[ "$candidate" == Pods-* ]]; then
+              echo "  -> Skipping (Pods scheme)"
+              continue
+            fi
+            # Prefer scheme that matches mojvis (case insensitive)
+            if [[ "${candidate,,}" == *"mojvis"* ]] || [[ "${candidate,,}" == *"moj vis"* ]]; then
+              SCHEME="$candidate"
+              echo "  -> SELECTED (matches app name)"
+              break
+            fi
+            # Otherwise take first non-Pods scheme
+            if [ -z "$SCHEME" ]; then
+              SCHEME="$candidate"
+              echo "  -> Candidate (first non-Pods)"
+            fi
+          done
+
+          # Fallback: if still no scheme, try text parsing
+          if [ -z "$SCHEME" ]; then
+            echo "JSON parsing failed or no suitable scheme, trying text parsing..."
             SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list 2>/dev/null | \
-              grep -A 100 "Schemes:" | grep -v "Schemes:" | \
+              grep -A 100 "Schemes:" | grep -v "Schemes:" | grep -v "Pods-" | \
               sed 's/^[[:space:]]*//' | grep -v "^$" | head -1)
           fi
 
           if [ -z "$SCHEME" ]; then
             echo "ERROR: Could not determine scheme"
+            echo "Available schemes:"
             xcodebuild -workspace "$WORKSPACE" -list
             exit 1
           fi
-          echo "Using scheme: $SCHEME"
+
+          echo ""
+          echo "=== FINAL SCHEME: $SCHEME ==="
+          echo ""
 
           # Set derived data path
           DERIVED_DATA_PATH="$(pwd)/build"
@@ -310,6 +354,9 @@ jobs:
           echo ""
           echo "=== xcodebuild SUCCESS ==="
 
+          # Export the scheme for later reference
+          echo "XCODE_SCHEME=$SCHEME" >> $GITHUB_ENV
+
       - name: Find and validate built .app
         id: find_app
         working-directory: mobile/ios
@@ -318,22 +365,69 @@ jobs:
 
           DERIVED_DATA_PATH="$(pwd)/build"
 
-          # Find .app in Build/Products
-          echo "Searching for .app in derived data..."
-          find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null || true
+          echo "Derived data path: $DERIVED_DATA_PATH"
+          echo "Scheme used: $XCODE_SCHEME"
+          echo ""
 
-          # Get the app path from Debug-iphonesimulator
-          APP_PATH=$(find "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator" -name "*.app" -type d 2>/dev/null | head -1)
+          # List Build/Products directory structure
+          echo "=== Build/Products directory structure ==="
+          ls -la "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
+          echo ""
+
+          # List Debug-iphonesimulator contents
+          echo "=== Debug-iphonesimulator contents ==="
+          ls -la "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator/" 2>/dev/null || echo "No Debug-iphonesimulator directory"
+          echo ""
+
+          # Find ALL .app bundles in derived data
+          echo "=== All .app bundles found ==="
+          find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null | head -20 || echo "No .app found"
+          echo ""
+
+          # Get the app path - prefer main app, not test runner or pods
+          echo "=== Searching for main app (excluding test runners) ==="
+          APP_PATH=""
+
+          # First try: look for app matching scheme name in Debug-iphonesimulator
+          for app in $(find "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name "*.app" -type d 2>/dev/null); do
+            app_name=$(basename "$app" .app)
+            echo "Found: $app (name: $app_name)"
+
+            # Skip test runners and xctest bundles
+            if [[ "$app_name" == *"Tests"* ]] || [[ "$app_name" == *"UITests"* ]]; then
+              echo "  -> Skipping (test bundle)"
+              continue
+            fi
+
+            # Prefer app matching our scheme or "mojvis"
+            if [[ "${app_name,,}" == *"mojvis"* ]] || [[ "${app_name,,}" == *"moj"* ]]; then
+              APP_PATH="$app"
+              echo "  -> SELECTED (matches app name)"
+              break
+            fi
+
+            # Take first non-test app as fallback
+            if [ -z "$APP_PATH" ]; then
+              APP_PATH="$app"
+              echo "  -> Candidate (first non-test app)"
+            fi
+          done
 
           if [ -z "$APP_PATH" ]; then
+            echo ""
             echo "ERROR: No .app found in Debug-iphonesimulator"
-            echo "Contents of derived data:"
+            echo ""
+            echo "=== Full derived data listing ==="
             find "$DERIVED_DATA_PATH" -type d -name "*.app" 2>/dev/null || echo "No .app directories found"
+            echo ""
+            echo "=== Build/Products full listing ==="
             ls -laR "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
             exit 1
           fi
 
-          echo "Found app: $APP_PATH"
+          echo ""
+          echo "=== SELECTED APP: $APP_PATH ==="
+          echo ""
 
           # Validate the .app exists and is a directory
           if [ ! -d "$APP_PATH" ]; then
@@ -342,8 +436,9 @@ jobs:
           fi
 
           # Show app contents
-          echo "App contents:"
+          echo "App bundle contents:"
           ls -la "$APP_PATH"
+          echo ""
 
           # Check for Info.plist
           if [ ! -f "$APP_PATH/Info.plist" ]; then
@@ -351,14 +446,31 @@ jobs:
             exit 1
           fi
 
+          # Check for main executable
+          APP_NAME=$(basename "$APP_PATH" .app)
+          if [ ! -f "$APP_PATH/$APP_NAME" ]; then
+            echo "WARNING: No executable named '$APP_NAME' found in app bundle"
+            echo "Contents:"
+            ls -la "$APP_PATH"
+          else
+            echo "Executable found: $APP_PATH/$APP_NAME"
+            file "$APP_PATH/$APP_NAME" || true
+          fi
+
           # Extract bundle identifier
           BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
           echo "Bundle identifier: $BUNDLE_ID"
+
+          # Extract app name from plist
+          APP_DISPLAY_NAME=$(/usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" "$APP_PATH/Info.plist" 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Print :CFBundleName" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
+          echo "App display name: $APP_DISPLAY_NAME"
 
           # Export for next steps
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
           echo "BUNDLE_ID=$BUNDLE_ID" >> $GITHUB_ENV
 
+          echo ""
           echo "=== App validation complete ==="
 
       - name: Debug info before install
