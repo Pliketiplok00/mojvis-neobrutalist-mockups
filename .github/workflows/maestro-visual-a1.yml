@@ -271,12 +271,22 @@ jobs:
           echo "END SCHEME EVIDENCE"
           echo "========================================================"
 
-      - name: Build iOS app with xcodebuild
+      - name: Build iOS app with xcodebuild (Release - embeds JS bundle)
         working-directory: mobile/ios
+        env:
+          # Prevent Metro/packager dependencies - we want embedded JS bundle
+          RCT_NO_LAUNCH_PACKAGER: "1"
+          CI: "1"
+          # Ensure React Native bundles JS during build
+          FORCE_BUNDLING: "1"
         run: |
           set -o pipefail
 
-          echo "=== Building iOS app with xcodebuild ==="
+          echo "=== Building iOS app with xcodebuild (RELEASE MODE - embeds JS bundle) ==="
+          echo ""
+          echo "IMPORTANT: Using Release configuration to embed JS bundle."
+          echo "Debug builds require Metro; Release embeds the bundle in the .app"
+          echo ""
 
           # Create logs directory
           mkdir -p ../../maestro/logs
@@ -454,16 +464,17 @@ jobs:
           echo "Device name: $SIM_DEVICE_NAME"
 
           # Build for iOS Simulator using the booted simulator's UDID
+          # CRITICAL: Use Release configuration to embed JS bundle (no Metro required)
           echo ""
-          echo "=== Running xcodebuild ==="
+          echo "=== Running xcodebuild (RELEASE configuration) ==="
           echo "Command:"
-          echo "xcodebuild -workspace \"$WORKSPACE\" -scheme \"$SCHEME\" -configuration Debug -sdk iphonesimulator -destination \"platform=iOS Simulator,id=$SIM_UDID\" -derivedDataPath \"$DERIVED_DATA_PATH\" CODE_SIGNING_ALLOWED=NO build"
+          echo "xcodebuild -workspace \"$WORKSPACE\" -scheme \"$SCHEME\" -configuration Release -sdk iphonesimulator -destination \"platform=iOS Simulator,id=$SIM_UDID\" -derivedDataPath \"$DERIVED_DATA_PATH\" CODE_SIGNING_ALLOWED=NO build"
           echo ""
 
           xcodebuild \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
-            -configuration Debug \
+            -configuration Release \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,id=$SIM_UDID" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
@@ -507,9 +518,9 @@ jobs:
           ls -la "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
           echo ""
 
-          # List Debug-iphonesimulator contents
-          echo "=== Debug-iphonesimulator contents ==="
-          ls -la "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator/" 2>/dev/null || echo "No Debug-iphonesimulator directory"
+          # List Release-iphonesimulator contents
+          echo "=== Release-iphonesimulator contents ==="
+          ls -la "$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator/" 2>/dev/null || echo "No Release-iphonesimulator directory"
           echo ""
 
           # Find ALL .app bundles in derived data
@@ -521,8 +532,8 @@ jobs:
           echo "=== Searching for main app (excluding test runners) ==="
           APP_PATH=""
 
-          # First try: look for app matching scheme name in Debug-iphonesimulator
-          for app in $(find "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name "*.app" -type d 2>/dev/null); do
+          # First try: look for app matching scheme name in Release-iphonesimulator
+          for app in $(find "$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator" -maxdepth 1 -name "*.app" -type d 2>/dev/null); do
             app_name=$(basename "$app" .app)
             echo "Found: $app (name: $app_name)"
 
@@ -549,7 +560,7 @@ jobs:
 
           if [ -z "$APP_PATH" ]; then
             echo ""
-            echo "ERROR: No .app found in Debug-iphonesimulator"
+            echo "ERROR: No .app found in Release-iphonesimulator"
             echo ""
             echo "=== Full derived data listing ==="
             find "$DERIVED_DATA_PATH" -type d -name "*.app" 2>/dev/null || echo "No .app directories found"
@@ -618,6 +629,94 @@ jobs:
           echo ""
           echo "App path exists: $(test -d "$APP_PATH" && echo "YES" || echo "NO")"
 
+      #########################################
+      # 6.5 CRITICAL: Verify JS Bundle is Embedded
+      #########################################
+      - name: Verify JS bundle is embedded (CRITICAL)
+        run: |
+          echo "========================================================"
+          echo "CRITICAL CHECK: JS Bundle Verification"
+          echo "========================================================"
+          echo ""
+          echo "APP_PATH: $APP_PATH"
+          echo ""
+
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: APP_PATH does not exist!"
+            exit 1
+          fi
+
+          echo "=== Searching for JS bundle in .app ==="
+          echo ""
+
+          # Look for common JS bundle file names
+          echo "Looking for main.jsbundle:"
+          find "$APP_PATH" -name "main.jsbundle" -type f 2>/dev/null | head -5
+
+          echo ""
+          echo "Looking for *.jsbundle:"
+          find "$APP_PATH" -name "*.jsbundle" -type f 2>/dev/null | head -10
+
+          echo ""
+          echo "Looking for *.bundle:"
+          find "$APP_PATH" -name "*.bundle" -type f 2>/dev/null | head -10
+
+          echo ""
+          echo "Looking for index.*.bundle:"
+          find "$APP_PATH" -name "index.*.bundle" -type f 2>/dev/null | head -5
+
+          echo ""
+          echo "Looking for Hermes bytecode (*.hbc):"
+          find "$APP_PATH" -name "*.hbc" -type f 2>/dev/null | head -5
+
+          # Check if any bundle exists
+          BUNDLE_FILES=$(find "$APP_PATH" \( -name "main.jsbundle" -o -name "*.jsbundle" -o -name "*.hbc" \) -type f 2>/dev/null)
+
+          echo ""
+          echo "=== Bundle search results ==="
+          if [ -n "$BUNDLE_FILES" ]; then
+            echo "JS bundle(s) found:"
+            echo "$BUNDLE_FILES"
+            echo ""
+
+            # Show file sizes
+            echo "Bundle file details:"
+            for f in $BUNDLE_FILES; do
+              ls -lh "$f" 2>/dev/null || true
+            done
+
+            echo ""
+            echo "SUCCESS: JS bundle is embedded in the .app"
+            echo ""
+          else
+            echo ""
+            echo "========================================================"
+            echo "FATAL ERROR: NO JS BUNDLE FOUND IN .app!"
+            echo "========================================================"
+            echo ""
+            echo "The app was built without an embedded JS bundle."
+            echo "This will cause 'No script URL provided' red screen error."
+            echo ""
+            echo "Expected files (any of):"
+            echo "  - main.jsbundle"
+            echo "  - *.jsbundle"
+            echo "  - *.hbc (Hermes bytecode)"
+            echo ""
+            echo "=== Full .app contents ==="
+            ls -laR "$APP_PATH" | head -100
+            echo ""
+            echo "Possible causes:"
+            echo "1. Build configuration is Debug instead of Release"
+            echo "2. Metro bundling step was skipped"
+            echo "3. FORCE_BUNDLING or similar env var not set"
+            echo ""
+            exit 1
+          fi
+
+          echo "========================================================"
+          echo "END JS Bundle Verification"
+          echo "========================================================"
+
       - name: Install app on simulator
         run: |
           echo "=== Installing app on simulator ==="
@@ -674,6 +773,80 @@ jobs:
           ./maestro/scripts/ci.sh
         env:
           MAESTRO_DEBUG: ${{ github.event.inputs.debug_enabled == 'true' && '1' || '' }}
+
+      #########################################
+      # 7.5 Validate screenshots were produced
+      #########################################
+      - name: Validate screenshots exist (CRITICAL)
+        if: always()
+        run: |
+          echo "========================================================"
+          echo "SCREENSHOT VALIDATION"
+          echo "========================================================"
+          echo ""
+
+          SCREENSHOT_DIR="maestro/screenshots/current"
+          echo "Checking: $SCREENSHOT_DIR"
+          echo ""
+
+          # Create directory if it doesn't exist
+          mkdir -p "$SCREENSHOT_DIR"
+
+          # Count PNG files
+          PNG_COUNT=$(find "$SCREENSHOT_DIR" -name "*.png" -type f 2>/dev/null | wc -l | tr -d ' ')
+          echo "PNG files found: $PNG_COUNT"
+          echo ""
+
+          if [ "$PNG_COUNT" -eq 0 ]; then
+            echo "========================================================"
+            echo "WARNING: NO SCREENSHOTS PRODUCED!"
+            echo "========================================================"
+            echo ""
+            echo "Expected: 12 screenshots from a1_baseline_all_screens.yaml"
+            echo "Found: 0"
+            echo ""
+
+            # Show Maestro logs for debugging
+            echo "=== Last 100 lines of Maestro log ==="
+            tail -100 maestro/logs/maestro-run.log 2>/dev/null || echo "No maestro-run.log found"
+            echo ""
+
+            # Check if app launched correctly
+            echo "=== App launch state ==="
+            xcrun simctl listapps booted 2>/dev/null | grep -A5 "mojvis" || echo "App not found in installed apps"
+            echo ""
+
+            # List any PNG files anywhere in maestro/
+            echo "=== All PNG files in maestro/ ==="
+            find maestro -name "*.png" -type f 2>/dev/null || echo "No PNG files found"
+            echo ""
+
+            echo "Possible causes:"
+            echo "1. App showed red error screen (missing JS bundle)"
+            echo "2. Maestro flow failed at assertion step"
+            echo "3. App crashed on launch"
+            echo ""
+            echo "Download maestro-logs artifact to investigate."
+            echo ""
+            # Don't fail here - let artifacts upload first
+          else
+            echo "SUCCESS: $PNG_COUNT screenshot(s) found"
+            echo ""
+            echo "=== Screenshots ==="
+            ls -la "$SCREENSHOT_DIR"/*.png 2>/dev/null || true
+            echo ""
+
+            # List expected A1 screenshots
+            echo "=== Checking for A1 baseline screenshots ==="
+            A1_COUNT=$(find "$SCREENSHOT_DIR" -name "a1_*.png" -type f 2>/dev/null | wc -l | tr -d ' ')
+            echo "A1 screenshots found: $A1_COUNT (expected: 12)"
+            find "$SCREENSHOT_DIR" -name "a1_*.png" -type f 2>/dev/null | sort
+          fi
+
+          echo ""
+          echo "========================================================"
+          echo "END SCREENSHOT VALIDATION"
+          echo "========================================================"
 
       #########################################
       # 8. Upload artifacts (always)
