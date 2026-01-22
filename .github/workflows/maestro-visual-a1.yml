@@ -266,50 +266,123 @@ jobs:
             jq -r '.workspace.schemes[]' 2>/dev/null || echo "")
           echo "$ALL_SCHEMES"
           echo ""
+          echo "Total schemes found: $(echo "$ALL_SCHEMES" | wc -l | tr -d ' ')"
+          echo ""
 
-          # Find the main app scheme (should match app name, not Pods-*)
-          # The app name from app.json is "MOJ VIS" with slug "mojvis"
-          # Expo prebuild typically creates a scheme matching the project name
+          # Find the REAL app scheme
+          # Must exclude ALL internal/library schemes:
+          # - Pods-* (CocoaPods)
+          # - EX* (Expo modules like EXApplication, EXConstants, etc.)
+          # - React-* (React Native internals)
+          # - Expo* (Expo SDK)
+          # - RN* (React Native)
+          # - hermes* (JS engine)
+          # - Yoga* (layout engine)
+          #
+          # The real app scheme should match the app name from app.json
+          # App name: "MOJ VIS", slug: "mojvis"
+
           SCHEME=""
+          FALLBACK_SCHEME=""
 
-          # Try to find a scheme that looks like the main app (not Pods-*)
+          echo "=== Scheme selection logic ==="
           for candidate in $ALL_SCHEMES; do
-            echo "Checking scheme: $candidate"
-            # Skip Pods schemes
+            echo -n "Checking: $candidate ... "
+
+            # Skip internal/library schemes (CRITICAL: includes EXApplication!)
             if [[ "$candidate" == Pods-* ]]; then
-              echo "  -> Skipping (Pods scheme)"
+              echo "SKIP (Pods)"
               continue
             fi
-            # Prefer scheme that matches mojvis (case insensitive)
-            if [[ "${candidate,,}" == *"mojvis"* ]] || [[ "${candidate,,}" == *"moj vis"* ]]; then
+            if [[ "$candidate" == EX* ]]; then
+              echo "SKIP (Expo module: EX*)"
+              continue
+            fi
+            if [[ "$candidate" == Expo* ]]; then
+              echo "SKIP (Expo SDK)"
+              continue
+            fi
+            if [[ "$candidate" == React-* ]] || [[ "$candidate" == React ]]; then
+              echo "SKIP (React Native)"
+              continue
+            fi
+            if [[ "$candidate" == RN* ]]; then
+              echo "SKIP (RN module)"
+              continue
+            fi
+            if [[ "$candidate" == hermes* ]] || [[ "$candidate" == Hermes* ]]; then
+              echo "SKIP (Hermes engine)"
+              continue
+            fi
+            if [[ "$candidate" == Yoga* ]]; then
+              echo "SKIP (Yoga layout)"
+              continue
+            fi
+            if [[ "$candidate" == RCT* ]]; then
+              echo "SKIP (RCT module)"
+              continue
+            fi
+
+            # This is a potential app scheme
+            # Prefer scheme matching app name
+            candidate_lower="${candidate,,}"
+            if [[ "$candidate_lower" == *"mojvis"* ]] || [[ "$candidate_lower" == *"moj"*"vis"* ]]; then
               SCHEME="$candidate"
-              echo "  -> SELECTED (matches app name)"
+              echo "SELECTED (matches app name 'mojvis')"
               break
             fi
-            # Otherwise take first non-Pods scheme
-            if [ -z "$SCHEME" ]; then
-              SCHEME="$candidate"
-              echo "  -> Candidate (first non-Pods)"
+
+            # Keep first valid candidate as fallback
+            if [ -z "$FALLBACK_SCHEME" ]; then
+              FALLBACK_SCHEME="$candidate"
+              echo "CANDIDATE (first valid, fallback)"
+            else
+              echo "VALID (but already have fallback)"
             fi
           done
 
-          # Fallback: if still no scheme, try text parsing
-          if [ -z "$SCHEME" ]; then
-            echo "JSON parsing failed or no suitable scheme, trying text parsing..."
-            SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list 2>/dev/null | \
-              grep -A 100 "Schemes:" | grep -v "Schemes:" | grep -v "Pods-" | \
-              sed 's/^[[:space:]]*//' | grep -v "^$" | head -1)
+          # Use fallback if no exact match
+          if [ -z "$SCHEME" ] && [ -n "$FALLBACK_SCHEME" ]; then
+            SCHEME="$FALLBACK_SCHEME"
+            echo ""
+            echo "No exact 'mojvis' match found, using fallback: $SCHEME"
           fi
 
+          # Final validation
           if [ -z "$SCHEME" ]; then
-            echo "ERROR: Could not determine scheme"
+            echo ""
+            echo "=========================================="
+            echo "ERROR: No valid app scheme found!"
+            echo "=========================================="
+            echo ""
+            echo "All schemes were internal/library schemes."
+            echo "This means expo prebuild did not create a shared app scheme."
+            echo ""
             echo "Available schemes:"
             xcodebuild -workspace "$WORKSPACE" -list
+            echo ""
+            echo "Possible fixes:"
+            echo "1. Check app.json 'name' and 'slug' fields"
+            echo "2. Ensure expo prebuild completed successfully"
+            echo "3. The app scheme may need to be shared in Xcode"
+            exit 1
+          fi
+
+          # Extra validation: reject EXApplication explicitly
+          if [[ "$SCHEME" == "EXApplication" ]]; then
+            echo ""
+            echo "=========================================="
+            echo "ERROR: Selected scheme is EXApplication!"
+            echo "=========================================="
+            echo "This is an Expo internal module, not the app."
+            echo "The real app scheme was not found."
             exit 1
           fi
 
           echo ""
-          echo "=== FINAL SCHEME: $SCHEME ==="
+          echo "=========================================="
+          echo "FINAL SELECTED SCHEME: $SCHEME"
+          echo "=========================================="
           echo ""
 
           # Set derived data path
