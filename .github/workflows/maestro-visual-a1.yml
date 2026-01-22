@@ -532,8 +532,9 @@ jobs:
               continue
             fi
 
-            # Prefer app matching our scheme or "mojvis"
-            if [[ "${app_name,,}" == *"mojvis"* ]] || [[ "${app_name,,}" == *"moj"* ]]; then
+            # Prefer app matching our scheme or "mojvis" (case-insensitive)
+            app_name_lower=$(echo "$app_name" | tr '[:upper:]' '[:lower:]')
+            if [[ "$app_name_lower" == *"mojvis"* ]] || [[ "$app_name_lower" == *"moj"* ]]; then
               APP_PATH="$app"
               echo "  -> SELECTED (matches app name)"
               break
