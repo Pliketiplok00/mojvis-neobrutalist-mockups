@@ -282,7 +282,9 @@ jobs:
         run: |
           set -o pipefail
 
-          echo "=== Building iOS app with xcodebuild (RELEASE MODE - embeds JS bundle) ==="
+          echo "========================================================"
+          echo "BUILD iOS APP (RELEASE MODE - embeds JS bundle)"
+          echo "========================================================"
           echo ""
           echo "IMPORTANT: Using Release configuration to embed JS bundle."
           echo "Debug builds require Metro; Release embeds the bundle in the .app"
@@ -300,177 +302,165 @@ jobs:
           fi
           echo "Workspace: $WORKSPACE"
 
-          # Get ALL schemes from JSON (handles spaces in names)
-          echo ""
-          echo "=== Extracting schemes from JSON ==="
-          SCHEMES_JSON=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null || echo "{}")
-          echo "Raw JSON saved to logs"
-          echo "$SCHEMES_JSON" > ../../maestro/logs/schemes-raw.json
-
-          # Extract schemes array - one per line, handling spaces
-          echo ""
-          echo "=== All available schemes ==="
-          SCHEMES_FILE=$(mktemp)
-          echo "$SCHEMES_JSON" | jq -r '.workspace.schemes[]?' 2>/dev/null > "$SCHEMES_FILE" || true
-          cat "$SCHEMES_FILE"
-          SCHEME_COUNT=$(wc -l < "$SCHEMES_FILE" | tr -d ' ')
-          echo ""
-          echo "Total schemes found: $SCHEME_COUNT"
-
-          # Also check directly in xcschemes directories
-          echo ""
-          echo "=== Direct scheme file check ==="
+          # Find xcodeproj
           XCODEPROJ=$(ls -d *.xcodeproj 2>/dev/null | head -1)
-          if [ -n "$XCODEPROJ" ]; then
-            echo "Shared schemes in $XCODEPROJ:"
-            ls "$XCODEPROJ/xcshareddata/xcschemes/"*.xcscheme 2>/dev/null | xargs -I {} basename {} .xcscheme || echo "  (none)"
-          fi
+          echo "Xcodeproj: $XCODEPROJ"
 
-          # Find the REAL app scheme
-          # App name from app.json: "MOJ VIS" (with space), slug: "mojvis"
-          # The scheme could be "MOJ VIS", "MOJVIS", "mojvis", etc.
+          # ================================================
+          # ROBUST SCHEME SELECTION
+          # ================================================
+          echo ""
+          echo "=== SCHEME SELECTION (ROBUST) ==="
+          echo ""
 
           SCHEME=""
-          FALLBACK_SCHEME=""
 
-          echo ""
-          echo "=== Scheme selection logic ==="
-
-          # Read schemes line by line to handle spaces
-          while IFS= read -r candidate || [ -n "$candidate" ]; do
-            [ -z "$candidate" ] && continue
-
-            echo -n "Checking: '$candidate' ... "
-
-            # Skip internal/library schemes
-            case "$candidate" in
-              Pods-*|Pods\ *)
-                echo "SKIP (Pods)"
-                continue
-                ;;
-              EX*)
-                echo "SKIP (Expo module: EX*)"
-                continue
-                ;;
-              Expo*)
-                echo "SKIP (Expo SDK)"
-                continue
-                ;;
-              React-*|React\ *|React)
-                echo "SKIP (React Native)"
-                continue
-                ;;
-              RN*)
-                echo "SKIP (RN module)"
-                continue
-                ;;
-              hermes*|Hermes*)
-                echo "SKIP (Hermes engine)"
-                continue
-                ;;
-              Yoga*)
-                echo "SKIP (Yoga layout)"
-                continue
-                ;;
-              RCT*)
-                echo "SKIP (RCT module)"
-                continue
-                ;;
-              *Tests|*Tests\ *|*UITests*)
-                echo "SKIP (Test target)"
-                continue
-                ;;
-            esac
-
-            # This is a potential app scheme
-            # Check if it matches app name patterns
-            candidate_lower=$(echo "$candidate" | tr '[:upper:]' '[:lower:]')
-
-            # Check for "moj vis" or "mojvis" patterns
-            if [[ "$candidate_lower" == *"moj"*"vis"* ]] || [[ "$candidate_lower" == *"mojvis"* ]]; then
-              SCHEME="$candidate"
-              echo "SELECTED (matches app name)"
-              break
-            fi
-
-            # Keep first valid candidate as fallback
-            if [ -z "$FALLBACK_SCHEME" ]; then
-              FALLBACK_SCHEME="$candidate"
-              echo "CANDIDATE (first valid)"
-            else
-              echo "VALID (already have candidate)"
-            fi
-          done < "$SCHEMES_FILE"
-
-          rm -f "$SCHEMES_FILE"
-
-          # Use fallback if no exact match
-          if [ -z "$SCHEME" ] && [ -n "$FALLBACK_SCHEME" ]; then
-            SCHEME="$FALLBACK_SCHEME"
+          # METHOD 1: Look directly at .xcscheme files in xcshareddata
+          echo "METHOD 1: Checking xcshareddata/xcschemes directory..."
+          SCHEMES_DIR="$XCODEPROJ/xcshareddata/xcschemes"
+          if [ -d "$SCHEMES_DIR" ]; then
+            echo "Found schemes directory: $SCHEMES_DIR"
+            ls -la "$SCHEMES_DIR"/ 2>/dev/null || true
             echo ""
-            echo "No exact app name match, using fallback: '$SCHEME'"
+
+            # Get scheme names from .xcscheme files
+            for scheme_file in "$SCHEMES_DIR"/*.xcscheme; do
+              if [ -f "$scheme_file" ]; then
+                scheme_name=$(basename "$scheme_file" .xcscheme)
+                echo "Found scheme file: $scheme_name"
+
+                # Skip internal schemes
+                case "$scheme_name" in
+                  Pods-*|EX*|Expo*|React-*|React|RN*|hermes*|Hermes*|Yoga*|RCT*|*Tests)
+                    echo "  -> SKIP (internal/library)"
+                    continue
+                    ;;
+                esac
+
+                # Check if it matches app name
+                scheme_lower=$(echo "$scheme_name" | tr '[:upper:]' '[:lower:]')
+                if [[ "$scheme_lower" == *"moj"* ]] || [[ "$scheme_lower" == *"mojvis"* ]]; then
+                  SCHEME="$scheme_name"
+                  echo "  -> SELECTED (matches app name pattern)"
+                  break
+                fi
+
+                # Keep first valid as fallback
+                if [ -z "$SCHEME" ]; then
+                  SCHEME="$scheme_name"
+                  echo "  -> CANDIDATE (first valid scheme)"
+                fi
+              fi
+            done
+          else
+            echo "No xcshareddata/xcschemes directory found"
           fi
 
-          # CRITICAL: Fail if no valid scheme found
+          # METHOD 2: If no scheme found, try xcodebuild -list
+          if [ -z "$SCHEME" ]; then
+            echo ""
+            echo "METHOD 2: Using xcodebuild -list..."
+            SCHEMES_JSON=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null || echo "{}")
+            echo "$SCHEMES_JSON" > ../../maestro/logs/schemes-raw.json
+
+            # Extract and filter schemes
+            SCHEMES_FILE=$(mktemp)
+            echo "$SCHEMES_JSON" | jq -r '.workspace.schemes[]?' 2>/dev/null > "$SCHEMES_FILE" || true
+
+            echo "Schemes from xcodebuild -list:"
+            cat "$SCHEMES_FILE"
+            echo ""
+
+            while IFS= read -r candidate || [ -n "$candidate" ]; do
+              [ -z "$candidate" ] && continue
+
+              # Skip internal schemes
+              case "$candidate" in
+                Pods-*|EX*|Expo*|React-*|React|RN*|hermes*|Hermes*|Yoga*|RCT*|*Tests)
+                  continue
+                  ;;
+              esac
+
+              candidate_lower=$(echo "$candidate" | tr '[:upper:]' '[:lower:]')
+              if [[ "$candidate_lower" == *"moj"* ]] || [[ "$candidate_lower" == *"mojvis"* ]]; then
+                SCHEME="$candidate"
+                echo "SELECTED from xcodebuild -list: '$SCHEME'"
+                break
+              fi
+
+              if [ -z "$SCHEME" ]; then
+                SCHEME="$candidate"
+                echo "CANDIDATE from xcodebuild -list: '$SCHEME'"
+              fi
+            done < "$SCHEMES_FILE"
+            rm -f "$SCHEMES_FILE"
+          fi
+
+          # METHOD 3: Use xcodeproj name as scheme name (common pattern)
+          if [ -z "$SCHEME" ]; then
+            echo ""
+            echo "METHOD 3: Using xcodeproj name as scheme..."
+            if [ -n "$XCODEPROJ" ]; then
+              SCHEME=$(basename "$XCODEPROJ" .xcodeproj)
+              echo "Using xcodeproj name as scheme: '$SCHEME'"
+            fi
+          fi
+
+          # VALIDATE: Never use EXApplication
+          if [[ "$SCHEME" == "EXApplication" ]] || [[ "$SCHEME" == EX* ]]; then
+            echo ""
+            echo "========================================================"
+            echo "FATAL ERROR: Selected scheme is an Expo internal module!"
+            echo "Scheme: $SCHEME"
+            echo "========================================================"
+            echo ""
+            echo "Available schemes:"
+            xcodebuild -workspace "$WORKSPACE" -list 2>&1 || true
+            echo ""
+            echo "xcschemes directory:"
+            ls -la "$XCODEPROJ/xcshareddata/xcschemes/" 2>/dev/null || echo "No xcschemes directory"
+            exit 1
+          fi
+
+          # FAIL if no scheme found
           if [ -z "$SCHEME" ]; then
             echo ""
             echo "========================================================"
             echo "FATAL ERROR: No valid app scheme found!"
             echo "========================================================"
             echo ""
-            echo "CI sees only internal/library schemes (EXApplication, Pods, etc.)"
-            echo "The real app scheme is MISSING."
-            echo ""
-            echo "This means expo prebuild did not create a shared app scheme."
-            echo ""
-            echo "=== Full scheme list from xcodebuild ==="
-            xcodebuild -workspace "$WORKSPACE" -list 2>&1
-            echo ""
-            echo "=== xcschemes directory contents ==="
-            ls -la "$XCODEPROJ/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes"
-            echo ""
-            echo "Possible causes:"
-            echo "1. app.json 'name' field has special characters"
-            echo "2. expo prebuild failed silently"
-            echo "3. Scheme not marked as 'shared' in Xcode"
-            echo ""
-            echo "WILL NOT build EXApplication as fallback."
-            exit 1
-          fi
-
-          # Extra validation: NEVER build EXApplication
-          if [[ "$SCHEME" == "EXApplication" ]]; then
-            echo ""
-            echo "========================================================"
-            echo "FATAL ERROR: Scheme is EXApplication!"
-            echo "========================================================"
-            echo "This is an Expo internal module, NOT the app."
-            echo "REFUSING to build. The real app scheme must be found."
+            echo "Available schemes:"
+            xcodebuild -workspace "$WORKSPACE" -list 2>&1 || true
             exit 1
           fi
 
           echo ""
           echo "========================================================"
-          echo "SELECTED APP SCHEME: '$SCHEME'"
+          echo "SELECTED SCHEME: '$SCHEME'"
           echo "========================================================"
           echo ""
 
           # Set derived data path
           DERIVED_DATA_PATH="$(pwd)/build"
-          echo "Derived data path: $DERIVED_DATA_PATH"
-
-          # Use simulator UDID from earlier step
-          echo "Using simulator UDID: $SIM_UDID"
+          echo "Workspace: $WORKSPACE"
+          echo "Scheme: $SCHEME"
+          echo "Derived data: $DERIVED_DATA_PATH"
+          echo "Simulator UDID: $SIM_UDID"
           echo "Device name: $SIM_DEVICE_NAME"
 
-          # Build for iOS Simulator using the booted simulator's UDID
-          # CRITICAL: Use Release configuration to embed JS bundle (no Metro required)
+          # ================================================
+          # BUILD FOR iOS SIMULATOR (Release configuration)
+          # ================================================
           echo ""
-          echo "=== Running xcodebuild (RELEASE configuration) ==="
-          echo "Command:"
-          echo "xcodebuild -workspace \"$WORKSPACE\" -scheme \"$SCHEME\" -configuration Release -sdk iphonesimulator -destination \"platform=iOS Simulator,id=$SIM_UDID\" -derivedDataPath \"$DERIVED_DATA_PATH\" CODE_SIGNING_ALLOWED=NO build"
+          echo "=== Running xcodebuild ==="
+          echo ""
+          echo "Configuration: Release (embeds JS bundle)"
+          echo "SDK: iphonesimulator"
+          echo "Destination: iOS Simulator with UDID $SIM_UDID"
+          echo "Code Signing: DISABLED (simulator build)"
           echo ""
 
+          # Full xcodebuild command with all necessary flags
           xcodebuild \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
@@ -479,137 +469,209 @@ jobs:
             -destination "platform=iOS Simulator,id=$SIM_UDID" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
             CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
             build 2>&1 | tee ../../maestro/logs/xcodebuild.log
 
           BUILD_EXIT_CODE=${PIPESTATUS[0]}
 
           if [ $BUILD_EXIT_CODE -ne 0 ]; then
             echo ""
-            echo "=== xcodebuild FAILED (exit code: $BUILD_EXIT_CODE) ==="
+            echo "========================================================"
+            echo "xcodebuild FAILED (exit code: $BUILD_EXIT_CODE)"
+            echo "========================================================"
             echo ""
-            echo "=== Last 200 lines of xcodebuild.log ==="
-            tail -200 ../../maestro/logs/xcodebuild.log
+            echo "=== FIRST error: line ==="
+            grep -i "error:" ../../maestro/logs/xcodebuild.log | head -1 || true
             echo ""
-            echo "=== Searching for errors in log ==="
-            grep -i "error:" ../../maestro/logs/xcodebuild.log | tail -50 || true
+            echo "=== All errors ==="
+            grep -i "error:" ../../maestro/logs/xcodebuild.log | head -20 || true
+            echo ""
+            echo "=== Last 100 lines of log ==="
+            tail -100 ../../maestro/logs/xcodebuild.log
             exit 1
           fi
 
           echo ""
-          echo "=== xcodebuild SUCCESS ==="
+          echo "========================================================"
+          echo "BUILD SUCCESS"
+          echo "========================================================"
+          echo ""
 
-          # Export the scheme for later reference
+          # Export for later steps
           echo "XCODE_SCHEME=$SCHEME" >> $GITHUB_ENV
+          echo "DERIVED_DATA_PATH=$DERIVED_DATA_PATH" >> $GITHUB_ENV
+
+          # ================================================
+          # POST-BUILD DIAGNOSTICS
+          # ================================================
+          echo "=== Post-build diagnostics ==="
+          echo ""
+          echo "Workspace: $WORKSPACE"
+          echo "Scheme: $SCHEME"
+          echo "DerivedData: $DERIVED_DATA_PATH"
+          echo ""
+          echo "Build products:"
+          ls -la "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products"
+          echo ""
+          echo "Release-iphonesimulator contents:"
+          ls -la "$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator/" 2>/dev/null || echo "No Release-iphonesimulator"
 
       - name: Find and validate built .app
         id: find_app
         working-directory: mobile/ios
         run: |
-          echo "=== Finding built .app ==="
+          echo "========================================================"
+          echo "FINDING AND VALIDATING BUILT .app"
+          echo "========================================================"
+          echo ""
 
-          DERIVED_DATA_PATH="$(pwd)/build"
+          # Use exported DERIVED_DATA_PATH or fallback
+          if [ -z "$DERIVED_DATA_PATH" ]; then
+            DERIVED_DATA_PATH="$(pwd)/build"
+          fi
 
           echo "Derived data path: $DERIVED_DATA_PATH"
           echo "Scheme used: $XCODE_SCHEME"
           echo ""
 
           # List Build/Products directory structure
-          echo "=== Build/Products directory structure ==="
+          echo "=== Build/Products directory ==="
           ls -la "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
           echo ""
 
           # List Release-iphonesimulator contents
+          PRODUCTS_DIR="$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator"
           echo "=== Release-iphonesimulator contents ==="
-          ls -la "$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator/" 2>/dev/null || echo "No Release-iphonesimulator directory"
+          ls -la "$PRODUCTS_DIR/" 2>/dev/null || echo "No Release-iphonesimulator directory"
           echo ""
 
-          # Find ALL .app bundles in derived data
-          echo "=== All .app bundles found ==="
+          # Find ALL .app bundles
+          echo "=== All .app bundles in DerivedData ==="
           find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null | head -20 || echo "No .app found"
           echo ""
 
-          # Get the app path - prefer main app, not test runner or pods
-          echo "=== Searching for main app (excluding test runners) ==="
+          # ================================================
+          # FIND THE MAIN APP
+          # ================================================
           APP_PATH=""
 
-          # First try: look for app matching scheme name in Release-iphonesimulator
-          for app in $(find "$DERIVED_DATA_PATH/Build/Products/Release-iphonesimulator" -maxdepth 1 -name "*.app" -type d 2>/dev/null); do
-            app_name=$(basename "$app" .app)
-            echo "Found: $app (name: $app_name)"
+          # Strategy 1: Look in Release-iphonesimulator
+          echo "=== Searching for app in Release-iphonesimulator ==="
+          if [ -d "$PRODUCTS_DIR" ]; then
+            for app in "$PRODUCTS_DIR"/*.app; do
+              [ ! -d "$app" ] && continue
 
-            # Skip test runners and xctest bundles
-            if [[ "$app_name" == *"Tests"* ]] || [[ "$app_name" == *"UITests"* ]]; then
-              echo "  -> Skipping (test bundle)"
-              continue
-            fi
+              app_name=$(basename "$app" .app)
+              echo "Found: $app_name"
 
-            # Prefer app matching our scheme or "mojvis" (case-insensitive)
-            app_name_lower=$(echo "$app_name" | tr '[:upper:]' '[:lower:]')
-            if [[ "$app_name_lower" == *"mojvis"* ]] || [[ "$app_name_lower" == *"moj"* ]]; then
-              APP_PATH="$app"
-              echo "  -> SELECTED (matches app name)"
-              break
-            fi
+              # Skip test bundles
+              if [[ "$app_name" == *"Tests"* ]] || [[ "$app_name" == *"UITests"* ]]; then
+                echo "  -> Skip (test bundle)"
+                continue
+              fi
 
-            # Take first non-test app as fallback
-            if [ -z "$APP_PATH" ]; then
-              APP_PATH="$app"
-              echo "  -> Candidate (first non-test app)"
-            fi
-          done
+              # Skip Expo internal modules
+              if [[ "$app_name" == EX* ]] || [[ "$app_name" == "Expo"* ]]; then
+                echo "  -> Skip (Expo module)"
+                continue
+              fi
 
+              # Check if matches app name pattern
+              app_name_lower=$(echo "$app_name" | tr '[:upper:]' '[:lower:]')
+              if [[ "$app_name_lower" == *"moj"* ]] || [[ "$app_name_lower" == *"mojvis"* ]]; then
+                APP_PATH="$app"
+                echo "  -> SELECTED (matches app name)"
+                break
+              fi
+
+              # Use first valid app as fallback
+              if [ -z "$APP_PATH" ]; then
+                APP_PATH="$app"
+                echo "  -> CANDIDATE (first valid app)"
+              fi
+            done
+          fi
+
+          # Strategy 2: Search entire DerivedData
           if [ -z "$APP_PATH" ]; then
             echo ""
-            echo "ERROR: No .app found in Release-iphonesimulator"
+            echo "=== Searching entire DerivedData ==="
+            while IFS= read -r app; do
+              app_name=$(basename "$app" .app)
+
+              # Skip internal/test apps
+              if [[ "$app_name" == *"Tests"* ]] || [[ "$app_name" == EX* ]]; then
+                continue
+              fi
+
+              app_name_lower=$(echo "$app_name" | tr '[:upper:]' '[:lower:]')
+              if [[ "$app_name_lower" == *"moj"* ]] || [[ "$app_name_lower" == *"mojvis"* ]]; then
+                APP_PATH="$app"
+                echo "Found app: $APP_PATH"
+                break
+              fi
+
+              if [ -z "$APP_PATH" ]; then
+                APP_PATH="$app"
+              fi
+            done < <(find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null)
+          fi
+
+          # FAIL if no app found
+          if [ -z "$APP_PATH" ]; then
             echo ""
-            echo "=== Full derived data listing ==="
-            find "$DERIVED_DATA_PATH" -type d -name "*.app" 2>/dev/null || echo "No .app directories found"
+            echo "========================================================"
+            echo "FATAL ERROR: No .app found!"
+            echo "========================================================"
             echo ""
-            echo "=== Build/Products full listing ==="
-            ls -laR "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
+            echo "Full DerivedData listing:"
+            find "$DERIVED_DATA_PATH" -type d -name "*.app" 2>/dev/null || echo "No .app directories"
+            echo ""
+            echo "Build/Products:"
+            ls -laR "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null | head -100 || true
             exit 1
           fi
 
           echo ""
-          echo "=== SELECTED APP: $APP_PATH ==="
+          echo "========================================================"
+          echo "SELECTED APP: $APP_PATH"
+          echo "========================================================"
           echo ""
 
-          # Validate the .app exists and is a directory
+          # Validate .app
           if [ ! -d "$APP_PATH" ]; then
-            echo "ERROR: APP_PATH is not a valid directory: $APP_PATH"
+            echo "ERROR: APP_PATH is not a directory: $APP_PATH"
             exit 1
           fi
 
-          # Show app contents
+          # Show contents
           echo "App bundle contents:"
           ls -la "$APP_PATH"
           echo ""
 
-          # Check for Info.plist
+          # Check Info.plist
           if [ ! -f "$APP_PATH/Info.plist" ]; then
-            echo "ERROR: No Info.plist found in app bundle"
+            echo "ERROR: No Info.plist in app bundle"
             exit 1
           fi
 
-          # Check for main executable
+          # Check executable
           APP_NAME=$(basename "$APP_PATH" .app)
-          if [ ! -f "$APP_PATH/$APP_NAME" ]; then
-            echo "WARNING: No executable named '$APP_NAME' found in app bundle"
-            echo "Contents:"
-            ls -la "$APP_PATH"
-          else
-            echo "Executable found: $APP_PATH/$APP_NAME"
+          if [ -f "$APP_PATH/$APP_NAME" ]; then
+            echo "Executable: $APP_PATH/$APP_NAME"
             file "$APP_PATH/$APP_NAME" || true
+          else
+            echo "WARNING: No executable named '$APP_NAME'"
+            echo "Looking for any executable..."
+            find "$APP_PATH" -maxdepth 1 -type f -perm +111 | head -5
           fi
 
-          # Extract bundle identifier
-          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
-          echo "Bundle identifier: $BUNDLE_ID"
-
-          # Extract app name from plist
-          APP_DISPLAY_NAME=$(/usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" "$APP_PATH/Info.plist" 2>/dev/null || \
-            /usr/libexec/PlistBuddy -c "Print :CFBundleName" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
-          echo "App display name: $APP_DISPLAY_NAME"
+          # Extract bundle ID
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist" 2>/dev/null || echo "com.mojvis.app")
+          echo ""
+          echo "Bundle ID: $BUNDLE_ID"
 
           # Export for next steps
           echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
