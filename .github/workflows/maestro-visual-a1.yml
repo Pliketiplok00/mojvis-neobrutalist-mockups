@@ -1,0 +1,737 @@
+name: Maestro Visual Baseline (A1)
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Enable debug logging'
+        required: false
+        default: 'false'
+        type: boolean
+  pull_request:
+    branches: [main]
+    paths:
+      - 'maestro/**'
+      - 'mobile/**'
+      - '.github/workflows/maestro-visual-a1.yml'
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: maestro-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visual-baseline:
+    name: Visual Baseline Check
+    runs-on: macos-14  # Apple Silicon (M1) runner
+    timeout-minutes: 30
+
+    steps:
+      #########################################
+      # 1. Checkout
+      #########################################
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      #########################################
+      # 1.5. Select Xcode 16 (required by React Native)
+      #########################################
+      - name: Select Xcode 16
+        run: |
+          # List available Xcode versions
+          echo "Available Xcode versions:"
+          ls -la /Applications | grep Xcode || true
+
+          # Select Xcode 16.x (React Native requires >= 16.1)
+          sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+          # Verify selection
+          echo "Selected Xcode:"
+          xcode-select -p
+          xcodebuild -version
+
+      #########################################
+      # 2. Setup Node.js and pnpm
+      #########################################
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      #########################################
+      # 3. Setup Java (required by Maestro)
+      #########################################
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      #########################################
+      # 4. Install dependencies
+      #########################################
+      - name: Install ImageMagick
+        run: brew install imagemagick
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Verify Maestro installation
+        run: |
+          export PATH="$HOME/.maestro/bin:$PATH"
+          maestro --version
+
+      - name: Print environment versions
+        run: |
+          echo "=== Environment Versions ==="
+          echo "Node: $(node -v)"
+          echo "pnpm: $(pnpm -v)"
+          echo "Ruby: $(ruby -v)"
+          echo "CocoaPods: $(pod --version)"
+          echo "Xcode: $(xcodebuild -version | head -1)"
+          echo "macOS: $(sw_vers -productVersion)"
+
+      - name: Install root JS dependencies
+        run: pnpm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: pnpm install
+
+      #########################################
+      # 5. Setup iOS Simulator
+      #########################################
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: Boot iOS Simulator
+        run: |
+          # Try multiple device names in order of preference
+          for DEVICE_NAME in "iPhone 15 Pro" "iPhone 15" "iPhone 14 Pro" "iPhone 14"; do
+            echo "Trying device: $DEVICE_NAME"
+
+            # Get the UDID of the device
+            UDID=$(xcrun simctl list devices available -j | \
+              jq -r ".devices | to_entries[] | .value[] | select(.name == \"$DEVICE_NAME\" and .isAvailable == true) | .udid" | \
+              head -1)
+
+            if [ -n "$UDID" ]; then
+              echo "Found device: $DEVICE_NAME (UDID: $UDID)"
+              break
+            fi
+          done
+
+          if [ -z "$UDID" ]; then
+            echo "ERROR: No suitable device found. Available devices:"
+            xcrun simctl list devices available | head -100
+            exit 1
+          fi
+
+          echo "Booting $DEVICE_NAME (UDID: $UDID)..."
+          xcrun simctl boot "$UDID" || true  # May already be booted
+
+          # Wait for simulator to be fully booted
+          echo "Waiting for simulator to boot..."
+          xcrun simctl bootstatus "$UDID" -b
+
+          echo "Simulator booted successfully"
+          xcrun simctl list devices booted
+
+          # Export UDID and device name for later steps
+          echo "SIM_UDID=$UDID" >> $GITHUB_ENV
+          echo "SIM_DEVICE_NAME=$DEVICE_NAME" >> $GITHUB_ENV
+
+      #########################################
+      # 6. Build iOS app via xcodebuild (no expo dev client)
+      #########################################
+      - name: Cache Expo prebuild
+        uses: actions/cache@v4
+        with:
+          path: |
+            mobile/ios
+          key: ${{ runner.os }}-expo-ios-${{ hashFiles('mobile/app.json', 'mobile/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-expo-ios-
+
+      - name: Expo prebuild (generate native iOS project)
+        working-directory: mobile
+        run: |
+          echo "=== Running Expo prebuild ==="
+          npx expo prebuild --platform ios --clean
+          echo "=== Prebuild complete ==="
+          echo ""
+          echo "=== iOS project contents ==="
+          ls -la ios/
+          echo ""
+          echo "=== Workspaces ==="
+          ls -la ios/*.xcworkspace 2>/dev/null || echo "No .xcworkspace found"
+          echo ""
+          echo "=== Projects ==="
+          ls -la ios/*.xcodeproj 2>/dev/null || echo "No .xcodeproj found"
+
+      - name: Install CocoaPods dependencies
+        working-directory: mobile/ios
+        run: |
+          echo "=== Installing CocoaPods dependencies ==="
+          pod install --repo-update
+          echo "=== CocoaPods install complete ==="
+          echo ""
+          echo "=== Podfile.lock (first 50 lines) ==="
+          head -50 Podfile.lock || true
+
+      - name: Scheme Evidence (CRITICAL DIAGNOSTICS)
+        working-directory: mobile/ios
+        run: |
+          echo "========================================================"
+          echo "SCHEME EVIDENCE - CRITICAL DIAGNOSTICS"
+          echo "========================================================"
+
+          # Create logs directory
+          mkdir -p ../../maestro/logs
+
+          # List ALL contents
+          echo ""
+          echo "=== Directory contents ==="
+          ls -la
+
+          echo ""
+          echo "=== Workspaces ==="
+          ls -la *.xcworkspace 2>/dev/null || echo "No .xcworkspace found"
+
+          echo ""
+          echo "=== Projects (xcodeproj) ==="
+          ls -la *.xcodeproj 2>/dev/null || echo "No .xcodeproj found"
+
+          # Find workspace
+          WORKSPACE=$(ls -d *.xcworkspace 2>/dev/null | head -1)
+          echo ""
+          echo "=== Selected workspace: $WORKSPACE ==="
+
+          if [ -n "$WORKSPACE" ]; then
+            echo ""
+            echo "=== xcodebuild -list -json (RAW) ==="
+            xcodebuild -workspace "$WORKSPACE" -list -json 2>&1 | tee ../../maestro/logs/xcodebuild-list.json
+
+            echo ""
+            echo "=== xcodebuild -list (TEXT) ==="
+            xcodebuild -workspace "$WORKSPACE" -list 2>&1 | tee ../../maestro/logs/xcodebuild-list.txt
+          fi
+
+          # Check xcodeproj too
+          XCODEPROJ=$(ls -d *.xcodeproj 2>/dev/null | head -1)
+          if [ -n "$XCODEPROJ" ]; then
+            echo ""
+            echo "=== xcodeproj: $XCODEPROJ ==="
+            echo ""
+            echo "=== Shared schemes in xcodeproj ==="
+            ls -la "$XCODEPROJ/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes directory"
+
+            echo ""
+            echo "=== User schemes in xcodeproj ==="
+            ls -la "$XCODEPROJ/xcuserdata/"*"/xcschemes/" 2>/dev/null || echo "No user schemes"
+          fi
+
+          # Check workspace xcshareddata too
+          if [ -n "$WORKSPACE" ]; then
+            echo ""
+            echo "=== Shared schemes in workspace ==="
+            ls -la "$WORKSPACE/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes in workspace"
+          fi
+
+          echo ""
+          echo "=== Booted simulator ==="
+          xcrun simctl list devices booted
+          echo "SIM_UDID: $SIM_UDID"
+          echo "SIM_DEVICE_NAME: $SIM_DEVICE_NAME"
+
+          echo ""
+          echo "========================================================"
+          echo "END SCHEME EVIDENCE"
+          echo "========================================================"
+
+      - name: Build iOS app with xcodebuild
+        working-directory: mobile/ios
+        run: |
+          set -o pipefail
+
+          echo "=== Building iOS app with xcodebuild ==="
+
+          # Create logs directory
+          mkdir -p ../../maestro/logs
+
+          # Find the workspace
+          WORKSPACE=$(ls -d *.xcworkspace 2>/dev/null | head -1)
+          if [ -z "$WORKSPACE" ]; then
+            echo "ERROR: No .xcworkspace found in mobile/ios/"
+            ls -la
+            exit 1
+          fi
+          echo "Workspace: $WORKSPACE"
+
+          # Get ALL schemes from JSON (handles spaces in names)
+          echo ""
+          echo "=== Extracting schemes from JSON ==="
+          SCHEMES_JSON=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null || echo "{}")
+          echo "Raw JSON saved to logs"
+          echo "$SCHEMES_JSON" > ../../maestro/logs/schemes-raw.json
+
+          # Extract schemes array - one per line, handling spaces
+          echo ""
+          echo "=== All available schemes ==="
+          SCHEMES_FILE=$(mktemp)
+          echo "$SCHEMES_JSON" | jq -r '.workspace.schemes[]?' 2>/dev/null > "$SCHEMES_FILE" || true
+          cat "$SCHEMES_FILE"
+          SCHEME_COUNT=$(wc -l < "$SCHEMES_FILE" | tr -d ' ')
+          echo ""
+          echo "Total schemes found: $SCHEME_COUNT"
+
+          # Also check directly in xcschemes directories
+          echo ""
+          echo "=== Direct scheme file check ==="
+          XCODEPROJ=$(ls -d *.xcodeproj 2>/dev/null | head -1)
+          if [ -n "$XCODEPROJ" ]; then
+            echo "Shared schemes in $XCODEPROJ:"
+            ls "$XCODEPROJ/xcshareddata/xcschemes/"*.xcscheme 2>/dev/null | xargs -I {} basename {} .xcscheme || echo "  (none)"
+          fi
+
+          # Find the REAL app scheme
+          # App name from app.json: "MOJ VIS" (with space), slug: "mojvis"
+          # The scheme could be "MOJ VIS", "MOJVIS", "mojvis", etc.
+
+          SCHEME=""
+          FALLBACK_SCHEME=""
+
+          echo ""
+          echo "=== Scheme selection logic ==="
+
+          # Read schemes line by line to handle spaces
+          while IFS= read -r candidate || [ -n "$candidate" ]; do
+            [ -z "$candidate" ] && continue
+
+            echo -n "Checking: '$candidate' ... "
+
+            # Skip internal/library schemes
+            case "$candidate" in
+              Pods-*|Pods\ *)
+                echo "SKIP (Pods)"
+                continue
+                ;;
+              EX*)
+                echo "SKIP (Expo module: EX*)"
+                continue
+                ;;
+              Expo*)
+                echo "SKIP (Expo SDK)"
+                continue
+                ;;
+              React-*|React\ *|React)
+                echo "SKIP (React Native)"
+                continue
+                ;;
+              RN*)
+                echo "SKIP (RN module)"
+                continue
+                ;;
+              hermes*|Hermes*)
+                echo "SKIP (Hermes engine)"
+                continue
+                ;;
+              Yoga*)
+                echo "SKIP (Yoga layout)"
+                continue
+                ;;
+              RCT*)
+                echo "SKIP (RCT module)"
+                continue
+                ;;
+              *Tests|*Tests\ *|*UITests*)
+                echo "SKIP (Test target)"
+                continue
+                ;;
+            esac
+
+            # This is a potential app scheme
+            # Check if it matches app name patterns
+            candidate_lower=$(echo "$candidate" | tr '[:upper:]' '[:lower:]')
+
+            # Check for "moj vis" or "mojvis" patterns
+            if [[ "$candidate_lower" == *"moj"*"vis"* ]] || [[ "$candidate_lower" == *"mojvis"* ]]; then
+              SCHEME="$candidate"
+              echo "SELECTED (matches app name)"
+              break
+            fi
+
+            # Keep first valid candidate as fallback
+            if [ -z "$FALLBACK_SCHEME" ]; then
+              FALLBACK_SCHEME="$candidate"
+              echo "CANDIDATE (first valid)"
+            else
+              echo "VALID (already have candidate)"
+            fi
+          done < "$SCHEMES_FILE"
+
+          rm -f "$SCHEMES_FILE"
+
+          # Use fallback if no exact match
+          if [ -z "$SCHEME" ] && [ -n "$FALLBACK_SCHEME" ]; then
+            SCHEME="$FALLBACK_SCHEME"
+            echo ""
+            echo "No exact app name match, using fallback: '$SCHEME'"
+          fi
+
+          # CRITICAL: Fail if no valid scheme found
+          if [ -z "$SCHEME" ]; then
+            echo ""
+            echo "========================================================"
+            echo "FATAL ERROR: No valid app scheme found!"
+            echo "========================================================"
+            echo ""
+            echo "CI sees only internal/library schemes (EXApplication, Pods, etc.)"
+            echo "The real app scheme is MISSING."
+            echo ""
+            echo "This means expo prebuild did not create a shared app scheme."
+            echo ""
+            echo "=== Full scheme list from xcodebuild ==="
+            xcodebuild -workspace "$WORKSPACE" -list 2>&1
+            echo ""
+            echo "=== xcschemes directory contents ==="
+            ls -la "$XCODEPROJ/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes"
+            echo ""
+            echo "Possible causes:"
+            echo "1. app.json 'name' field has special characters"
+            echo "2. expo prebuild failed silently"
+            echo "3. Scheme not marked as 'shared' in Xcode"
+            echo ""
+            echo "WILL NOT build EXApplication as fallback."
+            exit 1
+          fi
+
+          # Extra validation: NEVER build EXApplication
+          if [[ "$SCHEME" == "EXApplication" ]]; then
+            echo ""
+            echo "========================================================"
+            echo "FATAL ERROR: Scheme is EXApplication!"
+            echo "========================================================"
+            echo "This is an Expo internal module, NOT the app."
+            echo "REFUSING to build. The real app scheme must be found."
+            exit 1
+          fi
+
+          echo ""
+          echo "========================================================"
+          echo "SELECTED APP SCHEME: '$SCHEME'"
+          echo "========================================================"
+          echo ""
+
+          # Set derived data path
+          DERIVED_DATA_PATH="$(pwd)/build"
+          echo "Derived data path: $DERIVED_DATA_PATH"
+
+          # Use simulator UDID from earlier step
+          echo "Using simulator UDID: $SIM_UDID"
+          echo "Device name: $SIM_DEVICE_NAME"
+
+          # Build for iOS Simulator using the booted simulator's UDID
+          echo ""
+          echo "=== Running xcodebuild ==="
+          echo "Command:"
+          echo "xcodebuild -workspace \"$WORKSPACE\" -scheme \"$SCHEME\" -configuration Debug -sdk iphonesimulator -destination \"platform=iOS Simulator,id=$SIM_UDID\" -derivedDataPath \"$DERIVED_DATA_PATH\" CODE_SIGNING_ALLOWED=NO build"
+          echo ""
+
+          xcodebuild \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$SIM_UDID" \
+            -derivedDataPath "$DERIVED_DATA_PATH" \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee ../../maestro/logs/xcodebuild.log
+
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo ""
+            echo "=== xcodebuild FAILED (exit code: $BUILD_EXIT_CODE) ==="
+            echo ""
+            echo "=== Last 200 lines of xcodebuild.log ==="
+            tail -200 ../../maestro/logs/xcodebuild.log
+            echo ""
+            echo "=== Searching for errors in log ==="
+            grep -i "error:" ../../maestro/logs/xcodebuild.log | tail -50 || true
+            exit 1
+          fi
+
+          echo ""
+          echo "=== xcodebuild SUCCESS ==="
+
+          # Export the scheme for later reference
+          echo "XCODE_SCHEME=$SCHEME" >> $GITHUB_ENV
+
+      - name: Find and validate built .app
+        id: find_app
+        working-directory: mobile/ios
+        run: |
+          echo "=== Finding built .app ==="
+
+          DERIVED_DATA_PATH="$(pwd)/build"
+
+          echo "Derived data path: $DERIVED_DATA_PATH"
+          echo "Scheme used: $XCODE_SCHEME"
+          echo ""
+
+          # List Build/Products directory structure
+          echo "=== Build/Products directory structure ==="
+          ls -la "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
+          echo ""
+
+          # List Debug-iphonesimulator contents
+          echo "=== Debug-iphonesimulator contents ==="
+          ls -la "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator/" 2>/dev/null || echo "No Debug-iphonesimulator directory"
+          echo ""
+
+          # Find ALL .app bundles in derived data
+          echo "=== All .app bundles found ==="
+          find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null | head -20 || echo "No .app found"
+          echo ""
+
+          # Get the app path - prefer main app, not test runner or pods
+          echo "=== Searching for main app (excluding test runners) ==="
+          APP_PATH=""
+
+          # First try: look for app matching scheme name in Debug-iphonesimulator
+          for app in $(find "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name "*.app" -type d 2>/dev/null); do
+            app_name=$(basename "$app" .app)
+            echo "Found: $app (name: $app_name)"
+
+            # Skip test runners and xctest bundles
+            if [[ "$app_name" == *"Tests"* ]] || [[ "$app_name" == *"UITests"* ]]; then
+              echo "  -> Skipping (test bundle)"
+              continue
+            fi
+
+            # Prefer app matching our scheme or "mojvis" (case-insensitive)
+            app_name_lower=$(echo "$app_name" | tr '[:upper:]' '[:lower:]')
+            if [[ "$app_name_lower" == *"mojvis"* ]] || [[ "$app_name_lower" == *"moj"* ]]; then
+              APP_PATH="$app"
+              echo "  -> SELECTED (matches app name)"
+              break
+            fi
+
+            # Take first non-test app as fallback
+            if [ -z "$APP_PATH" ]; then
+              APP_PATH="$app"
+              echo "  -> Candidate (first non-test app)"
+            fi
+          done
+
+          if [ -z "$APP_PATH" ]; then
+            echo ""
+            echo "ERROR: No .app found in Debug-iphonesimulator"
+            echo ""
+            echo "=== Full derived data listing ==="
+            find "$DERIVED_DATA_PATH" -type d -name "*.app" 2>/dev/null || echo "No .app directories found"
+            echo ""
+            echo "=== Build/Products full listing ==="
+            ls -laR "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
+            exit 1
+          fi
+
+          echo ""
+          echo "=== SELECTED APP: $APP_PATH ==="
+          echo ""
+
+          # Validate the .app exists and is a directory
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: APP_PATH is not a valid directory: $APP_PATH"
+            exit 1
+          fi
+
+          # Show app contents
+          echo "App bundle contents:"
+          ls -la "$APP_PATH"
+          echo ""
+
+          # Check for Info.plist
+          if [ ! -f "$APP_PATH/Info.plist" ]; then
+            echo "ERROR: No Info.plist found in app bundle"
+            exit 1
+          fi
+
+          # Check for main executable
+          APP_NAME=$(basename "$APP_PATH" .app)
+          if [ ! -f "$APP_PATH/$APP_NAME" ]; then
+            echo "WARNING: No executable named '$APP_NAME' found in app bundle"
+            echo "Contents:"
+            ls -la "$APP_PATH"
+          else
+            echo "Executable found: $APP_PATH/$APP_NAME"
+            file "$APP_PATH/$APP_NAME" || true
+          fi
+
+          # Extract bundle identifier
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
+          echo "Bundle identifier: $BUNDLE_ID"
+
+          # Extract app name from plist
+          APP_DISPLAY_NAME=$(/usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" "$APP_PATH/Info.plist" 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Print :CFBundleName" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
+          echo "App display name: $APP_DISPLAY_NAME"
+
+          # Export for next steps
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "BUNDLE_ID=$BUNDLE_ID" >> $GITHUB_ENV
+
+          echo ""
+          echo "=== App validation complete ==="
+
+      - name: Debug info before install
+        run: |
+          echo "=== Debug info ==="
+          echo "APP_PATH: $APP_PATH"
+          echo "BUNDLE_ID: $BUNDLE_ID"
+          echo ""
+          echo "Booted simulators:"
+          xcrun simctl list devices booted
+          echo ""
+          echo "App path exists: $(test -d "$APP_PATH" && echo "YES" || echo "NO")"
+
+      - name: Install app on simulator
+        run: |
+          echo "=== Installing app on simulator ==="
+          echo "APP_PATH: $APP_PATH"
+
+          # Verify app path
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: APP_PATH does not exist: $APP_PATH"
+            exit 1
+          fi
+
+          # Install the app
+          echo "Running: xcrun simctl install booted \"$APP_PATH\""
+          xcrun simctl install booted "$APP_PATH"
+
+          echo "=== Install complete ==="
+
+      - name: Verify app installation
+        run: |
+          echo "=== Verifying app installation ==="
+
+          # Check if app is installed
+          if xcrun simctl get_app_container booted com.mojvis.app; then
+            echo "App com.mojvis.app is installed"
+            APP_CONTAINER=$(xcrun simctl get_app_container booted com.mojvis.app)
+            echo "App container: $APP_CONTAINER"
+          else
+            echo "ERROR: App com.mojvis.app not found on simulator"
+            echo "Listing installed apps:"
+            xcrun simctl listapps booted 2>/dev/null | head -50 || true
+            exit 1
+          fi
+
+      - name: Launch app for Maestro
+        run: |
+          echo "=== Launching app ==="
+          echo "Launching com.mojvis.app..."
+          xcrun simctl launch booted com.mojvis.app
+
+          # Give the app time to start and render
+          echo "Waiting for app to initialize..."
+          sleep 5
+
+          echo "App launched successfully"
+
+      #########################################
+      # 7. Run Maestro tests
+      #########################################
+      - name: Run Maestro visual baseline tests
+        id: maestro
+        continue-on-error: true  # Allow step to fail but continue to upload artifacts
+        run: |
+          export PATH="$HOME/.maestro/bin:$PATH"
+          ./maestro/scripts/ci.sh
+        env:
+          MAESTRO_DEBUG: ${{ github.event.inputs.debug_enabled == 'true' && '1' || '' }}
+
+      #########################################
+      # 8. Upload artifacts (always)
+      #########################################
+      - name: Upload Maestro artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-visual-artifacts
+          path: maestro-artifacts.zip
+          retention-days: 14
+          if-no-files-found: warn
+
+      # Also upload individual folders for easier browsing
+      - name: Upload current screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots-current
+          path: maestro/screenshots/current/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload diff images
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-screenshots-diff
+          path: maestro/screenshots/diff/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-logs
+          path: maestro/logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload xcodebuild log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-logs
+          path: |
+            mobile/ios/*.log
+            maestro/logs/xcodebuild*.log
+            maestro/logs/xcodebuild*.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+      #########################################
+      # 9. Report status
+      #########################################
+      - name: Check Maestro result
+        if: steps.maestro.outcome == 'failure'
+        run: |
+          echo "::error::Maestro visual baseline check failed. Download artifacts to review diffs."
+          exit 1
