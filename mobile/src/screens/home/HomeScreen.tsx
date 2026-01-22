@@ -189,6 +189,8 @@ export function HomeScreen(): React.JSX.Element {
                 style={styles.categoryTileWrapper}
                 onPress={() => handleCategoryPress(category)}
                 activeOpacity={0.8}
+                testID={`home-category-${category.key}`}
+                accessibilityLabel={`Category ${category.key}`}
               >
                 {/* Shadow layer for neobrut offset effect */}
                 <View style={styles.categoryTileShadow} />

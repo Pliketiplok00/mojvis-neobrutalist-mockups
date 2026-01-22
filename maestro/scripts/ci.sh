@@ -128,6 +128,62 @@ done
 log_info "Maestro execution complete. Log: $MAESTRO_LOG"
 
 #######################################
+# Step 3.5: Discovery Report
+#######################################
+log_info "Generating discovery report..."
+
+DISCOVERY_LOG="$LOGS_DIR/discovery-report.log"
+{
+  echo "========================================"
+  echo "MAESTRO A1 DISCOVERY REPORT"
+  echo "========================================"
+  echo "Generated: $(date)"
+  echo ""
+
+  echo "=== FLOWS EXECUTED ==="
+  for flow in "$FLOWS_DIR"/*.yaml; do
+    if [[ -f "$flow" ]]; then
+      echo "  - $(basename "$flow")"
+    fi
+  done
+  echo ""
+
+  echo "=== SCREENSHOTS PRODUCED ==="
+  SCREENSHOT_COUNT=0
+  for png in "$CURRENT_DIR"/*.png; do
+    if [[ -f "$png" ]]; then
+      echo "  - $(basename "$png")"
+      ((SCREENSHOT_COUNT++))
+    fi
+  done
+  echo ""
+  echo "Total screenshots: $SCREENSHOT_COUNT"
+  echo ""
+
+  echo "=== SCREENSHOT LOCATIONS ==="
+  echo "Current:  $CURRENT_DIR"
+  echo "Baseline: $BASELINE_DIR"
+  echo "Diff:     $DIFF_DIR"
+  echo ""
+
+  # Also search for any PNG files in other common locations
+  echo "=== PNG FILES IN REPO (excluding node_modules, build) ==="
+  find "$REPO_ROOT" -type f -name "*.png" \
+    ! -path "*/node_modules/*" \
+    ! -path "*/build/*" \
+    ! -path "*/.git/*" \
+    ! -path "*/ios/build/*" \
+    2>/dev/null | head -50
+
+  echo ""
+  echo "========================================"
+} > "$DISCOVERY_LOG"
+
+# Print discovery report to console
+cat "$DISCOVERY_LOG"
+log_info "Discovery report saved to: $DISCOVERY_LOG"
+
+#######################################
 # Step 4: Generate diffs
 #######################################
 log_info "Generating diffs against baseline..."

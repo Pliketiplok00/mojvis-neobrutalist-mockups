@@ -155,7 +155,11 @@ export function SettingsScreen(): React.JSX.Element {
 
         {/* Actions Section */}
         <View style={styles.section}>
-          <Button variant="danger" onPress={handleResetOnboarding}>
+          <Button
+            variant="danger"
+            onPress={handleResetOnboarding}
+            accessibilityLabel="Reset onboarding"
+          >
             {t('settings.reset.button')}
           </Button>
         </View>

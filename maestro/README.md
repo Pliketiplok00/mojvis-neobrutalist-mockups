@@ -144,9 +144,34 @@ maestro/
 
 ## Available Flows
 
-| Flow | Screenshot | Description |
+| Flow | Screenshots | Description |
 |------|------------|-------------|
-| `onboarding_language_selection` | `onboarding_language_selection.png` | Language Selection screen (first onboarding step) |
+| `a1_baseline_all_screens` | 12 screenshots | **Primary flow** - captures all key screens |
+| `onboarding_language_selection` | 1 screenshot | Language Selection screen only (legacy) |
+
+### A1 Baseline All Screens
+
+The `a1_baseline_all_screens.yaml` flow captures screenshots of all key mobile screens:
+
+| Screenshot | Screen |
+|------------|--------|
+| `a1_onboarding_language.png` | Language Selection |
+| `a1_onboarding_usermode.png` | User Mode Selection |
+| `a1_onboarding_municipality.png` | Municipality Selection |
+| `a1_home.png` | Home Screen |
+| `a1_transport_hub.png` | Transport Hub |
+| `a1_transport_road.png` | Road Transport List |
+| `a1_transport_sea.png` | Sea Transport List |
+| `a1_events.png` | Events List |
+| `a1_inbox.png` | Inbox List |
+| `a1_feedback_form.png` | Feedback Form |
+| `a1_clickfix_form.png` | Click & Fix Form |
+| `a1_settings.png` | Settings |
+
+Run locally:
+```bash
+maestro test maestro/flows/a1_baseline_all_screens.yaml
+```
 
 ## Adding New Flows
 
@@ -300,3 +325,74 @@ CI **fails** (exit 1) if:
 
 Maestro iOS testing does **not** work on Intel Macs (see `DEBUGGING_REPORT.md`).
 Use CI as the authoritative runner for visual baseline verification.
+
+---
+
+## How to Generate Baseline from CI Artifacts
+
+When CI runs but baselines are missing, follow these steps to create baselines from CI artifacts:
+
+### Step 1: Trigger CI
+
+Push to a PR or manually trigger the workflow:
+```bash
+# Push to trigger CI
+git push origin your-branch
+```
+Or go to **Actions** → **Maestro Visual Baseline (A1)** → **Run workflow**
+
+### Step 2: Download Screenshots
+
+After CI completes (even if failed due to missing baselines):
+1. Go to the workflow run page
+2. Download `maestro-screenshots-current` artifact
+3. Extract to a temporary folder
+
+### Step 3: Verify Screenshots
+
+Review each screenshot in the extracted folder:
+- Check that UI looks correct
+- Verify no test artifacts or loading states
+- Confirm text/icons are fully rendered
+
+### Step 4: Copy to Baseline
+
+```bash
+# Copy all A1 screenshots to baseline folder
+cp ~/Downloads/maestro-screenshots-current/a1_*.png \
+   maestro/screenshots/baseline/
+```
+
+### Step 5: Commit Baselines
+
+```bash
+# Stage baseline screenshots
+git add maestro/screenshots/baseline/
+
+# Commit with descriptive message
+git commit -m "chore(maestro): add A1 baseline screenshots
+
+Screenshots added:
+- a1_onboarding_language.png
+- a1_onboarding_usermode.png
+- a1_onboarding_municipality.png
+- a1_home.png
+- a1_transport_hub.png
+- a1_transport_road.png
+- a1_transport_sea.png
+- a1_events.png
+- a1_inbox.png
+- a1_feedback_form.png
+- a1_clickfix_form.png
+- a1_settings.png"
+
+# Push to trigger CI verification
+git push
+```
+
+### Verification
+
+CI should now pass (or show only intentional diffs). The discovery report in `maestro-logs` artifact shows:
+- List of flows executed
+- List of screenshots produced
+- Screenshot file locations

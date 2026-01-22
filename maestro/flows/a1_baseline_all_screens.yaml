@@ -1,0 +1,339 @@
+# A1 Baseline All Screens Flow
+#
+# Comprehensive Maestro flow that captures screenshots of ALL key mobile screens.
+# This is the authoritative visual baseline for CI.
+#
+# Navigation strategy:
+# - Uses accessibilityLabel selectors (id:) for stable, deterministic navigation
+# - Uses text selectors as fallback where accessibilityLabel is unavailable
+# - Screenshots have explicit stable names (a1_<screen_name>.png)
+#
+# Screens captured:
+# 1. Onboarding: Language Selection
+# 2. Onboarding: User Mode Selection
+# 3. Onboarding: Municipality Selection (local users only)
+# 4. Home Screen
+# 5. Transport Hub
+# 6. Road Transport List
+# 7. Sea Transport List
+# 8. Events List
+# 9. Inbox List
+# 10. Feedback Form
+# 11. Click & Fix Form
+# 12. Settings
+#
+# Prerequisites:
+# - iOS Simulator must be booted
+# - App must be installed (com.mojvis.app)
+#
+# Usage:
+#   Local:  maestro test maestro/flows/a1_baseline_all_screens.yaml
+#   CI:     Runs automatically via maestro/scripts/ci.sh
+
+appId: com.mojvis.app
+
+---
+
+###########################################
+# PHASE 1: ONBOARDING SCREENS
+###########################################
+
+# Clear app state to ensure fresh onboarding
+- clearState
+
+# Launch the app fresh
+- launchApp:
+    clearState: true
+
+# Wait for app to fully load
+- extendedWaitUntil:
+    visible:
+      text: "Dobrodošli / Welcome"
+    timeout: 15000
+
+#------------------------------------------
+# SCREEN 1: Language Selection
+#------------------------------------------
+- assertVisible:
+    text: "MOJ VIS"
+- assertVisible:
+    text: "Dobrodošli / Welcome"
+- assertVisible:
+    text: "Odaberite jezik / Select language"
+- assertVisible:
+    id: "Hrvatski"
+- assertVisible:
+    id: "English"
+
+- takeScreenshot: a1_onboarding_language
+
+# Select Croatian language
+- tapOn:
+    id: "Hrvatski"
+
+#------------------------------------------
+# SCREEN 2: User Mode Selection
+#------------------------------------------
+- extendedWaitUntil:
+    visible:
+      text: "Kako koristite aplikaciju?"
+    timeout: 5000
+
+- assertVisible:
+    text: "Kako koristite aplikaciju?"
+- assertVisible:
+    text: "How do you use the app?"
+- assertVisible:
+    id: "Visitor"
+- assertVisible:
+    id: "Local resident"
+
+- takeScreenshot: a1_onboarding_usermode
+
+# Select Local resident (to see municipality screen)
+- tapOn:
+    id: "Local resident"
+
+#------------------------------------------
+# SCREEN 3: Municipality Selection
+#------------------------------------------
+- extendedWaitUntil:
+    visible:
+      text: "Odaberite općinu"
+    timeout: 5000
+
+- assertVisible:
+    text: "Odaberite općinu"
+- assertVisible:
+    text: "Select your municipality"
+- assertVisible:
+    id: "Vis"
+- assertVisible:
+    id: "Komiza"
+
+- takeScreenshot: a1_onboarding_municipality
+
+# Select Vis municipality (completes onboarding)
+- tapOn:
+    id: "Vis"
+
+###########################################
+# PHASE 2: MAIN APP SCREENS
+###########################################
+
+#------------------------------------------
+# SCREEN 4: Home Screen
+#------------------------------------------
+- extendedWaitUntil:
+    visible:
+      id: "Open menu"
+    timeout: 10000
+
+# Wait for home content to load
+- extendedWaitUntil:
+    visible:
+      id: "home-category-events"
+    timeout: 5000
+
+- assertVisible:
+    text: "MOJ VIS"
+- assertVisible:
+    id: "Open menu"
+
+- takeScreenshot: a1_home
+
+#------------------------------------------
+# SCREEN 5: Transport Hub (via menu)
+#------------------------------------------
+# Open menu
+- tapOn:
+    id: "Open menu"
+
+- extendedWaitUntil:
+    visible:
+      text: "Izbornik / Menu"
+    timeout: 3000
+
+# Tap Transport Hub menu item
+- tapOn:
+    id: "Vozni redovi (Timetables)"
+
+- extendedWaitUntil:
+    visible:
+      text: "Vozni red"
+    timeout: 5000
+
+- assertVisible:
+    id: "Cestovni promet"
+- assertVisible:
+    id: "Pomorski promet"
+
+- takeScreenshot: a1_transport_hub
+
+#------------------------------------------
+# SCREEN 6: Road Transport List
+#------------------------------------------
+- tapOn:
+    id: "Cestovni promet"
+
+- extendedWaitUntil:
+    visible:
+      text: "Cestovni promet"
+    timeout: 5000
+
+- takeScreenshot: a1_transport_road
+
+# Go back to Transport Hub via menu
+- tapOn:
+    id: "Open menu"
+
+- extendedWaitUntil:
+    visible:
+      text: "Izbornik / Menu"
+    timeout: 3000
+
+- tapOn:
+    id: "Vozni redovi (Timetables)"
+
+- extendedWaitUntil:
+    visible:
+      id: "Pomorski promet"
+    timeout: 5000
+
+#------------------------------------------
+# SCREEN 7: Sea Transport List
+#------------------------------------------
+- tapOn:
+    id: "Pomorski promet"
+
+- extendedWaitUntil:
+    visible:
+      text: "Pomorski promet"
+    timeout: 5000
+
+- takeScreenshot: a1_transport_sea
+
+#------------------------------------------
+# SCREEN 8: Events List (via menu)
+#------------------------------------------
+- tapOn:
+    id: "Open menu"
+
+- extendedWaitUntil:
+    visible:
+      text: "Izbornik / Menu"
+    timeout: 3000
+
+- tapOn:
+    id: "Događaji (Events)"
+
+- extendedWaitUntil:
+    visible:
+      text: "MOJ VIS"
+    timeout: 5000
+
+# Small delay for events to load
+- swipe:
+    direction: DOWN
+    duration: 100
+
+- takeScreenshot: a1_events
+
+#------------------------------------------
+# SCREEN 9: Inbox List (via header icon)
+#------------------------------------------
+# Tap inbox icon in header (accessibilityLabel contains "Inbox")
+- tapOn:
+    id: "Inbox.*"
+
+- extendedWaitUntil:
+    visible:
+      text: "MOJ VIS"
+    timeout: 5000
+
+# Small delay for inbox to load
+- swipe:
+    direction: DOWN
+    duration: 100
+
+- takeScreenshot: a1_inbox
+
+#------------------------------------------
+# SCREEN 10: Feedback Form (via menu)
+#------------------------------------------
+- tapOn:
+    id: "Open menu"
+
+- extendedWaitUntil:
+    visible:
+      text: "Izbornik / Menu"
+    timeout: 3000
+
+- tapOn:
+    id: "Pošalji prijedlog (Feedback)"
+
+- extendedWaitUntil:
+    visible:
+      text: "MOJ VIS"
+    timeout: 5000
+
+- takeScreenshot: a1_feedback_form
+
+#------------------------------------------
+# SCREEN 11: Click & Fix Form (via menu)
+#------------------------------------------
+- tapOn:
+    id: "Open menu"
+
+- extendedWaitUntil:
+    visible:
+      text: "Izbornik / Menu"
+    timeout: 3000
+
+- tapOn:
+    id: "Prijavi problem (Click & Fix)"
+
+- extendedWaitUntil:
+    visible:
+      text: "MOJ VIS"
+    timeout: 5000
+
+- takeScreenshot: a1_clickfix_form
+
+#------------------------------------------
+# SCREEN 12: Settings (via menu)
+#------------------------------------------
+- tapOn:
+    id: "Open menu"
+
+- extendedWaitUntil:
+    visible:
+      text: "Izbornik / Menu"
+    timeout: 3000
+
+- tapOn:
+    id: "Postavke (Settings)"
+
+- extendedWaitUntil:
+    visible:
+      id: "Reset onboarding"
+    timeout: 5000
+
+- takeScreenshot: a1_settings
+
+###########################################
+# FLOW COMPLETE
+###########################################
+# All 12 key screens have been captured:
+# - a1_onboarding_language.png
+# - a1_onboarding_usermode.png
+# - a1_onboarding_municipality.png
+# - a1_home.png
+# - a1_transport_hub.png
+# - a1_transport_road.png
+# - a1_transport_sea.png
+# - a1_events.png
+# - a1_inbox.png
+# - a1_feedback_form.png
+# - a1_clickfix_form.png
+# - a1_settings.png
