@@ -143,58 +143,188 @@ jobs:
           xcrun simctl list devices booted
 
       #########################################
-      # 6. Build and install iOS app via Expo
+      # 6. Build iOS app via xcodebuild (no expo dev client)
       #########################################
       - name: Cache Expo prebuild
         uses: actions/cache@v4
         with:
           path: |
             mobile/ios
-            ~/Library/Developer/Xcode/DerivedData
           key: ${{ runner.os }}-expo-ios-${{ hashFiles('mobile/app.json', 'mobile/package.json') }}
           restore-keys: |
             ${{ runner.os }}-expo-ios-
 
-      - name: Build and install iOS app
+      - name: Expo prebuild (generate native iOS project)
         working-directory: mobile
         run: |
-          echo "=== Using Expo to build and install iOS app ==="
+          echo "=== Running Expo prebuild ==="
+          npx expo prebuild --platform ios --clean
+          echo "=== Prebuild complete ==="
+          echo "iOS project contents:"
+          ls -la ios/
 
-          # Show which simulator is booted
+      - name: Install CocoaPods dependencies
+        working-directory: mobile/ios
+        run: |
+          echo "=== Installing CocoaPods dependencies ==="
+          pod install --repo-update
+          echo "=== CocoaPods install complete ==="
+
+      - name: Build iOS app with xcodebuild
+        working-directory: mobile/ios
+        run: |
+          echo "=== Building iOS app with xcodebuild ==="
+
+          # Find the workspace
+          WORKSPACE=$(ls -d *.xcworkspace 2>/dev/null | head -1)
+          if [ -z "$WORKSPACE" ]; then
+            echo "ERROR: No .xcworkspace found in mobile/ios/"
+            ls -la
+            exit 1
+          fi
+          echo "Workspace: $WORKSPACE"
+
+          # Get available schemes
+          echo "Available schemes:"
+          xcodebuild -workspace "$WORKSPACE" -list
+
+          # Determine scheme (prefer mojvis or first available)
+          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list 2>/dev/null | grep -A 100 "Schemes:" | grep -v "Schemes:" | sed 's/^[[:space:]]*//' | grep -v "^$" | head -1)
+          echo "Using scheme: $SCHEME"
+
+          # Set derived data path
+          DERIVED_DATA_PATH="$(pwd)/build"
+          echo "Derived data path: $DERIVED_DATA_PATH"
+
+          # Show booted simulators
           echo "Booted simulators:"
           xcrun simctl list devices booted
 
-          # Use expo run:ios which handles prebuild + build + install
-          # --no-bundler: don't start Metro bundler (we just need the app installed)
-          # The command will target the booted simulator automatically
-          echo "Running: npx expo run:ios --no-bundler --device \"iPhone 15 Pro\""
-          npx expo run:ios --no-bundler --device "iPhone 15 Pro"
+          # Build for iOS Simulator
+          echo "Running xcodebuild..."
+          set -o pipefail
+          xcodebuild \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=iPhone 15 Pro" \
+            -derivedDataPath "$DERIVED_DATA_PATH" \
+            -allowProvisioningUpdates \
+            CODE_SIGNING_ALLOWED=NO \
+            build 2>&1 | tee xcodebuild.log || {
+              echo "=== xcodebuild FAILED ==="
+              echo "Last 100 lines of log:"
+              tail -100 xcodebuild.log
+              exit 1
+            }
 
-          echo "=== Expo build and install complete ==="
+          echo "=== xcodebuild complete ==="
+
+      - name: Find and validate built .app
+        id: find_app
+        working-directory: mobile/ios
+        run: |
+          echo "=== Finding built .app ==="
+
+          DERIVED_DATA_PATH="$(pwd)/build"
+
+          # Find .app in Build/Products
+          echo "Searching for .app in derived data..."
+          find "$DERIVED_DATA_PATH" -name "*.app" -type d 2>/dev/null || true
+
+          # Get the app path from Debug-iphonesimulator
+          APP_PATH=$(find "$DERIVED_DATA_PATH/Build/Products/Debug-iphonesimulator" -name "*.app" -type d 2>/dev/null | head -1)
+
+          if [ -z "$APP_PATH" ]; then
+            echo "ERROR: No .app found in Debug-iphonesimulator"
+            echo "Contents of derived data:"
+            find "$DERIVED_DATA_PATH" -type d -name "*.app" 2>/dev/null || echo "No .app directories found"
+            ls -laR "$DERIVED_DATA_PATH/Build/Products/" 2>/dev/null || echo "No Build/Products directory"
+            exit 1
+          fi
+
+          echo "Found app: $APP_PATH"
+
+          # Validate the .app exists and is a directory
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: APP_PATH is not a valid directory: $APP_PATH"
+            exit 1
+          fi
+
+          # Show app contents
+          echo "App contents:"
+          ls -la "$APP_PATH"
+
+          # Check for Info.plist
+          if [ ! -f "$APP_PATH/Info.plist" ]; then
+            echo "ERROR: No Info.plist found in app bundle"
+            exit 1
+          fi
+
+          # Extract bundle identifier
+          BUNDLE_ID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP_PATH/Info.plist" 2>/dev/null || echo "unknown")
+          echo "Bundle identifier: $BUNDLE_ID"
+
+          # Export for next steps
+          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          echo "BUNDLE_ID=$BUNDLE_ID" >> $GITHUB_ENV
+
+          echo "=== App validation complete ==="
+
+      - name: Debug info before install
+        run: |
+          echo "=== Debug info ==="
+          echo "APP_PATH: $APP_PATH"
+          echo "BUNDLE_ID: $BUNDLE_ID"
+          echo ""
+          echo "Booted simulators:"
+          xcrun simctl list devices booted
+          echo ""
+          echo "App path exists: $(test -d "$APP_PATH" && echo "YES" || echo "NO")"
+
+      - name: Install app on simulator
+        run: |
+          echo "=== Installing app on simulator ==="
+          echo "APP_PATH: $APP_PATH"
+
+          # Verify app path
+          if [ ! -d "$APP_PATH" ]; then
+            echo "ERROR: APP_PATH does not exist: $APP_PATH"
+            exit 1
+          fi
+
+          # Install the app
+          echo "Running: xcrun simctl install booted \"$APP_PATH\""
+          xcrun simctl install booted "$APP_PATH"
+
+          echo "=== Install complete ==="
 
       - name: Verify app installation
         run: |
-          echo "Verifying app installation..."
+          echo "=== Verifying app installation ==="
 
           # Check if app is installed
           if xcrun simctl get_app_container booted com.mojvis.app; then
             echo "App com.mojvis.app is installed"
+            APP_CONTAINER=$(xcrun simctl get_app_container booted com.mojvis.app)
+            echo "App container: $APP_CONTAINER"
           else
             echo "ERROR: App com.mojvis.app not found on simulator"
+            echo "Listing installed apps:"
+            xcrun simctl listapps booted 2>/dev/null | head -50 || true
             exit 1
           fi
 
-          # List installed apps for debugging
-          echo "Installed apps on booted simulator:"
-          xcrun simctl listapps booted 2>/dev/null | grep -E "CFBundleIdentifier|CFBundleName" | head -20 || true
-
       - name: Launch app for Maestro
         run: |
-          echo "Launching app com.mojvis.app..."
+          echo "=== Launching app ==="
+          echo "Launching com.mojvis.app..."
           xcrun simctl launch booted com.mojvis.app
 
-          # Give the app a moment to start
-          sleep 3
+          # Give the app time to start and render
+          echo "Waiting for app to initialize..."
+          sleep 5
 
           echo "App launched successfully"
 
