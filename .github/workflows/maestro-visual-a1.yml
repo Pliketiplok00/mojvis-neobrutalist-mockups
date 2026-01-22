@@ -840,68 +840,106 @@ jobs:
       # 7.5 Validate screenshots were produced
       #########################################
       - name: Validate screenshots exist (CRITICAL)
+        id: screenshot_check
         if: always()
         run: |
           echo "========================================================"
-          echo "SCREENSHOT VALIDATION"
+          echo "SCREENSHOT VALIDATION (ENFORCED)"
           echo "========================================================"
           echo ""
 
           SCREENSHOT_DIR="maestro/screenshots/current"
-          echo "Checking: $SCREENSHOT_DIR"
+          echo "Screenshot directory: $SCREENSHOT_DIR"
+          echo "Working directory: $(pwd)"
           echo ""
 
           # Create directory if it doesn't exist
           mkdir -p "$SCREENSHOT_DIR"
 
-          # Count PNG files
+          # === DIAGNOSTICS: Maestro execution details ===
+          echo "=== MAESTRO EXECUTION DIAGNOSTICS ==="
+          echo ""
+
+          # Show which flow files exist
+          echo "Flow files in maestro/flows/:"
+          ls -la maestro/flows/*.yaml 2>/dev/null || echo "No flow files found!"
+          echo ""
+
+          # Show Maestro exit code from ci.sh run
+          echo "Maestro step outcome: ${{ steps.maestro.outcome }}"
+          echo ""
+
+          # === Count PNG files ===
+          echo "=== SCREENSHOT COUNT ==="
           PNG_COUNT=$(find "$SCREENSHOT_DIR" -name "*.png" -type f 2>/dev/null | wc -l | tr -d ' ')
           echo "PNG files found: $PNG_COUNT"
           echo ""
 
+          # Save for later step
+          echo "png_count=$PNG_COUNT" >> $GITHUB_OUTPUT
+
+          # === List directory contents ===
+          echo "=== Directory listing: $SCREENSHOT_DIR ==="
+          ls -la "$SCREENSHOT_DIR"/ 2>/dev/null || echo "(empty or missing)"
+          echo ""
+
+          # === Search for PNGs everywhere in maestro/ ===
+          echo "=== All PNG files anywhere in maestro/ ==="
+          find maestro -name "*.png" -type f 2>/dev/null || echo "No PNG files found anywhere"
+          echo ""
+
           if [ "$PNG_COUNT" -eq 0 ]; then
             echo "========================================================"
-            echo "WARNING: NO SCREENSHOTS PRODUCED!"
+            echo "FAILURE: NO SCREENSHOTS PRODUCED!"
             echo "========================================================"
             echo ""
             echo "Expected: 12 screenshots from a1_baseline_all_screens.yaml"
             echo "Found: 0"
             echo ""
 
-            # Show Maestro logs for debugging
-            echo "=== Last 100 lines of Maestro log ==="
-            tail -100 maestro/logs/maestro-run.log 2>/dev/null || echo "No maestro-run.log found"
+            # === Full Maestro log ===
+            echo "=== FULL MAESTRO LOG ==="
+            if [ -f "maestro/logs/maestro-run.log" ]; then
+              cat maestro/logs/maestro-run.log
+            else
+              echo "No maestro-run.log found!"
+              echo "Contents of maestro/logs/:"
+              ls -la maestro/logs/ 2>/dev/null || echo "(missing)"
+            fi
             echo ""
 
-            # Check if app launched correctly
-            echo "=== App launch state ==="
-            xcrun simctl listapps booted 2>/dev/null | grep -A5 "mojvis" || echo "App not found in installed apps"
+            # === App state ===
+            echo "=== Installed apps on simulator ==="
+            xcrun simctl listapps booted 2>/dev/null | head -100 || echo "Could not list apps"
             echo ""
 
-            # List any PNG files anywhere in maestro/
-            echo "=== All PNG files in maestro/ ==="
-            find maestro -name "*.png" -type f 2>/dev/null || echo "No PNG files found"
+            # === Recent simulator logs ===
+            echo "=== Recent system.log entries (app crashes) ==="
+            xcrun simctl spawn booted log show --last 2m --predicate 'process == "mojvis" OR process CONTAINS "moj"' 2>/dev/null | tail -50 || echo "No recent logs"
             echo ""
 
-            echo "Possible causes:"
-            echo "1. App showed red error screen (missing JS bundle)"
-            echo "2. Maestro flow failed at assertion step"
-            echo "3. App crashed on launch"
+            echo "========================================================"
+            echo "DIAGNOSIS:"
+            echo "- Maestro ran but produced zero screenshots"
+            echo "- Check logs above for assertion failures or crashes"
+            echo "- Common causes:"
+            echo "  1. App shows error screen (check JS bundle)"
+            echo "  2. Maestro flow assertions fail"
+            echo "  3. takeScreenshot command not reached"
+            echo "  4. App crashes on launch"
+            echo "========================================================"
             echo ""
-            echo "Download maestro-logs artifact to investigate."
-            echo ""
-            # Don't fail here - let artifacts upload first
           else
-            echo "SUCCESS: $PNG_COUNT screenshot(s) found"
+            echo "SUCCESS: $PNG_COUNT screenshot(s) captured"
             echo ""
-            echo "=== Screenshots ==="
-            ls -la "$SCREENSHOT_DIR"/*.png 2>/dev/null || true
+            echo "=== Screenshot files ==="
+            find "$SCREENSHOT_DIR" -name "*.png" -type f -exec ls -la {} \; 2>/dev/null
             echo ""
 
-            # List expected A1 screenshots
-            echo "=== Checking for A1 baseline screenshots ==="
+            # Count A1 baseline screenshots specifically
             A1_COUNT=$(find "$SCREENSHOT_DIR" -name "a1_*.png" -type f 2>/dev/null | wc -l | tr -d ' ')
-            echo "A1 screenshots found: $A1_COUNT (expected: 12)"
+            echo "A1 baseline screenshots: $A1_COUNT (expected: 12)"
+            echo ""
             find "$SCREENSHOT_DIR" -name "a1_*.png" -type f 2>/dev/null | sort
           fi
 
@@ -963,8 +1001,42 @@ jobs:
           if-no-files-found: ignore
 
       #########################################
-      # 9. Report status
+      # 9. Report status (HARD ASSERTIONS)
       #########################################
+      - name: ASSERT screenshots were produced
+        if: always()
+        run: |
+          echo "========================================================"
+          echo "FINAL ASSERTION: Screenshots Must Exist"
+          echo "========================================================"
+          echo ""
+
+          PNG_COUNT="${{ steps.screenshot_check.outputs.png_count }}"
+          echo "Screenshots produced: $PNG_COUNT"
+          echo ""
+
+          if [ -z "$PNG_COUNT" ] || [ "$PNG_COUNT" -eq 0 ]; then
+            echo "::error::FATAL: Zero screenshots produced by Maestro!"
+            echo ""
+            echo "========================================================"
+            echo "CI FAILURE: NO SCREENSHOTS CAPTURED"
+            echo "========================================================"
+            echo ""
+            echo "The Maestro visual baseline workflow MUST produce screenshots."
+            echo "A green CI with zero screenshots is a silent failure."
+            echo ""
+            echo "Actions:"
+            echo "1. Download 'maestro-logs' artifact"
+            echo "2. Check maestro-run.log for errors"
+            echo "3. Verify app launches without red screen"
+            echo "4. Ensure flow assertions pass before takeScreenshot"
+            echo ""
+            exit 1
+          fi
+
+          echo "Assertion PASSED: $PNG_COUNT screenshot(s) exist"
+          echo ""
+
       - name: Check Maestro result
         if: steps.maestro.outcome == 'failure'
         run: |
