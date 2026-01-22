@@ -109,6 +109,10 @@ fi
 log_info "Running Maestro flows..."
 
 MAESTRO_LOG="$LOGS_DIR/maestro-run.log"
+MAESTRO_OUTPUT_DIR="$MAESTRO_DIR/maestro-output"  # Temporary output directory
+
+# Create temporary output directory
+mkdir -p "$MAESTRO_OUTPUT_DIR"
 
 # Run all flows
 for flow in "$FLOWS_DIR"/*.yaml; do
@@ -116,16 +120,151 @@ for flow in "$FLOWS_DIR"/*.yaml; do
     flow_name=$(basename "$flow" .yaml)
     log_info "Running flow: $flow_name"
 
-    # Run Maestro and capture output
-    if maestro test "$flow" --output "$CURRENT_DIR" >> "$MAESTRO_LOG" 2>&1; then
+    # Log the exact command being run
+    echo "" >> "$MAESTRO_LOG"
+    echo "========================================" >> "$MAESTRO_LOG"
+    echo "Running: maestro test $flow --output $MAESTRO_OUTPUT_DIR" >> "$MAESTRO_LOG"
+    echo "Time: $(date)" >> "$MAESTRO_LOG"
+    echo "Working directory: $(pwd)" >> "$MAESTRO_LOG"
+    echo "========================================" >> "$MAESTRO_LOG"
+
+    # Run Maestro and capture output (verbose mode)
+    if maestro test "$flow" --output "$MAESTRO_OUTPUT_DIR" >> "$MAESTRO_LOG" 2>&1; then
       log_info "  Flow $flow_name: PASSED"
     else
       log_warn "  Flow $flow_name: FAILED (see $MAESTRO_LOG for details)"
     fi
+
+    # Log directory state after each flow
+    echo "" >> "$MAESTRO_LOG"
+    echo "=== Post-flow directory state ===" >> "$MAESTRO_LOG"
+    echo "MAESTRO_OUTPUT_DIR contents:" >> "$MAESTRO_LOG"
+    ls -laR "$MAESTRO_OUTPUT_DIR" >> "$MAESTRO_LOG" 2>&1 || echo "  (empty or not found)" >> "$MAESTRO_LOG"
+    echo "" >> "$MAESTRO_LOG"
   fi
 done
 
 log_info "Maestro execution complete. Log: $MAESTRO_LOG"
+
+#######################################
+# Step 3.5: Discover and normalize screenshots
+#######################################
+log_info "Discovering screenshots from all possible locations..."
+
+DISCOVERY_LOG="$LOGS_DIR/screenshot-discovery.log"
+echo "Screenshot Discovery Report - $(date)" > "$DISCOVERY_LOG"
+echo "=====================================" >> "$DISCOVERY_LOG"
+echo "" >> "$DISCOVERY_LOG"
+
+# List of directories to search for screenshots
+SEARCH_DIRS=(
+  "$MAESTRO_OUTPUT_DIR"
+  "$MAESTRO_DIR"
+  "$HOME/.maestro"
+  "$REPO_ROOT"
+)
+
+FOUND_SCREENSHOTS=()
+
+for search_dir in "${SEARCH_DIRS[@]}"; do
+  if [[ -d "$search_dir" ]]; then
+    echo "Searching: $search_dir" >> "$DISCOVERY_LOG"
+
+    # Find all PNG files (excluding baseline and already-copied current)
+    while IFS= read -r -d '' png_file; do
+      # Skip baseline screenshots (we don't want to copy those)
+      if [[ "$png_file" == *"/screenshots/baseline/"* ]]; then
+        echo "  SKIP (baseline): $png_file" >> "$DISCOVERY_LOG"
+        continue
+      fi
+      # Skip files already in current directory
+      if [[ "$png_file" == "$CURRENT_DIR/"* ]]; then
+        echo "  SKIP (already in current): $png_file" >> "$DISCOVERY_LOG"
+        continue
+      fi
+      # Skip node_modules and build artifacts
+      if [[ "$png_file" == *"node_modules"* ]] || [[ "$png_file" == *"/build/"* ]] || [[ "$png_file" == *"/ios/build/"* ]]; then
+        echo "  SKIP (build/node_modules): $png_file" >> "$DISCOVERY_LOG"
+        continue
+      fi
+      # Skip asset images (likely app resources)
+      if [[ "$png_file" == *"/assets/"* ]] || [[ "$png_file" == *"/images/"* ]]; then
+        echo "  SKIP (assets): $png_file" >> "$DISCOVERY_LOG"
+        continue
+      fi
+
+      echo "  FOUND: $png_file" >> "$DISCOVERY_LOG"
+      FOUND_SCREENSHOTS+=("$png_file")
+    done < <(find "$search_dir" -type f -name "*.png" -print0 2>/dev/null)
+  else
+    echo "SKIP (not found): $search_dir" >> "$DISCOVERY_LOG"
+  fi
+  echo "" >> "$DISCOVERY_LOG"
+done
+
+# Also check common Maestro output patterns
+echo "Checking ~/.maestro/tests/ for recent test outputs..." >> "$DISCOVERY_LOG"
+if [[ -d "$HOME/.maestro/tests" ]]; then
+  # Get the most recent test directory
+  RECENT_TEST=$(ls -t "$HOME/.maestro/tests" 2>/dev/null | head -1)
+  if [[ -n "$RECENT_TEST" ]]; then
+    echo "Most recent test: $RECENT_TEST" >> "$DISCOVERY_LOG"
+    while IFS= read -r -d '' png_file; do
+      echo "  FOUND (in test output): $png_file" >> "$DISCOVERY_LOG"
+      FOUND_SCREENSHOTS+=("$png_file")
+    done < <(find "$HOME/.maestro/tests/$RECENT_TEST" -type f -name "*.png" -print0 2>/dev/null)
+  fi
+fi
+
+echo "" >> "$DISCOVERY_LOG"
+echo "=====================================" >> "$DISCOVERY_LOG"
+echo "Total screenshots found: ${#FOUND_SCREENSHOTS[@]}" >> "$DISCOVERY_LOG"
+
+# Copy found screenshots to CURRENT_DIR
+log_info "Found ${#FOUND_SCREENSHOTS[@]} screenshot(s)"
+
+if [[ ${#FOUND_SCREENSHOTS[@]} -gt 0 ]]; then
+  log_info "Copying screenshots to $CURRENT_DIR..."
+
+  for screenshot in "${FOUND_SCREENSHOTS[@]}"; do
+    filename=$(basename "$screenshot")
+    # Remove any timestamp prefixes (e.g., "2024-01-01_12-00-00_filename.png")
+    # Keep only the base filename from the YAML flow
+    clean_filename="$filename"
+
+    # If filename has UUID or timestamp prefix, try to extract meaningful name
+    if [[ "$filename" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2} ]] || [[ "$filename" =~ ^[a-f0-9]{8}-[a-f0-9]{4} ]]; then
+      # Try to extract the name after common prefixes
+      clean_filename=$(echo "$filename" | sed -E 's/^[0-9]{4}-[0-9]{2}-[0-9]{2}[_-]?[0-9]{2}[-:][0-9]{2}[-:][0-9]{2}[_-]?//')
+      clean_filename=$(echo "$clean_filename" | sed -E 's/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}[_-]?//')
+    fi
+
+    dest="$CURRENT_DIR/$clean_filename"
+    log_info "  Copying: $screenshot -> $dest"
+    cp "$screenshot" "$dest"
+    echo "COPIED: $screenshot -> $dest" >> "$DISCOVERY_LOG"
+  done
+else
+  log_warn "No screenshots found in any search location!"
+  echo "" >> "$DISCOVERY_LOG"
+  echo "WARNING: No screenshots discovered!" >> "$DISCOVERY_LOG"
+  echo "" >> "$DISCOVERY_LOG"
+  echo "Possible causes:" >> "$DISCOVERY_LOG"
+  echo "1. Maestro flow failed before takeScreenshot command" >> "$DISCOVERY_LOG"
+  echo "2. App crashed or assertion failed" >> "$DISCOVERY_LOG"
+  echo "3. Screenshot written to unexpected location" >> "$DISCOVERY_LOG"
+fi
+
+# Show what we have in CURRENT_DIR now
+log_info "Contents of $CURRENT_DIR:"
+ls -la "$CURRENT_DIR" 2>/dev/null || echo "  (empty)"
+
+# Count final screenshots
+FINAL_COUNT=$(find "$CURRENT_DIR" -type f -name "*.png" 2>/dev/null | wc -l | tr -d ' ')
+log_info "Final screenshot count in current/: $FINAL_COUNT"
+
+# Clean up temporary output directory
+rm -rf "$MAESTRO_OUTPUT_DIR"
 
 #######################################
 # Step 4: Generate diffs

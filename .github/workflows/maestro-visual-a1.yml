@@ -676,6 +676,73 @@ jobs:
           MAESTRO_DEBUG: ${{ github.event.inputs.debug_enabled == 'true' && '1' || '' }}
 
       #########################################
+      # 7.1. Forensic diagnostics: find all screenshots
+      #########################################
+      - name: Screenshot forensics (CRITICAL DIAGNOSTICS)
+        if: always()
+        run: |
+          echo "========================================================"
+          echo "SCREENSHOT FORENSICS - WHERE DID MAESTRO WRITE FILES?"
+          echo "========================================================"
+          echo ""
+
+          echo "=== Current working directory ==="
+          pwd
+          echo ""
+
+          echo "=== maestro/ directory listing ==="
+          ls -la maestro/ || echo "maestro/ not found"
+          echo ""
+
+          echo "=== maestro/screenshots/ listing ==="
+          ls -la maestro/screenshots/ || echo "maestro/screenshots/ not found"
+          echo ""
+
+          echo "=== maestro/screenshots/current/ listing ==="
+          ls -la maestro/screenshots/current/ || echo "maestro/screenshots/current/ not found"
+          echo ""
+
+          echo "=== maestro/screenshots/diff/ listing ==="
+          ls -la maestro/screenshots/diff/ || echo "maestro/screenshots/diff/ not found"
+          echo ""
+
+          echo "=== ALL .png files in repo (up to 200) ==="
+          find . -maxdepth 10 -type f -name "*.png" 2>/dev/null | sed 's|^\./||' | head -200
+          echo ""
+
+          echo "=== Total .png file count ==="
+          find . -type f -name "*.png" 2>/dev/null | wc -l
+          echo ""
+
+          echo "=== ~/.maestro directory (Maestro home) ==="
+          ls -la ~/.maestro/ 2>/dev/null || echo "~/.maestro/ not found"
+          echo ""
+
+          echo "=== ~/.maestro/tests/ (test outputs) ==="
+          ls -la ~/.maestro/tests/ 2>/dev/null | head -20 || echo "~/.maestro/tests/ not found"
+          echo ""
+
+          echo "=== Search for screenshots in ~/.maestro ==="
+          find ~/.maestro -type f -name "*.png" 2>/dev/null | head -50 || echo "No PNGs in ~/.maestro"
+          echo ""
+
+          echo "=== Search for test output directories ==="
+          find . -type d -name "*screenshot*" 2>/dev/null | head -20 || echo "No screenshot directories found"
+          echo ""
+
+          echo "=== Maestro log contents (first 100 lines) ==="
+          head -100 maestro/logs/maestro-run.log 2>/dev/null || echo "No maestro-run.log found"
+          echo ""
+
+          echo "=== Maestro log contents (last 100 lines) ==="
+          tail -100 maestro/logs/maestro-run.log 2>/dev/null || echo "No maestro-run.log found"
+          echo ""
+
+          echo "========================================================"
+          echo "END SCREENSHOT FORENSICS"
+          echo "========================================================"
+
+      #########################################
       # 8. Upload artifacts (always)
       #########################################
       - name: Upload Maestro artifacts
@@ -728,7 +795,37 @@ jobs:
           if-no-files-found: ignore
 
       #########################################
-      # 9. Report status
+      # 9. Validate screenshots were produced
+      #########################################
+      - name: Validate screenshots exist
+        if: always()
+        run: |
+          echo "=== Checking for screenshots in maestro/screenshots/current/ ==="
+
+          SCREENSHOT_COUNT=$(find maestro/screenshots/current -type f -name "*.png" 2>/dev/null | wc -l | tr -d ' ')
+          echo "Screenshots found: $SCREENSHOT_COUNT"
+
+          if [ "$SCREENSHOT_COUNT" -eq 0 ]; then
+            echo ""
+            echo "::error::NO SCREENSHOTS PRODUCED!"
+            echo ""
+            echo "Maestro did not generate any screenshots."
+            echo "Check the forensics output above to see where files were written."
+            echo ""
+            echo "Common causes:"
+            echo "1. Maestro test failed before reaching takeScreenshot"
+            echo "2. Screenshots written to wrong directory"
+            echo "3. App crashed or didn't launch properly"
+            echo ""
+            echo "Download maestro-logs artifact to review maestro-run.log"
+            exit 1
+          else
+            echo "Screenshots found:"
+            ls -la maestro/screenshots/current/*.png
+          fi
+
+      #########################################
+      # 10. Report status
       #########################################
       - name: Check Maestro result
         if: steps.maestro.outcome == 'failure'
