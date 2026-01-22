@@ -118,17 +118,24 @@ jobs:
 
       - name: Boot iOS Simulator
         run: |
-          # Use iPhone 15 Pro as it's available on macos-14 runners
-          DEVICE_NAME="iPhone 15 Pro"
+          # Try multiple device names in order of preference
+          for DEVICE_NAME in "iPhone 15 Pro" "iPhone 15" "iPhone 14 Pro" "iPhone 14"; do
+            echo "Trying device: $DEVICE_NAME"
 
-          # Get the UDID of the device
-          UDID=$(xcrun simctl list devices available -j | \
-            jq -r ".devices | to_entries[] | .value[] | select(.name == \"$DEVICE_NAME\" and .isAvailable == true) | .udid" | \
-            head -1)
+            # Get the UDID of the device
+            UDID=$(xcrun simctl list devices available -j | \
+              jq -r ".devices | to_entries[] | .value[] | select(.name == \"$DEVICE_NAME\" and .isAvailable == true) | .udid" | \
+              head -1)
+
+            if [ -n "$UDID" ]; then
+              echo "Found device: $DEVICE_NAME (UDID: $UDID)"
+              break
+            fi
+          done
 
           if [ -z "$UDID" ]; then
-            echo "Device '$DEVICE_NAME' not found, listing available devices:"
-            xcrun simctl list devices available
+            echo "ERROR: No suitable device found. Available devices:"
+            xcrun simctl list devices available | head -100
             exit 1
           fi
 
@@ -141,6 +148,10 @@ jobs:
 
           echo "Simulator booted successfully"
           xcrun simctl list devices booted
+
+          # Export UDID and device name for later steps
+          echo "SIM_UDID=$UDID" >> $GITHUB_ENV
+          echo "SIM_DEVICE_NAME=$DEVICE_NAME" >> $GITHUB_ENV
 
       #########################################
       # 6. Build iOS app via xcodebuild (no expo dev client)
@@ -160,8 +171,15 @@ jobs:
           echo "=== Running Expo prebuild ==="
           npx expo prebuild --platform ios --clean
           echo "=== Prebuild complete ==="
-          echo "iOS project contents:"
+          echo ""
+          echo "=== iOS project contents ==="
           ls -la ios/
+          echo ""
+          echo "=== Workspaces ==="
+          ls -la ios/*.xcworkspace 2>/dev/null || echo "No .xcworkspace found"
+          echo ""
+          echo "=== Projects ==="
+          ls -la ios/*.xcodeproj 2>/dev/null || echo "No .xcodeproj found"
 
       - name: Install CocoaPods dependencies
         working-directory: mobile/ios
@@ -169,11 +187,58 @@ jobs:
           echo "=== Installing CocoaPods dependencies ==="
           pod install --repo-update
           echo "=== CocoaPods install complete ==="
+          echo ""
+          echo "=== Podfile.lock (first 50 lines) ==="
+          head -50 Podfile.lock || true
+
+      - name: Diagnose Xcode project
+        working-directory: mobile/ios
+        run: |
+          echo "=== Xcode Project Diagnostics ==="
+
+          # Create logs directory
+          mkdir -p ../../maestro/logs
+
+          # List directory contents
+          echo "Directory contents:"
+          ls -la
+
+          # Find workspace
+          WORKSPACE=$(ls -d *.xcworkspace 2>/dev/null | head -1)
+          if [ -z "$WORKSPACE" ]; then
+            echo "ERROR: No .xcworkspace found"
+            exit 1
+          fi
+          echo "Found workspace: $WORKSPACE"
+
+          # Get project info as JSON and save for debugging
+          echo ""
+          echo "=== xcodebuild -list (JSON) ==="
+          xcodebuild -workspace "$WORKSPACE" -list -json 2>&1 | tee ../../maestro/logs/xcodebuild-list.json || true
+
+          echo ""
+          echo "=== xcodebuild -list (text) ==="
+          xcodebuild -workspace "$WORKSPACE" -list 2>&1 || true
+
+          echo ""
+          echo "=== Available simulators (first 50 lines) ==="
+          xcrun simctl list devices available 2>&1 | head -50
+
+          echo ""
+          echo "=== Booted simulator ==="
+          xcrun simctl list devices booted
+          echo "SIM_UDID: $SIM_UDID"
+          echo "SIM_DEVICE_NAME: $SIM_DEVICE_NAME"
 
       - name: Build iOS app with xcodebuild
         working-directory: mobile/ios
         run: |
+          set -o pipefail
+
           echo "=== Building iOS app with xcodebuild ==="
+
+          # Create logs directory
+          mkdir -p ../../maestro/logs
 
           # Find the workspace
           WORKSPACE=$(ls -d *.xcworkspace 2>/dev/null | head -1)
@@ -184,42 +249,66 @@ jobs:
           fi
           echo "Workspace: $WORKSPACE"
 
-          # Get available schemes
-          echo "Available schemes:"
-          xcodebuild -workspace "$WORKSPACE" -list
+          # Get scheme from JSON output (more reliable than text parsing)
+          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null | \
+            jq -r '.workspace.schemes[0]' 2>/dev/null || echo "")
 
-          # Determine scheme (prefer mojvis or first available)
-          SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list 2>/dev/null | grep -A 100 "Schemes:" | grep -v "Schemes:" | sed 's/^[[:space:]]*//' | grep -v "^$" | head -1)
+          # Fallback: try text parsing
+          if [ -z "$SCHEME" ] || [ "$SCHEME" = "null" ]; then
+            echo "JSON parsing failed, trying text parsing..."
+            SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list 2>/dev/null | \
+              grep -A 100 "Schemes:" | grep -v "Schemes:" | \
+              sed 's/^[[:space:]]*//' | grep -v "^$" | head -1)
+          fi
+
+          if [ -z "$SCHEME" ]; then
+            echo "ERROR: Could not determine scheme"
+            xcodebuild -workspace "$WORKSPACE" -list
+            exit 1
+          fi
           echo "Using scheme: $SCHEME"
 
           # Set derived data path
           DERIVED_DATA_PATH="$(pwd)/build"
           echo "Derived data path: $DERIVED_DATA_PATH"
 
-          # Show booted simulators
-          echo "Booted simulators:"
-          xcrun simctl list devices booted
+          # Use simulator UDID from earlier step
+          echo "Using simulator UDID: $SIM_UDID"
+          echo "Device name: $SIM_DEVICE_NAME"
 
-          # Build for iOS Simulator
-          echo "Running xcodebuild..."
-          set -o pipefail
+          # Build for iOS Simulator using the booted simulator's UDID
+          echo ""
+          echo "=== Running xcodebuild ==="
+          echo "Command:"
+          echo "xcodebuild -workspace \"$WORKSPACE\" -scheme \"$SCHEME\" -configuration Debug -sdk iphonesimulator -destination \"platform=iOS Simulator,id=$SIM_UDID\" -derivedDataPath \"$DERIVED_DATA_PATH\" CODE_SIGNING_ALLOWED=NO build"
+          echo ""
+
           xcodebuild \
             -workspace "$WORKSPACE" \
             -scheme "$SCHEME" \
             -configuration Debug \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=iPhone 15 Pro" \
+            -destination "platform=iOS Simulator,id=$SIM_UDID" \
             -derivedDataPath "$DERIVED_DATA_PATH" \
-            -allowProvisioningUpdates \
             CODE_SIGNING_ALLOWED=NO \
-            build 2>&1 | tee xcodebuild.log || {
-              echo "=== xcodebuild FAILED ==="
-              echo "Last 100 lines of log:"
-              tail -100 xcodebuild.log
-              exit 1
-            }
+            build 2>&1 | tee ../../maestro/logs/xcodebuild.log
 
-          echo "=== xcodebuild complete ==="
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo ""
+            echo "=== xcodebuild FAILED (exit code: $BUILD_EXIT_CODE) ==="
+            echo ""
+            echo "=== Last 200 lines of xcodebuild.log ==="
+            tail -200 ../../maestro/logs/xcodebuild.log
+            echo ""
+            echo "=== Searching for errors in log ==="
+            grep -i "error:" ../../maestro/logs/xcodebuild.log | tail -50 || true
+            exit 1
+          fi
+
+          echo ""
+          echo "=== xcodebuild SUCCESS ==="
 
       - name: Find and validate built .app
         id: find_app
@@ -377,6 +466,18 @@ jobs:
         with:
           name: maestro-logs
           path: maestro/logs/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload xcodebuild log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-logs
+          path: |
+            mobile/ios/*.log
+            maestro/logs/xcodebuild*.log
+            maestro/logs/xcodebuild*.json
           retention-days: 14
           if-no-files-found: ignore
 
