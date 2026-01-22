@@ -201,44 +201,75 @@ jobs:
           echo "=== Podfile.lock (first 50 lines) ==="
           head -50 Podfile.lock || true
 
-      - name: Diagnose Xcode project
+      - name: Scheme Evidence (CRITICAL DIAGNOSTICS)
         working-directory: mobile/ios
         run: |
-          echo "=== Xcode Project Diagnostics ==="
+          echo "========================================================"
+          echo "SCHEME EVIDENCE - CRITICAL DIAGNOSTICS"
+          echo "========================================================"
 
           # Create logs directory
           mkdir -p ../../maestro/logs
 
-          # List directory contents
-          echo "Directory contents:"
+          # List ALL contents
+          echo ""
+          echo "=== Directory contents ==="
           ls -la
+
+          echo ""
+          echo "=== Workspaces ==="
+          ls -la *.xcworkspace 2>/dev/null || echo "No .xcworkspace found"
+
+          echo ""
+          echo "=== Projects (xcodeproj) ==="
+          ls -la *.xcodeproj 2>/dev/null || echo "No .xcodeproj found"
 
           # Find workspace
           WORKSPACE=$(ls -d *.xcworkspace 2>/dev/null | head -1)
-          if [ -z "$WORKSPACE" ]; then
-            echo "ERROR: No .xcworkspace found"
-            exit 1
+          echo ""
+          echo "=== Selected workspace: $WORKSPACE ==="
+
+          if [ -n "$WORKSPACE" ]; then
+            echo ""
+            echo "=== xcodebuild -list -json (RAW) ==="
+            xcodebuild -workspace "$WORKSPACE" -list -json 2>&1 | tee ../../maestro/logs/xcodebuild-list.json
+
+            echo ""
+            echo "=== xcodebuild -list (TEXT) ==="
+            xcodebuild -workspace "$WORKSPACE" -list 2>&1 | tee ../../maestro/logs/xcodebuild-list.txt
           fi
-          echo "Found workspace: $WORKSPACE"
 
-          # Get project info as JSON and save for debugging
-          echo ""
-          echo "=== xcodebuild -list (JSON) ==="
-          xcodebuild -workspace "$WORKSPACE" -list -json 2>&1 | tee ../../maestro/logs/xcodebuild-list.json || true
+          # Check xcodeproj too
+          XCODEPROJ=$(ls -d *.xcodeproj 2>/dev/null | head -1)
+          if [ -n "$XCODEPROJ" ]; then
+            echo ""
+            echo "=== xcodeproj: $XCODEPROJ ==="
+            echo ""
+            echo "=== Shared schemes in xcodeproj ==="
+            ls -la "$XCODEPROJ/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes directory"
 
-          echo ""
-          echo "=== xcodebuild -list (text) ==="
-          xcodebuild -workspace "$WORKSPACE" -list 2>&1 || true
+            echo ""
+            echo "=== User schemes in xcodeproj ==="
+            ls -la "$XCODEPROJ/xcuserdata/"*"/xcschemes/" 2>/dev/null || echo "No user schemes"
+          fi
 
-          echo ""
-          echo "=== Available simulators (first 50 lines) ==="
-          xcrun simctl list devices available 2>&1 | head -50
+          # Check workspace xcshareddata too
+          if [ -n "$WORKSPACE" ]; then
+            echo ""
+            echo "=== Shared schemes in workspace ==="
+            ls -la "$WORKSPACE/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes in workspace"
+          fi
 
           echo ""
           echo "=== Booted simulator ==="
           xcrun simctl list devices booted
           echo "SIM_UDID: $SIM_UDID"
           echo "SIM_DEVICE_NAME: $SIM_DEVICE_NAME"
+
+          echo ""
+          echo "========================================================"
+          echo "END SCHEME EVIDENCE"
+          echo "========================================================"
 
       - name: Build iOS app with xcodebuild
         working-directory: mobile/ios
@@ -259,130 +290,159 @@ jobs:
           fi
           echo "Workspace: $WORKSPACE"
 
-          # Get ALL schemes and print them
+          # Get ALL schemes from JSON (handles spaces in names)
+          echo ""
+          echo "=== Extracting schemes from JSON ==="
+          SCHEMES_JSON=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null || echo "{}")
+          echo "Raw JSON saved to logs"
+          echo "$SCHEMES_JSON" > ../../maestro/logs/schemes-raw.json
+
+          # Extract schemes array - one per line, handling spaces
           echo ""
           echo "=== All available schemes ==="
-          ALL_SCHEMES=$(xcodebuild -workspace "$WORKSPACE" -list -json 2>/dev/null | \
-            jq -r '.workspace.schemes[]' 2>/dev/null || echo "")
-          echo "$ALL_SCHEMES"
+          SCHEMES_FILE=$(mktemp)
+          echo "$SCHEMES_JSON" | jq -r '.workspace.schemes[]?' 2>/dev/null > "$SCHEMES_FILE" || true
+          cat "$SCHEMES_FILE"
+          SCHEME_COUNT=$(wc -l < "$SCHEMES_FILE" | tr -d ' ')
           echo ""
-          echo "Total schemes found: $(echo "$ALL_SCHEMES" | wc -l | tr -d ' ')"
+          echo "Total schemes found: $SCHEME_COUNT"
+
+          # Also check directly in xcschemes directories
           echo ""
+          echo "=== Direct scheme file check ==="
+          XCODEPROJ=$(ls -d *.xcodeproj 2>/dev/null | head -1)
+          if [ -n "$XCODEPROJ" ]; then
+            echo "Shared schemes in $XCODEPROJ:"
+            ls "$XCODEPROJ/xcshareddata/xcschemes/"*.xcscheme 2>/dev/null | xargs -I {} basename {} .xcscheme || echo "  (none)"
+          fi
 
           # Find the REAL app scheme
-          # Must exclude ALL internal/library schemes:
-          # - Pods-* (CocoaPods)
-          # - EX* (Expo modules like EXApplication, EXConstants, etc.)
-          # - React-* (React Native internals)
-          # - Expo* (Expo SDK)
-          # - RN* (React Native)
-          # - hermes* (JS engine)
-          # - Yoga* (layout engine)
-          #
-          # The real app scheme should match the app name from app.json
-          # App name: "MOJ VIS", slug: "mojvis"
+          # App name from app.json: "MOJ VIS" (with space), slug: "mojvis"
+          # The scheme could be "MOJ VIS", "MOJVIS", "mojvis", etc.
 
           SCHEME=""
           FALLBACK_SCHEME=""
 
+          echo ""
           echo "=== Scheme selection logic ==="
-          for candidate in $ALL_SCHEMES; do
-            echo -n "Checking: $candidate ... "
 
-            # Skip internal/library schemes (CRITICAL: includes EXApplication!)
-            if [[ "$candidate" == Pods-* ]]; then
-              echo "SKIP (Pods)"
-              continue
-            fi
-            if [[ "$candidate" == EX* ]]; then
-              echo "SKIP (Expo module: EX*)"
-              continue
-            fi
-            if [[ "$candidate" == Expo* ]]; then
-              echo "SKIP (Expo SDK)"
-              continue
-            fi
-            if [[ "$candidate" == React-* ]] || [[ "$candidate" == React ]]; then
-              echo "SKIP (React Native)"
-              continue
-            fi
-            if [[ "$candidate" == RN* ]]; then
-              echo "SKIP (RN module)"
-              continue
-            fi
-            if [[ "$candidate" == hermes* ]] || [[ "$candidate" == Hermes* ]]; then
-              echo "SKIP (Hermes engine)"
-              continue
-            fi
-            if [[ "$candidate" == Yoga* ]]; then
-              echo "SKIP (Yoga layout)"
-              continue
-            fi
-            if [[ "$candidate" == RCT* ]]; then
-              echo "SKIP (RCT module)"
-              continue
-            fi
+          # Read schemes line by line to handle spaces
+          while IFS= read -r candidate || [ -n "$candidate" ]; do
+            [ -z "$candidate" ] && continue
+
+            echo -n "Checking: '$candidate' ... "
+
+            # Skip internal/library schemes
+            case "$candidate" in
+              Pods-*|Pods\ *)
+                echo "SKIP (Pods)"
+                continue
+                ;;
+              EX*)
+                echo "SKIP (Expo module: EX*)"
+                continue
+                ;;
+              Expo*)
+                echo "SKIP (Expo SDK)"
+                continue
+                ;;
+              React-*|React\ *|React)
+                echo "SKIP (React Native)"
+                continue
+                ;;
+              RN*)
+                echo "SKIP (RN module)"
+                continue
+                ;;
+              hermes*|Hermes*)
+                echo "SKIP (Hermes engine)"
+                continue
+                ;;
+              Yoga*)
+                echo "SKIP (Yoga layout)"
+                continue
+                ;;
+              RCT*)
+                echo "SKIP (RCT module)"
+                continue
+                ;;
+              *Tests|*Tests\ *|*UITests*)
+                echo "SKIP (Test target)"
+                continue
+                ;;
+            esac
 
             # This is a potential app scheme
-            # Prefer scheme matching app name
-            candidate_lower="${candidate,,}"
-            if [[ "$candidate_lower" == *"mojvis"* ]] || [[ "$candidate_lower" == *"moj"*"vis"* ]]; then
+            # Check if it matches app name patterns
+            candidate_lower=$(echo "$candidate" | tr '[:upper:]' '[:lower:]')
+
+            # Check for "moj vis" or "mojvis" patterns
+            if [[ "$candidate_lower" == *"moj"*"vis"* ]] || [[ "$candidate_lower" == *"mojvis"* ]]; then
               SCHEME="$candidate"
-              echo "SELECTED (matches app name 'mojvis')"
+              echo "SELECTED (matches app name)"
               break
             fi
 
             # Keep first valid candidate as fallback
             if [ -z "$FALLBACK_SCHEME" ]; then
               FALLBACK_SCHEME="$candidate"
-              echo "CANDIDATE (first valid, fallback)"
+              echo "CANDIDATE (first valid)"
             else
-              echo "VALID (but already have fallback)"
+              echo "VALID (already have candidate)"
             fi
-          done
+          done < "$SCHEMES_FILE"
+
+          rm -f "$SCHEMES_FILE"
 
           # Use fallback if no exact match
           if [ -z "$SCHEME" ] && [ -n "$FALLBACK_SCHEME" ]; then
             SCHEME="$FALLBACK_SCHEME"
             echo ""
-            echo "No exact 'mojvis' match found, using fallback: $SCHEME"
+            echo "No exact app name match, using fallback: '$SCHEME'"
           fi
 
-          # Final validation
+          # CRITICAL: Fail if no valid scheme found
           if [ -z "$SCHEME" ]; then
             echo ""
-            echo "=========================================="
-            echo "ERROR: No valid app scheme found!"
-            echo "=========================================="
+            echo "========================================================"
+            echo "FATAL ERROR: No valid app scheme found!"
+            echo "========================================================"
             echo ""
-            echo "All schemes were internal/library schemes."
+            echo "CI sees only internal/library schemes (EXApplication, Pods, etc.)"
+            echo "The real app scheme is MISSING."
+            echo ""
             echo "This means expo prebuild did not create a shared app scheme."
             echo ""
-            echo "Available schemes:"
-            xcodebuild -workspace "$WORKSPACE" -list
+            echo "=== Full scheme list from xcodebuild ==="
+            xcodebuild -workspace "$WORKSPACE" -list 2>&1
             echo ""
-            echo "Possible fixes:"
-            echo "1. Check app.json 'name' and 'slug' fields"
-            echo "2. Ensure expo prebuild completed successfully"
-            echo "3. The app scheme may need to be shared in Xcode"
+            echo "=== xcschemes directory contents ==="
+            ls -la "$XCODEPROJ/xcshareddata/xcschemes/" 2>/dev/null || echo "No shared schemes"
+            echo ""
+            echo "Possible causes:"
+            echo "1. app.json 'name' field has special characters"
+            echo "2. expo prebuild failed silently"
+            echo "3. Scheme not marked as 'shared' in Xcode"
+            echo ""
+            echo "WILL NOT build EXApplication as fallback."
             exit 1
           fi
 
-          # Extra validation: reject EXApplication explicitly
+          # Extra validation: NEVER build EXApplication
           if [[ "$SCHEME" == "EXApplication" ]]; then
             echo ""
-            echo "=========================================="
-            echo "ERROR: Selected scheme is EXApplication!"
-            echo "=========================================="
-            echo "This is an Expo internal module, not the app."
-            echo "The real app scheme was not found."
+            echo "========================================================"
+            echo "FATAL ERROR: Scheme is EXApplication!"
+            echo "========================================================"
+            echo "This is an Expo internal module, NOT the app."
+            echo "REFUSING to build. The real app scheme must be found."
             exit 1
           fi
 
           echo ""
-          echo "=========================================="
-          echo "FINAL SELECTED SCHEME: $SCHEME"
-          echo "=========================================="
+          echo "========================================================"
+          echo "SELECTED APP SCHEME: '$SCHEME'"
+          echo "========================================================"
           echo ""
 
           # Set derived data path
