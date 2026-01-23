@@ -110,23 +110,20 @@ log_info "Running Maestro flows..."
 
 MAESTRO_LOG="$LOGS_DIR/maestro-run.log"
 
-# Run ONLY the A1 baseline flow (deterministic, no swipe gestures)
-# Other flows are deprecated - A1 covers all core screens
-A1_FLOW="$FLOWS_DIR/a1_baseline_all_screens.yaml"
+# Run all flows
+for flow in "$FLOWS_DIR"/*.yaml; do
+  if [[ -f "$flow" ]]; then
+    flow_name=$(basename "$flow" .yaml)
+    log_info "Running flow: $flow_name"
 
-if [[ -f "$A1_FLOW" ]]; then
-  log_info "Running flow: a1_baseline_all_screens"
-
-  # Run Maestro and capture output
-  if maestro test "$A1_FLOW" --output "$CURRENT_DIR" >> "$MAESTRO_LOG" 2>&1; then
-    log_info "  Flow a1_baseline_all_screens: PASSED"
-  else
-    log_warn "  Flow a1_baseline_all_screens: FAILED (see $MAESTRO_LOG for details)"
+    # Run Maestro and capture output
+    if maestro test "$flow" --output "$CURRENT_DIR" >> "$MAESTRO_LOG" 2>&1; then
+      log_info "  Flow $flow_name: PASSED"
+    else
+      log_warn "  Flow $flow_name: FAILED (see $MAESTRO_LOG for details)"
+    fi
   fi
-else
-  log_error "A1 baseline flow not found: $A1_FLOW"
-  exit 1
-fi
+done
 
 log_info "Maestro execution complete. Log: $MAESTRO_LOG"
 

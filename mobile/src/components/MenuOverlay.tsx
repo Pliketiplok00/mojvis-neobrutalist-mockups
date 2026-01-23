@@ -187,7 +187,6 @@ export function MenuOverlay({
                   onPress={() => handleItemPress(item.route)}
                   accessibilityLabel={`${item.label} (${item.labelEn})`}
                   accessibilityRole="button"
-                  testID={`menu.item.${item.route.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
                 >
                   <View style={styles.menuIconContainer}>
                     <Icon name={item.icon} size="md" colorToken="textPrimary" />

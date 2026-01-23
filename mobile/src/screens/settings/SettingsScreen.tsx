@@ -89,13 +89,7 @@ export function SettingsScreen(): React.JSX.Element {
     : t('common.empty');
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      edges={['top']}
-      testID="screen.settings"
-      accessible={true}
-      accessibilityLabel="screen.settings"
-    >
+    <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.content}>

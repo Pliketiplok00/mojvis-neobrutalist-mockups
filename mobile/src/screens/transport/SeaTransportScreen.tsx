@@ -169,13 +169,7 @@ export function SeaTransportScreen(): React.JSX.Element {
   const visibleDepartures = todaysDepartures.slice(0, 10);
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      edges={['top']}
-      testID="screen.seaTransport"
-      accessible={true}
-      accessibilityLabel="screen.seaTransport"
-    >
+    <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
 
       <ScrollView
