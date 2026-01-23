@@ -204,7 +204,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
   }, [subject, description, location, photos, navigation, userContext]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top']} testID="screen.clickFix">
       <GlobalHeader type="child" />
 
       <KeyboardAvoidingView

@@ -81,6 +81,7 @@ export function GlobalHeader({
         style={styles.leftButton}
         onPress={handleLeftPress}
         accessibilityLabel="Open menu"
+        testID="header.btn.menu"
       >
         <View style={styles.menuIconBox}>
           <Icon name="menu" size="md" colorToken="textPrimary" />

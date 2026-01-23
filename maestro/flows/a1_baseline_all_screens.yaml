@@ -1,0 +1,377 @@
+# Maestro Flow: A1 Baseline All Screens (DETERMINISTIC)
+#
+# Captures screenshots of all key screens for visual baseline testing.
+# Uses testIDs exclusively - NO text-based navigation, NO optional steps.
+#
+# Expected output (12 screenshots):
+#   - a1_01_language_selection.png
+#   - a1_02_user_mode_selection.png
+#   - a1_03_home.png
+#   - a1_04_settings.png
+#   - a1_05_transport_hub.png
+#   - a1_06_sea_transport.png
+#   - a1_07_road_transport.png
+#   - a1_08_events.png
+#   - a1_09_info.png
+#   - a1_10_contacts.png
+#   - a1_11_click_fix.png
+#   - a1_12_feedback.png
+#
+# TestID Reference:
+#   Onboarding:
+#     - onboarding.language.en
+#     - onboarding.mode.visitor
+#   Header:
+#     - header.btn.menu
+#   Menu items:
+#     - menu.item.settings
+#     - menu.item.clickFix
+#     - menu.item.feedback
+#   Home tiles:
+#     - home.tile.transport
+#     - home.tile.events
+#     - home.tile.info
+#     - home.tile.contacts
+#     - home.tile.feedback
+#   Transport tabs:
+#     - transport.tab.sea
+#     - transport.tab.road
+#   Screen anchors:
+#     - screen.languageSelection
+#     - screen.userModeSelection
+#     - screen.home
+#     - screen.settings
+#     - screen.transportHub
+#     - screen.seaTransport
+#     - screen.roadTransport
+#     - screen.events
+#     - screen.info
+#     - screen.contacts
+#     - screen.clickFix
+#     - screen.feedback
+
+appId: com.mojvis.app
+
+---
+
+# ========================================
+# PHASE 1: Fresh launch and onboarding
+# ========================================
+
+# Clear app state for fresh onboarding
+- clearState
+
+# Launch the app fresh
+- launchApp:
+    clearState: true
+
+# Wait for app to initialize (optional wait for any element)
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 15000
+    optional: true
+
+# Wait for Language Selection screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.languageSelection"
+    timeout: 10000
+
+# Screenshot 1: Language Selection
+- takeScreenshot: a1_01_language_selection
+
+# Tap English language button
+- tapOn:
+    id: "onboarding.language.en"
+
+# Wait for User Mode Selection screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.userModeSelection"
+    timeout: 8000
+
+# Screenshot 2: User Mode Selection
+- takeScreenshot: a1_02_user_mode_selection
+
+# Tap Visitor mode
+- tapOn:
+    id: "onboarding.mode.visitor"
+
+# ========================================
+# PHASE 2: Home screen
+# ========================================
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 10000
+
+# Screenshot 3: Home Screen
+- takeScreenshot: a1_03_home
+
+# ========================================
+# PHASE 3: Settings (via menu)
+# ========================================
+
+# Open menu
+- tapOn:
+    id: "header.btn.menu"
+
+# Wait for menu to appear
+- extendedWaitUntil:
+    visible:
+      id: "menu.item.settings"
+    timeout: 5000
+
+# Tap Settings
+- tapOn:
+    id: "menu.item.settings"
+
+# Wait for Settings screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.settings"
+    timeout: 8000
+
+# Screenshot 4: Settings Screen
+- takeScreenshot: a1_04_settings
+
+# Go back to home (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 8000
+
+# ========================================
+# PHASE 4: Transport Hub
+# ========================================
+
+# Tap Transport tile
+- tapOn:
+    id: "home.tile.transport"
+
+# Wait for Transport Hub screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.transportHub"
+    timeout: 8000
+
+# Screenshot 5: Transport Hub
+- takeScreenshot: a1_05_transport_hub
+
+# ========================================
+# PHASE 5: Sea Transport
+# ========================================
+
+# Tap Sea Transport
+- tapOn:
+    id: "transport.tab.sea"
+
+# Wait for Sea Transport screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.seaTransport"
+    timeout: 8000
+
+# Screenshot 6: Sea Transport
+- takeScreenshot: a1_06_sea_transport
+
+# Go back to Transport Hub (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Transport Hub
+- extendedWaitUntil:
+    visible:
+      id: "screen.transportHub"
+    timeout: 8000
+
+# ========================================
+# PHASE 6: Road Transport
+# ========================================
+
+# Tap Road Transport
+- tapOn:
+    id: "transport.tab.road"
+
+# Wait for Road Transport screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.roadTransport"
+    timeout: 8000
+
+# Screenshot 7: Road Transport
+- takeScreenshot: a1_07_road_transport
+
+# Go back to Transport Hub (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Transport Hub
+- extendedWaitUntil:
+    visible:
+      id: "screen.transportHub"
+    timeout: 8000
+
+# Go back to Home (swipe right again)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 8000
+
+# ========================================
+# PHASE 7: Events
+# ========================================
+
+# Tap Events tile
+- tapOn:
+    id: "home.tile.events"
+
+# Wait for Events screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.events"
+    timeout: 8000
+
+# Screenshot 8: Events
+- takeScreenshot: a1_08_events
+
+# Go back to Home (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 8000
+
+# ========================================
+# PHASE 8: Info (Static Page)
+# ========================================
+
+# Tap Info tile
+- tapOn:
+    id: "home.tile.info"
+
+# Wait for Info screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.info"
+    timeout: 8000
+
+# Screenshot 9: Info
+- takeScreenshot: a1_09_info
+
+# Go back to Home (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 8000
+
+# ========================================
+# PHASE 9: Contacts (Static Page)
+# ========================================
+
+# Tap Contacts tile
+- tapOn:
+    id: "home.tile.contacts"
+
+# Wait for Contacts screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.contacts"
+    timeout: 8000
+
+# Screenshot 10: Contacts
+- takeScreenshot: a1_10_contacts
+
+# Go back to Home (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 8000
+
+# ========================================
+# PHASE 10: Click & Fix (via menu)
+# ========================================
+
+# Open menu
+- tapOn:
+    id: "header.btn.menu"
+
+# Wait for menu to appear
+- extendedWaitUntil:
+    visible:
+      id: "menu.item.clickFix"
+    timeout: 5000
+
+# Tap Click & Fix
+- tapOn:
+    id: "menu.item.clickFix"
+
+# Wait for Click & Fix screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.clickFix"
+    timeout: 8000
+
+# Screenshot 11: Click & Fix
+- takeScreenshot: a1_11_click_fix
+
+# Go back to Home (swipe right)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.home"
+    timeout: 8000
+
+# ========================================
+# PHASE 11: Feedback
+# ========================================
+
+# Tap Feedback CTA (green panel at bottom of home)
+- tapOn:
+    id: "home.tile.feedback"
+
+# Wait for Feedback screen
+- extendedWaitUntil:
+    visible:
+      id: "screen.feedback"
+    timeout: 8000
+
+# Screenshot 12: Feedback
+- takeScreenshot: a1_12_feedback
+
+# ========================================
+# END OF A1 BASELINE FLOW
+# ========================================

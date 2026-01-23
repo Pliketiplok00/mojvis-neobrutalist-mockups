@@ -77,7 +77,7 @@ export function FeedbackFormScreen(): React.JSX.Element {
   }, [subject, body, navigation, userContext]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top']} testID="screen.feedback">
       <GlobalHeader type="child" />
 
       <KeyboardAvoidingView

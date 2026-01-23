@@ -162,7 +162,7 @@ export function HomeScreen(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="screen.home">
       <Header type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
@@ -189,6 +189,8 @@ export function HomeScreen(): React.JSX.Element {
                 style={styles.categoryTileWrapper}
                 onPress={() => handleCategoryPress(category)}
                 activeOpacity={0.8}
+                testID={`home.tile.${category.key}`}
+                accessibilityLabel={`home.tile.${category.key}`}
               >
                 {/* Shadow layer for neobrut offset effect */}
                 <View style={styles.categoryTileShadow} />
@@ -285,6 +287,8 @@ export function HomeScreen(): React.JSX.Element {
           style={styles.ctaWrapper}
           onPress={handleFeedbackPress}
           activeOpacity={0.8}
+          testID="home.tile.feedback"
+          accessibilityLabel="home.tile.feedback"
         >
           {/* Shadow layer */}
           <View style={styles.ctaShadow} />

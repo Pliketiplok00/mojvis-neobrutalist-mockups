@@ -50,7 +50,7 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID="screen.userModeSelection">
       <View style={styles.content}>
         <H2 style={styles.title}>Kako koristite aplikaciju?</H2>
         <Body style={styles.subtitle}>How do you use the app?</Body>
@@ -60,6 +60,7 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
             variant="selection"
             onPress={() => void handleModeSelect('visitor')}
             accessibilityLabel="Visitor"
+            testID="onboarding.mode.visitor"
           >
             <View style={styles.optionIconContainer}>
               <Icon name="globe" size="lg" colorToken="textPrimary" />

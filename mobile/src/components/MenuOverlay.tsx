@@ -38,6 +38,7 @@ interface MenuItem {
   labelEn: string;
   icon: IconName;
   route: string;
+  testID?: string;
 }
 
 /**
@@ -45,15 +46,15 @@ interface MenuItem {
  * DO NOT modify this array unless explicitly required.
  */
 const CORE_MENU_ITEMS: MenuItem[] = [
-  { label: 'Početna', labelEn: 'Home', icon: 'home', route: 'Home' },
-  { label: 'Događaji', labelEn: 'Events', icon: 'calendar', route: 'Events' },
-  { label: 'Vozni redovi', labelEn: 'Timetables', icon: 'bus', route: 'TransportHub' },
-  { label: 'Flora i fauna', labelEn: 'Flora & Fauna', icon: 'leaf', route: 'StaticPage:flora-fauna' },
-  { label: 'Info za posjetitelje', labelEn: 'Visitor info', icon: 'info', route: 'StaticPage:visitor-info' },
-  { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: 'wrench', route: 'ClickFixForm' },
-  { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: 'message-circle', route: 'FeedbackForm' },
-  { label: 'Važni kontakti', labelEn: 'Important contacts', icon: 'phone', route: 'StaticPage:important-contacts' },
-  { label: 'Postavke', labelEn: 'Settings', icon: 'settings', route: 'Settings' },
+  { label: 'Početna', labelEn: 'Home', icon: 'home', route: 'Home', testID: 'menu.item.home' },
+  { label: 'Događaji', labelEn: 'Events', icon: 'calendar', route: 'Events', testID: 'menu.item.events' },
+  { label: 'Vozni redovi', labelEn: 'Timetables', icon: 'bus', route: 'TransportHub', testID: 'menu.item.transport' },
+  { label: 'Flora i fauna', labelEn: 'Flora & Fauna', icon: 'leaf', route: 'StaticPage:flora-fauna', testID: 'menu.item.floraFauna' },
+  { label: 'Info za posjetitelje', labelEn: 'Visitor info', icon: 'info', route: 'StaticPage:visitor-info', testID: 'menu.item.info' },
+  { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: 'wrench', route: 'ClickFixForm', testID: 'menu.item.clickFix' },
+  { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: 'message-circle', route: 'FeedbackForm', testID: 'menu.item.feedback' },
+  { label: 'Važni kontakti', labelEn: 'Important contacts', icon: 'phone', route: 'StaticPage:important-contacts', testID: 'menu.item.contacts' },
+  { label: 'Postavke', labelEn: 'Settings', icon: 'settings', route: 'Settings', testID: 'menu.item.settings' },
 ];
 
 interface MenuOverlayProps {
@@ -187,6 +188,7 @@ export function MenuOverlay({
                   onPress={() => handleItemPress(item.route)}
                   accessibilityLabel={`${item.label} (${item.labelEn})`}
                   accessibilityRole="button"
+                  testID={item.testID}
                 >
                   <View style={styles.menuIconContainer}>
                     <Icon name={item.icon} size="md" colorToken="textPrimary" />

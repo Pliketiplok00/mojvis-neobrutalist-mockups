@@ -71,7 +71,7 @@ export function TransportHubScreen(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={['top']} testID="screen.transportHub">
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView}>
@@ -98,6 +98,7 @@ export function TransportHubScreen(): React.JSX.Element {
               style={[styles.tile, styles.tileRoad]}
               accessibilityRole="button"
               accessibilityLabel={t('transport.hub.road')}
+              testID="transport.tab.road"
             >
               {/* Left icon slab */}
               <View style={styles.tileIconSlab}>
@@ -126,6 +127,7 @@ export function TransportHubScreen(): React.JSX.Element {
               style={[styles.tile, styles.tileSea]}
               accessibilityRole="button"
               accessibilityLabel={t('transport.hub.sea')}
+              testID="transport.tab.sea"
             >
               {/* Left icon slab */}
               <View style={styles.tileIconSlab}>

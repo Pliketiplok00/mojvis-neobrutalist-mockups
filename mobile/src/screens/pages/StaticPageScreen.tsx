@@ -51,6 +51,20 @@ import { LoadingState, ErrorState } from '../../ui/States';
 
 type PageRouteProp = RouteProp<MainStackParamList, 'StaticPage'>;
 
+/**
+ * Map slug to screen testID for Maestro testing
+ */
+function getScreenTestID(slug: string): string {
+  const slugMap: Record<string, string> = {
+    'info': 'screen.info',
+    'visitor-info': 'screen.info',
+    'contacts': 'screen.contacts',
+    'important-contacts': 'screen.contacts',
+    'flora-fauna': 'screen.floraFauna',
+  };
+  return slugMap[slug] || `screen.staticPage.${slug}`;
+}
+
 export function StaticPageScreen(): React.JSX.Element {
   const route = useRoute<PageRouteProp>();
   const navigation = useNavigation<NavigationProp<MainStackParamList>>();
@@ -120,9 +134,11 @@ export function StaticPageScreen(): React.JSX.Element {
     }
   };
 
+  const screenTestID = getScreenTestID(slug);
+
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} testID={screenTestID}>
         <GlobalHeader type="child" />
         <LoadingState message={t('common.loading')} />
       </SafeAreaView>
@@ -131,7 +147,7 @@ export function StaticPageScreen(): React.JSX.Element {
 
   if (error || !page) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container} testID={screenTestID}>
         <GlobalHeader type="child" />
         <ErrorState
           message={error || t('staticPage.notFound')}
@@ -143,7 +159,7 @@ export function StaticPageScreen(): React.JSX.Element {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID={screenTestID}>
       <GlobalHeader type="child" />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>

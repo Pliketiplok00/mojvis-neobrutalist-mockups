@@ -128,6 +128,55 @@ done
 log_info "Maestro execution complete. Log: $MAESTRO_LOG"
 
 #######################################
+# Step 3.5: Validate A1 screenshots exist
+#######################################
+log_info "Validating A1 baseline screenshots..."
+
+# Required A1 screenshots (EXACTLY these 12 names)
+REQUIRED_A1_SCREENSHOTS=(
+  "a1_01_language_selection.png"
+  "a1_02_user_mode_selection.png"
+  "a1_03_home.png"
+  "a1_04_settings.png"
+  "a1_05_transport_hub.png"
+  "a1_06_sea_transport.png"
+  "a1_07_road_transport.png"
+  "a1_08_events.png"
+  "a1_09_info.png"
+  "a1_10_contacts.png"
+  "a1_11_click_fix.png"
+  "a1_12_feedback.png"
+)
+
+A1_MISSING=0
+A1_FOUND=0
+
+for screenshot in "${REQUIRED_A1_SCREENSHOTS[@]}"; do
+  if [[ -f "$CURRENT_DIR/$screenshot" ]]; then
+    log_info "  [OK] $screenshot"
+    ((A1_FOUND++))
+  else
+    log_error "  [MISSING] $screenshot"
+    ((A1_MISSING++))
+  fi
+done
+
+log_info "A1 Screenshots: $A1_FOUND found, $A1_MISSING missing out of ${#REQUIRED_A1_SCREENSHOTS[@]} required"
+
+if [[ $A1_MISSING -gt 0 ]]; then
+  log_error "FATAL: Missing $A1_MISSING required A1 screenshots!"
+  log_error "The A1 baseline flow must produce EXACTLY 12 named screenshots."
+  log_error "See the a1_baseline_all_screens.yaml flow for expected output."
+
+  # List what we actually got
+  log_info "Actual PNG files in current/:"
+  ls -la "$CURRENT_DIR"/*.png 2>/dev/null || echo "  (none)"
+
+  # Set failure flag
+  HAS_MISSING_BASELINE=1
+fi
+
+#######################################
 # Step 4: Generate diffs
 #######################################
 log_info "Generating diffs against baseline..."
