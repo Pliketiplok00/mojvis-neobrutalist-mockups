@@ -858,3 +858,168 @@ jobs:
         run: |
           echo "::error::Maestro visual baseline check failed. Download artifacts to review diffs."
           exit 1
+
+  #########################################
+  # TEMPORARY JOB: Selector Discovery
+  # Purpose: Dump UI hierarchy to discover stable selectors
+  # Remove this job once selectors are documented
+  #########################################
+  selector-discovery:
+    name: Maestro Selector Discovery (TEMP)
+    runs-on: macos-14
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: |
+          sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer || \
+          sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+          xcodebuild -version
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Java (for Maestro)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          pnpm install
+          cd mobile && pnpm install
+
+      - name: Boot iOS Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available -j | \
+            jq -r '.devices | to_entries[] | .value[] | select(.name == "iPhone 15 Pro" and .isAvailable == true) | .udid' | head -1)
+          if [ -z "$UDID" ]; then
+            UDID=$(xcrun simctl list devices available -j | \
+              jq -r '.devices | to_entries[] | .value[] | select(.name == "iPhone 15" and .isAvailable == true) | .udid' | head -1)
+          fi
+          echo "Booting simulator: $UDID"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          echo "SIM_UDID=$UDID" >> $GITHUB_ENV
+
+      - name: Expo prebuild
+        working-directory: mobile
+        run: npx expo prebuild --platform ios --clean
+
+      - name: Install CocoaPods
+        working-directory: mobile/ios
+        run: pod install --repo-update
+
+      - name: Build iOS app (Release)
+        working-directory: mobile/ios
+        env:
+          RCT_NO_LAUNCH_PACKAGER: "1"
+          CI: "1"
+          FORCE_BUNDLING: "1"
+        run: |
+          mkdir -p ../../maestro/logs
+
+          xcodebuild \
+            -workspace MOJVIS.xcworkspace \
+            -scheme MOJVIS \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,id=$SIM_UDID" \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            GCC_TREAT_WARNINGS_AS_ERRORS=NO \
+            OTHER_CFLAGS='$(inherited) -Wno-nullability-completeness' \
+            build 2>&1 | tee ../../maestro/logs/xcodebuild.log
+
+      - name: Install app on simulator
+        run: |
+          APP_PATH=$(find "$RUNNER_TEMP/DerivedData/Build/Products/Release-iphonesimulator" -name "MOJVIS.app" -type d | head -1)
+          echo "APP_PATH: $APP_PATH"
+          xcrun simctl install booted "$APP_PATH"
+
+      - name: Launch app
+        run: |
+          xcrun simctl launch booted com.mojvis.app
+          sleep 5
+
+      - name: Run Selector Discovery Flow
+        id: discovery
+        continue-on-error: true
+        run: |
+          export PATH="$HOME/.maestro/bin:$PATH"
+
+          echo "========================================================"
+          echo "MAESTRO SELECTOR DISCOVERY"
+          echo "========================================================"
+          echo ""
+          echo "This flow dumps UI hierarchy at key screens."
+          echo "Output will be saved to maestro/logs/selector-hierarchy.log"
+          echo ""
+
+          # Create logs directory
+          mkdir -p maestro/logs
+
+          # Run the discovery flow and capture output
+          maestro test maestro/flows/a1_selector_discovery.yaml 2>&1 | tee maestro/logs/selector-hierarchy.log
+
+          MAESTRO_EXIT=$?
+          echo ""
+          echo "Maestro exit code: $MAESTRO_EXIT"
+
+          if [ $MAESTRO_EXIT -ne 0 ]; then
+            echo "::error::SELECTOR DISCOVERY BLOCKED: Maestro flow failed. Check logs for details."
+          fi
+
+          exit $MAESTRO_EXIT
+
+      - name: Upload selector discovery logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selector-discovery-logs
+          path: |
+            maestro/logs/selector-hierarchy.log
+            maestro/logs/*.log
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "========================================================"
+          echo "SELECTOR DISCOVERY SUMMARY"
+          echo "========================================================"
+          echo ""
+          echo "Log file: maestro/logs/selector-hierarchy.log"
+          echo ""
+          echo "To find selectors, download 'selector-discovery-logs' artifact"
+          echo "and search for:"
+          echo "  - HIERARCHY 01: FIRST SCREEN"
+          echo "  - HIERARCHY 02: HOME"
+          echo "  - HIERARCHY 03: SETTINGS"
+          echo "  - HIERARCHY 04: TRANSPORT"
+          echo ""
+          if [ -f "maestro/logs/selector-hierarchy.log" ]; then
+            echo "=== Hierarchy markers found in log ==="
+            grep -E "=== HIERARCHY" maestro/logs/selector-hierarchy.log || echo "(none found)"
+          fi
+          echo "========================================================"

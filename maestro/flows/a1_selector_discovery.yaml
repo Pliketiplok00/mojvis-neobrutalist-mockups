@@ -1,0 +1,174 @@
+# Maestro Flow: Selector Discovery (TEMPORARY)
+#
+# Purpose: Dump UI hierarchy at key screens to discover stable selectors.
+# This is NOT a screenshot baseline flow. It produces printHierarchy output only.
+#
+# Expected output:
+#   - Hierarchy dumps at 4 screens: First, Home, Settings, Transport
+#   - Output visible in CI logs and saved to maestro/logs/selector-hierarchy.log
+#
+# Navigation rules:
+#   - Onboarding steps may use known visible text ("English", "Visitor")
+#   - Post-onboarding navigation MUST use confirmed visible text
+#   - If navigation fails, flow fails (no guessing, no optional)
+
+appId: com.mojvis.app
+
+---
+
+# ========================================
+# STAGE 1: App Launch and First Screen
+# ========================================
+
+# Clear app state for fresh launch
+- clearState
+
+# Launch app
+- launchApp:
+    clearState: true
+
+# Wait for something to appear
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 15000
+
+# === HIERARCHY 01: FIRST SCREEN ===
+- runFlow:
+    commands:
+      - evalScript: console.log('\n\n=== HIERARCHY 01: FIRST SCREEN ===\n')
+      - printHierarchy
+      - evalScript: console.log('\n=== END HIERARCHY 01 ===\n\n')
+
+# ========================================
+# STAGE 2: Handle Onboarding (if present)
+# ========================================
+
+# Check if this is the language selection screen
+# Using known text from the app - "English" button should be visible
+- extendedWaitUntil:
+    visible:
+      text: "English"
+    timeout: 5000
+    optional: true
+
+# If English is visible, we're on language selection - tap it
+- tapOn:
+    text: "English"
+    optional: true
+
+# Wait for user mode screen
+- extendedWaitUntil:
+    visible:
+      text: "Visitor"
+    timeout: 5000
+    optional: true
+
+# If Visitor is visible, tap it
+- tapOn:
+    text: "Visitor"
+    optional: true
+
+# Wait for Home screen to load
+# The Home screen should have category tiles - "Transport" is a reliable marker
+- extendedWaitUntil:
+    visible:
+      text: "Transport"
+    timeout: 10000
+
+# ========================================
+# STAGE 3: Home Screen Hierarchy
+# ========================================
+
+# === HIERARCHY 02: HOME ===
+- runFlow:
+    commands:
+      - evalScript: console.log('\n\n=== HIERARCHY 02: HOME ===\n')
+      - printHierarchy
+      - evalScript: console.log('\n=== END HIERARCHY 02 ===\n\n')
+
+# ========================================
+# STAGE 4: Navigate to Settings
+# ========================================
+
+# Look for Settings entry point
+# Common patterns: "Settings" text, gear icon, or tab
+# First, verify Settings is tappable (this will fail if not found - desired behavior)
+- assertVisible:
+    text: "Settings"
+    enabled: true
+
+# Navigate to Settings (NON-OPTIONAL - must work or fail)
+- tapOn:
+    text: "Settings"
+
+# Wait for Settings screen marker
+- extendedWaitUntil:
+    visible:
+      text: "Push Notifications"
+    timeout: 8000
+
+# === HIERARCHY 03: SETTINGS ===
+- runFlow:
+    commands:
+      - evalScript: console.log('\n\n=== HIERARCHY 03: SETTINGS ===\n')
+      - printHierarchy
+      - evalScript: console.log('\n=== END HIERARCHY 03 ===\n\n')
+
+# ========================================
+# STAGE 5: Navigate back and to Transport
+# ========================================
+
+# Look for back navigation
+# Try common patterns - will discover actual selector from hierarchy
+- assertVisible:
+    text: ".*"
+    enabled: true
+
+# Try to go back using common iOS pattern (back button or swipe)
+# Since we can't know the exact selector yet, try tapping top-left area
+# or look for a back indicator in the hierarchy we just printed
+
+# Alternative: Press hardware back (swipe from left edge)
+- swipe:
+    direction: RIGHT
+    duration: 300
+
+# Wait for Home to be visible again
+- extendedWaitUntil:
+    visible:
+      text: "Transport"
+    timeout: 8000
+
+# Navigate to Transport (NON-OPTIONAL)
+- assertVisible:
+    text: "Transport"
+    enabled: true
+
+- tapOn:
+    text: "Transport"
+
+# Wait for Transport hub screen marker
+# Should have "Sea" and "Road" options
+- extendedWaitUntil:
+    visible:
+      text: "Sea"
+    timeout: 8000
+
+# === HIERARCHY 04: TRANSPORT ===
+- runFlow:
+    commands:
+      - evalScript: console.log('\n\n=== HIERARCHY 04: TRANSPORT ===\n')
+      - printHierarchy
+      - evalScript: console.log('\n=== END HIERARCHY 04 ===\n\n')
+
+# ========================================
+# DONE: Selector discovery complete
+# ========================================
+- evalScript: |
+    console.log('\n\n========================================');
+    console.log('SELECTOR DISCOVERY COMPLETE');
+    console.log('========================================');
+    console.log('Check CI logs for hierarchy dumps.');
+    console.log('Look for: HIERARCHY 01, 02, 03, 04');
+    console.log('========================================\n\n');
