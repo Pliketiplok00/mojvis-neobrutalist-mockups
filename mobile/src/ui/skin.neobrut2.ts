@@ -775,6 +775,59 @@ export const components = {
   },
 
   // Inbox screen component tokens (V1 banner list style)
+  // Onboarding role card (split-card pattern: colored header + white body)
+  onboarding: {
+    roleCard: {
+      // Outer card structure
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      // Shadow (reuse card shadow offset)
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+
+      // Header section (colored band)
+      header: {
+        paddingVertical: spacing.lg,
+        paddingHorizontal: spacing.lg,
+      },
+
+      // Icon box (square container in header)
+      iconBox: {
+        size: 48,
+        borderWidth: bordersToken.widthThin,
+        borderColor: colors.border,
+        background: colors.background, // White box on colored header
+      },
+
+      // Body section (white with bullets)
+      body: {
+        background: colors.background,
+        padding: spacing.lg,
+        borderTopWidth: bordersToken.widthThin,
+        borderTopColor: colors.border,
+      },
+
+      // Bullet styling
+      bullet: {
+        size: 8,
+        marginRight: spacing.sm,
+        marginTop: 6, // Align with text baseline
+      },
+
+      // Per-variant colors
+      visitor: {
+        headerBackground: palette.primary, // Blue
+        bulletColor: palette.primary,
+      },
+      local: {
+        headerBackground: palette.secondary, // Green
+        bulletColor: palette.secondary,
+      },
+    },
+  },
+
   inbox: {
     // Banner-style tabs (stronger typography hierarchy)
     tabs: {
