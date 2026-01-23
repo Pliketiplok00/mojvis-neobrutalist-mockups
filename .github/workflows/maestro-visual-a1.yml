@@ -539,6 +539,97 @@ jobs:
           MAESTRO_DEBUG: ${{ github.event.inputs.debug_enabled == 'true' && '1' || '' }}
 
       #########################################
+      # 7.25 Find and collect screenshots (path discovery)
+      #########################################
+      - name: Find and collect Maestro screenshots
+        if: always()
+        run: |
+          echo "========================================================"
+          echo "SCREENSHOT DISCOVERY AND COLLECTION"
+          echo "========================================================"
+          echo ""
+          echo "Working directory: $(pwd)"
+          echo ""
+
+          # === DIAGNOSTIC: Find where Maestro wrote PNGs ===
+          echo "=== Searching for PNGs in workspace ==="
+          find "$GITHUB_WORKSPACE" -type f -name "*.png" 2>/dev/null | head -100 || echo "(none in workspace)"
+          echo ""
+
+          echo "=== Searching for PNGs in HOME/.maestro ==="
+          find "$HOME/.maestro" -type f -name "*.png" 2>/dev/null | head -100 || echo "(none in .maestro)"
+          echo ""
+
+          echo "=== Searching for PNGs in /tmp ==="
+          find /tmp -type f -name "*.png" 2>/dev/null | head -50 || echo "(none in /tmp)"
+          echo ""
+
+          echo "=== Contents of maestro/screenshots/ ==="
+          ls -laR maestro/screenshots/ 2>/dev/null || echo "(directory missing or empty)"
+          echo ""
+
+          echo "=== Contents of HOME/.maestro ==="
+          ls -la "$HOME/.maestro" 2>/dev/null || echo "(directory missing)"
+          if [ -d "$HOME/.maestro/tests" ]; then
+            echo ""
+            echo "=== Contents of HOME/.maestro/tests ==="
+            ls -laR "$HOME/.maestro/tests" 2>/dev/null | head -100 || true
+          fi
+          echo ""
+
+          # === COLLECTION: Copy PNGs to canonical directory ===
+          echo "=== Collecting screenshots to canonical directory ==="
+          CANONICAL_DIR="maestro/screenshots/current"
+          mkdir -p "$CANONICAL_DIR"
+
+          # Strategy 1: Copy from maestro/screenshots (if ci.sh put them there)
+          if find maestro/screenshots -type f -name "*.png" 2>/dev/null | grep -q .; then
+            echo "Found PNGs in maestro/screenshots/, copying..."
+            find maestro/screenshots -type f -name "*.png" -exec cp -f {} "$CANONICAL_DIR/" \; 2>/dev/null || true
+          fi
+
+          # Strategy 2: Copy from ~/.maestro (Maestro's default output)
+          if find "$HOME/.maestro" -type f -name "*.png" 2>/dev/null | grep -q .; then
+            echo "Found PNGs in ~/.maestro/, copying..."
+            find "$HOME/.maestro" -type f -name "*.png" -exec cp -f {} "$CANONICAL_DIR/" \; 2>/dev/null || true
+          fi
+
+          # Strategy 3: Copy from any location in workspace containing "screenshot"
+          if find "$GITHUB_WORKSPACE" -path "*screenshot*" -type f -name "*.png" 2>/dev/null | grep -q .; then
+            echo "Found PNGs in screenshot-related paths, copying..."
+            find "$GITHUB_WORKSPACE" -path "*screenshot*" -type f -name "*.png" -exec cp -f {} "$CANONICAL_DIR/" \; 2>/dev/null || true
+          fi
+
+          # Strategy 4: Copy from /tmp if Maestro used temp dirs
+          if find /tmp -type f -name "*.png" -newer maestro/scripts/ci.sh 2>/dev/null | grep -q .; then
+            echo "Found recent PNGs in /tmp/, copying..."
+            find /tmp -type f -name "*.png" -newer maestro/scripts/ci.sh -exec cp -f {} "$CANONICAL_DIR/" \; 2>/dev/null || true
+          fi
+
+          echo ""
+          echo "=== Collection complete ==="
+          echo "Canonical directory: $CANONICAL_DIR"
+          echo ""
+          echo "Collected files:"
+          ls -la "$CANONICAL_DIR"/ 2>/dev/null || echo "(empty)"
+          echo ""
+
+          COLLECTED_COUNT=$(find "$CANONICAL_DIR" -type f -name "*.png" 2>/dev/null | wc -l | tr -d ' ')
+          echo "Total PNGs collected: $COLLECTED_COUNT"
+          echo ""
+
+          if [ "$COLLECTED_COUNT" -eq 0 ]; then
+            echo "WARNING: No PNGs collected from any source!"
+            echo ""
+            echo "All PNG files found anywhere:"
+            find / -type f -name "*.png" -mmin -10 2>/dev/null | head -50 || echo "(none found recently)"
+          fi
+
+          echo "========================================================"
+          echo "END SCREENSHOT DISCOVERY"
+          echo "========================================================"
+
+      #########################################
       # 7.5 Validate screenshots were produced
       #########################################
       - name: Validate screenshots exist (CRITICAL)
