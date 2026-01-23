@@ -323,13 +323,7 @@ export function EventsScreen(): React.JSX.Element {
   };
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      edges={['top']}
-      testID="screen.events"
-      accessible={true}
-      accessibilityLabel="screen.events"
-    >
+    <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="root" onMenuPress={handleMenuPress} />
 
       <ScrollView style={styles.scrollView}>

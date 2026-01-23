@@ -31,12 +31,7 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
   };
 
   return (
-    <SafeAreaView
-      style={styles.container}
-      testID="screen.languageSelection"
-      accessible={true}
-      accessibilityLabel="screen.languageSelection"
-    >
+    <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         {/* Logo placeholder */}
         <View style={styles.logoContainer}>
@@ -58,8 +53,7 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
           <Button
             variant="primary"
             onPress={() => handleLanguageSelect('en')}
-            accessibilityLabel="onboarding.language.en"
-            testID="onboarding.language.en"
+            accessibilityLabel="English"
           >
             English
           </Button>
