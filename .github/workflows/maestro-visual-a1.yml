@@ -870,12 +870,13 @@ jobs:
           exit 1
 
   #########################################
-  # TEMPORARY JOB: Selector Discovery
-  # Purpose: Dump UI hierarchy to discover stable selectors
+  # TEMPORARY JOB: iOS Accessibility Dump
+  # Purpose: Dump iOS UI tree to discover stable selectors
+  # Uses native xcrun simctl commands (not Maestro)
   # Remove this job once selectors are documented
   #########################################
-  selector-discovery:
-    name: Maestro Selector Discovery (TEMP)
+  accessibility-dump:
+    name: iOS Accessibility Dump (TEMP)
     runs-on: macos-14
     timeout-minutes: 25
 
@@ -899,17 +900,6 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 9
-
-      - name: Setup Java (for Maestro)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Install Maestro CLI
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
@@ -966,70 +956,156 @@ jobs:
           echo "APP_PATH: $APP_PATH"
           xcrun simctl install booted "$APP_PATH"
 
-      - name: Launch app
+      - name: Launch app and wait
         run: |
+          echo "Launching app..."
           xcrun simctl launch booted com.mojvis.app
-          sleep 5
+          echo "Waiting for app to fully render..."
+          sleep 8
 
-      - name: Run Selector Discovery Flow
-        id: discovery
-        continue-on-error: true
+      - name: Dump iOS UI Tree (Accessibility)
+        id: ui_dump
         run: |
-          export PATH="$HOME/.maestro/bin:$PATH"
-
           echo "========================================================"
-          echo "MAESTRO SELECTOR DISCOVERY"
+          echo "iOS ACCESSIBILITY / UI TREE DUMP"
           echo "========================================================"
           echo ""
-          echo "This flow dumps UI hierarchy at key screens."
-          echo "Output will be saved to maestro/logs/selector-hierarchy.log"
-          echo ""
 
-          # Create logs directory
           mkdir -p maestro/logs
+          UI_DUMP_SUCCESS=0
 
-          # Run the discovery flow and capture output
-          maestro test maestro/flows/a1_selector_discovery.yaml 2>&1 | tee maestro/logs/selector-hierarchy.log
-
-          MAESTRO_EXIT=$?
+          # Method A: Try xcrun simctl ui dump (preferred)
+          echo "=== Method A: xcrun simctl ui booted dump ==="
+          if xcrun simctl ui booted dump --format json > maestro/logs/ui-tree.json 2>&1; then
+            echo "Method A succeeded!"
+            UI_DUMP_SUCCESS=1
+          else
+            echo "Method A failed. Output:"
+            cat maestro/logs/ui-tree.json 2>/dev/null || echo "(no output)"
+            rm -f maestro/logs/ui-tree.json
+          fi
           echo ""
-          echo "Maestro exit code: $MAESTRO_EXIT"
 
-          if [ $MAESTRO_EXIT -ne 0 ]; then
-            echo "::error::SELECTOR DISCOVERY BLOCKED: Maestro flow failed. Check logs for details."
+          # Method B: Try xcrun simctl ui dump without format flag
+          if [ "$UI_DUMP_SUCCESS" -eq 0 ]; then
+            echo "=== Method B: xcrun simctl ui booted dump (no format) ==="
+            if xcrun simctl ui booted dump > maestro/logs/ui-tree.txt 2>&1; then
+              echo "Method B succeeded!"
+              UI_DUMP_SUCCESS=1
+            else
+              echo "Method B failed. Output:"
+              cat maestro/logs/ui-tree.txt 2>/dev/null || echo "(no output)"
+              rm -f maestro/logs/ui-tree.txt
+            fi
+          fi
+          echo ""
+
+          # Method C: Try accessibility inspector via lldb (experimental)
+          if [ "$UI_DUMP_SUCCESS" -eq 0 ]; then
+            echo "=== Method C: Checking available simctl subcommands ==="
+            xcrun simctl help 2>&1 | head -50
+            echo ""
+            echo "Trying: xcrun simctl spawn booted accessibility_inspector"
+            xcrun simctl spawn booted accessibility_inspector 2>&1 | head -100 > maestro/logs/accessibility-spawn.log || true
+            if [ -s maestro/logs/accessibility-spawn.log ]; then
+              UI_DUMP_SUCCESS=1
+            fi
+          fi
+          echo ""
+
+          # Method D: Take screenshot for reference
+          echo "=== Taking screenshot for reference ==="
+          xcrun simctl io booted screenshot maestro/logs/ui-screenshot.png 2>&1 || echo "Screenshot failed"
+          if [ -f maestro/logs/ui-screenshot.png ]; then
+            echo "Screenshot saved: maestro/logs/ui-screenshot.png"
+            ls -lh maestro/logs/ui-screenshot.png
+          fi
+          echo ""
+
+          # Method E: Dump running app info
+          echo "=== Dumping app info ==="
+          xcrun simctl listapps booted 2>&1 | grep -A 20 "com.mojvis.app" > maestro/logs/app-info.txt || true
+          echo ""
+
+          # Method F: Try to get UI description via AppleScript/osascript
+          echo "=== Method F: Trying osascript for accessibility ==="
+          osascript -e 'tell application "System Events" to get properties of every UI element of window 1 of application process "Simulator"' > maestro/logs/osascript-ui.txt 2>&1 || echo "osascript method failed"
+          echo ""
+
+          # Summary
+          echo "========================================================"
+          echo "UI DUMP SUMMARY"
+          echo "========================================================"
+          echo ""
+          echo "Files produced:"
+          ls -la maestro/logs/ 2>/dev/null
+          echo ""
+
+          if [ "$UI_DUMP_SUCCESS" -eq 0 ]; then
+            echo "::warning::No UI tree dump method succeeded. Check logs for details."
           fi
 
-          exit $MAESTRO_EXIT
+      - name: Search for selectors in UI dump
+        if: always()
+        run: |
+          echo "========================================================"
+          echo "SELECTOR SEARCH"
+          echo "========================================================"
+          echo ""
 
-      - name: Upload selector discovery logs
+          SEARCH_TERMS="Settings Transport Events Info Contacts Click Feedback Back Home"
+
+          for file in maestro/logs/ui-tree.json maestro/logs/ui-tree.txt maestro/logs/osascript-ui.txt; do
+            if [ -f "$file" ]; then
+              echo "=== Searching in: $file ==="
+              echo "File size: $(wc -c < "$file") bytes"
+              echo ""
+
+              for term in $SEARCH_TERMS; do
+                echo "--- Matches for '$term' ---"
+                grep -i -C 2 "$term" "$file" 2>/dev/null | head -20 || echo "(no matches)"
+                echo ""
+              done
+            fi
+          done
+
+          echo "========================================================"
+          echo "END SELECTOR SEARCH"
+          echo "========================================================"
+
+      - name: Upload accessibility dump artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: selector-discovery-logs
+          name: ios-accessibility-dump
           path: |
-            maestro/logs/selector-hierarchy.log
+            maestro/logs/ui-tree.json
+            maestro/logs/ui-tree.txt
+            maestro/logs/ui-screenshot.png
+            maestro/logs/app-info.txt
+            maestro/logs/osascript-ui.txt
+            maestro/logs/accessibility-spawn.log
             maestro/logs/*.log
           retention-days: 14
           if-no-files-found: warn
 
-      - name: Summary
+      - name: Final Summary
         if: always()
         run: |
           echo "========================================================"
-          echo "SELECTOR DISCOVERY SUMMARY"
+          echo "iOS ACCESSIBILITY DUMP COMPLETE"
           echo "========================================================"
           echo ""
-          echo "Log file: maestro/logs/selector-hierarchy.log"
+          echo "Artifacts uploaded: ios-accessibility-dump"
           echo ""
-          echo "To find selectors, download 'selector-discovery-logs' artifact"
-          echo "and search for:"
-          echo "  - HIERARCHY 01: FIRST SCREEN"
-          echo "  - HIERARCHY 02: HOME"
-          echo "  - HIERARCHY 03: SETTINGS"
-          echo "  - HIERARCHY 04: TRANSPORT"
+          echo "Files to check:"
+          echo "  - ui-tree.json (if xcrun simctl ui dump worked)"
+          echo "  - ui-tree.txt (alternative format)"
+          echo "  - ui-screenshot.png (visual reference)"
+          echo "  - osascript-ui.txt (if System Events worked)"
           echo ""
-          if [ -f "maestro/logs/selector-hierarchy.log" ]; then
-            echo "=== Hierarchy markers found in log ==="
-            grep -E "=== HIERARCHY" maestro/logs/selector-hierarchy.log || echo "(none found)"
-          fi
+          echo "Look for these selectors:"
+          echo "  - Settings entry point"
+          echo "  - Back navigation"
+          echo "  - Transport / Events / Info / Contacts / Click & Fix / Feedback"
           echo "========================================================"
