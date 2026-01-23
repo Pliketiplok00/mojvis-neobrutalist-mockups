@@ -1,19 +1,21 @@
 /**
  * Global Header Component
  *
- * Implements MOJ VIS header rules (NON-NEGOTIABLE):
+ * Implements MOJ VIS header rules:
  *
- * ALL SCREENS:
- * - Left: Hamburger menu (ALWAYS - back navigation is via iOS swipe gesture only)
+ * - Left button depends on screen type:
+ *   - 'root': Hamburger menu (opens side menu)
+ *   - 'child'/'inbox': Back button (navigates back)
  * - Center: App name "MOJ VIS"
  * - Right: Inbox icon (hidden on inbox screens)
- *
- * IMPORTANT: No screen should ever show a back arrow.
- * Back navigation relies on iOS swipe gesture.
  *
  * Title is ALWAYS "MOJ VIS" - never context-specific.
  *
  * Skin-pure: Uses Icon primitive and skin tokens (no emoji, no hardcoded hex).
+ *
+ * TestIDs for Maestro:
+ * - header.btn.menu: Hamburger menu button (root screens)
+ * - header.btn.back: Back button (child screens)
  */
 
 import React from 'react';
@@ -32,13 +34,10 @@ export type HeaderType = 'root' | 'child' | 'inbox';
 
 interface GlobalHeaderProps {
   /**
-   * Type of screen determines inbox icon visibility:
-   * - 'root': Shows inbox icon
-   * - 'child': Shows inbox icon
-   * - 'inbox': Hides inbox icon (we're already on inbox)
-   *
-   * NOTE: Left side ALWAYS shows hamburger menu.
-   * Back navigation is via iOS swipe gesture only.
+   * Type of screen determines left button and inbox icon:
+   * - 'root': Shows hamburger menu (left), inbox icon (right)
+   * - 'child': Shows back button (left), inbox icon (right)
+   * - 'inbox': Shows back button (left), hides inbox icon (right)
    */
   type: HeaderType;
 
@@ -61,9 +60,15 @@ export function GlobalHeader({
   const { openMenu } = useMenu();
   const { unreadCount } = useUnread();
 
-  // ALWAYS open menu - no back button behavior
+  // Root screens show menu, child/inbox screens show back button
+  const showMenuButton = type === 'root';
+
   const handleLeftPress = (): void => {
-    openMenu();
+    if (showMenuButton) {
+      openMenu();
+    } else {
+      navigation.goBack();
+    }
   };
 
   const handleInboxPress = (): void => {
@@ -76,14 +81,19 @@ export function GlobalHeader({
 
   return (
     <View style={styles.container}>
-      {/* Left: Hamburger Menu in yellow box (V1 poster style) */}
+      {/* Left: Menu (root) or Back (child/inbox) button */}
       <TouchableOpacity
         style={styles.leftButton}
         onPress={handleLeftPress}
-        accessibilityLabel="Open menu"
+        accessibilityLabel={showMenuButton ? 'header.btn.menu' : 'header.btn.back'}
+        testID={showMenuButton ? 'header.btn.menu' : 'header.btn.back'}
       >
-        <View style={styles.menuIconBox}>
-          <Icon name="menu" size="md" colorToken="textPrimary" />
+        <View style={showMenuButton ? styles.menuIconBox : styles.backIconBox}>
+          <Icon
+            name={showMenuButton ? 'menu' : 'arrow-left'}
+            size="md"
+            colorToken="textPrimary"
+          />
         </View>
       </TouchableOpacity>
 
@@ -136,6 +146,16 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     backgroundColor: skin.colors.warningAccent, // Yellow
+    borderWidth: skin.borders.widthCard, // Thick border per poster
+    borderColor: skin.colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Back button icon box (same poster style, neutral background)
+  backIconBox: {
+    width: 44,
+    height: 44,
+    backgroundColor: skin.colors.backgroundSecondary, // Neutral
     borderWidth: skin.borders.widthCard, // Thick border per poster
     borderColor: skin.colors.border,
     justifyContent: 'center',

@@ -28,6 +28,8 @@ interface CardProps {
   accessibilityLabel?: string;
   /** Additional style */
   style?: ViewStyle;
+  /** Test ID for Maestro/UI testing */
+  testID?: string;
 }
 
 export function Card({
@@ -38,6 +40,7 @@ export function Card({
   backgroundColor,
   accessibilityLabel,
   style,
+  testID,
 }: CardProps): React.JSX.Element {
   const getVariantStyle = () => {
     switch (variant) {
@@ -65,8 +68,9 @@ export function Card({
         onPress={onPress}
         disabled={disabled}
         activeOpacity={0.7}
-        accessibilityLabel={accessibilityLabel}
+        accessibilityLabel={accessibilityLabel || testID}
         accessibilityRole="button"
+        testID={testID}
       >
         {children}
       </TouchableOpacity>

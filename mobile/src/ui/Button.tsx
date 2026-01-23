@@ -30,6 +30,8 @@ interface ButtonProps {
   style?: ViewStyle;
   /** Accessibility label for screen readers */
   accessibilityLabel?: string;
+  /** Test ID for Maestro/UI testing */
+  testID?: string;
 }
 
 export function Button({
@@ -40,6 +42,7 @@ export function Button({
   loading = false,
   style,
   accessibilityLabel,
+  testID,
 }: ButtonProps): React.JSX.Element {
   const getButtonStyle = () => {
     switch (variant) {
@@ -69,8 +72,9 @@ export function Button({
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
-      accessibilityLabel={accessibilityLabel}
+      accessibilityLabel={accessibilityLabel || testID}
       accessibilityRole="button"
+      testID={testID}
     >
       {loading ? (
         <ActivityIndicator size="small" color={getTextColor()} />
