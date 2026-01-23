@@ -1,0 +1,267 @@
+# Maestro Flow: A1 Baseline - All Core Screens
+#
+# Captures 12 screenshots covering the core screen flow:
+# - Onboarding (Language, UserMode)
+# - Home
+# - Events
+# - Transport Hub, Sea Transport, Road Transport
+# - Settings
+# - Feedback Form
+#
+# NAVIGATION RULES:
+# - NO swipe gestures (flaky in CI)
+# - Use testIDs for all navigation
+# - Child screens: tap `header.btn.back` to return
+# - Root screens: use menu navigation
+#
+# TestIDs used:
+# - Screen anchors: screen.{name}
+# - Header back: header.btn.back
+# - Header menu: header.btn.menu
+# - Onboarding: onboarding.language.en, onboarding.mode.visitor
+# - Home tiles: home.tile.{key}
+# - Transport tiles: transport.tile.road, transport.tile.sea
+# - Menu items: menu.item.{route}
+#
+# Output: a1_01.png through a1_12.png
+
+appId: com.mojvis.app
+
+---
+
+# Clear app state to ensure fresh onboarding
+- clearState
+
+# Launch the app fresh
+- launchApp:
+    clearState: true
+
+# ============================================
+# SCREEN 01: Language Selection (Onboarding)
+# ============================================
+- assertVisible:
+    id: "screen.languageSelection"
+    timeout: 10000
+
+- takeScreenshot: a1_01_language_selection
+
+# Tap English to proceed
+- tapOn:
+    id: "onboarding.language.en"
+
+# ============================================
+# SCREEN 02: User Mode Selection (Onboarding)
+# ============================================
+- assertVisible:
+    id: "screen.userModeSelection"
+    timeout: 5000
+
+- takeScreenshot: a1_02_user_mode_selection
+
+# Tap Visitor to complete onboarding
+- tapOn:
+    id: "onboarding.mode.visitor"
+
+# ============================================
+# SCREEN 03: Home (Main)
+# ============================================
+- assertVisible:
+    id: "screen.home"
+    timeout: 10000
+
+- takeScreenshot: a1_03_home
+
+# ============================================
+# SCREEN 04: Events (via menu)
+# ============================================
+# Open menu
+- tapOn:
+    id: "header.btn.menu"
+
+- assertVisible:
+    id: "menu.item.events"
+    timeout: 3000
+
+# Navigate to Events
+- tapOn:
+    id: "menu.item.events"
+
+- assertVisible:
+    id: "screen.events"
+    timeout: 5000
+
+- takeScreenshot: a1_04_events
+
+# ============================================
+# SCREEN 05: Transport Hub (via menu)
+# ============================================
+# Open menu from Events (root screen)
+- tapOn:
+    id: "header.btn.menu"
+
+- assertVisible:
+    id: "menu.item.transporthub"
+    timeout: 3000
+
+# Navigate to Transport Hub
+- tapOn:
+    id: "menu.item.transporthub"
+
+- assertVisible:
+    id: "screen.transportHub"
+    timeout: 5000
+
+- takeScreenshot: a1_05_transport_hub
+
+# ============================================
+# SCREEN 06: Sea Transport (via tile)
+# ============================================
+- tapOn:
+    id: "transport.tile.sea"
+
+- assertVisible:
+    id: "screen.seaTransport"
+    timeout: 5000
+
+- takeScreenshot: a1_06_sea_transport
+
+# Return via back button (NOT swipe)
+- tapOn:
+    id: "header.btn.back"
+
+- assertVisible:
+    id: "screen.transportHub"
+    timeout: 3000
+
+# ============================================
+# SCREEN 07: Road Transport (via tile)
+# ============================================
+- tapOn:
+    id: "transport.tile.road"
+
+- assertVisible:
+    id: "screen.roadTransport"
+    timeout: 5000
+
+- takeScreenshot: a1_07_road_transport
+
+# Return via back button (NOT swipe)
+- tapOn:
+    id: "header.btn.back"
+
+- assertVisible:
+    id: "screen.transportHub"
+    timeout: 3000
+
+# ============================================
+# SCREEN 08: Settings (via menu)
+# ============================================
+# Open menu from Transport Hub (root screen)
+- tapOn:
+    id: "header.btn.menu"
+
+- assertVisible:
+    id: "menu.item.settings"
+    timeout: 3000
+
+- tapOn:
+    id: "menu.item.settings"
+
+- assertVisible:
+    id: "screen.settings"
+    timeout: 5000
+
+- takeScreenshot: a1_08_settings
+
+# Return via back button (NOT swipe)
+- tapOn:
+    id: "header.btn.back"
+
+# ============================================
+# SCREEN 09: Feedback Form (via menu)
+# ============================================
+# Open menu
+- tapOn:
+    id: "header.btn.menu"
+
+- assertVisible:
+    id: "menu.item.feedbackform"
+    timeout: 3000
+
+- tapOn:
+    id: "menu.item.feedbackform"
+
+- assertVisible:
+    id: "screen.feedbackForm"
+    timeout: 5000
+
+- takeScreenshot: a1_09_feedback_form
+
+# Return via back button (NOT swipe)
+- tapOn:
+    id: "header.btn.back"
+
+# ============================================
+# SCREEN 10: Home (return via menu)
+# ============================================
+# Open menu
+- tapOn:
+    id: "header.btn.menu"
+
+- assertVisible:
+    id: "menu.item.home"
+    timeout: 3000
+
+- tapOn:
+    id: "menu.item.home"
+
+- assertVisible:
+    id: "screen.home"
+    timeout: 5000
+
+# Scroll down to see feedback CTA
+- scroll:
+    direction: DOWN
+
+- takeScreenshot: a1_10_home_scrolled
+
+# Scroll back up
+- scroll:
+    direction: UP
+
+# ============================================
+# SCREEN 11: Events tile from Home
+# ============================================
+- tapOn:
+    id: "home.tile.events"
+
+- assertVisible:
+    id: "screen.events"
+    timeout: 5000
+
+- takeScreenshot: a1_11_events_from_home
+
+# Return via menu to Home
+- tapOn:
+    id: "header.btn.menu"
+
+- tapOn:
+    id: "menu.item.home"
+
+- assertVisible:
+    id: "screen.home"
+    timeout: 3000
+
+# ============================================
+# SCREEN 12: Transport tile from Home
+# ============================================
+- tapOn:
+    id: "home.tile.transport"
+
+- assertVisible:
+    id: "screen.transportHub"
+    timeout: 5000
+
+- takeScreenshot: a1_12_transport_from_home
+
+# Flow complete - all 12 screenshots captured
