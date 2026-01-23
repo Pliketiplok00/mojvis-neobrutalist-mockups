@@ -534,6 +534,29 @@ jobs:
         continue-on-error: true  # Allow step to fail but continue to upload artifacts
         run: |
           export PATH="$HOME/.maestro/bin:$PATH"
+
+          echo "========================================================"
+          echo "MAESTRO VISUAL BASELINE TESTS"
+          echo "========================================================"
+          echo ""
+          echo "Working directory: $(pwd)"
+          echo ""
+
+          echo "=== Flow files to be executed ==="
+          ls -la maestro/flows/*.yaml
+          echo ""
+
+          echo "=== Verifying A1 baseline flow exists ==="
+          if [ -f "maestro/flows/a1_baseline_all_screens.yaml" ]; then
+            echo "A1 flow file: FOUND"
+            head -20 maestro/flows/a1_baseline_all_screens.yaml
+          else
+            echo "::error::A1 flow file NOT FOUND!"
+            exit 1
+          fi
+          echo ""
+
+          echo "=== Running ci.sh ==="
           ./maestro/scripts/ci.sh
         env:
           MAESTRO_DEBUG: ${{ github.event.inputs.debug_enabled == 'true' && '1' || '' }}

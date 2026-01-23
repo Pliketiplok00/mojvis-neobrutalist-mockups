@@ -1,0 +1,292 @@
+# Maestro Flow: A1 Baseline All Screens
+#
+# Captures screenshots of all key screens for visual baseline testing.
+# This flow navigates through the app and captures each major screen.
+#
+# Expected output (12 screenshots):
+#   - a1_01_language_selection.png
+#   - a1_02_user_mode_selection.png
+#   - a1_03_home.png
+#   - a1_04_settings.png
+#   - a1_05_transport_hub.png
+#   - a1_06_sea_transport.png
+#   - a1_07_road_transport.png
+#   - a1_08_events.png
+#   - a1_09_info.png
+#   - a1_10_contacts.png
+#   - a1_11_click_fix.png
+#   - a1_12_feedback.png
+
+appId: com.mojvis.app
+
+---
+
+# ========================================
+# PHASE 1: Fresh launch and onboarding
+# ========================================
+
+# Clear app state for fresh onboarding
+- clearState
+
+# Launch the app fresh
+- launchApp:
+    clearState: true
+
+# Wait for app to initialize
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 15000
+    optional: true
+
+# Screenshot 1: Language Selection
+- takeScreenshot: a1_01_language_selection
+
+# Select English language
+- extendedWaitUntil:
+    visible:
+      text: "English"
+    timeout: 5000
+    optional: true
+
+- tapOn:
+    text: "English"
+    optional: true
+
+# Wait for user mode screen
+- extendedWaitUntil:
+    visible:
+      text: "Visitor"
+    timeout: 5000
+    optional: true
+
+# Screenshot 2: User Mode Selection
+- takeScreenshot: a1_02_user_mode_selection
+
+# Select Visitor mode (simpler path, no municipality selection)
+- tapOn:
+    text: "Visitor"
+    optional: true
+
+# Wait for home screen to load
+- extendedWaitUntil:
+    visible:
+      text: "Transport"
+    timeout: 8000
+    optional: true
+
+# ========================================
+# PHASE 2: Main screens
+# ========================================
+
+# Screenshot 3: Home Screen
+- takeScreenshot: a1_03_home
+
+# Navigate to Settings (tap settings icon/gear)
+- tapOn:
+    id: ".*settings.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Settings"
+    timeout: 5000
+    optional: true
+
+# Screenshot 4: Settings Screen
+- takeScreenshot: a1_04_settings
+
+# Go back to home
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Transport"
+    timeout: 5000
+    optional: true
+
+# ========================================
+# PHASE 3: Category screens
+# ========================================
+
+# Navigate to Transport
+- tapOn:
+    text: "Transport"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Sea"
+    timeout: 5000
+    optional: true
+
+# Screenshot 5: Transport Hub
+- takeScreenshot: a1_05_transport_hub
+
+# Navigate to Sea Transport
+- tapOn:
+    text: "Sea"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 6: Sea Transport
+- takeScreenshot: a1_06_sea_transport
+
+# Go back
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+# Navigate to Road Transport
+- tapOn:
+    text: "Road"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 7: Road Transport
+- takeScreenshot: a1_07_road_transport
+
+# Go back to home
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Events"
+    timeout: 5000
+    optional: true
+
+# Navigate to Events
+- tapOn:
+    text: "Events"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 8: Events
+- takeScreenshot: a1_08_events
+
+# Go back to home
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Info"
+    timeout: 5000
+    optional: true
+
+# Navigate to Info
+- tapOn:
+    text: "Info"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 9: Info
+- takeScreenshot: a1_09_info
+
+# Go back to home
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Contacts"
+    timeout: 5000
+    optional: true
+
+# Navigate to Contacts
+- tapOn:
+    text: "Contacts"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 10: Contacts
+- takeScreenshot: a1_10_contacts
+
+# Go back to home
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Click & Fix"
+    timeout: 5000
+    optional: true
+
+# Navigate to Click & Fix
+- tapOn:
+    text: "Click & Fix"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 11: Click & Fix
+- takeScreenshot: a1_11_click_fix
+
+# Go back to home
+- tapOn:
+    id: ".*back.*"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      text: "Feedback"
+    timeout: 5000
+    optional: true
+
+# Navigate to Feedback
+- tapOn:
+    text: "Feedback"
+    optional: true
+
+- extendedWaitUntil:
+    visible:
+      id: ".*"
+    timeout: 5000
+    optional: true
+
+# Screenshot 12: Feedback
+- takeScreenshot: a1_12_feedback
+
+# ========================================
+# END OF A1 BASELINE FLOW
+# ========================================
