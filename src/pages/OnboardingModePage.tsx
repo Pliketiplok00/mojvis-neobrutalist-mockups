@@ -126,7 +126,7 @@ export default function OnboardingModePage() {
         <div className="p-6 bg-card neo-border-t">
           <Button 
             size="lg" 
-            className="w-full bg-foreground text-background neo-border-heavy font-display text-lg py-6"
+            className="w-full bg-primary text-primary-foreground border-4 border-foreground font-display text-lg py-6 shadow-[4px_4px_0_0_hsl(var(--foreground))] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0_0_hsl(var(--foreground))]"
             onClick={handleContinue}
             disabled={!selectedMode}
           >
