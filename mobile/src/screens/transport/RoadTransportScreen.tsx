@@ -150,7 +150,13 @@ export function RoadTransportScreen(): React.JSX.Element {
   const visibleDepartures = todaysDepartures.slice(0, 10);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+      style={styles.container}
+      edges={['top']}
+      testID="screen.roadTransport"
+      accessible={true}
+      accessibilityLabel="screen.roadTransport"
+    >
       <GlobalHeader type="child" />
 
       <ScrollView
