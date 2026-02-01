@@ -409,7 +409,7 @@ export default function TransportSeaDetailPage() {
               <Card 
                 key={i}
                 variant="flat" 
-                className="neo-border-heavy neo-hover p-4 cursor-pointer"
+                className="neo-border-heavy neo-hover p-4 cursor-pointer shadow-[4px_4px_0_0_hsl(var(--foreground))]"
                 onClick={() => handleCall(contact.phone)}
               >
                 <div className="flex items-center gap-4">
