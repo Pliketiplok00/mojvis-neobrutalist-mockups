@@ -231,7 +231,7 @@ export default function TransportSeaDetailPage() {
         </Card>
 
         {/* Date Selector */}
-        <Card variant="flat" className="neo-border-heavy p-4">
+        <Card variant="flat" className="neo-border-heavy p-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <label className="font-display font-bold text-sm text-muted-foreground block mb-3">
             <CalendarIcon size={16} strokeWidth={2.5} className="inline mr-2" />
             DATUM
@@ -265,7 +265,7 @@ export default function TransportSeaDetailPage() {
         </Card>
 
         {/* Direction Toggle */}
-        <Card variant="flat" className="neo-border-heavy p-4">
+        <Card variant="flat" className="neo-border-heavy p-4 shadow-[4px_4px_0_0_hsl(var(--foreground))]">
           <label className="font-display font-bold text-sm text-muted-foreground block mb-3">
             <ArrowLeftRight size={16} strokeWidth={2.5} className="inline mr-2" />
             SMJER
