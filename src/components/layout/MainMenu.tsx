@@ -1,4 +1,4 @@
-import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Leaf, Fish, ArrowRight } from "lucide-react";
+import { X, Home, Calendar, Clock, MessageSquare, AlertTriangle, Settings, Info, Sprout, ArrowRight } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 
@@ -13,8 +13,7 @@ const menuItems = [
   { icon: Clock, labelKey: "menu.timetables", path: "/transport", hoverColor: "group-hover:bg-secondary" },
   { icon: MessageSquare, labelKey: "menu.feedback", path: "/feedback", hoverColor: "group-hover:bg-lavender" },
   { icon: AlertTriangle, labelKey: "menu.clickFix", path: "/click-fix", hoverColor: "group-hover:bg-destructive" },
-  { icon: Leaf, labelKey: "menu.flora", path: "/flora", hoverColor: "group-hover:bg-primary" },
-  { icon: Fish, labelKey: "menu.fauna", path: "/fauna", hoverColor: "group-hover:bg-secondary" },
+  { icon: Sprout, labelKey: "menu.floraFauna", path: "/flora-fauna", hoverColor: "group-hover:bg-primary" },
   { icon: Info, labelKey: "menu.info", path: "/info", hoverColor: "group-hover:bg-accent" },
   { icon: Settings, labelKey: "menu.settings", path: "/settings", hoverColor: "group-hover:bg-muted" },
 ];

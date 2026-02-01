@@ -33,8 +33,7 @@ const translations = {
   "menu.timetables": { hr: "Vozni red", en: "Timetables" },
   "menu.feedback": { hr: "Povratne informacije", en: "Feedback" },
   "menu.clickFix": { hr: "Klikni & Popravi", en: "Click & Fix" },
-  "menu.flora": { hr: "Flora", en: "Flora" },
-  "menu.fauna": { hr: "Fauna", en: "Fauna" },
+  "menu.floraFauna": { hr: "Flora & Fauna", en: "Flora & Fauna" },
   "menu.info": { hr: "Informacije", en: "Information" },
   "menu.settings": { hr: "Postavke", en: "Settings" },
   
