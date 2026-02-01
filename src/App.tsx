@@ -19,6 +19,7 @@ import TransportSeaDetailPage from "./pages/TransportSeaDetailPage";
 import SettingsPage from "./pages/SettingsPage";
 import FloraPage from "./pages/FloraPage";
 import FaunaPage from "./pages/FaunaPage";
+import FloraFaunaPage from "./pages/FloraFaunaPage";
 import InfoPage from "./pages/InfoPage";
 import OnboardingSplashPage from "./pages/OnboardingSplashPage";
 import OnboardingModePage from "./pages/OnboardingModePage";
