@@ -60,6 +60,7 @@ const App = () => (
             <Route path="/transport/sea" element={<TransportSeaPage />} />
             <Route path="/transport/sea/:lineId" element={<TransportSeaDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/flora-fauna" element={<FloraFaunaPage />} />
             <Route path="/flora" element={<FloraPage />} />
             <Route path="/fauna" element={<FaunaPage />} />
             <Route path="/info" element={<InfoPage />} />
