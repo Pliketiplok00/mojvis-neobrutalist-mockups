@@ -303,7 +303,7 @@ export default function TransportSeaDetailPage() {
               </p>
             </Card>
           ) : (
-            <Card variant="flat" className="neo-border-heavy overflow-hidden">
+            <Card variant="flat" className="neo-border-heavy overflow-hidden shadow-[4px_4px_0_0_hsl(var(--foreground))]">
               {departures.map((departure, i) => {
                 const pattern = line.patterns[departure.patternId] || defaultPattern;
                 const stops = getDirectionalStops(pattern.stops, selectedDirection);
@@ -409,7 +409,7 @@ export default function TransportSeaDetailPage() {
               <Card 
                 key={i}
                 variant="flat" 
-                className="neo-border-heavy neo-hover p-4 cursor-pointer"
+                className="neo-border-heavy neo-hover p-4 cursor-pointer shadow-[4px_4px_0_0_hsl(var(--foreground))]"
                 onClick={() => handleCall(contact.phone)}
               >
                 <div className="flex items-center gap-4">
