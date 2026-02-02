@@ -192,6 +192,7 @@ export const colors = {
 
   // Interactive
   primary: palette.primary,
+  secondary: palette.secondary,
   primaryText: "white",
   primaryTextMuted: hsla(0, 0, 100, 0.85), // White at 85% opacity for subtitles on colored surfaces
 
@@ -356,6 +357,34 @@ export const components = {
     borderColor: colors.border,
     borderRadius: bordersToken.radiusLarge,
     padding: spacing.xl,
+
+    /**
+     * Card variants - additive, never change default card contract.
+     */
+    variants: {
+      /**
+       * Onboarding selection card: thick border + hard offset shadow.
+       * Used for: MunicipalitySelection (and similar onboarding choices).
+       */
+      onboardingSelection: {
+        backgroundColor: colors.backgroundTertiary,
+        borderWidth: bordersToken.widthCard,
+        borderColor: colors.border,
+        borderRadius: bordersToken.radiusCard,
+        padding: spacing.xxl,
+        shadow: {
+          inactive: {
+            ...platformShadow(hardShadow(6, colors.border)),
+          },
+          activePrimary: {
+            ...platformShadow(hardShadow(6, palette.primary)),
+          },
+          activeSecondary: {
+            ...platformShadow(hardShadow(6, palette.secondary)),
+          },
+        },
+      },
+    },
   },
 
   button: {
@@ -771,6 +800,82 @@ export const components = {
       contactCardBorderColor: colors.border,
       contactCardBackground: colors.background,
       contactCardRadius: bordersToken.radiusSharp,
+    },
+  },
+
+  // Onboarding role card (split-card pattern: colored header + white body)
+  onboarding: {
+    roleCard: {
+      // Outer card structure
+      borderWidth: bordersToken.widthCard,
+      borderColor: colors.border,
+      borderRadius: bordersToken.radiusSharp,
+      // Shadow (reuse card shadow offset)
+      shadowOffsetX: 4,
+      shadowOffsetY: 4,
+      shadowColor: colors.border,
+
+      // Header section (colored band)
+      header: {
+        paddingVertical: spacing.lg,
+        paddingHorizontal: spacing.lg,
+      },
+
+      // Icon box (square container in header)
+      iconBox: {
+        size: 48,
+        borderWidth: bordersToken.widthThin,
+        borderColor: colors.border,
+        background: colors.background, // White box on colored header
+      },
+
+      // Body section (white with bullets)
+      body: {
+        background: colors.background,
+        padding: spacing.lg,
+        borderTopWidth: bordersToken.widthThin,
+        borderTopColor: colors.border,
+      },
+
+      // Bullet styling
+      bullet: {
+        size: 8,
+        marginRight: spacing.sm,
+        marginTop: 6, // Align with text baseline
+      },
+
+      // Per-variant colors
+      visitor: {
+        headerBackground: palette.primary, // Blue
+        bulletColor: palette.primary,
+      },
+      local: {
+        headerBackground: palette.secondary, // Green
+        bulletColor: palette.secondary,
+      },
+    },
+
+    // Municipality selection screen tokens
+    municipalitySelection: {
+      optionGap: spacing.lg,
+      card: {
+        contentGap: spacing.xxl,
+      },
+      iconBox: {
+        size: 64,
+        backgroundColor: colors.backgroundSecondary,
+        borderWidth: bordersToken.widthCard,
+        borderColor: colors.border,
+        borderRadius: bordersToken.radiusCard,
+      },
+      title: {
+        textTransform: typography.textTransform.uppercase,
+        letterSpacing: 1,
+        color: colors.textPrimary,
+      },
+      subtitle: {
+        color: colors.textSecondary,
+      },
     },
   },
 
