@@ -5,8 +5,14 @@ import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "react-router-dom";
-import { MapPin, Clock, Calendar, User, Users, Bell, Share2, Check, Star } from "lucide-react";
+import { MapPin, Clock, Calendar, User, Users, Bell, Share2, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import summerFestivalImg from "@/assets/event-summer-festival.jpg";
+
+const mockImages = [
+  summerFestivalImg,
+  summerFestivalImg, // placeholder for additional images
+  summerFestivalImg,
+];
 
 const mockEvent = {
   id: 1,
@@ -32,8 +38,18 @@ export default function EventDetailPage() {
   const [hasReminder, setHasReminder] = useState(false);
   const { id } = useParams();
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const handleReminder = () => {
     setHasReminder(!hasReminder);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? mockImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === mockImages.length - 1 ? 0 : prev + 1));
   };
 
   const handleShare = () => {
@@ -52,18 +68,45 @@ export default function EventDetailPage() {
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col pb-24">
-        {/* Event Hero Image */}
+        {/* Event Hero Image Carousel */}
         <div className="relative aspect-[16/10] w-full border-b-4 border-foreground overflow-hidden">
           <img 
-            src={summerFestivalImg} 
-            alt={mockEvent.title}
+            src={mockImages[currentImageIndex]} 
+            alt={`${mockEvent.title} - image ${currentImageIndex + 1}`}
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
-          <div className="absolute bottom-4 left-4">
-            <div className="flex h-10 w-10 items-center justify-center border-3 border-foreground bg-accent" style={{ borderWidth: "3px" }}>
-              <Star className="h-5 w-5 fill-foreground" strokeWidth={2.5} />
-            </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
+          
+          {/* Navigation Arrows */}
+          <button 
+            onClick={handlePrevImage}
+            className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center border-3 border-foreground bg-background shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[5px_5px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            style={{ borderWidth: "3px" }}
+            aria-label="Previous image"
+          >
+            <ChevronLeft className="h-5 w-5" strokeWidth={3} />
+          </button>
+          <button 
+            onClick={handleNextImage}
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center border-3 border-foreground bg-background shadow-[3px_3px_0_0_hsl(var(--foreground))] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[5px_5px_0_0_hsl(var(--foreground))] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            style={{ borderWidth: "3px" }}
+            aria-label="Next image"
+          >
+            <ChevronRight className="h-5 w-5" strokeWidth={3} />
+          </button>
+
+          {/* Image Indicators */}
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+            {mockImages.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className={`h-2 w-2 border-2 border-foreground transition-all ${
+                  index === currentImageIndex ? 'bg-accent w-4' : 'bg-background'
+                }`}
+                aria-label={`Go to image ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
 
