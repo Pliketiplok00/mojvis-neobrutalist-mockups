@@ -52,22 +52,14 @@ export default function EventDetailPage() {
       <MainMenu isOpen={menuOpen} onClose={() => setMenuOpen(false)} />
       
       <main className="flex flex-col pb-24">
-        {/* Event Image - Bold pattern placeholder */}
-        <div 
-          className="relative aspect-[16/10] w-full border-b-4 border-foreground bg-primary"
-          style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 20px,
-              hsl(var(--primary-foreground) / 0.1) 20px,
-              hsl(var(--primary-foreground) / 0.1) 40px
-            )`
-          }}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-display text-7xl font-bold uppercase text-primary-foreground/20">VIS</span>
-          </div>
+        {/* Event Hero Image */}
+        <div className="relative aspect-[16/10] w-full border-b-4 border-foreground overflow-hidden">
+          <img 
+            src={summerFestivalImg} 
+            alt={mockEvent.title}
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
           <div className="absolute bottom-4 left-4">
             <Badge variant="accent" className="text-sm uppercase font-bold">Featured</Badge>
           </div>
