@@ -61,7 +61,9 @@ export default function EventDetailPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
           <div className="absolute bottom-4 left-4">
-            <Badge variant="accent" className="text-sm uppercase font-bold">Featured</Badge>
+            <div className="flex h-10 w-10 items-center justify-center border-3 border-foreground bg-accent" style={{ borderWidth: "3px" }}>
+              <Star className="h-5 w-5 fill-foreground" strokeWidth={2.5} />
+            </div>
           </div>
         </div>
 
