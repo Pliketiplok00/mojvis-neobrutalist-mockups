@@ -5,8 +5,14 @@ import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useParams } from "react-router-dom";
-import { MapPin, Clock, Calendar, User, Users, Bell, Share2, Check, Star } from "lucide-react";
+import { MapPin, Clock, Calendar, User, Users, Bell, Share2, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import summerFestivalImg from "@/assets/event-summer-festival.jpg";
+
+const mockImages = [
+  summerFestivalImg,
+  summerFestivalImg, // placeholder for additional images
+  summerFestivalImg,
+];
 
 const mockEvent = {
   id: 1,
