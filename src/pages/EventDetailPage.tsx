@@ -38,8 +38,18 @@ export default function EventDetailPage() {
   const [hasReminder, setHasReminder] = useState(false);
   const { id } = useParams();
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const handleReminder = () => {
     setHasReminder(!hasReminder);
+  };
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? mockImages.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === mockImages.length - 1 ? 0 : prev + 1));
   };
 
   const handleShare = () => {
