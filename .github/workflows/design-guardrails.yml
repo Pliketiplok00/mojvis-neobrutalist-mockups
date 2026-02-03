@@ -2,20 +2,22 @@ name: Design Guardrails
 
 on:
   push:
-    branches: [main]
+    branches: [main, integration/mobile]
     paths:
       - 'mobile/**'
       - 'scripts/design-guard.mjs'
       - 'package.json'
       - 'docs/DESIGN_CI_RULES.md'
+      - 'docs/GIT_WORKFLOW_MOBILE.md'
       - '.github/workflows/design-guardrails.yml'
   pull_request:
-    branches: [main]
+    branches: [main, integration/mobile]
     paths:
       - 'mobile/**'
       - 'scripts/design-guard.mjs'
       - 'package.json'
       - 'docs/DESIGN_CI_RULES.md'
+      - 'docs/GIT_WORKFLOW_MOBILE.md'
       - '.github/workflows/design-guardrails.yml'
 
 jobs:
@@ -34,3 +36,31 @@ jobs:
 
       - name: Run design guardrails
         run: node scripts/design-guard.mjs all
+
+  mobile-baseline:
+    name: Mobile Baseline Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify mobile baseline
+        run: node mobile/scripts/verify-mobile-baseline.mjs
+
+      - name: TypeScript check (mobile)
+        working-directory: mobile
+        run: npx tsc --noEmit
