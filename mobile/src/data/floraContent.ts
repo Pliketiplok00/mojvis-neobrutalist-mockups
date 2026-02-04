@@ -197,7 +197,11 @@ export const floraContent: FloraContent = {
         hr: "Pravilnik o strogo zaštićenim vrstama (NN 144/13, 73/16)",
         en: "Ordinance on Strictly Protected Species (OG 144/13, 73/16)"
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/orchid1/800/600" },
+        { url: "https://picsum.photos/seed/orchid2/800/600" },
+        { url: "https://picsum.photos/seed/orchid3/800/600" },
+      ]
     },
 
     {
@@ -221,7 +225,10 @@ export const floraContent: FloraContent = {
         hr: "Pravilnik o strogo zaštićenim vrstama",
         en: "Ordinance on Strictly Protected Species"
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/centaurea1/800/600" },
+        { url: "https://picsum.photos/seed/centaurea2/800/600" },
+      ]
     },
 
     {
@@ -241,7 +248,11 @@ export const floraContent: FloraContent = {
         hr: "Zaštita staništa – Natura 2000",
         en: "Habitat protection – Natura 2000"
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/pancratium1/800/600" },
+        { url: "https://picsum.photos/seed/pancratium2/800/600" },
+        { url: "https://picsum.photos/seed/pancratium3/800/600" },
+      ]
     },
 
     {
@@ -264,7 +275,10 @@ export const floraContent: FloraContent = {
         hr: "Pravilnik o sakupljanju zavičajnih divljih vrsta (NN 114/17)",
         en: "Ordinance on the harvesting of native wild species (OG 114/17)"
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/asparagus1/800/600" },
+        { url: "https://picsum.photos/seed/asparagus2/800/600" },
+      ]
     },
 
     {
@@ -279,7 +293,10 @@ export const floraContent: FloraContent = {
         hr: "Suha, kamenita područja i makija.",
         en: "Dry, rocky areas and Mediterranean scrub."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/salviaf1/800/600" },
+        { url: "https://picsum.photos/seed/salviaf2/800/600" },
+      ]
     },
 
     {
@@ -294,7 +311,11 @@ export const floraContent: FloraContent = {
         hr: "Sunčane padine i makija.",
         en: "Sunny slopes and Mediterranean scrub."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/salviao1/800/600" },
+        { url: "https://picsum.photos/seed/salviao2/800/600" },
+        { url: "https://picsum.photos/seed/salviao3/800/600" },
+      ]
     },
 
     {
@@ -309,7 +330,10 @@ export const floraContent: FloraContent = {
         hr: "Suha, otvorena područja.",
         en: "Dry, open areas."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/helichrysum1/800/600" },
+        { url: "https://picsum.photos/seed/helichrysum2/800/600" },
+      ]
     },
 
     {
@@ -324,7 +348,10 @@ export const floraContent: FloraContent = {
         hr: "Kamenjari i sunčane padine.",
         en: "Rocky ground and sunny slopes."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/satureja1/800/600" },
+        { url: "https://picsum.photos/seed/satureja2/800/600" },
+      ]
     },
 
     {
@@ -339,7 +366,10 @@ export const floraContent: FloraContent = {
         hr: "Suhi travnjaci i kamenjari.",
         en: "Dry grasslands and rocky terrain."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/thymus1/800/600" },
+        { url: "https://picsum.photos/seed/thymus2/800/600" },
+      ]
     },
 
     {
@@ -354,7 +384,11 @@ export const floraContent: FloraContent = {
         hr: "Stjenovita obala.",
         en: "Rocky coastline."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/crithmum1/800/600" },
+        { url: "https://picsum.photos/seed/crithmum2/800/600" },
+        { url: "https://picsum.photos/seed/crithmum3/800/600" },
+      ]
     },
 
     {
@@ -369,7 +403,10 @@ export const floraContent: FloraContent = {
         hr: "Obalne stijene.",
         en: "Coastal cliffs."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/limonium1/800/600" },
+        { url: "https://picsum.photos/seed/limonium2/800/600" },
+      ]
     },
 
     {
@@ -384,7 +421,10 @@ export const floraContent: FloraContent = {
         hr: "Suhe kamene padine.",
         en: "Dry rocky slopes."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/euphorbia1/800/600" },
+        { url: "https://picsum.photos/seed/euphorbia2/800/600" },
+      ]
     },
 
     {
@@ -399,7 +439,11 @@ export const floraContent: FloraContent = {
         hr: "Makija i suhi travnjaci.",
         en: "Mediterranean scrub and dry grasslands."
       },
-      images: []
+      images: [
+        { url: "https://picsum.photos/seed/cistus1/800/600" },
+        { url: "https://picsum.photos/seed/cistus2/800/600" },
+        { url: "https://picsum.photos/seed/cistus3/800/600" },
+      ]
     }
   ],
 
