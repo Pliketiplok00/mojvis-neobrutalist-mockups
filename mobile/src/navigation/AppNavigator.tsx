@@ -54,6 +54,7 @@ import { FeedbackDetailScreen } from '../screens/feedback/FeedbackDetailScreen';
 import { ClickFixFormScreen } from '../screens/click-fix/ClickFixFormScreen';
 import { ClickFixConfirmationScreen } from '../screens/click-fix/ClickFixConfirmationScreen';
 import { ClickFixDetailScreen } from '../screens/click-fix/ClickFixDetailScreen';
+import { FloraScreen } from '../screens/flora/FloraScreen';
 import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
 import { SettingsScreen } from '../screens/settings/SettingsScreen';
 // Dev-only screens
@@ -120,6 +121,7 @@ function MainNavigator(): React.JSX.Element {
       <MainStack.Screen name="ClickFixForm" component={ClickFixFormScreen} />
       <MainStack.Screen name="ClickFixConfirmation" component={ClickFixConfirmationScreen} />
       <MainStack.Screen name="ClickFixDetail" component={ClickFixDetailScreen} />
+      <MainStack.Screen name="Flora" component={FloraScreen} />
       <MainStack.Screen name="StaticPage" component={StaticPageScreen} />
       <MainStack.Screen name="Settings" component={SettingsScreen} />
       {/* Dev-only screens */}
