@@ -114,8 +114,8 @@ const MENU_PAGES: PageData[] = [
               id: 'link-flora',
               title_hr: 'Flora',
               title_en: 'Flora',
-              link_type: 'page',
-              link_target: 'flora',
+              link_type: 'screen',
+              link_target: 'Flora',
             },
             {
               id: 'link-fauna',
