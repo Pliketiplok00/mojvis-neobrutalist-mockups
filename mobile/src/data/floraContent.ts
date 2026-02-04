@@ -84,11 +84,9 @@ export const floraContent: FloraContent = {
     subtitle: { hr: "NATURA 2000", en: "NATURA 2000" },
     badge: { hr: "OTOK VIS", en: "VIS ISLAND" },
     images: [
-      // Placeholder images - to be replaced with actual flora images
+      // Temporary placeholder - to be replaced with actual flora images
       {
-        url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Vis_panoramic_view.jpg/1280px-Vis_panoramic_view.jpg",
-        author: "Wikimedia Commons",
-        license: "CC BY-SA 4.0",
+        url: "https://picsum.photos/id/1025/1200/800",
       },
     ]
   },
@@ -99,17 +97,17 @@ export const floraContent: FloraContent = {
       en: "Please don't pick or remove plants"
     },
     text: {
-      hr: "Na Visu rastu biljne vrste koje su zakonom strogo zaštićene, imaju regulirano sakupljanje ili su vrlo osjetljive.\n\nMolimo vas da ih ne berete, ne dirate i ne odnosite iz prirode — čak ni \"samo jednu\".",
-      en: "On Vis, many plants are strictly protected by law, have regulated collection, or are very fragile.\n\nPlease do not pick, touch, or remove them from nature — not even \"just one\"."
+      hr: "Na Visu rastu biljke koje su strogo zaštićene ili izuzetno osjetljive. Najsigurnije pravilo je jednostavno: promatrajte, fotografirajte i ostavite kako jest.",
+      en: "On Vis, some plants are strictly protected or exceptionally sensitive. The safest rule is simple: observe, take photos, and leave them as they are."
     },
     bullets: [
       { hr: "Ne berite biljke", en: "Do not pick plants" },
-      { hr: "Ne dirajte ih", en: "Do not touch them" },
-      { hr: "Ne odnosite ih iz prirode", en: "Do not remove them from nature" }
+      { hr: "Ne čupajte i ne lomite", en: "Do not uproot or break them" },
+      { hr: "Ne odnosite ništa iz prirode", en: "Do not remove anything from nature" }
     ],
     note: {
-      hr: "Ako niste sigurni je li neka biljka zaštićena — pravilo je jednostavno: ostavite je tamo gdje jest.\n\nU nastavku je popis biljaka koje se na Visu posebno često oštećuju ili beru.",
-      en: "If you're not sure whether a plant is protected, the rule is simple: leave it where it is.\n\nBelow is a list of plants that are most often disturbed or picked on Vis."
+      hr: "Ako niste sigurni je li neka biljka zaštićena — ostavite je tamo gdje jest.\n\nU nastavku su primjeri biljaka koje ne treba brati ni dirati. Prve tri su najstrože zaštićene i posebno osjetljive.",
+      en: "If you're not sure whether a plant is protected — leave it where it is.\n\nBelow are examples of plants that should not be picked or disturbed. The first three are the most strictly protected and sensitive."
     }
   },
 
@@ -340,21 +338,6 @@ export const floraContent: FloraContent = {
       habitat: {
         hr: "Suhi travnjaci i kamenjari.",
         en: "Dry grasslands and rocky terrain."
-      },
-      images: []
-    },
-
-    {
-      id: "rosmarinus-officinalis",
-      title: { hr: "Ružmarin (samonikli)", en: "Wild rosemary" },
-      latin: "Rosmarinus officinalis",
-      description: {
-        hr: "Samonikli ružmarin raste u prirodnim staništima makije. Ima igličaste listove i plave cvjetove. Iako je čest, čupanje i rezanje može oštetiti stanište. Biljka se sporo obnavlja. Preporučuje se da se ne bere u prirodi.",
-        en: "Wild rosemary grows naturally in Mediterranean scrub habitats. It has needle-like leaves and blue flowers. Although common, cutting or uprooting damages the habitat. The plant regenerates slowly. It should not be harvested in nature."
-      },
-      habitat: {
-        hr: "Makija i kamenjari.",
-        en: "Mediterranean scrub and rocky ground."
       },
       images: []
     },
