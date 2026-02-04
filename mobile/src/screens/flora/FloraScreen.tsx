@@ -55,7 +55,7 @@ export function FloraScreen(): React.JSX.Element {
         {/* 2. Warning Callout */}
         <View style={styles.sectionContainer}>
           <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
+            <View style={[styles.shadowLayer, styles.shadowLayerWarning]} />
             <View style={[styles.card, styles.warningCard]}>
               <View style={styles.warningHeader}>
                 <View style={styles.warningIconBox}>
@@ -210,9 +210,14 @@ const styles = StyleSheet.create({
   },
 
   // Warning card variant
+  // Note: colors.errorBackground has alpha, so use opaque white base + tinted overlay
   warningCard: {
-    backgroundColor: colors.errorBackground,
+    backgroundColor: colors.background,
     borderColor: colors.urgent,
+  },
+  // Shadow for warning card uses urgent color with reduced opacity
+  shadowLayerWarning: {
+    backgroundColor: 'rgba(215, 72, 47, 0.4)', // urgent color at 40% opacity
   },
   warningHeader: {
     flexDirection: 'row',

@@ -147,13 +147,17 @@ export function FloraSpeciesCard({
       >
         {/* Header Row (always visible) */}
         <View style={styles.header}>
-          {/* Thumbnail */}
-          {thumbnailImage && (
+          {/* Thumbnail (with placeholder fallback) */}
+          {thumbnailImage ? (
             <Image
               source={{ uri: thumbnailImage }}
               style={styles.thumbnail}
               resizeMode="cover"
             />
+          ) : (
+            <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
+              <Icon name="leaf" size="md" colorToken="textMuted" />
+            </View>
           )}
 
           {/* Title Area */}
@@ -184,60 +188,69 @@ export function FloraSpeciesCard({
         {/* Expanded Content */}
         {expanded && (
           <View style={styles.expandedContent}>
-            {/* Image Gallery */}
-            {hasImages && (
-              <View style={styles.gallery}>
-                <FlatList
-                  ref={galleryRef}
-                  data={species.images}
-                  renderItem={renderGalleryImage}
-                  keyExtractor={(_, index) => `gallery-${species.id}-${index}`}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  onScroll={handleGalleryScroll}
-                  scrollEventThrottle={16}
-                  bounces={false}
-                />
+            {/* Image Gallery (or placeholder if no images) */}
+            <View style={styles.gallery}>
+              {hasImages ? (
+                <>
+                  <FlatList
+                    ref={galleryRef}
+                    data={species.images}
+                    renderItem={renderGalleryImage}
+                    keyExtractor={(_, index) => `gallery-${species.id}-${index}`}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={handleGalleryScroll}
+                    scrollEventThrottle={16}
+                    bounces={false}
+                  />
 
-                {/* Gallery Chevrons */}
-                {hasMultipleImages && (
-                  <>
-                    <TouchableOpacity
-                      style={[styles.galleryChevron, styles.galleryChevronLeft]}
-                      onPress={goToPreviousImage}
-                      disabled={galleryIndex === 0}
-                    >
-                      <Icon name="chevron-left" size="sm" color={colors.primaryText} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.galleryChevron, styles.galleryChevronRight]}
-                      onPress={goToNextImage}
-                      disabled={galleryIndex === species.images.length - 1}
-                    >
-                      <Icon name="chevron-right" size="sm" color={colors.primaryText} />
-                    </TouchableOpacity>
-                  </>
-                )}
+                  {/* Gallery Chevrons */}
+                  {hasMultipleImages && (
+                    <>
+                      <TouchableOpacity
+                        style={[styles.galleryChevron, styles.galleryChevronLeft]}
+                        onPress={goToPreviousImage}
+                        disabled={galleryIndex === 0}
+                      >
+                        <Icon name="chevron-left" size="sm" color={colors.primaryText} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.galleryChevron, styles.galleryChevronRight]}
+                        onPress={goToNextImage}
+                        disabled={galleryIndex === species.images.length - 1}
+                      >
+                        <Icon name="chevron-right" size="sm" color={colors.primaryText} />
+                      </TouchableOpacity>
+                    </>
+                  )}
 
-                {/* Gallery Dots */}
-                {hasMultipleImages && (
-                  <View style={styles.galleryDots}>
-                    {species.images.map((_, index) => (
-                      <View
-                        key={`dot-${index}`}
-                        style={[
-                          styles.galleryDot,
-                          index === galleryIndex
-                            ? styles.galleryDotActive
-                            : styles.galleryDotInactive,
-                        ]}
-                      />
-                    ))}
-                  </View>
-                )}
-              </View>
-            )}
+                  {/* Gallery Dots */}
+                  {hasMultipleImages && (
+                    <View style={styles.galleryDots}>
+                      {species.images.map((_, index) => (
+                        <View
+                          key={`dot-${index}`}
+                          style={[
+                            styles.galleryDot,
+                            index === galleryIndex
+                              ? styles.galleryDotActive
+                              : styles.galleryDotInactive,
+                          ]}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
+              ) : (
+                <View style={styles.galleryPlaceholder}>
+                  <Icon name="camera" size="xl" colorToken="textMuted" />
+                  <Meta style={styles.galleryPlaceholderText}>
+                    {language === 'hr' ? 'Slika nije dostupna' : 'Image not available'}
+                  </Meta>
+                </View>
+              )}
+            </View>
 
             {/* Description */}
             <View style={styles.section}>
@@ -307,8 +320,9 @@ const styles = StyleSheet.create({
   shadowLayerDefault: {
     backgroundColor: colors.border,
   },
+  // Critical shadow uses urgent color with reduced opacity for cleaner look
   shadowLayerCritical: {
-    backgroundColor: colors.urgent,
+    backgroundColor: 'rgba(215, 72, 47, 0.5)', // urgent color at 50% opacity
     top: 6,
     left: 6,
     right: -6,
@@ -324,8 +338,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderColor: colors.border,
   },
+  // Note: colors.errorBackground has alpha, so use opaque white for clean look
   cardCritical: {
-    backgroundColor: colors.errorBackground,
+    backgroundColor: colors.background,
     borderColor: colors.urgent,
   },
   cardPressed: {
@@ -343,6 +358,11 @@ const styles = StyleSheet.create({
     height: 72,
     borderWidth: borders.widthThin,
     borderColor: colors.border,
+  },
+  thumbnailPlaceholder: {
+    backgroundColor: colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleArea: {
     flex: 1,
@@ -436,6 +456,17 @@ const styles = StyleSheet.create({
   },
   galleryDotInactive: {
     backgroundColor: colors.borderMuted,
+  },
+  galleryPlaceholder: {
+    width: '100%',
+    height: GALLERY_HEIGHT,
+    backgroundColor: colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  galleryPlaceholderText: {
+    color: colors.textMuted,
   },
 
   // Sections
