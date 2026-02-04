@@ -6,13 +6,12 @@
  *
  * Structure:
  * 1. Hero (no shadow)
- * 2. Warning callout (with shadow)
- * 3. Why special (with shadow)
- * 4. Highlights (with shadow)
- * 5. Sensitive areas (with shadow)
- * 6. Species section header (with shadow)
- * 7. Species cards (with shadows)
- * 8. Closing note (with shadow)
+ * 2. Why special (with shadow)
+ * 3. Highlights (with shadow)
+ * 4. Warning / guide card (with shadow) - introduces species list
+ * 5. Species cards (with shadows)
+ * 6. Closing note (with shadow)
+ * 7. Sensitive areas (at bottom, with shadow)
  *
  * Skin-pure: Uses skin tokens only (no hardcoded colors).
  */
@@ -52,7 +51,39 @@ export function FloraScreen(): React.JSX.Element {
           subtitle={getText(floraContent.hero.subtitle)}
         />
 
-        {/* 2. Warning Callout */}
+        {/* 2. Why Special */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.cardWrapper}>
+            <View style={styles.shadowLayer} />
+            <View style={styles.card}>
+              <H2 style={styles.cardTitle}>{getText(floraContent.whySpecial.title)}</H2>
+              <Body style={styles.cardText}>{getText(floraContent.whySpecial.text)}</Body>
+            </View>
+          </View>
+        </View>
+
+        {/* 3. Highlights */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.cardWrapper}>
+            <View style={styles.shadowLayer} />
+            <View style={styles.card}>
+              <H2 style={styles.cardTitle}>{getText(floraContent.highlights.title)}</H2>
+              <View style={styles.highlightList}>
+                {floraContent.highlights.items.map((item, index) => (
+                  <View key={`highlight-${index}`} style={styles.highlightItem}>
+                    <View style={styles.highlightBullet} />
+                    <View style={styles.highlightContent}>
+                      <Label style={styles.highlightHeadline}>{getText(item.headline)}</Label>
+                      <Body style={styles.highlightDescription}>{getText(item.description)}</Body>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* 4. Warning / Guide Card (introduces species list) */}
         <View style={styles.sectionContainer}>
           <View style={styles.cardWrapper}>
             <View style={[styles.shadowLayer, styles.shadowLayerWarning]} />
@@ -82,63 +113,7 @@ export function FloraScreen(): React.JSX.Element {
           </View>
         </View>
 
-        {/* 3. Why Special */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.whySpecial.title)}</H2>
-              <Body style={styles.cardText}>{getText(floraContent.whySpecial.text)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 4. Highlights */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.highlights.title)}</H2>
-              <View style={styles.highlightList}>
-                {floraContent.highlights.items.map((item, index) => (
-                  <View key={`highlight-${index}`} style={styles.highlightItem}>
-                    <View style={styles.highlightBullet} />
-                    <Body style={styles.highlightText}>{getText(item)}</Body>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* 5. Sensitive Areas */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={[styles.card, styles.sensitiveCard]}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.sensitiveAreas.title)}</H2>
-              <Body style={styles.cardText}>{getText(floraContent.sensitiveAreas.text)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 6. Species Section Header */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <View style={styles.speciesHeaderRow}>
-                <Icon name="leaf" size="lg" colorToken="secondary" />
-                <H2 style={styles.speciesSectionTitle}>
-                  {getText(floraContent.speciesSection.title)}
-                </H2>
-              </View>
-              <Body style={styles.cardText}>{getText(floraContent.speciesSection.intro)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 7. Species Cards */}
+        {/* 5. Species Cards */}
         <View style={styles.speciesListContainer}>
           {floraContent.species.map((species) => (
             <FloraSpeciesCard
@@ -150,12 +125,23 @@ export function FloraScreen(): React.JSX.Element {
           ))}
         </View>
 
-        {/* 8. Closing Note */}
+        {/* 6. Closing Note */}
         <View style={styles.sectionContainer}>
           <View style={styles.cardWrapper}>
             <View style={styles.shadowLayer} />
             <View style={styles.card}>
               <Body style={styles.closingNote}>{getText(floraContent.closingNote)}</Body>
+            </View>
+          </View>
+        </View>
+
+        {/* 7. Sensitive Areas (at bottom) */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.cardWrapper}>
+            <View style={styles.shadowLayer} />
+            <View style={[styles.card, styles.sensitiveCard]}>
+              <H2 style={styles.cardTitle}>{getText(floraContent.sensitiveAreas.title)}</H2>
+              <Body style={styles.cardText}>{getText(floraContent.sensitiveAreas.text)}</Body>
             </View>
           </View>
         </View>
@@ -278,30 +264,25 @@ const styles = StyleSheet.create({
   highlightItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   highlightBullet: {
     width: 8,
     height: 8,
     backgroundColor: colors.secondary,
-    marginTop: 6,
+    marginTop: 4,
     marginRight: spacing.md,
   },
-  highlightText: {
+  highlightContent: {
     flex: 1,
-    color: colors.textSecondary,
   },
-
-  // Species section header
-  speciesHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    marginBottom: spacing.md,
-  },
-  speciesSectionTitle: {
-    flex: 1,
+  highlightHeadline: {
     color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  highlightDescription: {
+    color: colors.textSecondary,
+    lineHeight: 20,
   },
 
   // Species list

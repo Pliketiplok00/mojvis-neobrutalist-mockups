@@ -56,7 +56,10 @@ export interface FloraContent {
   };
   highlights: {
     title: BilingualText;
-    items: BilingualText[];
+    items: Array<{
+      headline: BilingualText;
+      description: BilingualText;
+    }>;
   };
   sensitiveAreas: {
     title: BilingualText;
@@ -92,12 +95,12 @@ export const floraContent: FloraContent = {
 
   doNotTouch: {
     title: {
-      hr: "Što molimo da ne radite",
-      en: "Please do not do the following"
+      hr: "Ne berite i ne odnosite iz prirode",
+      en: "Please don't pick or remove plants"
     },
     text: {
-      hr: "Na Visu rastu biljne vrste koje su zakonom strogo zaštićene ili izuzetno osjetljive. Molimo vas da ih ne berete, ne dirate i ne odnosite iz prirode.",
-      en: "On Vis, plant species grow that are strictly protected by law or exceptionally sensitive. Please do not pick, touch, or remove them from nature."
+      hr: "Na Visu rastu biljne vrste koje su zakonom strogo zaštićene, imaju regulirano sakupljanje ili su vrlo osjetljive.\n\nMolimo vas da ih ne berete, ne dirate i ne odnosite iz prirode — čak ni \"samo jednu\".",
+      en: "On Vis, many plants are strictly protected by law, have regulated collection, or are very fragile.\n\nPlease do not pick, touch, or remove them from nature — not even \"just one\"."
     },
     bullets: [
       { hr: "Ne berite biljke", en: "Do not pick plants" },
@@ -105,8 +108,8 @@ export const floraContent: FloraContent = {
       { hr: "Ne odnosite ih iz prirode", en: "Do not remove them from nature" }
     ],
     note: {
-      hr: "Ako niste sigurni je li neka biljka zaštićena – pravilo je jednostavno: ostavite je tamo gdje jest.",
-      en: "If you are unsure whether a plant is protected, the rule is simple: leave it where it is."
+      hr: "Ako niste sigurni je li neka biljka zaštićena — pravilo je jednostavno: ostavite je tamo gdje jest.\n\nU nastavku je popis biljaka koje se na Visu posebno često oštećuju ili beru.",
+      en: "If you're not sure whether a plant is protected, the rule is simple: leave it where it is.\n\nBelow is a list of plants that are most often disturbed or picked on Vis."
     }
   },
 
@@ -125,16 +128,25 @@ export const floraContent: FloraContent = {
     title: { hr: "Zanimljivosti", en: "Highlights" },
     items: [
       {
-        hr: "Na Visu je zabilježeno više od 870 biljnih vrsta.",
-        en: "More than 870 plant species have been recorded on Vis."
+        headline: { hr: "Više od 870 vrsta", en: "Over 870 species" },
+        description: {
+          hr: "Na Visu je zabilježeno više od 870 biljnih vrsta — iznimna raznolikost za tako mali otok.",
+          en: "More than 870 plant species have been recorded on Vis — exceptional diversity for such a small island."
+        }
       },
       {
-        hr: "Biševo je jedno od botanički najbogatijih otočnih područja u Hrvatskoj.",
-        en: "Biševo is one of the most botanically rich island areas in Croatia."
+        headline: { hr: "Biševo — botanički dragulj", en: "Biševo — a botanical gem" },
+        description: {
+          hr: "Biševo je jedno od botanički najbogatijih otočnih područja u Hrvatskoj.",
+          en: "Biševo is one of the most botanically rich island areas in Croatia."
+        }
       },
       {
-        hr: "Brojne biljne vrste dio su europske mreže Natura 2000.",
-        en: "Many plant species are part of the European Natura 2000 ecological network."
+        headline: { hr: "Natura 2000", en: "Natura 2000" },
+        description: {
+          hr: "Brojne biljne vrste dio su europske mreže Natura 2000 za očuvanje prirode.",
+          en: "Many plant species are part of the European Natura 2000 ecological network."
+        }
       }
     ]
   },
