@@ -84,9 +84,11 @@ export const floraContent: FloraContent = {
     subtitle: { hr: "NATURA 2000", en: "NATURA 2000" },
     badge: { hr: "OTOK VIS", en: "VIS ISLAND" },
     images: [
-      // Temporary placeholder - to be replaced with actual flora images
       {
-        url: "https://picsum.photos/id/1025/1200/800",
+        url: "https://upload.wikimedia.org/wikipedia/commons/c/c9/J32_479_Vis%2C_S%C3%BCdk%C3%BCste.jpg",
+        author: "Falk2",
+        license: "CC BY-SA 4.0",
+        sourcePage: "https://commons.wikimedia.org/wiki/File:J32_479_Vis,_S%C3%BCdk%C3%BCste.jpg",
       },
     ]
   },
@@ -198,9 +200,36 @@ export const floraContent: FloraContent = {
         en: "Ordinance on Strictly Protected Species (OG 144/13, 73/16)"
       },
       images: [
-        { url: "https://picsum.photos/seed/orchid1/800/600" },
-        { url: "https://picsum.photos/seed/orchid2/800/600" },
-        { url: "https://picsum.photos/seed/orchid3/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/4/46/Serapias_lingua_2.jpg",
+          author: "Thomas Krucker",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Serapias_lingua_2.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/2/27/Anacamptis_pyramidalis_2.jpg",
+          author: "Franz Xaver",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Anacamptis_pyramidalis_2.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Ophrys_bombyliflora.jpg",
+          author: "luis Nunes Alberto",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Ophrys_bombyliflora.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/5/58/Ophrys_sphegodes_Leopoldsberg.jpg",
+          author: "Allefant",
+          license: "CC0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Ophrys_sphegodes_Leopoldsberg.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Orchis_italica_kz06.jpg",
+          author: "Krzysztof Ziarnek, Kenraiz",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Orchis_italica_kz06.jpg",
+        },
       ]
     },
 
@@ -226,8 +255,24 @@ export const floraContent: FloraContent = {
         en: "Ordinance on Strictly Protected Species"
       },
       images: [
-        { url: "https://picsum.photos/seed/centaurea1/800/600" },
-        { url: "https://picsum.photos/seed/centaurea2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/1/10/Dubrovacka_zecina.JPG",
+          author: "Croq",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Dubrovacka_zecina.JPG",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Centaurea_ragusina_Risan_Bay_of_Kotor_yard_of_the_St._Michael.JPG",
+          author: "Orjen",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Centaurea_ragusina_Risan_Bay_of_Kotor_yard_of_the_St._Michael.JPG",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/a/ad/Centaurea_ragusina_3_%28Corse%29.JPG",
+          author: "Ghislain118",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Centaurea_ragusina_3_(Corse).JPG",
+        },
       ]
     },
 
@@ -249,9 +294,30 @@ export const floraContent: FloraContent = {
         en: "Habitat protection – Natura 2000"
       },
       images: [
-        { url: "https://picsum.photos/seed/pancratium1/800/600" },
-        { url: "https://picsum.photos/seed/pancratium2/800/600" },
-        { url: "https://picsum.photos/seed/pancratium3/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Pancratium_maritimum_Corsica_2008.jpg",
+          author: "Calimo",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Pancratium_maritimum_Corsica_2008.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Pancratium_maritimum_Greece.jpg",
+          author: "Gorillo.Chimpo",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Pancratium_maritimum_Greece.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/4/42/Lliri_de_mar_a_les_dunes_de_la_platja_de_les_Deveses%2C_D%C3%A9nia.jpg",
+          author: "Joanbanjo",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Lliri_de_mar_a_les_dunes_de_la_platja_de_les_Deveses,_D%C3%A9nia.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Azucena_de_mar_%28Pancratium_maritimum%29.jpg",
+          author: "Juan Emilio Prades Bel",
+          license: "CC BY 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Azucena_de_mar_(Pancratium_maritimum).jpg",
+        },
       ]
     },
 
@@ -276,8 +342,24 @@ export const floraContent: FloraContent = {
         en: "Ordinance on the harvesting of native wild species (OG 114/17)"
       },
       images: [
-        { url: "https://picsum.photos/seed/asparagus1/800/600" },
-        { url: "https://picsum.photos/seed/asparagus2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Asparagus_acutifolius_Brote_2010-5-08_DehesaBoyaldePuertollano.jpg",
+          author: "Javier martin",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Asparagus_acutifolius_Brote_2010-5-08_DehesaBoyaldePuertollano.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/9/95/Asparagus_acutifolius_TalloyHojas_2010-5-08_DehesaBoyaldePuertollano.jpg",
+          author: "Javier martin",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Asparagus_acutifolius_TalloyHojas_2010-5-08_DehesaBoyaldePuertollano.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/b/bf/Asparagus_acutifolius_kz03.jpg",
+          author: "Krzysztof Ziarnek, Kenraiz",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Asparagus_acutifolius_kz03.jpg",
+        },
       ]
     },
 
@@ -294,8 +376,24 @@ export const floraContent: FloraContent = {
         en: "Dry, rocky areas and Mediterranean scrub."
       },
       images: [
-        { url: "https://picsum.photos/seed/salviaf1/800/600" },
-        { url: "https://picsum.photos/seed/salviaf2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Salvia_fruticosa_RF.jpg",
+          author: "Robert Flogaus-Faust",
+          license: "CC BY 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Salvia_fruticosa_RF.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/1/13/Salvia_fruticosa_2_RF.jpg",
+          author: "Robert Flogaus-Faust",
+          license: "CC BY 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Salvia_fruticosa_2_RF.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/7/71/Salvia_fruticosa_1.jpg",
+          author: "Aroche",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Salvia_fruticosa_1.jpg",
+        },
       ]
     },
 
@@ -312,9 +410,18 @@ export const floraContent: FloraContent = {
         en: "Sunny slopes and Mediterranean scrub."
       },
       images: [
-        { url: "https://picsum.photos/seed/salviao1/800/600" },
-        { url: "https://picsum.photos/seed/salviao2/800/600" },
-        { url: "https://picsum.photos/seed/salviao3/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/b/b6/Kadulja_Krizisce_240508_2.jpg",
+          author: "Roberta F.",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Kadulja_Krizisce_240508_2.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Salbei_auf_der_Causse_Noir.jpg",
+          author: "GerritR",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Salbei_auf_der_Causse_Noir.jpg",
+        },
       ]
     },
 
@@ -331,8 +438,24 @@ export const floraContent: FloraContent = {
         en: "Dry, open areas."
       },
       images: [
-        { url: "https://picsum.photos/seed/helichrysum1/800/600" },
-        { url: "https://picsum.photos/seed/helichrysum2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Helichrysum_italicum_%28corsica%29.jpg",
+          author: "Bj.schoenmakers",
+          license: "CC0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Helichrysum_italicum_(corsica).jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Helichrysum_italicum_%28immortelle%29.JPG",
+          author: "Zubro",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Helichrysum_italicum_(immortelle).JPG",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/f/f4/Flora_della_Sardegna_317_%281%29.JPG",
+          author: "Gianni Careddu",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Flora_della_Sardegna_317_(1).JPG",
+        },
       ]
     },
 
@@ -349,8 +472,18 @@ export const floraContent: FloraContent = {
         en: "Rocky ground and sunny slopes."
       },
       images: [
-        { url: "https://picsum.photos/seed/satureja1/800/600" },
-        { url: "https://picsum.photos/seed/satureja2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/3/33/Satureja_montana_in_bloom.jpg",
+          author: "Oblutak",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Satureja_montana_in_bloom.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/b/bc/SATUREJA_MONTANA_-_CADINELL_-_IB-415_%28Sajolida%29.JPG",
+          author: "Isidre blanc",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:SATUREJA_MONTANA_-_CADINELL_-_IB-415_(Sajolida).JPG",
+        },
       ]
     },
 
@@ -367,8 +500,24 @@ export const floraContent: FloraContent = {
         en: "Dry grasslands and rocky terrain."
       },
       images: [
-        { url: "https://picsum.photos/seed/thymus1/800/600" },
-        { url: "https://picsum.photos/seed/thymus2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/4/43/Thymus_longicaulis_subsp._longicaulis_sl1.jpg",
+          author: "Stefan.lefnaer",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Thymus_longicaulis_subsp._longicaulis_sl1.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Thymus_longicaulis_subsp._longicaulis_sl4.jpg",
+          author: "Stefan.lefnaer",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Thymus_longicaulis_subsp._longicaulis_sl4.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/9/93/20200611Thymus_serpyllum3.jpg",
+          author: "AnRo0002",
+          license: "CC0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:20200611Thymus_serpyllum3.jpg",
+        },
       ]
     },
 
@@ -385,9 +534,24 @@ export const floraContent: FloraContent = {
         en: "Rocky coastline."
       },
       images: [
-        { url: "https://picsum.photos/seed/crithmum1/800/600" },
-        { url: "https://picsum.photos/seed/crithmum2/800/600" },
-        { url: "https://picsum.photos/seed/crithmum3/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/8/87/Crithmum_maritimum.jpg",
+          author: "Júlio Reis",
+          license: "CC BY-SA 2.5",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Crithmum_maritimum.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Crithmum_maritimum_%28Habitus%29.jpg",
+          author: "Ixitixel",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Crithmum_maritimum_(Habitus).jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/7/73/Criste_marine_-_Plage_de_Porto_2022.jpg",
+          author: "René Hourdry",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Criste_marine_-_Plage_de_Porto_2022.jpg",
+        },
       ]
     },
 
@@ -404,8 +568,18 @@ export const floraContent: FloraContent = {
         en: "Coastal cliffs."
       },
       images: [
-        { url: "https://picsum.photos/seed/limonium1/800/600" },
-        { url: "https://picsum.photos/seed/limonium2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/8/89/Caryophyllales_-_Limonium_vulgare_-_1.jpg",
+          author: "Emőke Dénes",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Caryophyllales_-_Limonium_vulgare_-_1.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/8/8b/31-08-2010_Limonium-vulgare-habitus.JPG",
+          author: "Sten Porse",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:31-08-2010_Limonium-vulgare-habitus.JPG",
+        },
       ]
     },
 
@@ -422,8 +596,24 @@ export const floraContent: FloraContent = {
         en: "Dry rocky slopes."
       },
       images: [
-        { url: "https://picsum.photos/seed/euphorbia1/800/600" },
-        { url: "https://picsum.photos/seed/euphorbia2/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/a/a3/Euphorbia_dendroides_RF.jpg",
+          author: "Robert Flogaus-Faust",
+          license: "CC BY 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Euphorbia_dendroides_RF.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/b/b7/Euphorbia_dendroides_Zingaro_0047.JPG",
+          author: "tato grasso",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Euphorbia_dendroides_Zingaro_0047.JPG",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Euphorbia_dendroides_Zingaro_0054.JPG",
+          author: "tato grasso",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Euphorbia_dendroides_Zingaro_0054.JPG",
+        },
       ]
     },
 
@@ -440,9 +630,30 @@ export const floraContent: FloraContent = {
         en: "Mediterranean scrub and dry grasslands."
       },
       images: [
-        { url: "https://picsum.photos/seed/cistus1/800/600" },
-        { url: "https://picsum.photos/seed/cistus2/800/600" },
-        { url: "https://picsum.photos/seed/cistus3/800/600" },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cistus_salviifolius_Blossom_SierraMadrona.jpg",
+          author: "Javier martin",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Cistus_salviifolius_Blossom_SierraMadrona.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Cistus_salviifolius_Habitus_SierraMadrona.jpg",
+          author: "Javier martin",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Cistus_salviifolius_Habitus_SierraMadrona.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Cistus_creticus_bush_in_Mount_Carmel.jpg",
+          author: "Aaadir",
+          license: "CC0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Cistus_creticus_bush_in_Mount_Carmel.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/0/04/Cistus_creticus_-_Pink_rock-rose_01.jpg",
+          author: "Zeynel Cebeci",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Cistus_creticus_-_Pink_rock-rose_01.jpg",
+        },
       ]
     }
   ],

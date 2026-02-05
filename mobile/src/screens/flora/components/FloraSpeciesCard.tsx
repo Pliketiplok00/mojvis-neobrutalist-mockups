@@ -44,6 +44,23 @@ const CARD_HORIZONTAL_MARGIN = skin.spacing.lg * 2;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_HORIZONTAL_MARGIN;
 const GALLERY_HEIGHT = 200;
 
+/**
+ * Convert a Wikimedia Commons original-file URL to a width-limited thumbnail.
+ *
+ * Original : …/commons/a/ab/File.jpg
+ * Thumbnail: …/commons/thumb/a/ab/File.jpg/WIDTHpx-File.jpg
+ *
+ * Keeps non-Wikimedia URLs untouched.
+ */
+const WIKI_PREFIX = 'https://upload.wikimedia.org/wikipedia/commons/';
+
+function wikiThumb(url: string, width = 800): string {
+  if (!url.startsWith(WIKI_PREFIX)) return url;
+  const rest = url.slice(WIKI_PREFIX.length); // e.g. "a/ab/File.jpg"
+  const filename = rest.split('/').pop() ?? '';
+  return `${WIKI_PREFIX}thumb/${rest}/${width}px-${filename}`;
+}
+
 interface FloraSpeciesCardProps {
   species: FloraSpecies;
   /** Current language for bilingual content */
@@ -105,23 +122,26 @@ export function FloraSpeciesCard({
     }
   };
 
-  const renderGalleryImage = ({ item }: ListRenderItemInfo<FloraImage>) => (
-    <View style={styles.galleryImageContainer}>
-      <Image
-        source={{ uri: item.url }}
-        style={styles.galleryImage}
-        resizeMode="cover"
-      />
-      {item.author && (
-        <Meta style={styles.imageAttribution}>
-          {item.author} {item.license ? `(${item.license})` : ''}
-        </Meta>
-      )}
-    </View>
-  );
+  const renderGalleryImage = ({ item }: ListRenderItemInfo<FloraImage>) => {
+    const uri = wikiThumb(item.url);
+    return (
+      <View style={styles.galleryImageContainer}>
+        <Image
+          source={{ uri }}
+          style={styles.galleryImage}
+          resizeMode="cover"
+        />
+        {item.author && (
+          <Meta style={styles.imageAttribution}>
+            {item.author} {item.license ? `(${item.license})` : ''}
+          </Meta>
+        )}
+      </View>
+    );
+  };
 
-  // Get first image for thumbnail
-  const thumbnailImage = hasImages ? species.images[0].url : null;
+  // Get first image for thumbnail (use 200px thumb for collapsed card)
+  const thumbnailImage = hasImages ? wikiThumb(species.images[0].url, 200) : null;
 
   return (
     <View style={styles.wrapper}>

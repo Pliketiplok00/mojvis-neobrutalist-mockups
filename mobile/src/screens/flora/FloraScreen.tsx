@@ -30,14 +30,23 @@ import { FloraSpeciesCard } from './components/FloraSpeciesCard';
 
 const { colors, spacing, borders } = skin;
 
+/** Wikimedia Commons original → width-limited thumbnail */
+const WIKI_PREFIX = 'https://upload.wikimedia.org/wikipedia/commons/';
+function wikiThumb(url: string, width = 1200): string {
+  if (!url.startsWith(WIKI_PREFIX)) return url;
+  const rest = url.slice(WIKI_PREFIX.length);
+  const filename = rest.split('/').pop() ?? '';
+  return `${WIKI_PREFIX}thumb/${rest}/${width}px-${filename}`;
+}
+
 export function FloraScreen(): React.JSX.Element {
   const { language } = useTranslations();
 
   // Helper to get text for current language
   const getText = (text: BilingualText) => text[language];
 
-  // Prepare hero images
-  const heroImages = floraContent.hero.images.map((img) => img.url);
+  // Prepare hero images (use 1200px thumbs — full-width hero)
+  const heroImages = floraContent.hero.images.map((img) => wikiThumb(img.url));
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
