@@ -155,7 +155,7 @@ export default function InfoPage() {
         />
 
         <LinkListBlock
-          title="App Sections"
+          title="Dijelovi aplikacije"
           links={pageData.usefulLinks}
         />
 
