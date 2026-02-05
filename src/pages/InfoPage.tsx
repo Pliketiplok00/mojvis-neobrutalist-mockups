@@ -160,7 +160,7 @@ export default function InfoPage() {
         />
 
         <LinkListBlock
-          title="External Links"
+          title="Vanjski linkovi"
           links={pageData.externalLinks}
         />
 
