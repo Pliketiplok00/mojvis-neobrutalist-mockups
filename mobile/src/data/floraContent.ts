@@ -64,6 +64,7 @@ export interface FloraContent {
   sensitiveAreas: {
     title: BilingualText;
     text: BilingualText;
+    image: FloraImage;
   };
   speciesSection: {
     title: BilingualText;
@@ -159,7 +160,13 @@ export const floraContent: FloraContent = {
     text: {
       hr: "Otoci Brusnik, Sveti Andrija i Biševo izuzetno su osjetljiva prirodna područja s velikim brojem endemskih i zaštićenih biljnih vrsta.\n\nMolimo sve posjetitelje da ne beru, ne odnose i ne diraju ništa iz prirode – čak ni biljke, kamenje ili pijesak.",
       en: "The islands of Brusnik, Sveti Andrija, and Biševo are extremely sensitive natural areas with many endemic and protected plant species.\n\nVisitors are kindly asked not to pick, remove, or disturb anything from nature – including plants, stones, or sand."
-    }
+    },
+    image: {
+      url: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Bisevo-Andrija-Brusnik-Jabuka.jpg',
+      author: 'Sl-Ziga',
+      license: 'Public domain',
+      sourcePage: 'https://commons.wikimedia.org/wiki/File:Bisevo-Andrija-Brusnik-Jabuka.jpg',
+    },
   },
 
   speciesSection: {
@@ -659,8 +666,8 @@ export const floraContent: FloraContent = {
   ],
 
   closingNote: {
-    hr: "Ove biljke nisu rijetke zato što ih je malo, nego zato što rastu sporo i lako nestaju ako ih se dira.\n\nHvala što pomažete očuvati floru otoka Visa.",
-    en: "These plants are not rare because there are few of them, but because they grow slowly and disappear easily if disturbed.\n\nThank you for helping preserve the flora of Vis Island."
+    hr: "Hvala što pomažete očuvati floru viškog arhipelaga.",
+    en: "Thank you for helping preserve the flora of the Vis archipelago."
   },
 
   criticalTag: {

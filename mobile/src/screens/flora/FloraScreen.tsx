@@ -10,14 +10,14 @@
  * 3. Highlights (with shadow)
  * 4. Warning / guide card (with shadow) - introduces species list
  * 5. Species cards (with shadows)
- * 6. Closing note (with shadow)
- * 7. Sensitive areas (at bottom, with shadow)
+ * 6. Sensitive areas (with shadow, image + white text)
+ * 7. Closing note (no shadow, transport-note style)
  *
  * Skin-pure: Uses skin tokens only (no hardcoded colors).
  */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { HeroMediaHeader } from '../../ui/HeroMediaHeader';
@@ -27,17 +27,14 @@ import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
 import { floraContent, type BilingualText } from '../../data/floraContent';
 import { FloraSpeciesCard } from './components/FloraSpeciesCard';
+import { wikiThumb } from '../../utils/wikiThumb';
 
 const { colors, spacing, borders } = skin;
 
-/** Wikimedia Commons original → width-limited thumbnail */
-const WIKI_PREFIX = 'https://upload.wikimedia.org/wikipedia/commons/';
-function wikiThumb(url: string, width = 1200): string {
-  if (!url.startsWith(WIKI_PREFIX)) return url;
-  const rest = url.slice(WIKI_PREFIX.length);
-  const filename = rest.split('/').pop() ?? '';
-  return `${WIKI_PREFIX}thumb/${rest}/${width}px-${filename}`;
-}
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CARD_WIDTH = SCREEN_WIDTH - spacing.lg * 2;
+const SENSITIVE_IMAGE_HEIGHT = 160;
+const SENSITIVE_IMAGE_WIDTH = CARD_WIDTH - borders.widthCard * 2;
 
 export function FloraScreen(): React.JSX.Element {
   const { language } = useTranslations();
@@ -46,7 +43,7 @@ export function FloraScreen(): React.JSX.Element {
   const getText = (text: BilingualText) => text[language];
 
   // Prepare hero images (use 1200px thumbs — full-width hero)
-  const heroImages = floraContent.hero.images.map((img) => wikiThumb(img.url));
+  const heroImages = floraContent.hero.images.map((img) => wikiThumb(img.url, 1200));
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -134,24 +131,36 @@ export function FloraScreen(): React.JSX.Element {
           ))}
         </View>
 
-        {/* 6. Closing Note */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <Body style={styles.closingNote}>{getText(floraContent.closingNote)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 7. Sensitive Areas (at bottom) */}
+        {/* 6. Sensitive Areas */}
         <View style={styles.sectionContainer}>
           <View style={styles.cardWrapper}>
             <View style={styles.shadowLayer} />
             <View style={[styles.card, styles.sensitiveCard]}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.sensitiveAreas.title)}</H2>
-              <Body style={styles.cardText}>{getText(floraContent.sensitiveAreas.text)}</Body>
+              <Image
+                source={{ uri: wikiThumb(floraContent.sensitiveAreas.image.url, 800) }}
+                style={{ width: SENSITIVE_IMAGE_WIDTH, height: SENSITIVE_IMAGE_HEIGHT }}
+                resizeMode="cover"
+              />
+              {floraContent.sensitiveAreas.image.author && (
+                <Meta style={styles.sensitiveImageAttribution}>
+                  {floraContent.sensitiveAreas.image.author}{' '}
+                  {floraContent.sensitiveAreas.image.license
+                    ? `(${floraContent.sensitiveAreas.image.license})`
+                    : ''}
+                </Meta>
+              )}
+              <View style={styles.sensitiveTextArea}>
+                <H2 style={styles.sensitiveTitle}>{getText(floraContent.sensitiveAreas.title)}</H2>
+                <Body style={styles.sensitiveText}>{getText(floraContent.sensitiveAreas.text)}</Body>
+              </View>
             </View>
+          </View>
+        </View>
+
+        {/* 7. Closing Note (no shadow, transport-note style) */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.closingNoteCard}>
+            <Body style={styles.closingNote}>{getText(floraContent.closingNote)}</Body>
           </View>
         </View>
       </ScrollView>
@@ -264,6 +273,28 @@ const styles = StyleSheet.create({
   // Sensitive areas card variant
   sensitiveCard: {
     backgroundColor: colors.warningBackground,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  sensitiveImageAttribution: {
+    position: 'absolute',
+    top: SENSITIVE_IMAGE_HEIGHT - 20,
+    right: spacing.xs,
+    backgroundColor: colors.overlay,
+    color: colors.primaryText,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+  },
+  sensitiveTextArea: {
+    padding: spacing.lg,
+  },
+  sensitiveTitle: {
+    marginBottom: spacing.md,
+    color: colors.primaryText,
+  },
+  sensitiveText: {
+    color: colors.primaryText,
+    lineHeight: 22,
   },
 
   // Highlights
@@ -300,7 +331,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
   },
 
-  // Closing note
+  // Closing note (transport-note style: thin border, no shadow)
+  closingNoteCard: {
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
+    padding: spacing.lg,
+  },
   closingNote: {
     color: colors.textSecondary,
     lineHeight: 22,

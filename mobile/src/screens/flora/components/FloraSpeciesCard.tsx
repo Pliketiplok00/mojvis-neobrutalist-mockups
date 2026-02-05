@@ -33,6 +33,7 @@ import { skin } from '../../../ui/skin';
 import { Icon } from '../../../ui/Icon';
 import { H2, Body, Meta, Label } from '../../../ui/Text';
 import type { FloraSpecies, FloraImage, BilingualText } from '../../../data/floraContent';
+import { wikiThumb } from '../../../utils/wikiThumb';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -43,23 +44,6 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_HORIZONTAL_MARGIN = skin.spacing.lg * 2;
 const CARD_WIDTH = SCREEN_WIDTH - CARD_HORIZONTAL_MARGIN;
 const GALLERY_HEIGHT = 200;
-
-/**
- * Convert a Wikimedia Commons original-file URL to a width-limited thumbnail.
- *
- * Original : …/commons/a/ab/File.jpg
- * Thumbnail: …/commons/thumb/a/ab/File.jpg/WIDTHpx-File.jpg
- *
- * Keeps non-Wikimedia URLs untouched.
- */
-const WIKI_PREFIX = 'https://upload.wikimedia.org/wikipedia/commons/';
-
-function wikiThumb(url: string, width = 800): string {
-  if (!url.startsWith(WIKI_PREFIX)) return url;
-  const rest = url.slice(WIKI_PREFIX.length); // e.g. "a/ab/File.jpg"
-  const filename = rest.split('/').pop() ?? '';
-  return `${WIKI_PREFIX}thumb/${rest}/${width}px-${filename}`;
-}
 
 interface FloraSpeciesCardProps {
   species: FloraSpecies;
@@ -122,13 +106,15 @@ export function FloraSpeciesCard({
     }
   };
 
+  const galleryImageWidth = CARD_WIDTH - borders.widthCard * 2;
+
   const renderGalleryImage = ({ item }: ListRenderItemInfo<FloraImage>) => {
     const uri = wikiThumb(item.url);
     return (
       <View style={styles.galleryImageContainer}>
         <Image
           source={{ uri }}
-          style={styles.galleryImage}
+          style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
           resizeMode="cover"
         />
         {item.author && (
@@ -223,6 +209,11 @@ export function FloraSpeciesCard({
                     onScroll={handleGalleryScroll}
                     scrollEventThrottle={16}
                     bounces={false}
+                    getItemLayout={(_, index) => ({
+                      length: galleryImageWidth,
+                      offset: galleryImageWidth * index,
+                      index,
+                    })}
                   />
 
                   {/* Gallery Chevrons */}
@@ -428,10 +419,6 @@ const styles = StyleSheet.create({
   galleryImageContainer: {
     width: CARD_WIDTH - borders.widthCard * 2,
     height: GALLERY_HEIGHT,
-  },
-  galleryImage: {
-    width: '100%',
-    height: '100%',
   },
   imageAttribution: {
     position: 'absolute',
