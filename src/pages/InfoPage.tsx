@@ -127,7 +127,7 @@ export default function InfoPage() {
         {/* Emergency Numbers Grid */}
         <section className="border-b-2 border-border bg-background p-5">
           <h3 className="mb-4 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Emergency Numbers
+            Hitni brojevi
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {pageData.emergencyNumbers.map((item) => (
