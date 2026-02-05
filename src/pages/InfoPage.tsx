@@ -116,7 +116,7 @@ export default function InfoPage() {
 
         <MediaBlock
           images={pageData.mediaImages}
-          caption="Vis town - the eastern gateway to the island"
+          caption="Grad Vis - istočna vrata otoka"
         />
 
         <TextBlock
