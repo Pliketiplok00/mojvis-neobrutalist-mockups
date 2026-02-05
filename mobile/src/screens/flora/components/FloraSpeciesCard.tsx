@@ -54,6 +54,11 @@ interface FloraSpeciesCardProps {
 
 const { colors, spacing, borders } = skin;
 
+// Wikimedia requires User-Agent header to avoid 429 rate limits
+const WIKI_IMAGE_HEADERS = {
+  'User-Agent': 'MojVisApp/1.0 (https://vis.hr; contact@vis.hr) React-Native',
+};
+
 export function FloraSpeciesCard({
   species,
   language,
@@ -137,11 +142,9 @@ export function FloraSpeciesCard({
           {/* Thumbnail (with placeholder fallback) */}
           {thumbnailImage ? (
             <Image
-              source={{ uri: thumbnailImage, cache: 'reload' }}
+              source={{ uri: thumbnailImage, headers: WIKI_IMAGE_HEADERS }}
               style={styles.thumbnail}
               resizeMode="cover"
-              onLoad={() => __DEV__ && console.warn(`[FloraImg] thumb ${species.id} OK`)}
-              onError={(e) => __DEV__ && console.warn(`[FloraImg] thumb ${species.id} ERR:`, e.nativeEvent.error)}
             />
           ) : (
             <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
@@ -190,25 +193,26 @@ export function FloraSpeciesCard({
                     scrollEventThrottle={16}
                     bounces={false}
                   >
-                    {species.images.map((item, index) => (
-                      <View
-                        key={`gallery-${species.id}-${index}`}
-                        style={styles.galleryImageContainer}
-                      >
-                        <Image
-                          source={{ uri: wikiThumb(item.url), cache: 'reload' }}
-                          style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
-                          resizeMode="cover"
-                          onLoad={() => __DEV__ && console.warn(`[FloraImg] gallery ${species.id}[${index}] OK`)}
-                          onError={(e) => __DEV__ && console.warn(`[FloraImg] gallery ${species.id}[${index}] ERR:`, e.nativeEvent.error)}
-                        />
-                        {item.author && (
-                          <Meta style={styles.imageAttribution}>
-                            {item.author} {item.license ? `(${item.license})` : ''}
-                          </Meta>
-                        )}
-                      </View>
-                    ))}
+                    {species.images.map((item, index) => {
+                      const computedUrl = wikiThumb(item.url);
+                      return (
+                        <View
+                          key={`gallery-${species.id}-${index}`}
+                          style={styles.galleryImageContainer}
+                        >
+                          <Image
+                            source={{ uri: computedUrl, headers: WIKI_IMAGE_HEADERS, cache: 'reload' }}
+                            style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
+                            resizeMode="cover"
+                          />
+                          {item.author && (
+                            <Meta style={styles.imageAttribution}>
+                              {item.author} {item.license ? `(${item.license})` : ''}
+                            </Meta>
+                          )}
+                        </View>
+                      );
+                    })}
                   </ScrollView>
 
                   {/* Gallery Chevrons */}

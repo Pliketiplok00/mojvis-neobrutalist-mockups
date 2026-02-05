@@ -47,6 +47,11 @@ interface HeroMediaHeaderProps {
 
 const { colors, spacing, borders } = skin;
 
+// Wikimedia requires User-Agent header to avoid 429 rate limits
+const WIKI_IMAGE_HEADERS = {
+  'User-Agent': 'MojVisApp/1.0 (https://vis.hr; contact@vis.hr) React-Native',
+};
+
 export function HeroMediaHeader({
   images,
   title,
@@ -91,11 +96,9 @@ export function HeroMediaHeader({
 
   const renderImage = ({ item }: ListRenderItemInfo<string>) => (
     <Image
-      source={{ uri: item, cache: 'reload' }}
+      source={{ uri: item, headers: WIKI_IMAGE_HEADERS }}
       style={styles.image}
       resizeMode="cover"
-      onLoad={() => __DEV__ && console.warn('[FloraImg] hero OK')}
-      onError={(e) => __DEV__ && console.warn('[FloraImg] hero ERR:', e.nativeEvent.error)}
     />
   );
 

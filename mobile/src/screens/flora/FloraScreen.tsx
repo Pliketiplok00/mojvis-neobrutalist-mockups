@@ -31,6 +31,11 @@ import { wikiThumb } from '../../utils/wikiThumb';
 
 const { colors, spacing, borders } = skin;
 
+// Wikimedia requires User-Agent header to avoid 429 rate limits
+const WIKI_IMAGE_HEADERS = {
+  'User-Agent': 'MojVisApp/1.0 (https://vis.hr; contact@vis.hr) React-Native',
+};
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = SCREEN_WIDTH - spacing.lg * 2;
 const SENSITIVE_IMAGE_HEIGHT = 160;
@@ -137,11 +142,9 @@ export function FloraScreen(): React.JSX.Element {
             <View style={styles.shadowLayer} />
             <View style={[styles.card, styles.sensitiveCard]}>
               <Image
-                source={{ uri: wikiThumb(floraContent.sensitiveAreas.image.url, 800), cache: 'reload' }}
+                source={{ uri: wikiThumb(floraContent.sensitiveAreas.image.url, 800), headers: WIKI_IMAGE_HEADERS }}
                 style={{ width: SENSITIVE_IMAGE_WIDTH, height: SENSITIVE_IMAGE_HEIGHT }}
                 resizeMode="cover"
-                onLoad={() => __DEV__ && console.warn('[FloraImg] sensitive OK')}
-                onError={(e) => __DEV__ && console.warn('[FloraImg] sensitive ERR:', e.nativeEvent.error)}
               />
               {floraContent.sensitiveAreas.image.author && (
                 <Meta style={styles.sensitiveImageAttribution}>
