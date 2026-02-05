@@ -19,15 +19,14 @@ import {
   Image,
   StyleSheet,
   Pressable,
+  ScrollView,
   LayoutAnimation,
   Platform,
   UIManager,
-  FlatList,
   TouchableOpacity,
   Dimensions,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
-  type ListRenderItemInfo,
 } from 'react-native';
 import { skin } from '../../../ui/skin';
 import { Icon } from '../../../ui/Icon';
@@ -62,11 +61,13 @@ export function FloraSpeciesCard({
 }: FloraSpeciesCardProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
-  const galleryRef = useRef<FlatList<FloraImage>>(null);
+  const galleryRef = useRef<ScrollView>(null);
 
   const isCritical = species.priority === 'critical';
   const hasImages = species.images.length > 0;
   const hasMultipleImages = species.images.length > 1;
+
+  const galleryImageWidth = CARD_WIDTH - borders.widthCard * 2;
 
   // Helper to get text for current language
   const getText = (text: BilingualText) => text[language];
@@ -78,7 +79,7 @@ export function FloraSpeciesCard({
 
   const handleGalleryScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / CARD_WIDTH);
+    const index = Math.round(offsetX / galleryImageWidth);
     if (index !== galleryIndex && index >= 0 && index < species.images.length) {
       setGalleryIndex(index);
     }
@@ -87,8 +88,8 @@ export function FloraSpeciesCard({
   const goToPreviousImage = () => {
     if (galleryIndex > 0) {
       const newIndex = galleryIndex - 1;
-      galleryRef.current?.scrollToOffset({
-        offset: newIndex * CARD_WIDTH,
+      galleryRef.current?.scrollTo({
+        x: newIndex * galleryImageWidth,
         animated: true,
       });
       setGalleryIndex(newIndex);
@@ -98,32 +99,12 @@ export function FloraSpeciesCard({
   const goToNextImage = () => {
     if (galleryIndex < species.images.length - 1) {
       const newIndex = galleryIndex + 1;
-      galleryRef.current?.scrollToOffset({
-        offset: newIndex * CARD_WIDTH,
+      galleryRef.current?.scrollTo({
+        x: newIndex * galleryImageWidth,
         animated: true,
       });
       setGalleryIndex(newIndex);
     }
-  };
-
-  const galleryImageWidth = CARD_WIDTH - borders.widthCard * 2;
-
-  const renderGalleryImage = ({ item }: ListRenderItemInfo<FloraImage>) => {
-    const uri = wikiThumb(item.url);
-    return (
-      <View style={styles.galleryImageContainer}>
-        <Image
-          source={{ uri }}
-          style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
-          resizeMode="cover"
-        />
-        {item.author && (
-          <Meta style={styles.imageAttribution}>
-            {item.author} {item.license ? `(${item.license})` : ''}
-          </Meta>
-        )}
-      </View>
-    );
   };
 
   // Get first image for thumbnail (use 200px thumb for collapsed card)
@@ -198,23 +179,33 @@ export function FloraSpeciesCard({
             <View style={styles.gallery}>
               {hasImages ? (
                 <>
-                  <FlatList
+                  <ScrollView
                     ref={galleryRef}
-                    data={species.images}
-                    renderItem={renderGalleryImage}
-                    keyExtractor={(_, index) => `gallery-${species.id}-${index}`}
                     horizontal
                     pagingEnabled
                     showsHorizontalScrollIndicator={false}
                     onScroll={handleGalleryScroll}
                     scrollEventThrottle={16}
                     bounces={false}
-                    getItemLayout={(_, index) => ({
-                      length: galleryImageWidth,
-                      offset: galleryImageWidth * index,
-                      index,
-                    })}
-                  />
+                  >
+                    {species.images.map((item, index) => (
+                      <View
+                        key={`gallery-${species.id}-${index}`}
+                        style={styles.galleryImageContainer}
+                      >
+                        <Image
+                          source={{ uri: wikiThumb(item.url) }}
+                          style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
+                          resizeMode="cover"
+                        />
+                        {item.author && (
+                          <Meta style={styles.imageAttribution}>
+                            {item.author} {item.license ? `(${item.license})` : ''}
+                          </Meta>
+                        )}
+                      </View>
+                    ))}
+                  </ScrollView>
 
                   {/* Gallery Chevrons */}
                   {hasMultipleImages && (
