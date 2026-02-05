@@ -150,7 +150,7 @@ export default function InfoPage() {
         </section>
 
         <ContactBlock
-          title="Important Contacts"
+          title="Važni kontakti"
           contacts={pageData.contacts}
         />
 
