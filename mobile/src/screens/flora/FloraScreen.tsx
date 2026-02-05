@@ -137,9 +137,11 @@ export function FloraScreen(): React.JSX.Element {
             <View style={styles.shadowLayer} />
             <View style={[styles.card, styles.sensitiveCard]}>
               <Image
-                source={{ uri: wikiThumb(floraContent.sensitiveAreas.image.url, 800) }}
+                source={{ uri: wikiThumb(floraContent.sensitiveAreas.image.url, 800), cache: 'reload' }}
                 style={{ width: SENSITIVE_IMAGE_WIDTH, height: SENSITIVE_IMAGE_HEIGHT }}
                 resizeMode="cover"
+                onLoad={() => __DEV__ && console.warn('[FloraImg] sensitive OK')}
+                onError={(e) => __DEV__ && console.warn('[FloraImg] sensitive ERR:', e.nativeEvent.error)}
               />
               {floraContent.sensitiveAreas.image.author && (
                 <Meta style={styles.sensitiveImageAttribution}>

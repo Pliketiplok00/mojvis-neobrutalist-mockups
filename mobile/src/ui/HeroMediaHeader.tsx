@@ -91,9 +91,11 @@ export function HeroMediaHeader({
 
   const renderImage = ({ item }: ListRenderItemInfo<string>) => (
     <Image
-      source={{ uri: item }}
+      source={{ uri: item, cache: 'reload' }}
       style={styles.image}
       resizeMode="cover"
+      onLoad={() => __DEV__ && console.warn('[FloraImg] hero OK')}
+      onError={(e) => __DEV__ && console.warn('[FloraImg] hero ERR:', e.nativeEvent.error)}
     />
   );
 

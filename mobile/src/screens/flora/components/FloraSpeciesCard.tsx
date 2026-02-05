@@ -137,9 +137,11 @@ export function FloraSpeciesCard({
           {/* Thumbnail (with placeholder fallback) */}
           {thumbnailImage ? (
             <Image
-              source={{ uri: thumbnailImage }}
+              source={{ uri: thumbnailImage, cache: 'reload' }}
               style={styles.thumbnail}
               resizeMode="cover"
+              onLoad={() => __DEV__ && console.warn(`[FloraImg] thumb ${species.id} OK`)}
+              onError={(e) => __DEV__ && console.warn(`[FloraImg] thumb ${species.id} ERR:`, e.nativeEvent.error)}
             />
           ) : (
             <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
@@ -194,9 +196,11 @@ export function FloraSpeciesCard({
                         style={styles.galleryImageContainer}
                       >
                         <Image
-                          source={{ uri: wikiThumb(item.url) }}
+                          source={{ uri: wikiThumb(item.url), cache: 'reload' }}
                           style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
                           resizeMode="cover"
+                          onLoad={() => __DEV__ && console.warn(`[FloraImg] gallery ${species.id}[${index}] OK`)}
+                          onError={(e) => __DEV__ && console.warn(`[FloraImg] gallery ${species.id}[${index}] ERR:`, e.nativeEvent.error)}
                         />
                         {item.author && (
                           <Meta style={styles.imageAttribution}>
