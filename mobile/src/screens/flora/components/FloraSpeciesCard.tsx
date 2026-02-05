@@ -19,20 +19,20 @@ import {
   Image,
   StyleSheet,
   Pressable,
+  ScrollView,
   LayoutAnimation,
   Platform,
   UIManager,
-  FlatList,
   TouchableOpacity,
   Dimensions,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
-  type ListRenderItemInfo,
 } from 'react-native';
 import { skin } from '../../../ui/skin';
 import { Icon } from '../../../ui/Icon';
 import { H2, Body, Meta, Label } from '../../../ui/Text';
 import type { FloraSpecies, FloraImage, BilingualText } from '../../../data/floraContent';
+import { wikiThumb } from '../../../utils/wikiThumb';
 
 // Enable LayoutAnimation on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -54,6 +54,11 @@ interface FloraSpeciesCardProps {
 
 const { colors, spacing, borders } = skin;
 
+// Wikimedia requires User-Agent header to avoid 429 rate limits
+const WIKI_IMAGE_HEADERS = {
+  'User-Agent': 'MojVisApp/1.0 (https://vis.hr; contact@vis.hr) React-Native',
+};
+
 export function FloraSpeciesCard({
   species,
   language,
@@ -61,11 +66,13 @@ export function FloraSpeciesCard({
 }: FloraSpeciesCardProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
-  const galleryRef = useRef<FlatList<FloraImage>>(null);
+  const galleryRef = useRef<ScrollView>(null);
 
   const isCritical = species.priority === 'critical';
   const hasImages = species.images.length > 0;
   const hasMultipleImages = species.images.length > 1;
+
+  const galleryImageWidth = CARD_WIDTH - borders.widthCard * 2;
 
   // Helper to get text for current language
   const getText = (text: BilingualText) => text[language];
@@ -77,7 +84,7 @@ export function FloraSpeciesCard({
 
   const handleGalleryScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / CARD_WIDTH);
+    const index = Math.round(offsetX / galleryImageWidth);
     if (index !== galleryIndex && index >= 0 && index < species.images.length) {
       setGalleryIndex(index);
     }
@@ -86,8 +93,8 @@ export function FloraSpeciesCard({
   const goToPreviousImage = () => {
     if (galleryIndex > 0) {
       const newIndex = galleryIndex - 1;
-      galleryRef.current?.scrollToOffset({
-        offset: newIndex * CARD_WIDTH,
+      galleryRef.current?.scrollTo({
+        x: newIndex * galleryImageWidth,
         animated: true,
       });
       setGalleryIndex(newIndex);
@@ -97,31 +104,16 @@ export function FloraSpeciesCard({
   const goToNextImage = () => {
     if (galleryIndex < species.images.length - 1) {
       const newIndex = galleryIndex + 1;
-      galleryRef.current?.scrollToOffset({
-        offset: newIndex * CARD_WIDTH,
+      galleryRef.current?.scrollTo({
+        x: newIndex * galleryImageWidth,
         animated: true,
       });
       setGalleryIndex(newIndex);
     }
   };
 
-  const renderGalleryImage = ({ item }: ListRenderItemInfo<FloraImage>) => (
-    <View style={styles.galleryImageContainer}>
-      <Image
-        source={{ uri: item.url }}
-        style={styles.galleryImage}
-        resizeMode="cover"
-      />
-      {item.author && (
-        <Meta style={styles.imageAttribution}>
-          {item.author} {item.license ? `(${item.license})` : ''}
-        </Meta>
-      )}
-    </View>
-  );
-
-  // Get first image for thumbnail
-  const thumbnailImage = hasImages ? species.images[0].url : null;
+  // Get first image for thumbnail (use 200px thumb for collapsed card)
+  const thumbnailImage = hasImages ? wikiThumb(species.images[0].url, 200) : null;
 
   return (
     <View style={styles.wrapper}>
@@ -147,13 +139,17 @@ export function FloraSpeciesCard({
       >
         {/* Header Row (always visible) */}
         <View style={styles.header}>
-          {/* Thumbnail */}
-          {thumbnailImage && (
+          {/* Thumbnail (with placeholder fallback) */}
+          {thumbnailImage ? (
             <Image
-              source={{ uri: thumbnailImage }}
+              source={{ uri: thumbnailImage, headers: WIKI_IMAGE_HEADERS }}
               style={styles.thumbnail}
               resizeMode="cover"
             />
+          ) : (
+            <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
+              <Icon name="leaf" size="md" colorToken="textMuted" />
+            </View>
           )}
 
           {/* Title Area */}
@@ -184,60 +180,87 @@ export function FloraSpeciesCard({
         {/* Expanded Content */}
         {expanded && (
           <View style={styles.expandedContent}>
-            {/* Image Gallery */}
-            {hasImages && (
-              <View style={styles.gallery}>
-                <FlatList
-                  ref={galleryRef}
-                  data={species.images}
-                  renderItem={renderGalleryImage}
-                  keyExtractor={(_, index) => `gallery-${species.id}-${index}`}
-                  horizontal
-                  pagingEnabled
-                  showsHorizontalScrollIndicator={false}
-                  onScroll={handleGalleryScroll}
-                  scrollEventThrottle={16}
-                  bounces={false}
-                />
+            {/* Image Gallery (or placeholder if no images) */}
+            <View style={styles.gallery}>
+              {hasImages ? (
+                <>
+                  <ScrollView
+                    ref={galleryRef}
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={handleGalleryScroll}
+                    scrollEventThrottle={16}
+                    bounces={false}
+                  >
+                    {species.images.map((item, index) => {
+                      const computedUrl = wikiThumb(item.url);
+                      return (
+                        <View
+                          key={`gallery-${species.id}-${index}`}
+                          style={styles.galleryImageContainer}
+                        >
+                          <Image
+                            source={{ uri: computedUrl, headers: WIKI_IMAGE_HEADERS, cache: 'reload' }}
+                            style={{ width: galleryImageWidth, height: GALLERY_HEIGHT }}
+                            resizeMode="cover"
+                          />
+                          {item.author && (
+                            <Meta style={styles.imageAttribution}>
+                              {item.author} {item.license ? `(${item.license})` : ''}
+                            </Meta>
+                          )}
+                        </View>
+                      );
+                    })}
+                  </ScrollView>
 
-                {/* Gallery Chevrons */}
-                {hasMultipleImages && (
-                  <>
-                    <TouchableOpacity
-                      style={[styles.galleryChevron, styles.galleryChevronLeft]}
-                      onPress={goToPreviousImage}
-                      disabled={galleryIndex === 0}
-                    >
-                      <Icon name="chevron-left" size="sm" color={colors.primaryText} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={[styles.galleryChevron, styles.galleryChevronRight]}
-                      onPress={goToNextImage}
-                      disabled={galleryIndex === species.images.length - 1}
-                    >
-                      <Icon name="chevron-right" size="sm" color={colors.primaryText} />
-                    </TouchableOpacity>
-                  </>
-                )}
+                  {/* Gallery Chevrons */}
+                  {hasMultipleImages && (
+                    <>
+                      <TouchableOpacity
+                        style={[styles.galleryChevron, styles.galleryChevronLeft]}
+                        onPress={goToPreviousImage}
+                        disabled={galleryIndex === 0}
+                      >
+                        <Icon name="chevron-left" size="sm" color={colors.primaryText} />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[styles.galleryChevron, styles.galleryChevronRight]}
+                        onPress={goToNextImage}
+                        disabled={galleryIndex === species.images.length - 1}
+                      >
+                        <Icon name="chevron-right" size="sm" color={colors.primaryText} />
+                      </TouchableOpacity>
+                    </>
+                  )}
 
-                {/* Gallery Dots */}
-                {hasMultipleImages && (
-                  <View style={styles.galleryDots}>
-                    {species.images.map((_, index) => (
-                      <View
-                        key={`dot-${index}`}
-                        style={[
-                          styles.galleryDot,
-                          index === galleryIndex
-                            ? styles.galleryDotActive
-                            : styles.galleryDotInactive,
-                        ]}
-                      />
-                    ))}
-                  </View>
-                )}
-              </View>
-            )}
+                  {/* Gallery Dots */}
+                  {hasMultipleImages && (
+                    <View style={styles.galleryDots}>
+                      {species.images.map((_, index) => (
+                        <View
+                          key={`dot-${index}`}
+                          style={[
+                            styles.galleryDot,
+                            index === galleryIndex
+                              ? styles.galleryDotActive
+                              : styles.galleryDotInactive,
+                          ]}
+                        />
+                      ))}
+                    </View>
+                  )}
+                </>
+              ) : (
+                <View style={styles.galleryPlaceholder}>
+                  <Icon name="camera" size="xl" colorToken="textMuted" />
+                  <Meta style={styles.galleryPlaceholderText}>
+                    {language === 'hr' ? 'Slika nije dostupna' : 'Image not available'}
+                  </Meta>
+                </View>
+              )}
+            </View>
 
             {/* Description */}
             <View style={styles.section}>
@@ -307,8 +330,9 @@ const styles = StyleSheet.create({
   shadowLayerDefault: {
     backgroundColor: colors.border,
   },
+  // Critical shadow uses urgent color with reduced opacity for cleaner look
   shadowLayerCritical: {
-    backgroundColor: colors.urgent,
+    backgroundColor: 'rgba(215, 72, 47, 0.5)', // urgent color at 50% opacity
     top: 6,
     left: 6,
     right: -6,
@@ -324,8 +348,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderColor: colors.border,
   },
+  // Note: colors.errorBackground has alpha, so use opaque white for clean look
   cardCritical: {
-    backgroundColor: colors.errorBackground,
+    backgroundColor: colors.background,
     borderColor: colors.urgent,
   },
   cardPressed: {
@@ -343,6 +368,11 @@ const styles = StyleSheet.create({
     height: 72,
     borderWidth: borders.widthThin,
     borderColor: colors.border,
+  },
+  thumbnailPlaceholder: {
+    backgroundColor: colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   titleArea: {
     flex: 1,
@@ -389,10 +419,6 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH - borders.widthCard * 2,
     height: GALLERY_HEIGHT,
   },
-  galleryImage: {
-    width: '100%',
-    height: '100%',
-  },
   imageAttribution: {
     position: 'absolute',
     bottom: spacing.xs,
@@ -436,6 +462,17 @@ const styles = StyleSheet.create({
   },
   galleryDotInactive: {
     backgroundColor: colors.borderMuted,
+  },
+  galleryPlaceholder: {
+    width: '100%',
+    height: GALLERY_HEIGHT,
+    backgroundColor: colors.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  galleryPlaceholderText: {
+    color: colors.textMuted,
   },
 
   // Sections

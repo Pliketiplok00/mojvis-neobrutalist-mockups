@@ -6,19 +6,18 @@
  *
  * Structure:
  * 1. Hero (no shadow)
- * 2. Warning callout (with shadow)
- * 3. Why special (with shadow)
- * 4. Highlights (with shadow)
- * 5. Sensitive areas (with shadow)
- * 6. Species section header (with shadow)
- * 7. Species cards (with shadows)
- * 8. Closing note (with shadow)
+ * 2. Why special (with shadow)
+ * 3. Highlights (with shadow)
+ * 4. Warning / guide card (with shadow) - introduces species list
+ * 5. Species cards (with shadows)
+ * 6. Sensitive areas (with shadow, image + white text)
+ * 7. Closing note (no shadow, transport-note style)
  *
  * Skin-pure: Uses skin tokens only (no hardcoded colors).
  */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, Image, StyleSheet, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { HeroMediaHeader } from '../../ui/HeroMediaHeader';
@@ -28,8 +27,19 @@ import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
 import { floraContent, type BilingualText } from '../../data/floraContent';
 import { FloraSpeciesCard } from './components/FloraSpeciesCard';
+import { wikiThumb } from '../../utils/wikiThumb';
 
 const { colors, spacing, borders } = skin;
+
+// Wikimedia requires User-Agent header to avoid 429 rate limits
+const WIKI_IMAGE_HEADERS = {
+  'User-Agent': 'MojVisApp/1.0 (https://vis.hr; contact@vis.hr) React-Native',
+};
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CARD_WIDTH = SCREEN_WIDTH - spacing.lg * 2;
+const SENSITIVE_IMAGE_HEIGHT = 160;
+const SENSITIVE_IMAGE_WIDTH = CARD_WIDTH - borders.widthCard * 2;
 
 export function FloraScreen(): React.JSX.Element {
   const { language } = useTranslations();
@@ -37,8 +47,8 @@ export function FloraScreen(): React.JSX.Element {
   // Helper to get text for current language
   const getText = (text: BilingualText) => text[language];
 
-  // Prepare hero images
-  const heroImages = floraContent.hero.images.map((img) => img.url);
+  // Prepare hero images (use 1200px thumbs — full-width hero)
+  const heroImages = floraContent.hero.images.map((img) => wikiThumb(img.url, 1200));
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -52,10 +62,42 @@ export function FloraScreen(): React.JSX.Element {
           subtitle={getText(floraContent.hero.subtitle)}
         />
 
-        {/* 2. Warning Callout */}
+        {/* 2. Why Special */}
         <View style={styles.sectionContainer}>
           <View style={styles.cardWrapper}>
             <View style={styles.shadowLayer} />
+            <View style={styles.card}>
+              <H2 style={styles.cardTitle}>{getText(floraContent.whySpecial.title)}</H2>
+              <Body style={styles.cardText}>{getText(floraContent.whySpecial.text)}</Body>
+            </View>
+          </View>
+        </View>
+
+        {/* 3. Highlights */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.cardWrapper}>
+            <View style={styles.shadowLayer} />
+            <View style={styles.card}>
+              <H2 style={styles.cardTitle}>{getText(floraContent.highlights.title)}</H2>
+              <View style={styles.highlightList}>
+                {floraContent.highlights.items.map((item, index) => (
+                  <View key={`highlight-${index}`} style={styles.highlightItem}>
+                    <View style={styles.highlightBullet} />
+                    <View style={styles.highlightContent}>
+                      <Label style={styles.highlightHeadline}>{getText(item.headline)}</Label>
+                      <Body style={styles.highlightDescription}>{getText(item.description)}</Body>
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        {/* 4. Warning / Guide Card (introduces species list) */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.cardWrapper}>
+            <View style={[styles.shadowLayer, styles.shadowLayerWarning]} />
             <View style={[styles.card, styles.warningCard]}>
               <View style={styles.warningHeader}>
                 <View style={styles.warningIconBox}>
@@ -82,63 +124,7 @@ export function FloraScreen(): React.JSX.Element {
           </View>
         </View>
 
-        {/* 3. Why Special */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.whySpecial.title)}</H2>
-              <Body style={styles.cardText}>{getText(floraContent.whySpecial.text)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 4. Highlights */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.highlights.title)}</H2>
-              <View style={styles.highlightList}>
-                {floraContent.highlights.items.map((item, index) => (
-                  <View key={`highlight-${index}`} style={styles.highlightItem}>
-                    <View style={styles.highlightBullet} />
-                    <Body style={styles.highlightText}>{getText(item)}</Body>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* 5. Sensitive Areas */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={[styles.card, styles.sensitiveCard]}>
-              <H2 style={styles.cardTitle}>{getText(floraContent.sensitiveAreas.title)}</H2>
-              <Body style={styles.cardText}>{getText(floraContent.sensitiveAreas.text)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 6. Species Section Header */}
-        <View style={styles.sectionContainer}>
-          <View style={styles.cardWrapper}>
-            <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <View style={styles.speciesHeaderRow}>
-                <Icon name="leaf" size="lg" colorToken="secondary" />
-                <H2 style={styles.speciesSectionTitle}>
-                  {getText(floraContent.speciesSection.title)}
-                </H2>
-              </View>
-              <Body style={styles.cardText}>{getText(floraContent.speciesSection.intro)}</Body>
-            </View>
-          </View>
-        </View>
-
-        {/* 7. Species Cards */}
+        {/* 5. Species Cards */}
         <View style={styles.speciesListContainer}>
           {floraContent.species.map((species) => (
             <FloraSpeciesCard
@@ -150,13 +136,36 @@ export function FloraScreen(): React.JSX.Element {
           ))}
         </View>
 
-        {/* 8. Closing Note */}
+        {/* 6. Sensitive Areas */}
         <View style={styles.sectionContainer}>
           <View style={styles.cardWrapper}>
             <View style={styles.shadowLayer} />
-            <View style={styles.card}>
-              <Body style={styles.closingNote}>{getText(floraContent.closingNote)}</Body>
+            <View style={[styles.card, styles.sensitiveCard]}>
+              <Image
+                source={{ uri: wikiThumb(floraContent.sensitiveAreas.image.url, 800), headers: WIKI_IMAGE_HEADERS }}
+                style={{ width: SENSITIVE_IMAGE_WIDTH, height: SENSITIVE_IMAGE_HEIGHT }}
+                resizeMode="cover"
+              />
+              {floraContent.sensitiveAreas.image.author && (
+                <Meta style={styles.sensitiveImageAttribution}>
+                  {floraContent.sensitiveAreas.image.author}{' '}
+                  {floraContent.sensitiveAreas.image.license
+                    ? `(${floraContent.sensitiveAreas.image.license})`
+                    : ''}
+                </Meta>
+              )}
+              <View style={styles.sensitiveTextArea}>
+                <H2 style={styles.sensitiveTitle}>{getText(floraContent.sensitiveAreas.title)}</H2>
+                <Body style={styles.sensitiveText}>{getText(floraContent.sensitiveAreas.text)}</Body>
+              </View>
             </View>
+          </View>
+        </View>
+
+        {/* 7. Closing Note (no shadow, transport-note style) */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.closingNoteCard}>
+            <Body style={styles.closingNote}>{getText(floraContent.closingNote)}</Body>
           </View>
         </View>
       </ScrollView>
@@ -210,9 +219,14 @@ const styles = StyleSheet.create({
   },
 
   // Warning card variant
+  // Note: colors.errorBackground has alpha, so use opaque white base + tinted overlay
   warningCard: {
-    backgroundColor: colors.errorBackground,
+    backgroundColor: colors.background,
     borderColor: colors.urgent,
+  },
+  // Shadow for warning card uses urgent color with reduced opacity
+  shadowLayerWarning: {
+    backgroundColor: 'rgba(215, 72, 47, 0.4)', // urgent color at 40% opacity
   },
   warningHeader: {
     flexDirection: 'row',
@@ -264,6 +278,28 @@ const styles = StyleSheet.create({
   // Sensitive areas card variant
   sensitiveCard: {
     backgroundColor: colors.warningBackground,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  sensitiveImageAttribution: {
+    position: 'absolute',
+    top: SENSITIVE_IMAGE_HEIGHT - 20,
+    right: spacing.xs,
+    backgroundColor: colors.overlay,
+    color: colors.primaryText,
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+  },
+  sensitiveTextArea: {
+    padding: spacing.lg,
+  },
+  sensitiveTitle: {
+    marginBottom: spacing.md,
+    color: colors.primaryText,
+  },
+  sensitiveText: {
+    color: colors.primaryText,
+    lineHeight: 22,
   },
 
   // Highlights
@@ -273,30 +309,25 @@ const styles = StyleSheet.create({
   highlightItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   highlightBullet: {
     width: 8,
     height: 8,
     backgroundColor: colors.secondary,
-    marginTop: 6,
+    marginTop: 4,
     marginRight: spacing.md,
   },
-  highlightText: {
+  highlightContent: {
     flex: 1,
-    color: colors.textSecondary,
   },
-
-  // Species section header
-  speciesHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    marginBottom: spacing.md,
-  },
-  speciesSectionTitle: {
-    flex: 1,
+  highlightHeadline: {
     color: colors.textPrimary,
+    marginBottom: spacing.xs,
+  },
+  highlightDescription: {
+    color: colors.textSecondary,
+    lineHeight: 20,
   },
 
   // Species list
@@ -305,7 +336,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
   },
 
-  // Closing note
+  // Closing note (transport-note style: thin border, no shadow)
+  closingNoteCard: {
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+    backgroundColor: colors.background,
+    padding: spacing.lg,
+  },
   closingNote: {
     color: colors.textSecondary,
     lineHeight: 22,

@@ -1,0 +1,177 @@
+export const floraContent = {
+  hero: {
+    title: { hr: "FLORA", en: "FLORA" },
+    subtitle: { hr: "NATURA 2000", en: "NATURA 2000" },
+    badge: { hr: "OTOK VIS", en: "VIS ISLAND" },
+    images: [] // Claude will source open-license images
+  },
+
+  doNotTouch: {
+    title: {
+      hr: "Što molimo da ne radite",
+      en: "Please do not do the following"
+    },
+    text: {
+      hr: "Na Visu rastu biljne vrste koje su zakonom strogo zaštićene ili izuzetno osjetljive. Molimo vas da ih ne berete, ne dirate i ne odnosite iz prirode.",
+      en: ""
+    },
+    bullets: [
+      { hr: "Ne berite biljke", en: "" },
+      { hr: "Ne dirajte ih", en: "" },
+      { hr: "Ne odnosite ih iz prirode", en: "" }
+    ],
+    note: {
+      hr: "Ako niste sigurni je li neka biljka zaštićena – pravilo je jednostavno: ostavite je tamo gdje jest.",
+      en: ""
+    }
+  },
+
+  whySpecial: {
+    title: {
+      hr: "Zašto je flora Visa posebna",
+      en: ""
+    },
+    text: {
+      hr: "Vis ima iznimno raznoliku mediteransku floru, oblikovanu sušom, vjetrom i izolacijom otoka. Na malom prostoru susreću se šume crnike, makija, suhi travnjaci i rijetka otočna staništa.\n\nMnoge biljke rastu sporo, na vrlo ograničenim područjima i lako nestaju ako ih se dira ili bere.",
+      en: ""
+    }
+  },
+
+  highlights: {
+    title: { hr: "Zanimljivosti", en: "Highlights" },
+    items: [
+      {
+        hr: "Na Visu je zabilježeno više od 870 biljnih vrsta.",
+        en: ""
+      },
+      {
+        hr: "Biševo je jedno od botanički najbogatijih otočnih područja u Hrvatskoj.",
+        en: ""
+      },
+      {
+        hr: "Brojne biljne vrste dio su europske mreže Natura 2000.",
+        en: ""
+      }
+    ]
+  },
+
+  sensitiveAreas: {
+    title: {
+      hr: "Posebno osjetljiva područja",
+      en: "Especially sensitive areas"
+    },
+    text: {
+      hr: "Otoci Brusnik, Sveti Andrija i Biševo izuzetno su osjetljiva prirodna područja s velikim brojem endemskih i zaštićenih biljnih vrsta.\n\nMolimo sve posjetitelje da ne beru, ne odnose i ne diraju ništa iz prirode – čak ni biljke, kamenje ili pijesak.",
+      en: ""
+    }
+  },
+
+  speciesSection: {
+    title: {
+      hr: "Flora otoka Visa – biljke koje ne treba brati ni dirati",
+      en: ""
+    },
+    intro: {
+      hr: "Ove biljke su zakonom strogo zaštićene, imaju regulirano sakupljanje ili su posebno osjetljive za prirodu otoka Visa.",
+      en: ""
+    }
+  },
+
+  species: [
+    {
+      priority: "critical",
+      title: { hr: "Divlje orhideje", en: "Wild orchids" },
+      latin: "Orchidaceae spp.",
+      description: {
+        hr: "Sve divlje orhideje u Hrvatskoj zakonom su strogo zaštićene. Na Visu raste više vrsta koje su posebno osjetljive na gaženje, branje i čupanje iz tla.",
+        en: ""
+      },
+      howToRecognize: {
+        hr: "Neobični cvjetovi, često nalik kukcima ili s izraženim uzorkom.",
+        en: ""
+      },
+      habitat: {
+        hr: "Travnjaci, rubovi makije, otvorena prirodna staništa.",
+        en: ""
+      },
+      notes: {
+        hr: "Čak i kratko čupanje iz tla najčešće uništi biljku.",
+        en: ""
+      },
+      legalBasis: {
+        hr: "Pravilnik o strogo zaštićenim vrstama (NN 144/13, 73/16)",
+        en: ""
+      },
+      images: []
+    },
+
+    {
+      priority: "critical",
+      title: { hr: "Dubrovačka zečina", en: "Ragusa knapweed" },
+      latin: "Centaurea ragusina",
+      description: {
+        hr: "Rijetka i endemska biljka jadranske obale, prepoznatljiva po srebrnastim listovima.",
+        en: ""
+      },
+      habitat: {
+        hr: "Kamenite padine i obala.",
+        en: ""
+      },
+      notes: {
+        hr: "Branje i oštećivanje ove biljke je zabranjeno.",
+        en: ""
+      },
+      legalBasis: {
+        hr: "Pravilnik o strogo zaštićenim vrstama",
+        en: ""
+      },
+      images: []
+    },
+
+    {
+      priority: "critical",
+      title: { hr: "Morski ljiljan", en: "Sea daffodil" },
+      latin: "Pancratium maritimum",
+      description: {
+        hr: "Raste isključivo na prirodnim pješčanim plažama i vrlo je osjetljiv na gaženje.",
+        en: ""
+      },
+      habitat: {
+        hr: "Pješčane plaže i dine.",
+        en: ""
+      },
+      legalBasis: {
+        hr: "Zaštita staništa – Natura 2000",
+        en: ""
+      },
+      images: []
+    },
+
+    {
+      title: { hr: "Divlja šparoga", en: "Wild asparagus" },
+      latin: "Asparagus acutifolius",
+      description: {
+        hr: "Samonikla mediteranska biljka koju ljudi često beru u proljeće. Prekomjerno branje šteti prirodnim populacijama.",
+        en: ""
+      },
+      habitat: {
+        hr: "Makija, rubovi šuma i kamenjari.",
+        en: ""
+      },
+      notes: {
+        hr: "Molimo ne berite samoniklu šparogu u prirodi otoka Visa.",
+        en: ""
+      },
+      legalBasis: {
+        hr: "Pravilnik o sakupljanju zavičajnih divljih vrsta (NN 114/17)",
+        en: ""
+      },
+      images: []
+    }
+  ],
+
+  closingNote: {
+    hr: "Ove biljke nisu rijetke zato što ih je malo, nego zato što rastu sporo i lako nestaju ako ih se dira.\n\nHvala što pomažete očuvati floru otoka Visa.",
+    en: ""
+  }
+};
