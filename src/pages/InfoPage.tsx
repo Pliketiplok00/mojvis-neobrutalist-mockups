@@ -14,87 +14,87 @@ import infoVisTownImg from "@/assets/info-vis-town.jpg";
 // Mock CMS data
 const pageData = {
   header: {
-    title: "Information",
-    subtitle: "Essential contacts & useful links",
+    title: "Informacije",
+    subtitle: "Važni kontakti i korisni linkovi",
   },
   mediaImages: [
-    { src: infoVisTownImg, alt: "Aerial view of Vis town harbor" },
+    { src: infoVisTownImg, alt: "Pogled iz zraka na luku grada Visa" },
   ],
   intro: {
-    title: "About the Island",
+    title: "O otoku",
     body: [
-      "Vis is the farthest inhabited island from the Croatian mainland, located 45 km from Split. With a population of around 3,500, it offers an authentic Dalmatian experience away from mass tourism.",
-      "The island has two main settlements: Vis town on the eastern coast and Komiža on the western coast. Both offer essential services, restaurants, and accommodation.",
+      "Vis je najudaljeniji naseljeni otok od hrvatskog kopna, udaljen 45 km od Splita. S oko 3.500 stanovnika, nudi autentično dalmatinsko iskustvo daleko od masovnog turizma.",
+      "Otok ima dva glavna naselja: grad Vis na istočnoj obali i Komižu na zapadnoj obali. Oba nude osnovne usluge, restorane i smještaj.",
     ],
   },
   emergencyNumbers: [
-    { icon: Phone, label: "Police", number: "192", color: "bg-primary", textColor: "text-primary-foreground" },
-    { icon: Flame, label: "Fire", number: "193", color: "bg-accent", textColor: "text-accent-foreground" },
-    { icon: Anchor, label: "Sea Rescue", number: "195", color: "bg-secondary", textColor: "text-secondary-foreground" },
-    { icon: AlertCircle, label: "Emergency", number: "112", color: "bg-destructive", textColor: "text-destructive-foreground" },
+    { icon: Phone, label: "Policija", number: "192", color: "bg-primary", textColor: "text-primary-foreground" },
+    { icon: Flame, label: "Vatrogasci", number: "193", color: "bg-accent", textColor: "text-accent-foreground" },
+    { icon: Anchor, label: "Spašavanje na moru", number: "195", color: "bg-secondary", textColor: "text-secondary-foreground" },
+    { icon: AlertCircle, label: "Hitna pomoć", number: "112", color: "bg-destructive", textColor: "text-destructive-foreground" },
   ],
   contacts: [
     {
       id: "tourist-office-vis",
-      name: "Tourist Office Vis",
+      name: "Turistička zajednica Vis",
       address: "Šetalište stare Isse 5, 21480 Vis",
       phones: ["+385 21 717 017"],
       email: "info@tz-vis.hr",
       workingHours: [
-        { days: "Mon-Fri", hours: "08:00-14:00" },
-        { days: "Sat-Sun", hours: "Closed" },
+        { days: "Pon-Pet", hours: "08:00-14:00" },
+        { days: "Sub-Ned", hours: "Zatvoreno" },
       ],
-      note: "Extended hours during summer season",
+      note: "Produženo radno vrijeme tijekom ljetne sezone",
     },
     {
       id: "tourist-office-komiza",
-      name: "Tourist Office Komiža",
+      name: "Turistička zajednica Komiža",
       address: "Riva svetog Mikule 2, 21485 Komiža",
       phones: ["+385 21 713 455"],
       email: "info@tz-komiza.hr",
-      workingHours: "Seasonal hours vary",
+      workingHours: "Sezonsko radno vrijeme varira",
     },
     {
       id: "health-center",
-      name: "Health Center Vis",
+      name: "Dom zdravlja Vis",
       address: "Put Mula 2, 21480 Vis",
       phones: ["+385 21 711 320", "+385 21 711 036"],
       workingHours: [
-        { days: "Mon-Fri", hours: "07:00-20:00" },
-        { days: "Sat", hours: "08:00-12:00" },
-        { days: "Sun", hours: "Emergency only" },
+        { days: "Pon-Pet", hours: "07:00-20:00" },
+        { days: "Sub", hours: "08:00-12:00" },
+        { days: "Ned", hours: "Samo hitni slučajevi" },
       ],
     },
     {
       id: "pharmacy",
-      name: "Pharmacy Vis",
+      name: "Ljekarna Vis",
       address: "Obala sv. Jurja 36, 21480 Vis",
       phones: ["+385 21 711 190"],
-      workingHours: "Mon-Fri 07:30-19:00, Sat 08:00-12:00",
+      workingHours: "Pon-Pet 07:30-19:00, Sub 08:00-12:00",
     },
     {
       id: "harbor-master",
-      name: "Harbor Master's Office",
+      name: "Lučka kapetanija",
       address: "Obala sv. Jurja 25, 21480 Vis",
       phones: ["+385 21 711 162"],
-      note: "For maritime emergencies and port information",
+      note: "Za pomorske hitne slučajeve i informacije o luci",
     },
   ],
   usefulLinks: [
-    { id: "events", title: "Events Calendar", link: "/events" },
-    { id: "transport-road", title: "Bus Schedules", link: "/transport/road" },
-    { id: "transport-sea", title: "Ferry & Catamaran", link: "/transport/sea" },
-    { id: "flora", title: "Flora of Vis", link: "/flora" },
-    { id: "fauna", title: "Fauna of Vis", link: "/fauna" },
+    { id: "events", title: "Kalendar događanja", link: "/events" },
+    { id: "transport-road", title: "Autobusni vozni red", link: "/transport/road" },
+    { id: "transport-sea", title: "Trajekt i katamaran", link: "/transport/sea" },
+    { id: "flora", title: "Flora otoka Visa", link: "/flora" },
+    { id: "fauna", title: "Fauna otoka Visa", link: "/fauna" },
   ],
   externalLinks: [
-    { id: "tz-croatia", title: "Croatian National Tourist Board", link: "https://croatia.hr", external: true },
-    { id: "jadrolinija", title: "Jadrolinija (Ferries)", link: "https://jadrolinija.hr", external: true },
-    { id: "weather", title: "Weather Forecast", link: "https://meteo.hr", external: true },
+    { id: "tz-croatia", title: "Hrvatska turistička zajednica", link: "https://croatia.hr", external: true },
+    { id: "jadrolinija", title: "Jadrolinija (trajekti)", link: "https://jadrolinija.hr", external: true },
+    { id: "weather", title: "Vremenska prognoza", link: "https://meteo.hr", external: true },
   ],
   infoTip: {
-    title: "Local Tips",
-    body: "Most shops close for afternoon siesta (13:00-17:00). ATMs are available in both Vis and Komiža. Credit cards are widely accepted but cash is useful for smaller establishments.",
+    title: "Lokalni savjeti",
+    body: "Većina trgovina zatvara tijekom popodnevne pauze (13:00-17:00). Bankomati su dostupni u Visu i Komiži. Kartice se široko prihvaćaju, ali gotovina je korisna za manje objekte.",
     variant: "tip" as const,
   },
 };
@@ -116,7 +116,7 @@ export default function InfoPage() {
 
         <MediaBlock
           images={pageData.mediaImages}
-          caption="Vis town - the eastern gateway to the island"
+          caption="Grad Vis - istočna vrata otoka"
         />
 
         <TextBlock
@@ -127,7 +127,7 @@ export default function InfoPage() {
         {/* Emergency Numbers Grid */}
         <section className="border-b-2 border-border bg-background p-5">
           <h3 className="mb-4 font-display text-xs font-bold uppercase tracking-widest text-muted-foreground">
-            Emergency Numbers
+            Hitni brojevi
           </h3>
           <div className="grid grid-cols-2 gap-3">
             {pageData.emergencyNumbers.map((item) => (
@@ -150,17 +150,17 @@ export default function InfoPage() {
         </section>
 
         <ContactBlock
-          title="Important Contacts"
+          title="Važni kontakti"
           contacts={pageData.contacts}
         />
 
         <LinkListBlock
-          title="App Sections"
+          title="Dijelovi aplikacije"
           links={pageData.usefulLinks}
         />
 
         <LinkListBlock
-          title="External Links"
+          title="Vanjski linkovi"
           links={pageData.externalLinks}
         />
 
