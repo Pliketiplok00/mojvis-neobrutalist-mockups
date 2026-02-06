@@ -23,6 +23,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -95,41 +96,6 @@ export function ClickFixFormScreen(): React.JSX.Element {
       Alert.alert(t('common.error'), t('clickFix.error.location'));
     } finally {
       setIsGettingLocation(false);
-    }
-  }, [t]);
-
-  const handleTakePhoto = useCallback(async (slotIndex: number) => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(
-        t('clickFix.permissions.title'),
-        t('clickFix.permissions.cameraDenied')
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      quality: 0.8,
-    });
-
-    if (!result.canceled && result.assets.length > 0) {
-      const asset = result.assets[0];
-      const newPhoto: PhotoToUpload = {
-        uri: asset.uri,
-        fileName: asset.fileName || `photo-${Date.now()}.jpg`,
-        mimeType: asset.mimeType || 'image/jpeg',
-      };
-
-      setPhotos((prev) => {
-        const updated = [...prev];
-        // Replace at slot index or add new
-        if (slotIndex < updated.length) {
-          updated[slotIndex] = newPhoto;
-        } else {
-          updated.push(newPhoto);
-        }
-        return updated.slice(0, VALIDATION_LIMITS.MAX_PHOTOS);
-      });
     }
   }, [t]);
 
@@ -248,13 +214,13 @@ export function ClickFixFormScreen(): React.JSX.Element {
                     {location.lat.toFixed(5)}, {location.lng.toFixed(5)}
                   </Body>
                 </View>
-                <Button
-                  variant="secondary"
-                  onPress={handleGetLocation}
-                  disabled={isGettingLocation}
+                <Pressable
+                  style={styles.locationClearButton}
+                  onPress={() => setLocation(null)}
+                  accessibilityLabel={t('common.close')}
                 >
-                  {t('clickFix.locationActions.change')}
-                </Button>
+                  <Icon name="close" size="sm" colorToken="textMuted" />
+                </Pressable>
               </View>
             ) : (
               <Button
@@ -284,12 +250,9 @@ export function ClickFixFormScreen(): React.JSX.Element {
                 <PhotoSlotTile
                   key={slotIndex}
                   photoUri={photos[slotIndex]?.uri}
-                  onTakePhoto={() => handleTakePhoto(slotIndex)}
                   onPickPhoto={() => handlePickPhoto(slotIndex)}
                   onRemove={photos[slotIndex] ? () => handleRemovePhoto(slotIndex) : undefined}
                   disabled={isSubmitting}
-                  takePhotoLabel={t('clickFix.photoActions.takePhoto')}
-                  pickPhotoLabel={t('clickFix.photoActions.pickFromGallery')}
                 />
               ))}
             </View>
@@ -356,6 +319,7 @@ export function ClickFixFormScreen(): React.JSX.Element {
               onPress={handleSubmit}
               loading={isSubmitting}
               disabled={isSubmitting}
+              shadow
             >
               {t('clickFix.send')}
             </Button>
@@ -413,6 +377,9 @@ const styles = StyleSheet.create({
   locationText: {
     color: colors.successText,
     fontFamily: skin.typography.fontFamily.body.regular,
+  },
+  locationClearButton: {
+    padding: spacing.xs,
   },
   buttonError: {
     borderColor: colors.errorText,
