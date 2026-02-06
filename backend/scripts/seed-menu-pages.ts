@@ -120,7 +120,8 @@ const MENU_PAGES: PageData[] = [
           cards: [
             {
               id: 'tile-flora',
-              image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Centaurea_ragusina_1.jpg',
+              // Centaurea ragusina (Dubrovnik/Ragusa endemic) - verified working URL
+              image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Centaurea_ragusina_3_%28Corse%29.JPG',
               title_hr: 'Flora',
               title_en: 'Flora',
               description_hr: 'Biljni svijet viškog arhipelaga',
@@ -132,7 +133,8 @@ const MENU_PAGES: PageData[] = [
             },
             {
               id: 'tile-fauna',
-              image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Tursiops_truncatus_01.jpg',
+              // Atlantic bottlenose dolphin (Tursiops truncatus) - verified working URL
+              image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/60/010_Atlantic_bottlenose_dolphin_jumping_at_Pelican_point_Photo_by_Giles_Laurent.jpg',
               title_hr: 'Fauna',
               title_en: 'Fauna',
               description_hr: 'Životinjski svijet viškog arhipelaga',

@@ -44,7 +44,7 @@ export const staticPageFixture: StaticPageResponse = {
         cards: [
           {
             id: 'tile-flora',
-            image_url: 'https://upload.wikimedia.org/wikipedia/commons/4/4a/Centaurea_ragusina_1.jpg',
+            image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Centaurea_ragusina_3_%28Corse%29.JPG',
             title: 'Flora',
             description: 'Biljni svijet viškog arhipelaga',
             meta: null,
@@ -53,7 +53,7 @@ export const staticPageFixture: StaticPageResponse = {
           },
           {
             id: 'tile-fauna',
-            image_url: 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Tursiops_truncatus_01.jpg',
+            image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/60/010_Atlantic_bottlenose_dolphin_jumping_at_Pelican_point_Photo_by_Giles_Laurent.jpg',
             title: 'Fauna',
             description: 'Životinjski svijet viškog arhipelaga',
             meta: null,
