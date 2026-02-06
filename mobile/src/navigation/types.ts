@@ -49,6 +49,7 @@ export type MainStackParamList = {
   ClickFixDetail: { clickFixId: string };
   Flora: undefined;
   Fauna: undefined;
+  JavneUsluge: undefined;
   Settings: undefined;
   StaticPage: { slug: string };
   // Dev-only screens (gated by __DEV__)
