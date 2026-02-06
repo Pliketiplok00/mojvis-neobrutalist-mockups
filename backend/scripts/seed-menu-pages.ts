@@ -93,21 +93,36 @@ const MENU_PAGES: PageData[] = [
       subtitle_en: 'Natural beauties of the island of Vis',
     },
     blocks: [
+      // Shared "Why special" card
       {
-        id: 'flora-fauna-text-1',
+        id: 'flora-fauna-why-special',
         type: 'text',
         order: 0,
         content: {
-          title_hr: null,
-          title_en: null,
-          body_hr: 'Otkrijte bogatu prirodnu baštinu otoka Visa - od mediteranskog bilja do endemskih vrsta.',
-          body_en: 'Discover the rich natural heritage of the island of Vis - from Mediterranean plants to endemic species.',
+          title_hr: 'Zašto su flora i fauna Viškog arhipelaga posebne',
+          title_en: 'Why the flora and fauna of the Vis archipelago are special',
+          body_hr: 'Viški arhipelag ima iznimno raznoliku mediteransku floru i faunu, oblikovanu izolacijom, čistim morem i netaknutim staništima. Na malom prostoru susreću se endemske vrste, rijetke ptice gnjezdarice, morski sisavci i preko 870 biljnih vrsta.\n\nMnoge vrste osjetljive su na uznemiravanje — promatrajte, fotografirajte, ali ne uznemiravajte i ne berite.',
+          body_en: 'The Vis archipelago has exceptionally diverse Mediterranean flora and fauna, shaped by isolation, clean seas, and pristine habitats. Within a small area, endemic species, rare nesting birds, marine mammals, and over 870 plant species coexist.\n\nMany species are sensitive to disturbance — observe and photograph, but do not disturb or pick.',
         },
       },
+      // Shared "Highlights" card
+      {
+        id: 'flora-fauna-highlights',
+        type: 'highlight',
+        order: 1,
+        content: {
+          variant: 'info',
+          title_hr: 'Zanimljivosti',
+          title_en: 'Highlights',
+          body_hr: '• Više od 870 biljnih vrsta zabilježeno je na Visu\n• Biševo je utočište za ugroženu sredozemnu medvjedicu\n• Viški arhipelag jedno je od rijetkih gnjezdilišta Eleonorinog sokola\n• Endemske gušterice razvijale su se izolirano tisućama godina\n• Natura 2000 štiti brojne vrste ovog područja',
+          body_en: '• Over 870 plant species recorded on Vis\n• Biševo is a refuge for the endangered Mediterranean monk seal\n• The Vis archipelago is one of the rare nesting sites for Eleonora\'s falcon\n• Endemic lizards evolved in isolation for thousands of years\n• Natura 2000 protects many species in this area',
+        },
+      },
+      // Links to Flora and Fauna screens
       {
         id: 'flora-fauna-links-1',
         type: 'link_list',
-        order: 1,
+        order: 2,
         content: {
           links: [
             {
@@ -121,8 +136,8 @@ const MENU_PAGES: PageData[] = [
               id: 'link-fauna',
               title_hr: 'Fauna',
               title_en: 'Fauna',
-              link_type: 'page',
-              link_target: 'fauna',
+              link_type: 'screen',
+              link_target: 'Fauna',
             },
           ],
         },
