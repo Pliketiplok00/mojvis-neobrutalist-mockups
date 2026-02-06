@@ -56,6 +56,7 @@ import { ClickFixConfirmationScreen } from '../screens/click-fix/ClickFixConfirm
 import { ClickFixDetailScreen } from '../screens/click-fix/ClickFixDetailScreen';
 import { FloraScreen } from '../screens/flora/FloraScreen';
 import { FaunaScreen } from '../screens/fauna/FaunaScreen';
+import { JavneUslugeScreen } from '../screens/services/JavneUslugeScreen';
 import { StaticPageScreen } from '../screens/pages/StaticPageScreen';
 import { SettingsScreen } from '../screens/settings/SettingsScreen';
 // Dev-only screens
@@ -124,6 +125,7 @@ function MainNavigator(): React.JSX.Element {
       <MainStack.Screen name="ClickFixDetail" component={ClickFixDetailScreen} />
       <MainStack.Screen name="Flora" component={FloraScreen} />
       <MainStack.Screen name="Fauna" component={FaunaScreen} />
+      <MainStack.Screen name="JavneUsluge" component={JavneUslugeScreen} />
       <MainStack.Screen name="StaticPage" component={StaticPageScreen} />
       <MainStack.Screen name="Settings" component={SettingsScreen} />
       {/* Dev-only screens */}
