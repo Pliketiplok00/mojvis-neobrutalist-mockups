@@ -1,11 +1,11 @@
 /**
  * ServicePageHeader Component
  *
- * Teal-colored header slab for service pages.
+ * Colored header slab for service/form pages.
  * NOT a HeroMediaHeader - simple colored band with text.
  *
  * Features:
- * - Teal background (administrative/service context)
+ * - Configurable background color (defaults to teal)
  * - Leading icon
  * - Title and subtitle
  * - Heavy bottom border (neobrutalist style)
@@ -26,6 +26,8 @@ interface ServicePageHeaderProps {
   subtitle?: string;
   /** Leading icon name */
   icon?: IconName;
+  /** Background color token (defaults to teal) */
+  backgroundColor?: 'teal' | 'orange' | 'primary' | 'secondary' | 'lavender';
 }
 
 const { colors, spacing, borders } = skin;
@@ -34,9 +36,10 @@ export function ServicePageHeader({
   title,
   subtitle,
   icon,
+  backgroundColor = 'teal',
 }: ServicePageHeaderProps): React.JSX.Element {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors[backgroundColor] }]}>
       <View style={styles.content}>
         {icon && (
           <View style={styles.iconContainer}>
@@ -54,7 +57,6 @@ export function ServicePageHeader({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.teal,
     borderBottomWidth: borders.widthHeavy,
     borderBottomColor: colors.border,
   },

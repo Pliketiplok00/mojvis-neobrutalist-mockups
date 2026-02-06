@@ -218,11 +218,12 @@
     }
   },
   "clickFix": {
-    "title": "Report problem",
+    "title": "Snap & Fix",
+    "subtitle": "Report an issue on the island",
     "titleField": "Title",
     "titlePlaceholder": "Brief description of the problem",
-    "description": "Description",
-    "descriptionPlaceholder": "Describe the problem in detail...",
+    "description": "Issue description",
+    "descriptionPlaceholder": "Describe the issue you noticed...",
     "location": "Location",
     "locationHint": "Tap to select location on map",
     "locationSelected": "Location selected",
@@ -232,12 +233,12 @@
     "removePhoto": "Remove",
     "locationActions": {
       "change": "Change",
-      "getLocation": "Get current location"
+      "getLocation": "Get my location"
     },
     "photoActions": {
       "maxTitle": "Maximum photos reached",
       "maxMessage": "You can add up to 3 photos.",
-      "pickFromGallery": "Choose from gallery",
+      "pickFromGallery": "Gallery",
       "takePhoto": "Take photo"
     },
     "send": "Submit report",
@@ -330,7 +331,7 @@
       "timetables": "Timetables",
       "flora": "Flora & Fauna",
       "visitorInfo": "Visitor Info",
-      "clickFix": "Report Problem",
+      "clickFix": "Snap & Fix",
       "feedback": "Send Feedback",
       "contacts": "Important Contacts"
     }

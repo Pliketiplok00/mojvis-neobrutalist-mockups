@@ -50,7 +50,7 @@ const CORE_MENU_ITEMS: MenuItem[] = [
   { label: 'Vozni redovi', labelEn: 'Timetables', icon: 'bus', route: 'TransportHub' },
   { label: 'Flora i fauna', labelEn: 'Flora & Fauna', icon: 'leaf', route: 'StaticPage:flora-fauna' },
   { label: 'Javne usluge', labelEn: 'Public services', icon: 'info', route: 'JavneUsluge' },
-  { label: 'Prijavi problem', labelEn: 'Click & Fix', icon: 'wrench', route: 'ClickFixForm' },
+  { label: 'Slikaj & Popravi', labelEn: 'Snap & Fix', icon: 'camera', route: 'ClickFixForm' },
   { label: 'Pošalji prijedlog', labelEn: 'Feedback', icon: 'message-circle', route: 'FeedbackForm' },
   { label: 'Važni kontakti', labelEn: 'Important contacts', icon: 'phone', route: 'StaticPage:important-contacts' },
   { label: 'Postavke', labelEn: 'Settings', icon: 'settings', route: 'Settings' },
