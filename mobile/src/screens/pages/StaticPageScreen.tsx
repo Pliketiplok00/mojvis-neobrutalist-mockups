@@ -246,17 +246,47 @@ function TextBlock({ content }: { content: TextBlockContent }): React.JSX.Elemen
 }
 
 function HighlightBlock({ content }: { content: HighlightBlockContent }): React.JSX.Element {
-  const variantStyles = {
-    info: { backgroundColor: skin.colors.infoBackground, borderColor: skin.colors.infoText },
-    warning: { backgroundColor: skin.colors.warningBackground, borderColor: skin.colors.warningAccent },
-    success: { backgroundColor: skin.colors.successBackground, borderColor: skin.colors.successText },
+  // Parse bullets: lines starting with • or - are treated as bullet items
+  const bulletLines = content.body
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  const hasBullets = bulletLines.some(line => line.startsWith('•') || line.startsWith('-'));
+
+  // Variant styling for the shadow
+  const variantShadowColors: Record<string, string> = {
+    info: skin.colors.infoText,
+    warning: skin.colors.warningAccent,
+    success: skin.colors.successText,
   };
-  const style = variantStyles[content.variant] || variantStyles.info;
+  const shadowColor = variantShadowColors[content.variant] || variantShadowColors.info;
 
   return (
-    <View style={[styles.block, styles.highlightBlock, { backgroundColor: style.backgroundColor, borderLeftColor: style.borderColor }]}>
-      {content.title && <ButtonText style={styles.highlightTitle}>{content.title}</ButtonText>}
-      <Body style={styles.highlightBody}>{content.body}</Body>
+    <View style={styles.highlightCardContainer}>
+      <View style={styles.highlightCardWrapper}>
+        <View style={[styles.highlightShadow, { backgroundColor: shadowColor }]} />
+        <View style={styles.highlightCard}>
+          {content.title && <H2 style={styles.highlightCardTitle}>{content.title}</H2>}
+          {hasBullets ? (
+            <View style={styles.highlightBulletList}>
+              {bulletLines.map((line, index) => {
+                const text = line.replace(/^[•-]\s*/, '');
+                return (
+                  <View key={`bullet-${index}`} style={styles.highlightBulletRow}>
+                    <View style={styles.highlightBulletIcon}>
+                      <Icon name="check" size="sm" colorToken="secondary" />
+                    </View>
+                    <Body style={styles.highlightBulletText}>{text}</Body>
+                  </View>
+                );
+              })}
+            </View>
+          ) : (
+            <Body style={styles.highlightCardBody}>{content.body}</Body>
+          )}
+        </View>
+      </View>
     </View>
   );
 }
@@ -521,17 +551,48 @@ const styles = StyleSheet.create({
     color: skin.colors.textSecondary,
   },
 
-  // Highlight block
-  highlightBlock: {
-    borderLeftWidth: 4,
-    borderRadius: skin.borders.radiusCard,
-    marginHorizontal: skin.spacing.lg,
+  // Highlight block (neobrut card with shadow)
+  highlightCardContainer: {
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.md,
   },
-  highlightTitle: {
-    marginBottom: skin.spacing.xs,
-    color: skin.colors.textPrimary,
+  highlightCardWrapper: {
+    position: 'relative',
   },
-  highlightBody: {
+  highlightShadow: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    right: -4,
+    bottom: -4,
+  },
+  highlightCard: {
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.lg,
+  },
+  highlightCardTitle: {
+    marginBottom: skin.spacing.md,
+  },
+  highlightBulletList: {
+    gap: skin.spacing.sm,
+  },
+  highlightBulletRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  highlightBulletIcon: {
+    width: 24,
+    marginRight: skin.spacing.sm,
+    paddingTop: 2,
+  },
+  highlightBulletText: {
+    flex: 1,
+    lineHeight: 22,
+    color: skin.colors.textSecondary,
+  },
+  highlightCardBody: {
     lineHeight: 22,
     color: skin.colors.textSecondary,
   },
