@@ -1,13 +1,12 @@
 /**
  * PhotoSlotTile Component
  *
- * A dashed-bordered tile for photo slots in form screens.
- * Can display either an empty slot (with action buttons) or a photo thumbnail.
+ * A tile for photo slots in form screens.
+ * Polish version: simplified empty state, neobrut shadow on filled.
  *
  * Features:
- * - Empty state: dashed border with camera/gallery icons
- * - Filled state: photo thumbnail with remove button
- * - Neobrutalist styling (sharp corners, thick borders)
+ * - Empty state: dashed border with centered camera icon (taps to pick photo)
+ * - Filled state: photo thumbnail with neobrut offset shadow + remove button
  *
  * Skin-pure: Uses skin tokens only.
  */
@@ -16,133 +15,114 @@ import React from 'react';
 import { View, Image, Pressable, StyleSheet } from 'react-native';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
-import { Meta } from '../../ui/Text';
+
+const SHADOW_OFFSET = 4;
 
 interface PhotoSlotTileProps {
   /** Photo URI if filled, undefined if empty */
   photoUri?: string;
-  /** Called when empty tile is pressed for camera */
-  onTakePhoto?: () => void;
-  /** Called when empty tile is pressed for gallery */
+  /** Called when empty tile is pressed (opens picker) */
   onPickPhoto?: () => void;
   /** Called when remove button is pressed */
   onRemove?: () => void;
   /** Whether the tile is disabled */
   disabled?: boolean;
-  /** Label for take photo action */
-  takePhotoLabel?: string;
-  /** Label for pick photo action */
-  pickPhotoLabel?: string;
 }
 
 const { colors, spacing, borders } = skin;
 
-const TILE_SIZE = 100;
-
 export function PhotoSlotTile({
   photoUri,
-  onTakePhoto,
   onPickPhoto,
   onRemove,
   disabled,
-  takePhotoLabel = 'Slikaj',
-  pickPhotoLabel = 'Galerija',
 }: PhotoSlotTileProps): React.JSX.Element {
-  // Filled state - show photo with remove button
+  // Filled state - show photo with neobrut shadow and remove button
   if (photoUri) {
     return (
-      <View style={styles.filledContainer}>
-        <Image source={{ uri: photoUri }} style={styles.photo} />
-        {onRemove && !disabled && (
-          <Pressable
-            style={styles.removeButton}
-            onPress={onRemove}
-            accessibilityRole="button"
-            accessibilityLabel="Remove photo"
-          >
-            <Icon name="close" size="sm" color={colors.background} />
-          </Pressable>
-        )}
+      <View style={styles.filledWrapper}>
+        {/* Shadow layer */}
+        <View style={styles.shadowLayer} />
+        {/* Main tile */}
+        <View style={styles.filledContainer}>
+          <Image source={{ uri: photoUri }} style={styles.photo} />
+          {onRemove && !disabled && (
+            <Pressable
+              style={styles.removeButton}
+              onPress={onRemove}
+              accessibilityRole="button"
+              accessibilityLabel="Remove photo"
+            >
+              <Icon name="close" size="sm" colorToken="background" />
+            </Pressable>
+          )}
+        </View>
       </View>
     );
   }
 
-  // Empty state - show action buttons
+  // Empty state - dashed border with centered camera icon
   return (
-    <View style={styles.emptyContainer}>
-      <Pressable
-        style={styles.actionButton}
-        onPress={onTakePhoto}
-        disabled={disabled}
-        accessibilityRole="button"
-        accessibilityLabel={takePhotoLabel}
-      >
-        <Icon name="camera" size="md" colorToken="textMuted" />
-        <Meta style={styles.actionLabel}>{takePhotoLabel}</Meta>
-      </Pressable>
-      <View style={styles.divider} />
-      <Pressable
-        style={styles.actionButton}
-        onPress={onPickPhoto}
-        disabled={disabled}
-        accessibilityRole="button"
-        accessibilityLabel={pickPhotoLabel}
-      >
-        <Icon name="inbox" size="md" colorToken="textMuted" />
-        <Meta style={styles.actionLabel}>{pickPhotoLabel}</Meta>
-      </Pressable>
-    </View>
+    <Pressable
+      style={styles.emptyContainer}
+      onPress={onPickPhoto}
+      disabled={disabled}
+      accessibilityRole="button"
+      accessibilityLabel="Add photo"
+    >
+      <Icon name="camera" size="lg" colorToken="textMuted" />
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   emptyContainer: {
-    width: TILE_SIZE,
-    height: TILE_SIZE,
+    flex: 1,
+    aspectRatio: 1,
     borderWidth: borders.widthThin,
     borderColor: colors.border,
     borderStyle: 'dashed',
-    flexDirection: 'column',
+    borderRadius: borders.radiusSharp,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.background,
   },
-  filledContainer: {
-    width: TILE_SIZE,
-    height: TILE_SIZE,
+  filledWrapper: {
+    flex: 1,
+    aspectRatio: 1,
     position: 'relative',
   },
-  photo: {
-    width: TILE_SIZE,
-    height: TILE_SIZE,
+  shadowLayer: {
+    position: 'absolute',
+    top: SHADOW_OFFSET,
+    left: SHADOW_OFFSET,
+    right: -SHADOW_OFFSET,
+    bottom: -SHADOW_OFFSET,
+    backgroundColor: colors.border,
+    borderRadius: borders.radiusSharp,
+  },
+  filledContainer: {
+    flex: 1,
     borderWidth: borders.widthThin,
     borderColor: colors.border,
+    borderRadius: borders.radiusSharp,
+    overflow: 'hidden',
+    backgroundColor: colors.background,
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
   },
   removeButton: {
     position: 'absolute',
-    top: -spacing.sm,
-    right: -spacing.sm,
-    width: spacing.xxl,
-    height: spacing.xxl,
-    borderRadius: spacing.md,
+    top: spacing.xs,
+    right: spacing.xs,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: colors.errorText,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  actionButton: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  },
-  divider: {
-    width: '80%',
-    height: borders.widthHairline,
-    backgroundColor: colors.borderLight,
-  },
-  actionLabel: {
-    color: colors.textMuted,
-    marginTop: spacing.xs,
-    textAlign: 'center',
   },
 });
 
