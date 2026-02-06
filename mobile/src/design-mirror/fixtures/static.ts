@@ -8,6 +8,7 @@
 import type {
   StaticPageResponse,
   TextBlockContent,
+  HighlightBlockContent,
   CardListBlockContent,
 } from '../../types/static-page';
 
@@ -19,43 +20,54 @@ export const staticPageFixture: StaticPageResponse = {
   slug: 'flora-fauna',
   header: {
     type: 'media',
-    title: 'Flora i Fauna',
+    title: 'Flora i fauna',
     subtitle: 'Prirodne ljepote otoka Visa',
-    images: ['https://picsum.photos/800/400?random=1'],
+    images: ['https://upload.wikimedia.org/wikipedia/commons/c/c9/J32_479_Vis%2C_S%C3%BCdk%C3%BCste.jpg'],
   },
   blocks: [
-    // Intro text
+    // Why special (shared intro)
     {
-      id: 'block-text-intro',
+      id: 'flora-fauna-why-special',
       type: 'text',
       content: {
-        title: null,
-        body: 'Otok Vis je dom bogatoj mediteranskoj flori i fauni. Endemske biljke i rijetke životinjske vrste čine ovaj otok posebnim.',
+        title: 'Zašto je priroda Visa posebna?',
+        body: 'Otok Vis je zbog svoje izoliranosti sačuvao jedinstvenu biološku raznolikost. Mediteranska klima, netaknuti ekosustavi i čisto more čine ga domom rijetkih i endemskih vrsta.',
       } as TextBlockContent,
     },
-    // Gateway cards: Flora and Fauna
+    // Highlights
     {
-      id: 'block-cards-gateway',
+      id: 'flora-fauna-highlights',
+      type: 'highlight',
+      content: {
+        variant: 'info',
+        icon: null,
+        title: 'Zanimljivosti',
+        body: 'Vis je dio mreže Natura 2000. Na otoku raste preko 500 biljnih vrsta, a u okolnim vodama obitavaju dupini, kornjače i razne vrste riba.',
+      } as HighlightBlockContent,
+    },
+    // Navigation tiles (card_list)
+    {
+      id: 'flora-fauna-cards',
       type: 'card_list',
       content: {
         cards: [
           {
             id: 'card-flora',
-            image_url: 'https://picsum.photos/400/200?random=flora',
+            image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Centaurea_ragusina_1.jpg/800px-Centaurea_ragusina_1.jpg',
             title: 'Flora',
-            description: 'Zaštićene biljke i endemske vrste otoka Visa',
+            description: 'Biljni svijet otoka Visa — zaštićene i endemske vrste',
             meta: null,
             link_type: 'screen',
             link_target: 'Flora',
           },
           {
             id: 'card-fauna',
-            image_url: 'https://picsum.photos/400/200?random=fauna',
+            image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Tursiops_truncatus_01.jpg/800px-Tursiops_truncatus_01.jpg',
             title: 'Fauna',
-            description: 'Životinjski svijet otoka — uskoro',
+            description: 'Životinjski svijet otoka — morski i kopneni stanovnici',
             meta: null,
-            link_type: null,
-            link_target: null,
+            link_type: 'screen',
+            link_target: 'Fauna',
           },
         ],
       } as CardListBlockContent,

@@ -26,11 +26,13 @@ const pool = new Pool({
 interface PageData {
   slug: string;
   header: {
-    type: string;
+    type: 'simple' | 'media';
     title_hr: string;
     title_en: string;
     subtitle_hr?: string;
     subtitle_en?: string;
+    icon?: string;
+    images?: string[];
   };
   blocks: Array<{
     id: string;
@@ -82,47 +84,75 @@ const MENU_PAGES: PageData[] = [
     ],
   },
 
-  // Flora & Fauna landing page
+  // Flora & Fauna landing page (HUB with hero and tiles)
   {
     slug: 'flora-fauna',
     header: {
-      type: 'simple',
+      type: 'media',
       title_hr: 'Flora i fauna',
       title_en: 'Flora & Fauna',
       subtitle_hr: 'Prirodne ljepote otoka Visa',
       subtitle_en: 'Natural beauties of the island of Vis',
+      images: [
+        'https://upload.wikimedia.org/wikipedia/commons/c/c9/J32_479_Vis%2C_S%C3%BCdk%C3%BCste.jpg',
+      ],
     },
     blocks: [
+      // Why special (shared intro)
       {
-        id: 'flora-fauna-text-1',
+        id: 'flora-fauna-why-special',
         type: 'text',
         order: 0,
         content: {
-          title_hr: null,
-          title_en: null,
-          body_hr: 'Otkrijte bogatu prirodnu baštinu otoka Visa - od mediteranskog bilja do endemskih vrsta.',
-          body_en: 'Discover the rich natural heritage of the island of Vis - from Mediterranean plants to endemic species.',
+          title_hr: 'Zašto je priroda Visa posebna?',
+          title_en: 'Why is the nature of Vis special?',
+          body_hr: 'Otok Vis je zbog svoje izoliranosti sačuvao jedinstvenu biološku raznolikost. Mediteranska klima, netaknuti ekosustavi i čisto more čine ga domom rijetkih i endemskih vrsta.',
+          body_en: 'Due to its isolation, the island of Vis has preserved unique biodiversity. Mediterranean climate, pristine ecosystems, and clean sea make it home to rare and endemic species.',
         },
       },
+      // Highlights
       {
-        id: 'flora-fauna-links-1',
-        type: 'link_list',
+        id: 'flora-fauna-highlights',
+        type: 'highlight',
         order: 1,
         content: {
-          links: [
+          variant: 'info',
+          title_hr: 'Zanimljivosti',
+          title_en: 'Highlights',
+          body_hr: 'Vis je dio mreže Natura 2000. Na otoku raste preko 500 biljnih vrsta, a u okolnim vodama obitavaju dupini, kornjače i razne vrste riba.',
+          body_en: 'Vis is part of the Natura 2000 network. Over 500 plant species grow on the island, while dolphins, turtles, and various fish species inhabit the surrounding waters.',
+        },
+      },
+      // Navigation tiles (card_list)
+      {
+        id: 'flora-fauna-cards',
+        type: 'card_list',
+        order: 2,
+        content: {
+          cards: [
             {
-              id: 'link-flora',
+              id: 'card-flora',
+              image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Centaurea_ragusina_1.jpg/800px-Centaurea_ragusina_1.jpg',
               title_hr: 'Flora',
               title_en: 'Flora',
+              description_hr: 'Biljni svijet otoka Visa — zaštićene i endemske vrste',
+              description_en: 'Plant life of Vis Island — protected and endemic species',
+              meta_hr: null,
+              meta_en: null,
               link_type: 'screen',
               link_target: 'Flora',
             },
             {
-              id: 'link-fauna',
+              id: 'card-fauna',
+              image_url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Tursiops_truncatus_01.jpg/800px-Tursiops_truncatus_01.jpg',
               title_hr: 'Fauna',
               title_en: 'Fauna',
-              link_type: 'page',
-              link_target: 'fauna',
+              description_hr: 'Životinjski svijet otoka — morski i kopneni stanovnici',
+              description_en: 'Animal life of the island — marine and land inhabitants',
+              meta_hr: null,
+              meta_en: null,
+              link_type: 'screen',
+              link_target: 'Fauna',
             },
           ],
         },

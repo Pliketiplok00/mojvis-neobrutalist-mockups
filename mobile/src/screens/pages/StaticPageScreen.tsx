@@ -27,6 +27,7 @@ import {
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { RouteProp, NavigationProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { HeroMediaHeader } from '../../ui/HeroMediaHeader';
 import { useTranslations } from '../../i18n';
 import { useUserContext } from '../../hooks/useUserContext';
 import { staticPagesApi } from '../../services/api';
@@ -166,17 +167,25 @@ export function StaticPageScreen(): React.JSX.Element {
 
 /**
  * Page header renderer
+ *
+ * - media: Uses HeroMediaHeader with carousel, title slab
+ * - simple: Uses plain H1 + subtitle
  */
 function PageHeaderView({ header }: { header: StaticPageResponse['header'] }): React.JSX.Element {
+  // Media header: use HeroMediaHeader component for carousel + title slab
+  if (header.type === 'media' && header.images && header.images.length > 0) {
+    return (
+      <HeroMediaHeader
+        images={header.images}
+        title={header.title}
+        subtitle={header.subtitle ?? undefined}
+      />
+    );
+  }
+
+  // Simple header: plain text
   return (
     <View style={styles.pageHeader}>
-      {header.type === 'media' && header.images && header.images.length > 0 && (
-        <Image
-          source={{ uri: header.images[0] }}
-          style={styles.headerImage}
-          resizeMode="cover"
-        />
-      )}
       <H1 style={styles.pageTitle}>{header.title}</H1>
       {header.subtitle && (
         <Body style={styles.pageSubtitle}>{header.subtitle}</Body>
