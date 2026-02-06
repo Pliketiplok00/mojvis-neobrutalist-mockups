@@ -87,7 +87,7 @@ export const javneUslugeContent: JavneUslugeContent = {
   services: [
     {
       id: 'dom-zdravlja',
-      icon: 'home',
+      icon: 'hospital',
       title: 'Dom zdravlja',
       subtitle: 'Primarna zdravstvena zaštita',
       badge: 'VELJAČA \'26',
@@ -113,7 +113,7 @@ export const javneUslugeContent: JavneUslugeContent = {
     },
     {
       id: 'veterinarska',
-      icon: 'leaf',
+      icon: 'cat',
       title: 'Veterinarska stanica',
       subtitle: 'Zdravstvena skrb za životinje',
       iconBackgroundColor: 'secondary',
@@ -162,7 +162,7 @@ export const javneUslugeContent: JavneUslugeContent = {
     },
     {
       id: 'tehnicki-pregled',
-      icon: 'wrench',
+      icon: 'car',
       title: 'Tehnički pregled',
       subtitle: 'Registracija vozila',
       iconBackgroundColor: 'orange',
@@ -186,7 +186,7 @@ export const javneUslugeContent: JavneUslugeContent = {
     },
     {
       id: 'banke',
-      icon: 'inbox',
+      icon: 'landmark',
       title: 'Banke',
       subtitle: 'Bankomati i poslovnice',
       iconBackgroundColor: 'accent',
