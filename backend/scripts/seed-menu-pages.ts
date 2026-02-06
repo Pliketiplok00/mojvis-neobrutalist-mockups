@@ -26,11 +26,13 @@ const pool = new Pool({
 interface PageData {
   slug: string;
   header: {
-    type: string;
+    type: 'simple' | 'media';
     title_hr: string;
     title_en: string;
     subtitle_hr?: string;
     subtitle_en?: string;
+    icon?: string;
+    images?: string[];
   };
   blocks: Array<{
     id: string;
@@ -82,49 +84,80 @@ const MENU_PAGES: PageData[] = [
     ],
   },
 
-  // Flora & Fauna landing page
+  // Flora & Fauna HUB (archipelago landing page)
   {
     slug: 'flora-fauna',
     header: {
-      type: 'simple',
+      type: 'media',
       title_hr: 'Flora i fauna',
       title_en: 'Flora & Fauna',
-      subtitle_hr: 'Prirodne ljepote otoka Visa',
-      subtitle_en: 'Natural beauties of the island of Vis',
+      subtitle_hr: 'Viški arhipelag',
+      subtitle_en: 'Vis Archipelago',
+      images: [
+        // Panoramic view of Biševo island next to Vis island - archipelago overview
+        'https://upload.wikimedia.org/wikipedia/commons/f/fa/Panoramic_view_of_Bisevo_island_next_to_Vis_island_in_Croatia_%2848608613336%29.jpg',
+      ],
     },
     blocks: [
+      // 0) INTRO TEXT BLOCK
       {
-        id: 'flora-fauna-text-1',
+        id: 'flora-fauna-intro',
         type: 'text',
         order: 0,
         content: {
-          title_hr: null,
-          title_en: null,
-          body_hr: 'Otkrijte bogatu prirodnu baštinu otoka Visa - od mediteranskog bilja do endemskih vrsta.',
-          body_en: 'Discover the rich natural heritage of the island of Vis - from Mediterranean plants to endemic species.',
+          title_hr: 'Zašto je flora i fauna viškog arhipelaga posebna?',
+          title_en: 'Why is the flora and fauna of the Vis archipelago special?',
+          body_hr: 'Viški arhipelag čini mozaik otoka, otočića, hridi i podmorja koji su desetljećima ostali izvan intenzivnog ljudskog utjecaja. Upravo ta kombinacija izolacije, čistog mora i raznolikih staništa — od strmih morskih litica i špilja do suhozida, makije i otvorenog mora — stvorila je iznimno bogat i osjetljiv prirodni sustav.\n\nNa relativno malom prostoru susreću se rijetke i endemske biljne vrste, ptice gnijezdarice, morski sisavci i brojni podmorski organizmi. Mnoge od tih vrsta ovise o miru, stabilnosti i očuvanom okolišu — zato su promatranje, poštovanje i nenarušavanje ključni za njihovo očuvanje.',
+          body_en: 'The Vis archipelago is a mosaic of islands, islets, reefs and surrounding seas that remained largely untouched by intensive human activity for decades. This unique combination of isolation, clean waters and diverse habitats — from steep sea cliffs and caves to dry stone landscapes, maquis and open sea — has shaped an exceptionally rich and fragile natural system.\n\nWithin a relatively small area, rare and endemic plant species, nesting seabirds, marine mammals and diverse underwater life coexist. Many of these species depend on calm, stability and intact habitats — which is why observation, respect and non-disturbance are essential for their survival.',
         },
       },
+      // 1) FLORA & FAUNA TILES (card_list, side-by-side)
       {
-        id: 'flora-fauna-links-1',
-        type: 'link_list',
+        id: 'flora-fauna-tiles',
+        type: 'card_list',
         order: 1,
         content: {
-          links: [
+          cards: [
             {
-              id: 'link-flora',
+              id: 'tile-flora',
+              // Centaurea ragusina (Dubrovnik/Ragusa endemic) - verified working URL
+              image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Centaurea_ragusina_3_%28Corse%29.JPG',
               title_hr: 'Flora',
               title_en: 'Flora',
+              description_hr: 'Biljni svijet viškog arhipelaga',
+              description_en: 'Plant life of the Vis archipelago',
+              meta_hr: null,
+              meta_en: null,
               link_type: 'screen',
               link_target: 'Flora',
             },
             {
-              id: 'link-fauna',
+              id: 'tile-fauna',
+              // Atlantic bottlenose dolphin (Tursiops truncatus) - verified working URL
+              image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/60/010_Atlantic_bottlenose_dolphin_jumping_at_Pelican_point_Photo_by_Giles_Laurent.jpg',
               title_hr: 'Fauna',
               title_en: 'Fauna',
-              link_type: 'page',
-              link_target: 'fauna',
+              description_hr: 'Životinjski svijet viškog arhipelaga',
+              description_en: 'Animal life of the Vis archipelago',
+              meta_hr: null,
+              meta_en: null,
+              link_type: 'screen',
+              link_target: 'Fauna',
             },
           ],
+        },
+      },
+      // 2) HIGHLIGHTS BLOCK (bullet list)
+      {
+        id: 'flora-fauna-highlights',
+        type: 'highlight',
+        order: 2,
+        content: {
+          variant: 'info',
+          title_hr: 'Zanimljivosti',
+          title_en: 'Highlights',
+          body_hr: '• Viški arhipelag dio je europske ekološke mreže Natura 2000, koja štiti najvrjednija prirodna staništa.\n• Otočići poput Biševa, Brusnika i Jabuke ključna su područja za gniježđenje ptica i život rijetkih morskih vrsta.\n• Podmorje arhipelaga dom je dupina, morskih kornjača i brojnih osjetljivih zajednica.\n• Mnoge biljne vrste prilagođene su surovim uvjetima — vjetru, suši i slanom aerosolu.\n• Tišina i slab svjetlosni utjecaj noću čine arhipelag važnim za noćne životinje i orijentaciju ptica.',
+          body_en: '• The Vis archipelago is part of the Natura 2000 network, protecting Europe\'s most valuable natural habitats.\n• Islets such as Biševo, Brusnik and Jabuka are key areas for seabird nesting and rare marine species.\n• The surrounding sea is home to dolphins, sea turtles and sensitive underwater ecosystems.\n• Many plant species are adapted to harsh conditions — wind, drought and salt spray.\n• Low light pollution and relative silence make the archipelago important for nocturnal wildlife and bird navigation.',
         },
       },
     ],
