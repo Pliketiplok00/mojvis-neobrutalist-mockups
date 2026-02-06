@@ -13,7 +13,7 @@
  */
 
 import React from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { ServicePageHeader } from '../../components/services/ServicePageHeader';
@@ -21,12 +21,17 @@ import { ServiceAccordionCard } from '../../components/services/ServiceAccordion
 import { EmergencyTile } from '../../components/services/EmergencyTile';
 import { javneUslugeContent } from '../../data/javneUslugeContent';
 import { skin } from '../../ui/skin';
-import { H2 } from '../../ui/Text';
+import { Icon } from '../../ui/Icon';
+import { H2, Body } from '../../ui/Text';
 
-const { colors, spacing } = skin;
+const { colors, spacing, borders } = skin;
 
 export function JavneUslugeScreen(): React.JSX.Element {
-  const { header, services, emergency } = javneUslugeContent;
+  const { header, services, emergency, usefulLinks } = javneUslugeContent;
+
+  const handleLinkPress = (url: string) => {
+    void Linking.openURL(url);
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -76,6 +81,26 @@ export function JavneUslugeScreen(): React.JSX.Element {
             ))}
           </View>
         </View>
+
+        {/* Useful Links Section */}
+        <View style={styles.linksSection}>
+          <H2 style={styles.linksTitle}>{usefulLinks.title}</H2>
+          <View style={styles.linksList}>
+            {usefulLinks.links.map((link) => (
+              <Pressable
+                key={link.id}
+                style={styles.linkItem}
+                onPress={() => handleLinkPress(link.url)}
+                accessibilityRole="link"
+                accessibilityLabel={link.title}
+              >
+                <Icon name={link.icon} size="sm" colorToken="textMuted" />
+                <Body style={styles.linkText}>{link.title}</Body>
+                <Icon name="globe" size="sm" colorToken="chevron" />
+              </Pressable>
+            ))}
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -106,6 +131,32 @@ const styles = StyleSheet.create({
   emergencyTiles: {
     flexDirection: 'row',
     gap: spacing.sm,
+  },
+  linksSection: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.xl,
+  },
+  linksTitle: {
+    marginBottom: spacing.md,
+    color: colors.textPrimary,
+  },
+  linksList: {
+    backgroundColor: colors.background,
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+  },
+  linkItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderBottomWidth: borders.widthHairline,
+    borderBottomColor: colors.borderLight,
+    gap: spacing.md,
+  },
+  linkText: {
+    flex: 1,
+    color: colors.textPrimary,
   },
 });
 

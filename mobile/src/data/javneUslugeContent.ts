@@ -25,9 +25,26 @@ export interface ServiceItem {
   title: string;
   subtitle: string;
   badge?: string;
-  iconBackgroundColor: 'backgroundSecondary' | 'teal' | 'secondary' | 'warningBackground';
+  iconBackgroundColor:
+    | 'errorBackground'
+    | 'warningBackground'
+    | 'infoBackground'
+    | 'pendingBackground'
+    | 'accent'
+    | 'secondary'
+    | 'primary'
+    | 'lavender'
+    | 'orange'
+    | 'urgent';
   infoRows: ServiceInfoRow[];
   note?: string;
+}
+
+export interface UsefulLink {
+  id: string;
+  icon: IconName;
+  title: string;
+  url: string;
 }
 
 export interface EmergencyNumber {
@@ -50,6 +67,10 @@ export interface JavneUslugeContent {
     title: string;
     numbers: EmergencyNumber[];
   };
+  usefulLinks: {
+    title: string;
+    links: UsefulLink[];
+  };
 }
 
 // ============================================================
@@ -70,7 +91,7 @@ export const javneUslugeContent: JavneUslugeContent = {
       title: 'Dom zdravlja',
       subtitle: 'Primarna zdravstvena zaštita',
       badge: 'VELJAČA \'26',
-      iconBackgroundColor: 'backgroundSecondary',
+      iconBackgroundColor: 'urgent',
       infoRows: [
         {
           icon: 'map-pin',
@@ -95,7 +116,7 @@ export const javneUslugeContent: JavneUslugeContent = {
       icon: 'leaf',
       title: 'Veterinarska stanica',
       subtitle: 'Zdravstvena skrb za životinje',
-      iconBackgroundColor: 'backgroundSecondary',
+      iconBackgroundColor: 'secondary',
       infoRows: [
         {
           icon: 'map-pin',
@@ -119,7 +140,7 @@ export const javneUslugeContent: JavneUslugeContent = {
       icon: 'file-text',
       title: 'Javni bilježnik',
       subtitle: 'Pravne usluge i ovjera dokumenata',
-      iconBackgroundColor: 'backgroundSecondary',
+      iconBackgroundColor: 'lavender',
       infoRows: [
         {
           icon: 'map-pin',
@@ -144,7 +165,7 @@ export const javneUslugeContent: JavneUslugeContent = {
       icon: 'wrench',
       title: 'Tehnički pregled',
       subtitle: 'Registracija vozila',
-      iconBackgroundColor: 'backgroundSecondary',
+      iconBackgroundColor: 'orange',
       infoRows: [
         {
           icon: 'map-pin',
@@ -168,7 +189,7 @@ export const javneUslugeContent: JavneUslugeContent = {
       icon: 'inbox',
       title: 'Banke',
       subtitle: 'Bankomati i poslovnice',
-      iconBackgroundColor: 'backgroundSecondary',
+      iconBackgroundColor: 'accent',
       infoRows: [
         {
           icon: 'map-pin',
@@ -192,7 +213,7 @@ export const javneUslugeContent: JavneUslugeContent = {
       icon: 'mail',
       title: 'Pošta & Internet',
       subtitle: 'Poštanske usluge i pristup internetu',
-      iconBackgroundColor: 'backgroundSecondary',
+      iconBackgroundColor: 'primary',
       infoRows: [
         {
           icon: 'map-pin',
@@ -239,6 +260,30 @@ export const javneUslugeContent: JavneUslugeContent = {
         phoneNumber: '193',
         backgroundColor: 'secondary',
         textColor: 'primaryText',
+      },
+    ],
+  },
+
+  usefulLinks: {
+    title: 'Korisni linkovi',
+    links: [
+      {
+        id: 'jadrolinija',
+        icon: 'ship',
+        title: 'Jadrolinija – trajekti',
+        url: 'https://www.jadrolinija.hr',
+      },
+      {
+        id: 'krilo',
+        icon: 'anchor',
+        title: 'Krilo – katamaran',
+        url: 'https://www.krfrilo.hr',
+      },
+      {
+        id: 'prognoza',
+        icon: 'globe',
+        title: 'Vremenska prognoza',
+        url: 'https://meteo.hr',
       },
     ],
   },
