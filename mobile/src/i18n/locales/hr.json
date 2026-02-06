@@ -218,11 +218,12 @@
     }
   },
   "clickFix": {
-    "title": "Prijavi problem",
+    "title": "Slikaj & Popravi",
+    "subtitle": "Prijavite problem na otoku",
     "titleField": "Naslov",
     "titlePlaceholder": "Kratki opis problema",
-    "description": "Opis",
-    "descriptionPlaceholder": "Detaljno opisite problem...",
+    "description": "Opis problema",
+    "descriptionPlaceholder": "Opišite problem koji ste uočili...",
     "location": "Lokacija",
     "locationHint": "Dodirnite za odabir lokacije na karti",
     "locationSelected": "Lokacija odabrana",
@@ -232,15 +233,15 @@
     "removePhoto": "Ukloni",
     "locationActions": {
       "change": "Promijeni",
-      "getLocation": "Dohvati trenutnu lokaciju"
+      "getLocation": "Dohvati moju lokaciju"
     },
     "photoActions": {
       "maxTitle": "Maksimalan broj slika",
-      "maxMessage": "Mozete dodati najvise 3 slike.",
-      "pickFromGallery": "Odaberi iz galerije",
+      "maxMessage": "Možete dodati najviše 3 slike.",
+      "pickFromGallery": "Galerija",
       "takePhoto": "Slikaj"
     },
-    "send": "Posalji prijavu",
+    "send": "Pošalji prijavu",
     "sending": "Slanje...",
     "error": {
       "submit": "Greska pri slanju prijave. Pokusajte ponovo.",
@@ -330,7 +331,7 @@
       "timetables": "Vozni redovi",
       "flora": "Flora i fauna",
       "visitorInfo": "Info za posjetitelje",
-      "clickFix": "Prijavi problem",
+      "clickFix": "Slikaj & Popravi",
       "feedback": "Posalji prijedlog",
       "contacts": "Vazni kontakti"
     }
