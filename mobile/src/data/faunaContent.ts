@@ -86,10 +86,10 @@ export const faunaContent: FaunaContent = {
     badge: { hr: "OTOK VIS", en: "VIS ISLAND" },
     images: [
       {
-        url: "https://upload.wikimedia.org/wikipedia/commons/1/14/Island_of_Vis%2C_Croatia.jpg",
-        author: "Bracodbk",
+        url: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Komiza%2C_Island_of_Vis%2C_Croatia.JPG",
+        author: "Hedwig Storch",
         license: "CC BY-SA 3.0",
-        sourcePage: "https://commons.wikimedia.org/wiki/File:Island_of_Vis,_Croatia.jpg",
+        sourcePage: "https://commons.wikimedia.org/wiki/File:Komiza,_Island_of_Vis,_Croatia.JPG",
       },
     ]
   },
@@ -208,22 +208,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/6/6c/Monachus_monachus_-_Kroatien_2009_-_1.jpg",
-          author: "Nsjake",
-          license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Monachus_monachus_-_Kroatien_2009_-_1.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Mediterranean_Monk_Seal.jpg",
-          author: "Archipelagos Institute of Marine Conservation",
+          url: "https://upload.wikimedia.org/wikipedia/commons/8/88/Adult_female_monk_seal.jpg",
+          author: "Wanax01",
           license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Mediterranean_Monk_Seal.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Adult_female_monk_seal.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Monachus_monachus_-_Museo_civico_di_storia_naturale_%28Milan%29.jpg",
-          author: "Giovanni Dall'Orto",
-          license: "CC BY-SA 2.5",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Monachus_monachus_-_Museo_civico_di_storia_naturale_(Milan).jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/5/51/Monachus_monachus_DSC_0274.jpg",
+          author: "Marinko Babic",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Monachus_monachus_DSC_0274.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/8/84/Monachus_monachus_DSC_0057.jpg",
+          author: "Marinko Babic",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Monachus_monachus_DSC_0057.jpg",
         },
       ]
     },
@@ -255,22 +255,10 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/4/48/Falco_eleonorae_by_Sergio_Canobbio_2.jpg",
-          author: "Sergio Canobbio",
-          license: "CC BY-SA 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Falco_eleonorae_by_Sergio_Canobbio_2.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/8/84/Eleonora%27s_Falcon.jpg",
-          author: "Sergey Yeliseev",
-          license: "CC BY 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Eleonora%27s_Falcon.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/0/02/Falco_eleonorae_Tenerife.jpg",
-          author: "Juan Emilio",
-          license: "CC BY-SA 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Falco_eleonorae_Tenerife.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/3/38/Eleonora%27s_Falcon%2C_Carloforte%2C_Sardinia_1.jpg",
+          author: "Charles J. Sharp",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Eleonora's_Falcon,_Carloforte,_Sardinia_1.jpg",
         },
       ]
     },
@@ -302,22 +290,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/5/55/Podarcis_melisellensis_%28Karlobag%2C_Croatia%29.jpg",
-          author: "Benny Trapp",
+          url: "https://upload.wikimedia.org/wikipedia/commons/8/8d/Adriatische_Mauereidechse_Podarcis_melisellensis.jpg",
+          author: "Holger Krisp",
           license: "CC BY 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Podarcis_melisellensis_(Karlobag,_Croatia).jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Adriatische_Mauereidechse_Podarcis_melisellensis.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Podarcis_melisellensis_fiumanus%2C_Karlobag%2C_Croatia_01.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/0/0d/Benny_Trapp_Podarcis_melisselensis.jpg",
           author: "Benny Trapp",
           license: "CC BY 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Podarcis_melisellensis_fiumanus,_Karlobag,_Croatia_01.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Benny_Trapp_Podarcis_melisselensis.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/6/65/Podarcis_melisellensis_01_by_Line1.jpg",
-          author: "Line1",
+          url: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Podarcis_melisellensis-Vis_island.jpg",
+          author: "Jadvinia",
           license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Podarcis_melisellensis_01_by_Line1.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Podarcis_melisellensis-Vis_island.jpg",
         },
       ]
     },
@@ -353,18 +341,6 @@ export const faunaContent: FaunaContent = {
           license: "Public domain",
           sourcePage: "https://commons.wikimedia.org/wiki/File:Tursiops_truncatus_01.jpg",
         },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/8/8b/Bottlenose_dolphin_%28Tursiops_truncatus%29_-_Moray_Firth_-_Scotland.jpg",
-          author: "Charlie Phillips",
-          license: "CC BY 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Bottlenose_dolphin_(Tursiops_truncatus)_-_Moray_Firth_-_Scotland.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Tursiops_truncatus_-_Flickr_-_NOAA_Photo_Library.jpg",
-          author: "NOAA",
-          license: "CC BY 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Tursiops_truncatus_-_Flickr_-_NOAA_Photo_Library.jpg",
-        },
       ]
     },
 
@@ -394,22 +370,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/4/4d/Cory%27s_Shearwater_-_Calonectris_diomedea_-_Azores_%28Portugal%29_-_August_2012.jpg",
-          author: "Artemy Voikhansky",
+          url: "https://upload.wikimedia.org/wikipedia/commons/d/d2/Scopoli%27s_Shearwater.jpg",
+          author: "Telegro",
           license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Cory%27s_Shearwater_-_Calonectris_diomedea_-_Azores_(Portugal)_-_August_2012.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Scopoli's_Shearwater.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/f/f5/Scopoli%27s_Shearwater_%28Calonectris_diomedea%29_%2814524847844%29.jpg",
-          author: "Kentish Plumber",
-          license: "CC BY 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Scopoli%27s_Shearwater_(Calonectris_diomedea)_(14524847844).jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/1/13/Berta_maggiore.jpg",
+          author: "F.Lo Valvo",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Berta_maggiore.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/5/59/Scopoli%27s_shearwater_%28Calonectris_diomedea%29_in_flight.jpg",
-          author: "Artemy Voikhansky",
+          url: "https://upload.wikimedia.org/wikipedia/commons/a/aa/Puffin_de_Scopoli.jpg",
+          author: "Frederic Coulon",
           license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Scopoli%27s_shearwater_(Calonectris_diomedea)_in_flight.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Puffin_de_Scopoli.jpg",
         },
       ]
     },
@@ -440,22 +416,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/a/a6/Testudo_hermanni_hermanni_Mallorca_02.jpg",
-          author: "Orchi",
-          license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Testudo_hermanni_hermanni_Mallorca_02.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/0/08/Testudo_hermanni_in_Parco_Naturale_Monte_San_Bartolo.jpg",
-          author: "AleXXw",
-          license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Testudo_hermanni_in_Parco_Naturale_Monte_San_Bartolo.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/5/50/Griechische_Landschildkr%C3%B6te_%28Testudo_hermanni%29_01.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/5/52/Testudo_hermanni_boettgeri_01.JPG",
           author: "H. Zell",
           license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Griechische_Landschildkr%C3%B6te_(Testudo_hermanni)_01.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Testudo_hermanni_boettgeri_01.JPG",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/f/f5/Testudo_hermanni_BW_1.JPG",
+          author: "Berthold Werner",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Testudo_hermanni_BW_1.JPG",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/c/c4/Testudo_hermanni_BW_2.JPG",
+          author: "Berthold Werner",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Testudo_hermanni_BW_2.JPG",
         },
       ]
     },
@@ -478,22 +454,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/3/39/European_Shag_Phalacrocorax_aristotelis.jpg",
-          author: "Andreas Trepte",
-          license: "CC BY-SA 2.5",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:European_Shag_Phalacrocorax_aristotelis.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/9/9a/Phalacrocorax_aristotelis_%28Macaronesian%29.jpg",
-          author: "Juan Emilio Prades Bel",
+          url: "https://upload.wikimedia.org/wikipedia/commons/7/7c/European_shags_%28Gulosus_aristotelis_aristotelis%29_Argyll.jpg",
+          author: "Charles J. Sharp",
           license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Phalacrocorax_aristotelis_(Macaronesian).jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:European_shags_(Gulosus_aristotelis_aristotelis)_Argyll.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/8/88/Phalacrocorax_aristotelis_drying_wings.jpg",
-          author: "Smudge 9000",
-          license: "CC BY-SA 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Phalacrocorax_aristotelis_drying_wings.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/c/cc/European_shag_%28Gulosus_aristotelis_aristotelis%29_in_flight_Flatey.jpg",
+          author: "Charles J. Sharp",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:European_shag_(Gulosus_aristotelis_aristotelis)_in_flight_Flatey.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/d/d9/European_shag_%28Phalacrocorax_aristotelis%29.jpg",
+          author: "Bouke ten Cate",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:European_shag_(Phalacrocorax_aristotelis).jpg",
         },
       ]
     },
@@ -524,22 +500,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/6/62/Caretta_caretta_060417w2.jpg",
-          author: "P.Lindgren",
-          license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Caretta_caretta_060417w2.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/f/f5/Loggerhead_Sea_Turtle_%28Caretta_caretta%29.jpg",
+          author: "The High Fin Sperm Whale",
+          license: "Public domain",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Loggerhead_Sea_Turtle_(Caretta_caretta).jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/9/92/Caretta_caretta%2C_Malta.jpg",
-          author: "Kurzon",
-          license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Caretta_caretta,_Malta.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/6/66/Ada_sea_turtle.JPG",
+          author: "SanBa",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Ada_sea_turtle.JPG",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/4/41/Caretta_Caretta%2C_the_Loggerhead_Sea_Turtle%2C_Dalyan%2C_Turkey.jpg",
-          author: "Magellan nh",
+          url: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Anamur_caretta_caretta.jpg",
+          author: "Walterhelbling",
           license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Caretta_Caretta,_the_Loggerhead_Sea_Turtle,_Dalyan,_Turkey.jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Anamur_caretta_caretta.jpg",
         },
       ]
     },
@@ -570,22 +546,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/9/9d/Leopardnatter_Zamenis_situla.jpg",
-          author: "Benny Trapp",
-          license: "CC BY 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Leopardnatter_Zamenis_situla.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/4/49/Leopardsnake.jpg",
+          author: "Berkay353",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Leopardsnake.jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/c/c3/Elaphe_situla.jpg",
-          author: "Mario Modesto Mata",
-          license: "CC BY-SA 3.0",
+          url: "https://upload.wikimedia.org/wikipedia/commons/1/15/Zamenis_situla.jpg",
+          author: "Sebottendorf",
+          license: "CC BY-SA 4.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Zamenis_situla.jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/7/76/Elaphe_situla.jpg",
+          author: "Atanas Grozdanov",
+          license: "CC BY 2.5",
           sourcePage: "https://commons.wikimedia.org/wiki/File:Elaphe_situla.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/a/a9/Leopard_Snake_-_Zamenis_situla_%2814091929034%29.jpg",
-          author: "Bernard Dupont",
-          license: "CC BY-SA 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Leopard_Snake_-_Zamenis_situla_(14091929034).jpg",
         },
       ]
     },
@@ -608,22 +584,22 @@ export const faunaContent: FaunaContent = {
       },
       images: [
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Larus_audouinii_%E2%80%93_Ebro_Delta_01.jpg",
-          author: "Hans Hillewaert",
-          license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Larus_audouinii_%E2%80%93_Ebro_Delta_01.jpg",
+          url: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Audouin%27s_gull_%28Ichthyaetus_audouinii%29.jpg",
+          author: "Hobbyfotowiki",
+          license: "CC0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Audouin's_gull_(Ichthyaetus_audouinii).jpg",
         },
         {
-          url: "https://upload.wikimedia.org/wikipedia/commons/6/64/Audouin%27s_Gull_%28Ichthyaetus_audouinii%29_%2814062795506%29.jpg",
-          author: "Kentish Plumber",
-          license: "CC BY 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Audouin%27s_Gull_(Ichthyaetus_audouinii)_(14062795506).jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Larus_audouinii_1_%28Paco_G%C3%B3mez%29.jpg",
-          author: "Paco Gomez",
+          url: "https://upload.wikimedia.org/wikipedia/commons/9/9e/Audouin%27s_Gull_Larus_audouinii_%288470613496%29.jpg",
+          author: "Len Worthington",
           license: "CC BY-SA 2.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Larus_audouinii_1_(Paco_G%C3%B3mez).jpg",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Audouin's_Gull_Larus_audouinii_(8470613496).jpg",
+        },
+        {
+          url: "https://upload.wikimedia.org/wikipedia/commons/2/23/Audouin%60s_gull_%28Larus_audouinii%29_%281%29.jpg",
+          author: "Ken Billington",
+          license: "CC BY-SA 3.0",
+          sourcePage: "https://commons.wikimedia.org/wiki/File:Audouin`s_gull_(Larus_audouinii)_(1).jpg",
         },
       ]
     },
