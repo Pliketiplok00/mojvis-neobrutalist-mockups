@@ -23,13 +23,16 @@ import {
   TouchableOpacity,
   Image,
   Linking,
+  Dimensions,
 } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import type { RouteProp, NavigationProp } from '@react-navigation/native';
 import { GlobalHeader } from '../../components/GlobalHeader';
+import { HeroMediaHeader } from '../../ui/HeroMediaHeader';
 import { useTranslations } from '../../i18n';
 import { useUserContext } from '../../hooks/useUserContext';
 import { staticPagesApi } from '../../services/api';
+import { wikiThumb } from '../../utils/wikiThumb';
 import type { MainStackParamList } from '../../navigation/types';
 import type {
   StaticPageResponse,
@@ -166,17 +169,27 @@ export function StaticPageScreen(): React.JSX.Element {
 
 /**
  * Page header renderer
+ *
+ * - media: Uses HeroMediaHeader with carousel, title slab (matches Flora/Fauna screens)
+ * - simple: Uses plain H1 + subtitle
  */
 function PageHeaderView({ header }: { header: StaticPageResponse['header'] }): React.JSX.Element {
+  // Media header: use HeroMediaHeader component for carousel + title slab
+  if (header.type === 'media' && header.images && header.images.length > 0) {
+    // Convert images to wikiThumb URLs for proper sizing
+    const heroImages = header.images.map((img) => wikiThumb(img, 1200));
+    return (
+      <HeroMediaHeader
+        images={heroImages}
+        title={header.title}
+        subtitle={header.subtitle ?? undefined}
+      />
+    );
+  }
+
+  // Simple header: plain text
   return (
     <View style={styles.pageHeader}>
-      {header.type === 'media' && header.images && header.images.length > 0 && (
-        <Image
-          source={{ uri: header.images[0] }}
-          style={styles.headerImage}
-          resizeMode="cover"
-        />
-      )}
       <H1 style={styles.pageTitle}>{header.title}</H1>
       {header.subtitle && (
         <Body style={styles.pageSubtitle}>{header.subtitle}</Body>
@@ -248,6 +261,15 @@ function HighlightBlock({ content }: { content: HighlightBlockContent }): React.
   );
 }
 
+// Wikimedia requires User-Agent header to avoid 429 rate limits
+const WIKI_IMAGE_HEADERS = {
+  'User-Agent': 'MojVisApp/1.0 (https://vis.hr; contact@vis.hr) React-Native',
+};
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const TILE_GAP = skin.spacing.md;
+const TILE_WIDTH = (SCREEN_WIDTH - skin.spacing.lg * 2 - TILE_GAP) / 2;
+
 function CardListBlock({
   content,
   onLinkPress
@@ -257,25 +279,73 @@ function CardListBlock({
 }): React.JSX.Element {
   if (content.cards.length === 0) return <View />;
 
+  // For exactly 2 cards, render side-by-side (gateway tiles)
+  const isTileLayout = content.cards.length === 2;
+
+  if (isTileLayout) {
+    return (
+      <View style={styles.tilesContainer}>
+        {content.cards.map((card) => {
+          const imageUrl = card.image_url ? wikiThumb(card.image_url, 400) : null;
+          return (
+            <TouchableOpacity
+              key={card.id}
+              style={styles.tile}
+              onPress={() => card.link_type && card.link_target && onLinkPress(card.link_type, card.link_target)}
+              disabled={!card.link_type || !card.link_target}
+              accessibilityRole="button"
+              accessibilityLabel={card.title}
+            >
+              <View style={styles.tileShadow} />
+              <View style={styles.tileInner}>
+                {imageUrl && (
+                  <Image
+                    source={{ uri: imageUrl, headers: WIKI_IMAGE_HEADERS }}
+                    style={styles.tileImage}
+                    resizeMode="cover"
+                  />
+                )}
+                <View style={styles.tileContent}>
+                  <ButtonText style={styles.tileTitle}>{card.title}</ButtonText>
+                  {card.description && (
+                    <Label style={styles.tileDescription} numberOfLines={2}>{card.description}</Label>
+                  )}
+                </View>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
+
+  // Default: vertical card list
   return (
     <View style={styles.block}>
-      {content.cards.map((card) => (
-        <TouchableOpacity
-          key={card.id}
-          style={styles.card}
-          onPress={() => card.link_type && card.link_target && onLinkPress(card.link_type, card.link_target)}
-          disabled={!card.link_type || !card.link_target}
-        >
-          {card.image_url && (
-            <Image source={{ uri: card.image_url }} style={styles.cardImage} resizeMode="cover" />
-          )}
-          <View style={styles.cardContent}>
-            <ButtonText style={styles.cardTitle}>{card.title}</ButtonText>
-            {card.description && <Label style={styles.cardDescription}>{card.description}</Label>}
-            {card.meta && <Meta style={styles.cardMeta}>{card.meta}</Meta>}
-          </View>
-        </TouchableOpacity>
-      ))}
+      {content.cards.map((card) => {
+        const imageUrl = card.image_url ? wikiThumb(card.image_url, 800) : null;
+        return (
+          <TouchableOpacity
+            key={card.id}
+            style={styles.card}
+            onPress={() => card.link_type && card.link_target && onLinkPress(card.link_type, card.link_target)}
+            disabled={!card.link_type || !card.link_target}
+          >
+            {imageUrl && (
+              <Image
+                source={{ uri: imageUrl, headers: WIKI_IMAGE_HEADERS }}
+                style={styles.cardImage}
+                resizeMode="cover"
+              />
+            )}
+            <View style={styles.cardContent}>
+              <ButtonText style={styles.cardTitle}>{card.title}</ButtonText>
+              {card.description && <Label style={styles.cardDescription}>{card.description}</Label>}
+              {card.meta && <Meta style={styles.cardMeta}>{card.meta}</Meta>}
+            </View>
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }
@@ -466,7 +536,7 @@ const styles = StyleSheet.create({
     color: skin.colors.textSecondary,
   },
 
-  // Card list
+  // Card list (vertical)
   card: {
     backgroundColor: skin.colors.backgroundTertiary,
     borderRadius: skin.borders.radiusCard,
@@ -490,6 +560,47 @@ const styles = StyleSheet.create({
   },
   cardMeta: {
     // Inherited from Meta primitive (textDisabled)
+  },
+
+  // Gateway tiles (side-by-side 2-column)
+  tilesContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: skin.spacing.lg,
+    paddingVertical: skin.spacing.md,
+    gap: skin.spacing.md,
+  },
+  tile: {
+    flex: 1,
+    position: 'relative',
+  },
+  tileShadow: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    right: -4,
+    bottom: -4,
+    backgroundColor: skin.colors.border,
+  },
+  tileInner: {
+    backgroundColor: skin.colors.background,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    overflow: 'hidden',
+  },
+  tileImage: {
+    width: '100%',
+    height: 100,
+  },
+  tileContent: {
+    padding: skin.spacing.md,
+  },
+  tileTitle: {
+    marginBottom: skin.spacing.xs,
+    color: skin.colors.textPrimary,
+  },
+  tileDescription: {
+    color: skin.colors.textSecondary,
+    lineHeight: 18,
   },
 
   // Media block
