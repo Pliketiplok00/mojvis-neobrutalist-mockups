@@ -16,14 +16,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminClickFixApi } from '../../services/api';
+import { adminClickFixApi, API_BASE_URL } from '../../services/api';
 import type { ClickFixDetail, ClickFixStatus } from '../../types/click-fix';
 import { STATUS_LABELS, STATUS_COLORS } from '../../types/click-fix';
-
-// Backend URL for photo URLs
-const API_BASE_URL = import.meta.env.DEV
-  ? 'http://localhost:3000'
-  : 'https://api.mojvis.hr';
 
 export function ClickFixDetailPage() {
   const { id } = useParams<{ id: string }>();

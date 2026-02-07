@@ -42,10 +42,14 @@ import type {
   MenuExtrasListResponse,
 } from '../types/menu-extras';
 
-// TODO: Move to environment config
-const API_BASE_URL = import.meta.env.DEV
-  ? 'http://localhost:3000'
-  : 'https://api.mojvis.hr';
+/**
+ * API base URL resolution:
+ * 1. VITE_API_URL env var (for staging/custom deployments)
+ * 2. Development: http://localhost:3000
+ * 3. Production: https://api.mojvis.hr
+ */
+export const API_BASE_URL = import.meta.env.VITE_API_URL
+  ?? (import.meta.env.DEV ? 'http://localhost:3000' : 'https://api.mojvis.hr');
 
 /**
  * Make API request to admin endpoints
