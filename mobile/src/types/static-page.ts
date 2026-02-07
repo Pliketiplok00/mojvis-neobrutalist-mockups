@@ -62,7 +62,7 @@ export interface CardItem {
   title: string;
   description: string | null;
   meta: string | null;
-  link_type: 'inbox' | 'event' | 'page' | 'external' | null;
+  link_type: 'inbox' | 'event' | 'page' | 'external' | 'screen' | null;
   link_target: string | null;
 }
 

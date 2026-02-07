@@ -3,6 +3,7 @@
  *
  * Primary and secondary button variants.
  * Uses ButtonText primitive for consistent typography (Space Mono Bold).
+ * Supports optional neobrut shadow styling via `shadow` prop.
  */
 
 import React from 'react';
@@ -10,10 +11,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
+  View,
   type ViewStyle,
 } from 'react-native';
 import { skin } from './skin';
 import { ButtonText } from './Text';
+
+const SHADOW_OFFSET = 4;
 
 interface ButtonProps {
   /** Button label */
@@ -26,7 +30,9 @@ interface ButtonProps {
   disabled?: boolean;
   /** Loading state */
   loading?: boolean;
-  /** Additional style */
+  /** Enable neobrut offset shadow */
+  shadow?: boolean;
+  /** Additional style (applied to outer container when shadow=true, else to button) */
   style?: ViewStyle;
   /** Accessibility label for screen readers */
   accessibilityLabel?: string;
@@ -38,6 +44,7 @@ export function Button({
   variant = 'primary',
   disabled = false,
   loading = false,
+  shadow = false,
   style,
   accessibilityLabel,
 }: ButtonProps): React.JSX.Element {
@@ -63,9 +70,9 @@ export function Button({
     }
   };
 
-  return (
+  const button = (
     <TouchableOpacity
-      style={[styles.base, getButtonStyle(), disabled && styles.disabled, style]}
+      style={[styles.base, getButtonStyle(), disabled && styles.disabled, !shadow && style]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
@@ -78,6 +85,18 @@ export function Button({
         <ButtonText color={getTextColor()}>{children}</ButtonText>
       )}
     </TouchableOpacity>
+  );
+
+  if (!shadow) {
+    return button;
+  }
+
+  // Wrap with shadow container for neobrut effect
+  return (
+    <View style={[styles.shadowContainer, style]}>
+      <View style={styles.shadowLayer} />
+      {button}
+    </View>
   );
 }
 
@@ -107,6 +126,19 @@ const styles = StyleSheet.create({
   },
   disabled: {
     opacity: components.button.disabledOpacity,
+  },
+  // Neobrut shadow styles
+  shadowContainer: {
+    position: 'relative',
+  },
+  shadowLayer: {
+    position: 'absolute',
+    top: SHADOW_OFFSET,
+    left: SHADOW_OFFSET,
+    right: -SHADOW_OFFSET,
+    bottom: -SHADOW_OFFSET,
+    backgroundColor: skin.colors.border,
+    borderRadius: components.button.borderRadius,
   },
 });
 

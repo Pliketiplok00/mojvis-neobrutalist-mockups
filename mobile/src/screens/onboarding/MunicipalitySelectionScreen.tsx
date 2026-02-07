@@ -23,6 +23,8 @@ import { Icon } from '../../ui/Icon';
 import { Card } from '../../ui/Card';
 import { H1, H2, Body, Label, Meta } from '../../ui/Text';
 
+const t = skin.components.onboarding.municipalitySelection;
+
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'MunicipalitySelection'>;
   route: RouteProp<OnboardingStackParamList, 'MunicipalitySelection'>;
@@ -34,7 +36,6 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
 
   const handleMunicipalitySelect = async (municipality: 'vis' | 'komiza'): Promise<void> => {
     console.info(`Selected municipality: ${municipality}`);
-    // Complete onboarding with municipality
     await completeOnboarding({
       language,
       userMode: 'local',
@@ -60,27 +61,35 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
 
         <View style={styles.optionsContainer}>
           <Card
-            variant="selection"
-            onPress={() => void handleMunicipalitySelect('vis')}
-            accessibilityLabel="Vis"
-            style={styles.municipalityCard}
+            variant="onboardingSelection"
+            onPress={() => void handleMunicipalitySelect('komiza')}
+            accessibilityLabel="Komiža"
           >
-            <H1 style={styles.municipalityName}>Vis</H1>
-            <Label style={styles.municipalityDescription}>
-              Grad Vis i okolica
-            </Label>
+            <View style={styles.cardContent}>
+              <View style={styles.iconBox}>
+                <Icon name="file-text" size="lg" colorToken="textPrimary" />
+              </View>
+              <View style={styles.textStack}>
+                <H1 style={styles.municipalityName}>Komiža</H1>
+                <Label style={styles.municipalityDescription}>Općina Komiža</Label>
+              </View>
+            </View>
           </Card>
 
           <Card
-            variant="selection"
-            onPress={() => void handleMunicipalitySelect('komiza')}
-            accessibilityLabel="Komiza"
-            style={styles.municipalityCard}
+            variant="onboardingSelection"
+            onPress={() => void handleMunicipalitySelect('vis')}
+            accessibilityLabel="Vis"
           >
-            <H1 style={styles.municipalityName}>Komiža</H1>
-            <Label style={styles.municipalityDescription}>
-              Grad Komiža i okolica
-            </Label>
+            <View style={styles.cardContent}>
+              <View style={styles.iconBox}>
+                <Icon name="file-text" size="lg" colorToken="textPrimary" />
+              </View>
+              <View style={styles.textStack}>
+                <H1 style={styles.municipalityName}>Vis</H1>
+                <Label style={styles.municipalityDescription}>Grad Vis</Label>
+              </View>
+            </View>
           </Card>
         </View>
 
@@ -121,16 +130,32 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxxl,
   },
   optionsContainer: {
-    gap: skin.spacing.lg,
+    gap: t.optionGap,
   },
-  municipalityCard: {
-    padding: skin.spacing.xxl,
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: t.card.contentGap,
+  },
+  iconBox: {
+    width: t.iconBox.size,
+    height: t.iconBox.size,
+    backgroundColor: t.iconBox.backgroundColor,
+    borderWidth: t.iconBox.borderWidth,
+    borderColor: t.iconBox.borderColor,
+    borderRadius: t.iconBox.borderRadius,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textStack: {
+    flex: 1,
   },
   municipalityName: {
+    ...t.title,
     marginBottom: skin.spacing.sm,
   },
   municipalityDescription: {
-    color: skin.colors.textMuted,
+    ...t.subtitle,
   },
   hint: {
     textAlign: 'center',

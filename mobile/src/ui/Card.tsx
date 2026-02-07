@@ -6,12 +6,7 @@
  */
 
 import React from 'react';
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  type ViewStyle,
-} from 'react-native';
+import { View, Pressable, StyleSheet, type ViewStyle } from 'react-native';
 import { skin } from './skin';
 
 interface CardProps {
@@ -21,7 +16,12 @@ interface CardProps {
   /** Disable press interaction */
   disabled?: boolean;
   /** Card variant */
-  variant?: 'default' | 'outlined' | 'filled' | 'selection';
+  variant?: 'default' | 'outlined' | 'filled' | 'selection' | 'onboardingSelection';
+  /**
+   * Press feedback tint for variants that support it (e.g. onboardingSelection).
+   * Uses skin color tokens.
+   */
+  pressFeedbackColorToken?: 'primary' | 'secondary';
   /** Background color override */
   backgroundColor?: string;
   /** Accessibility label */
@@ -35,48 +35,82 @@ export function Card({
   onPress,
   disabled,
   variant = 'outlined',
+  pressFeedbackColorToken = 'primary',
   backgroundColor,
   accessibilityLabel,
   style,
 }: CardProps): React.JSX.Element {
-  const getVariantStyle = () => {
-    switch (variant) {
-      case 'filled':
-        return styles.filled;
-      case 'selection':
-        return styles.selection;
-      case 'outlined':
-      default:
-        return styles.outlined;
-    }
-  };
+  const baseStyle = [styles.base, backgroundColor && { backgroundColor }, style];
 
-  const cardStyle = [
-    styles.base,
-    getVariantStyle(),
-    backgroundColor && { backgroundColor },
-    style,
-  ];
-
-  if (onPress) {
+  if (!onPress) {
     return (
-      <TouchableOpacity
-        style={cardStyle}
-        onPress={onPress}
-        disabled={disabled}
-        activeOpacity={0.7}
-        accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-      >
+      <View style={[...baseStyle, getVariantStyle(variant, false, pressFeedbackColorToken)]}>
         {children}
-      </TouchableOpacity>
+      </View>
     );
   }
 
-  return <View style={cardStyle}>{children}</View>;
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      style={({ pressed }) => [
+        ...baseStyle,
+        getVariantStyle(variant, pressed, pressFeedbackColorToken),
+        disabled && styles.disabled,
+      ]}
+    >
+      {children}
+    </Pressable>
+  );
 }
 
 const { components, colors, borders } = skin;
+
+type CardVariant = NonNullable<CardProps['variant']>;
+type FeedbackToken = NonNullable<CardProps['pressFeedbackColorToken']>;
+
+function getVariantStyle(
+  variant: CardVariant,
+  pressed: boolean,
+  pressFeedbackColorToken: FeedbackToken
+): ViewStyle {
+  const v = variant === 'default' ? 'outlined' : variant;
+
+  // New, strictly skin-driven onboarding selection style.
+  if (v === 'onboardingSelection') {
+    const token = components.card.variants?.onboardingSelection;
+    const activeShadow =
+      pressFeedbackColorToken === 'secondary'
+        ? token?.shadow?.activeSecondary
+        : token?.shadow?.activePrimary;
+
+    return {
+      backgroundColor: token?.backgroundColor ?? components.card.backgroundColor,
+      borderWidth: token?.borderWidth ?? components.card.borderWidth,
+      borderColor: pressed
+        ? pressFeedbackColorToken === 'secondary'
+          ? colors.secondary
+          : colors.primary
+        : token?.borderColor ?? components.card.borderColor,
+      borderRadius: token?.borderRadius ?? components.card.borderRadius,
+      padding: token?.padding ?? components.card.padding,
+      ...(pressed ? activeShadow : token?.shadow?.inactive),
+    };
+  }
+
+  switch (v) {
+    case 'filled':
+      return styles.filled;
+    case 'selection':
+      return styles.selection;
+    case 'outlined':
+    default:
+      return styles.outlined;
+  }
+}
 
 const styles = StyleSheet.create({
   base: {
@@ -97,6 +131,9 @@ const styles = StyleSheet.create({
     borderWidth: borders.widthThin,
     borderColor: colors.borderLight,
     borderRadius: borders.radiusCard,
+  },
+  disabled: {
+    opacity: 0.6,
   },
 });
 

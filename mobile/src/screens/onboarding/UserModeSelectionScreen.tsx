@@ -10,7 +10,7 @@
  * - Local users proceed to municipality selection
  * - Visitors go directly to Home
  *
- * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no emoji).
+ * Skin-pure: Uses skin tokens and OnboardingRoleCard (no hardcoded hex).
  */
 
 import React from 'react';
@@ -20,9 +20,8 @@ import type { RouteProp } from '@react-navigation/native';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { skin } from '../../ui/skin';
-import { Icon } from '../../ui/Icon';
-import { Card } from '../../ui/Card';
-import { H2, Body, ButtonText, Label, Meta } from '../../ui/Text';
+import { H2, Body, Meta } from '../../ui/Text';
+import { OnboardingRoleCard } from './components/OnboardingRoleCard';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'UserModeSelection'>;
@@ -56,39 +55,31 @@ export function UserModeSelectionScreen({ navigation, route }: Props): React.JSX
         <Body style={styles.subtitle}>How do you use the app?</Body>
 
         <View style={styles.optionsContainer}>
-          <Card
-            variant="selection"
+          <OnboardingRoleCard
+            variant="visitor"
+            title="Posjetitelj / Visitor"
+            subtitle="Turisticka posjeta otoku"
+            icon="globe"
+            bullets={[
+              'Kulturni dogadaji i festivali',
+              'Trajektni i autobusni vozni redovi',
+              'Hitne obavijesti i upozorenja',
+            ]}
             onPress={() => void handleModeSelect('visitor')}
-            accessibilityLabel="Visitor"
-          >
-            <View style={styles.optionIconContainer}>
-              <Icon name="globe" size="lg" colorToken="textPrimary" />
-            </View>
-            <ButtonText style={styles.optionTitle}>Posjetitelj / Visitor</ButtonText>
-            <Label style={styles.optionDescription}>
-              Turisticka posjeta otoku
-            </Label>
-            <Meta style={styles.optionDescriptionEn}>
-              Visiting the island as a tourist
-            </Meta>
-          </Card>
+          />
 
-          <Card
-            variant="selection"
+          <OnboardingRoleCard
+            variant="local"
+            title="Lokalac / Local"
+            subtitle="Živim ili radim na otoku"
+            icon="home"
+            bullets={[
+              'Sve funkcije za posjetitelje',
+              'Opcinski servisi i obavijesti',
+              'Komunalne prijave problema',
+            ]}
             onPress={() => void handleModeSelect('local')}
-            accessibilityLabel="Local resident"
-          >
-            <View style={styles.optionIconContainer}>
-              <Icon name="home" size="lg" colorToken="textPrimary" />
-            </View>
-            <ButtonText style={styles.optionTitle}>Lokalac / Local</ButtonText>
-            <Label style={styles.optionDescription}>
-              Živim ili radim na otoku
-            </Label>
-            <Meta style={styles.optionDescriptionEn}>
-              I live or work on the island
-            </Meta>
-          </Card>
+          />
         </View>
 
         <Meta style={styles.hint}>
@@ -120,19 +111,7 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxxl,
   },
   optionsContainer: {
-    gap: skin.spacing.lg,
-  },
-  optionIconContainer: {
-    marginBottom: skin.spacing.md,
-  },
-  optionTitle: {
-    marginBottom: skin.spacing.sm,
-  },
-  optionDescription: {
-    color: skin.colors.textMuted,
-  },
-  optionDescriptionEn: {
-    fontStyle: 'italic',
+    gap: skin.spacing.xl,
   },
   hint: {
     textAlign: 'center',

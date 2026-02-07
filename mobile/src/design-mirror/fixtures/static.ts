@@ -2,229 +2,77 @@
  * Static Page Fixtures (Design Mirror)
  *
  * Static data for StaticPage mirror screen.
- * Includes all 8 block types for comprehensive visual testing.
+ * Matches runtime seed data for visual parity testing.
  */
 
 import type {
   StaticPageResponse,
-  ContentBlock,
   TextBlockContent,
   HighlightBlockContent,
   CardListBlockContent,
-  MediaBlockContent,
-  MapBlockContent,
-  ContactBlockContent,
-  LinkListBlockContent,
-  NoticeBlockContent,
 } from '../../types/static-page';
 
 /**
- * Sample static page fixture with all 8 block types
+ * Flora & Fauna HUB fixture (matches seed-menu-pages.ts)
  */
 export const staticPageFixture: StaticPageResponse = {
   id: 'page-flora-fauna',
   slug: 'flora-fauna',
   header: {
     type: 'media',
-    title: 'Flora i Fauna',
-    subtitle: 'Prirodne ljepote otoka Visa',
-    images: ['https://picsum.photos/800/400?random=1'],
+    title: 'Flora i fauna',
+    subtitle: 'Viški arhipelag',
+    images: [
+      'https://upload.wikimedia.org/wikipedia/commons/f/fa/Panoramic_view_of_Bisevo_island_next_to_Vis_island_in_Croatia_%2848608613336%29.jpg',
+    ],
   },
   blocks: [
-    // 1. TextBlock
+    // 0) INTRO TEXT BLOCK
     {
-      id: 'block-text-1',
+      id: 'flora-fauna-intro',
       type: 'text',
       content: {
-        title: 'O prirodi otoka',
-        body: 'Otok Vis je dom bogatoj mediteranskoj flori i fauni. Endemske biljke i rijetke životinjske vrste čine ovaj otok posebnim. Posjetitelji mogu uživati u prirodnim ljepotama nacionalnog parka i zaštićenih područja.',
+        title: 'Zašto je flora i fauna viškog arhipelaga posebna?',
+        body: 'Viški arhipelag čini mozaik otoka, otočića, hridi i podmorja koji su desetljećima ostali izvan intenzivnog ljudskog utjecaja. Upravo ta kombinacija izolacije, čistog mora i raznolikih staništa — od strmih morskih litica i špilja do suhozida, makije i otvorenog mora — stvorila je iznimno bogat i osjetljiv prirodni sustav.\n\nNa relativno malom prostoru susreću se rijetke i endemske biljne vrste, ptice gnijezdarice, morski sisavci i brojni podmorski organizmi. Mnoge od tih vrsta ovise o miru, stabilnosti i očuvanom okolišu — zato su promatranje, poštovanje i nenarušavanje ključni za njihovo očuvanje.',
       } as TextBlockContent,
     },
-    // 2. HighlightBlock - info variant
+    // 1) FLORA & FAUNA TILES (card_list, side-by-side)
     {
-      id: 'block-highlight-info',
-      type: 'highlight',
-      content: {
-        title: 'Savjet za posjetitelje',
-        body: 'Preporučujemo posjet u ranim jutarnjim satima kada je fauna najaktivnija.',
-        icon: 'info',
-        variant: 'info',
-      } as HighlightBlockContent,
-    },
-    // 3. HighlightBlock - warning variant
-    {
-      id: 'block-highlight-warning',
-      type: 'highlight',
-      content: {
-        title: 'Upozorenje',
-        body: 'Zabranjeno je branje zaštićenih biljaka. Kazne su visoke.',
-        icon: 'alert-triangle',
-        variant: 'warning',
-      } as HighlightBlockContent,
-    },
-    // 4. HighlightBlock - success variant
-    {
-      id: 'block-highlight-success',
-      type: 'highlight',
-      content: {
-        title: 'Dobra vijest',
-        body: 'Populacija endemske viške gušterice je u porastu!',
-        icon: 'check-circle',
-        variant: 'success',
-      } as HighlightBlockContent,
-    },
-    // 5. CardListBlock
-    {
-      id: 'block-cards-1',
+      id: 'flora-fauna-tiles',
       type: 'card_list',
       content: {
         cards: [
           {
-            id: 'card-1',
-            image_url: 'https://picsum.photos/400/200?random=2',
-            title: 'Modra špilja',
-            description: 'Prirodni fenomen na otoku Biševu',
-            meta: '20 min brodom',
-            link_type: 'page',
-            link_target: 'blue-cave',
+            id: 'tile-flora',
+            image_url: 'https://upload.wikimedia.org/wikipedia/commons/a/ad/Centaurea_ragusina_3_%28Corse%29.JPG',
+            title: 'Flora',
+            description: 'Biljni svijet viškog arhipelaga',
+            meta: null,
+            link_type: 'screen',
+            link_target: 'Flora',
           },
           {
-            id: 'card-2',
-            image_url: 'https://picsum.photos/400/200?random=3',
-            title: 'Stiniva plaža',
-            description: 'Jedna od najljepših plaža na svijetu',
-            meta: '45 min pješice',
-            link_type: 'page',
-            link_target: 'stiniva',
-          },
-          {
-            id: 'card-3',
-            image_url: null,
-            title: 'Zelena špilja',
-            description: 'Još jedna prirodna atrakcija',
-            meta: '15 min brodom',
-            link_type: null,
-            link_target: null,
+            id: 'tile-fauna',
+            image_url: 'https://upload.wikimedia.org/wikipedia/commons/6/60/010_Atlantic_bottlenose_dolphin_jumping_at_Pelican_point_Photo_by_Giles_Laurent.jpg',
+            title: 'Fauna',
+            description: 'Životinjski svijet viškog arhipelaga',
+            meta: null,
+            link_type: 'screen',
+            link_target: 'Fauna',
           },
         ],
       } as CardListBlockContent,
     },
-    // 6. MediaBlock
+    // 2) HIGHLIGHTS BLOCK
     {
-      id: 'block-media-1',
-      type: 'media',
+      id: 'flora-fauna-highlights',
+      type: 'highlight',
       content: {
-        images: [
-          'https://picsum.photos/800/400?random=4',
-          'https://picsum.photos/800/400?random=5',
-        ],
-        caption: 'Pogled na viške uvale s vrha Hum',
-      } as MediaBlockContent,
-    },
-    // 7. MapBlock
-    {
-      id: 'block-map-1',
-      type: 'map',
-      content: {
-        pins: [
-          {
-            id: 'pin-1',
-            latitude: 43.0622,
-            longitude: 16.1833,
-            title: 'Grad Vis',
-            description: 'Glavni grad otoka',
-          },
-          {
-            id: 'pin-2',
-            latitude: 43.0447,
-            longitude: 16.0914,
-            title: 'Komiža',
-            description: 'Ribarsko mjesto na zapadnoj obali',
-          },
-          {
-            id: 'pin-3',
-            latitude: 43.0167,
-            longitude: 16.0833,
-            title: 'Biševo',
-            description: 'Otok s Modrom špiljom',
-          },
-        ],
-      } as MapBlockContent,
-    },
-    // 8. ContactBlock
-    {
-      id: 'block-contact-1',
-      type: 'contact',
-      content: {
-        contacts: [
-          {
-            id: 'contact-1',
-            icon: 'phone',
-            name: 'Turistička zajednica Vis',
-            address: 'Šetalište Stare Isse 5, Vis',
-            phones: ['+385 21 717 017', '+385 21 717 018'],
-            email: 'info@tz-vis.hr',
-            working_hours: 'Pon-Pet: 08:00-16:00',
-            note: 'Zatvoreno vikendom izvan sezone',
-          },
-          {
-            id: 'contact-2',
-            icon: 'building',
-            name: 'Park prirode Lastovo',
-            address: null,
-            phones: ['+385 20 801 252'],
-            email: 'pp-lastovo@np-lastovo.hr',
-            working_hours: null,
-            note: null,
-          },
-        ],
-      } as ContactBlockContent,
-    },
-    // 9. LinkListBlock
-    {
-      id: 'block-links-1',
-      type: 'link_list',
-      content: {
-        links: [
-          {
-            id: 'link-1',
-            title: 'Vozni redovi',
-            link_type: 'page',
-            link_target: 'TransportHub',
-          },
-          {
-            id: 'link-2',
-            title: 'Događaji na otoku',
-            link_type: 'event',
-            link_target: 'events',
-          },
-          {
-            id: 'link-3',
-            title: 'Službena stranica TZ',
-            link_type: 'external',
-            link_target: 'https://www.tz-vis.hr',
-          },
-        ],
-      } as LinkListBlockContent,
-    },
-    // 10. NoticeBlock
-    {
-      id: 'block-notice-1',
-      type: 'notice',
-      content: {
-        notices: [
-          {
-            id: 'notice-1',
-            title: 'Trajektna linija 602 ne vozi zbog olujnog nevremena',
-            is_urgent: true,
-          },
-          {
-            id: 'notice-2',
-            title: 'Produženo radno vrijeme TZ u sezoni',
-            is_urgent: false,
-          },
-        ],
-      } as NoticeBlockContent,
+        variant: 'info',
+        icon: null,
+        title: 'Zanimljivosti',
+        body: '• Viški arhipelag dio je europske ekološke mreže Natura 2000, koja štiti najvrjednija prirodna staništa.\n• Otočići poput Biševa, Brusnika i Jabuke ključna su područja za gniježđenje ptica i život rijetkih morskih vrsta.\n• Podmorje arhipelaga dom je dupina, morskih kornjača i brojnih osjetljivih zajednica.\n• Mnoge biljne vrste prilagođene su surovim uvjetima — vjetru, suši i slanom aerosolu.\n• Tišina i slab svjetlosni utjecaj noću čine arhipelag važnim za noćne životinje i orijentaciju ptica.',
+      } as HighlightBlockContent,
     },
   ],
 };
