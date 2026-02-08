@@ -284,6 +284,13 @@ export function InboxEditPage() {
     if (!id || isNew || publishedAt) return;
 
     setError(null);
+
+    // Validate EN fields before publish (same as save)
+    if (requiresEnglish(selectedTags) && (!titleEn.trim() || !bodyEn.trim())) {
+      setError('Engleski prijevod je obavezan za ne-općinske poruke.');
+      return;
+    }
+
     setPublishing(true);
 
     try {
