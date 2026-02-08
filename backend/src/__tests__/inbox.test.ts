@@ -511,4 +511,119 @@ describe('Inbox Routes', () => {
       expect(body.banners).toHaveLength(0);
     });
   });
+
+  /**
+   * Package 4 Stage 12: Municipality Guard Tests
+   *
+   * Local users MUST have a valid municipality header set.
+   * If missing, the API should return 400 with MUNICIPALITY_REQUIRED code.
+   */
+  describe('Municipality Guard (Package 4 Stage 12)', () => {
+    it('should return 400 for local user without municipality on GET /inbox', async () => {
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/inbox',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'local',
+          // No x-municipality header
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body = response.json();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(body.code).toBe('MUNICIPALITY_REQUIRED');
+    });
+
+    it('should return 400 for local user with invalid municipality on GET /inbox', async () => {
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/inbox',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'local',
+          'x-municipality': 'invalid',
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body = response.json();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(body.code).toBe('MUNICIPALITY_REQUIRED');
+    });
+
+    it('should return 400 for local user without municipality on GET /inbox/:id', async () => {
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/inbox/some-id',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'local',
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body = response.json();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(body.code).toBe('MUNICIPALITY_REQUIRED');
+    });
+
+    it('should return 400 for local user without municipality on GET /banners/active', async () => {
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/banners/active',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'local',
+        },
+      });
+
+      expect(response.statusCode).toBe(400);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body = response.json();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(body.code).toBe('MUNICIPALITY_REQUIRED');
+    });
+
+    it('should allow local user with valid municipality on GET /inbox', async () => {
+      mockedGetInboxMessages.mockResolvedValueOnce({
+        messages: [],
+        total: 0,
+      });
+
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/inbox',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'local',
+          'x-municipality': 'vis',
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+    });
+
+    it('should allow visitor without municipality on all endpoints', async () => {
+      mockedGetInboxMessages.mockResolvedValueOnce({
+        messages: [],
+        total: 0,
+      });
+
+      const response = await fastify.inject({
+        method: 'GET',
+        url: '/inbox',
+        headers: {
+          'x-device-id': 'test-device',
+          'x-user-mode': 'visitor',
+        },
+      });
+
+      expect(response.statusCode).toBe(200);
+    });
+  });
 });

@@ -33,35 +33,13 @@ import {
   type ScreenContext,
 } from '../lib/eligibility.js';
 import type {
-  UserContext,
-  UserMode,
-  Municipality,
   InboxMessage,
   InboxMessageResponse,
   InboxListResponse,
   BannerResponse,
 } from '../types/inbox.js';
 import { isUrgent } from '../types/inbox.js';
-
-/**
- * Extract user context from request headers
- */
-function getUserContext(request: FastifyRequest): UserContext {
-  const headers = request.headers;
-
-  const deviceId = (headers['x-device-id'] as string) || 'anonymous';
-  const userMode = (headers['x-user-mode'] as UserMode) || 'visitor';
-  const municipalityHeader = headers['x-municipality'] as string | undefined;
-
-  let municipality: Municipality = null;
-  if (userMode === 'local' && municipalityHeader) {
-    if (municipalityHeader === 'vis' || municipalityHeader === 'komiza') {
-      municipality = municipalityHeader;
-    }
-  }
-
-  return { deviceId, userMode, municipality };
-}
+import { extractUserContext } from '../middleware/user-context.js';
 
 /**
  * Get language preference from request
@@ -127,9 +105,16 @@ export async function inboxRoutes(
    */
   fastify.get<{
     Querystring: { page?: string; page_size?: string };
-    Reply: InboxListResponse;
+    Reply: InboxListResponse | { error: string; code: string };
   }>('/inbox', async (request, reply) => {
-    const context = getUserContext(request);
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
     const language = getLanguage(request);
 
     const page = Math.max(1, parseInt(request.query.page ?? '1', 10));
@@ -172,10 +157,17 @@ export async function inboxRoutes(
    */
   fastify.get<{
     Params: { id: string };
-    Reply: InboxMessageResponse | { error: string };
+    Reply: InboxMessageResponse | { error: string; code?: string };
   }>('/inbox/:id', async (request, reply) => {
     const { id } = request.params;
-    const context = getUserContext(request);
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
     const language = getLanguage(request);
 
     console.info(`[Inbox] GET /inbox/${id} user=${context.deviceId} mode=${context.userMode}`);
@@ -220,9 +212,16 @@ export async function inboxRoutes(
    */
   fastify.get<{
     Querystring: { screen?: string };
-    Reply: BannerResponse;
+    Reply: BannerResponse | { error: string; code: string };
   }>('/banners/active', async (request, reply) => {
-    const userContext = getUserContext(request);
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const userContext = contextResult.context;
     const language = getLanguage(request);
     const screenParam = request.query.screen;
 

@@ -16,7 +16,6 @@
  */
 
 import type { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
-import type { Municipality, UserMode } from '../types/inbox.js';
 import type {
   FeedbackLanguage,
   SubmitFeedbackRequest,
@@ -36,34 +35,7 @@ import {
   getFeedbackReplies,
   getSentItemsForDevice,
 } from '../repositories/feedback.js';
-
-/**
- * Extract user context from request headers
- */
-function getUserContext(request: FastifyRequest): {
-  deviceId: string;
-  userMode: UserMode;
-  municipality: Municipality;
-} {
-  const headers = request.headers;
-
-  const deviceId = headers['x-device-id'] as string | undefined;
-  const userMode = (headers['x-user-mode'] as UserMode) || 'visitor';
-  const municipalityHeader = headers['x-municipality'] as string | undefined;
-
-  let municipality: Municipality = null;
-  if (userMode === 'local' && municipalityHeader) {
-    if (municipalityHeader === 'vis' || municipalityHeader === 'komiza') {
-      municipality = municipalityHeader;
-    }
-  }
-
-  return {
-    deviceId: deviceId || '',
-    userMode,
-    municipality,
-  };
-}
+import { extractUserContext } from '../middleware/user-context.js';
 
 /**
  * Get language preference from request
@@ -94,17 +66,27 @@ export async function feedbackRoutes(
    */
   fastify.post<{
     Body: SubmitFeedbackRequest;
-    Reply: FeedbackSubmitResponse | { error: string; error_hr?: string; error_en?: string };
+    Reply: FeedbackSubmitResponse | { error: string; code?: string; error_hr?: string; error_en?: string };
   }>('/feedback', async (request, reply) => {
-    const context = getUserContext(request);
     const language = getLanguage(request);
 
-    // Check for device ID
-    if (!context.deviceId) {
+    // Check for device ID header
+    const deviceIdHeader = request.headers['x-device-id'];
+    if (!deviceIdHeader || typeof deviceIdHeader !== 'string') {
       return reply.status(400).send({
         error: 'X-Device-ID header is required',
       });
     }
+
+    // Validate user context (Package 4 Stage 12: local users need municipality)
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
 
     console.info(`[Feedback] POST /feedback device=${context.deviceId} mode=${context.userMode} lang=${language}`);
 
@@ -165,17 +147,28 @@ export async function feedbackRoutes(
    */
   fastify.get<{
     Params: { id: string };
-    Reply: FeedbackDetailResponse | { error: string };
+    Reply: FeedbackDetailResponse | { error: string; code?: string };
   }>('/feedback/:id', async (request, reply) => {
     const { id } = request.params;
-    const context = getUserContext(request);
     const language = getLanguage(request);
 
-    if (!context.deviceId) {
+    // Check for device ID header
+    const deviceIdHeader = request.headers['x-device-id'];
+    if (!deviceIdHeader || typeof deviceIdHeader !== 'string') {
       return reply.status(400).send({
         error: 'X-Device-ID header is required',
       });
     }
+
+    // Validate user context (Package 4 Stage 12: local users need municipality)
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
 
     console.info(`[Feedback] GET /feedback/${id} device=${context.deviceId}`);
 
@@ -232,16 +225,27 @@ export async function feedbackRoutes(
       page: number;
       page_size: number;
       has_more: boolean;
-    } | { error: string };
+    } | { error: string; code?: string };
   }>('/feedback/sent', async (request, reply) => {
-    const context = getUserContext(request);
     const language = getLanguage(request);
 
-    if (!context.deviceId) {
+    // Check for device ID header
+    const deviceIdHeader = request.headers['x-device-id'];
+    if (!deviceIdHeader || typeof deviceIdHeader !== 'string') {
       return reply.status(400).send({
         error: 'X-Device-ID header is required',
       });
     }
+
+    // Validate user context (Package 4 Stage 12: local users need municipality)
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
 
     const page = Math.max(1, parseInt(request.query.page ?? '1', 10));
     const pageSize = Math.min(50, Math.max(1, parseInt(request.query.page_size ?? '20', 10)));
