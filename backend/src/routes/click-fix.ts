@@ -21,8 +21,8 @@ import { existsSync, mkdirSync, createWriteStream } from 'fs';
 import { join, extname } from 'path';
 import { pipeline } from 'stream/promises';
 import { randomUUID } from 'crypto';
-import type { Municipality, UserMode } from '../types/inbox.js';
 import type { FeedbackLanguage } from '../types/feedback.js';
+import { extractUserContext } from '../middleware/user-context.js';
 import type {
   Location,
   ClickFixDetailResponse,
@@ -54,34 +54,6 @@ const UPLOADS_DIR = join(process.cwd(), 'uploads', 'click-fix');
 // Ensure uploads directory exists
 if (!existsSync(UPLOADS_DIR)) {
   mkdirSync(UPLOADS_DIR, { recursive: true });
-}
-
-/**
- * Extract user context from request headers
- */
-function getUserContext(request: FastifyRequest): {
-  deviceId: string;
-  userMode: UserMode;
-  municipality: Municipality;
-} {
-  const headers = request.headers;
-
-  const deviceId = headers['x-device-id'] as string | undefined;
-  const userMode = (headers['x-user-mode'] as UserMode) || 'visitor';
-  const municipalityHeader = headers['x-municipality'] as string | undefined;
-
-  let municipality: Municipality = null;
-  if (userMode === 'local' && municipalityHeader) {
-    if (municipalityHeader === 'vis' || municipalityHeader === 'komiza') {
-      municipality = municipalityHeader;
-    }
-  }
-
-  return {
-    deviceId: deviceId || '',
-    userMode,
-    municipality,
-  };
 }
 
 /**
@@ -128,17 +100,27 @@ export async function clickFixRoutes(
    * Rate limit: 3 per device per day (Europe/Zagreb timezone)
    */
   fastify.post<{
-    Reply: ClickFixSubmitResponse | { error: string; error_hr?: string; error_en?: string };
+    Reply: ClickFixSubmitResponse | { error: string; code?: string; error_hr?: string; error_en?: string };
   }>('/click-fix', async (request, reply) => {
-    const context = getUserContext(request);
     const language = getLanguage(request);
 
-    // Check for device ID
-    if (!context.deviceId) {
+    // Check for device ID header
+    const deviceIdHeader = request.headers['x-device-id'];
+    if (!deviceIdHeader || typeof deviceIdHeader !== 'string') {
       return reply.status(400).send({
         error: 'X-Device-ID header is required',
       });
     }
+
+    // Validate user context (Package 4 Stage 12: local users need municipality)
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
 
     console.info(`[ClickFix] POST /click-fix device=${context.deviceId} mode=${context.userMode} lang=${language}`);
 
@@ -289,17 +271,28 @@ export async function clickFixRoutes(
    */
   fastify.get<{
     Params: { id: string };
-    Reply: ClickFixDetailResponse | { error: string };
+    Reply: ClickFixDetailResponse | { error: string; code?: string };
   }>('/click-fix/:id', async (request, reply) => {
     const { id } = request.params;
-    const context = getUserContext(request);
     const language = getLanguage(request);
 
-    if (!context.deviceId) {
+    // Check for device ID header
+    const deviceIdHeader = request.headers['x-device-id'];
+    if (!deviceIdHeader || typeof deviceIdHeader !== 'string') {
       return reply.status(400).send({
         error: 'X-Device-ID header is required',
       });
     }
+
+    // Validate user context (Package 4 Stage 12: local users need municipality)
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
 
     console.info(`[ClickFix] GET /click-fix/${id} device=${context.deviceId}`);
 
@@ -363,16 +356,27 @@ export async function clickFixRoutes(
       page: number;
       page_size: number;
       has_more: boolean;
-    } | { error: string };
+    } | { error: string; code?: string };
   }>('/click-fix/sent', async (request, reply) => {
-    const context = getUserContext(request);
     const language = getLanguage(request);
 
-    if (!context.deviceId) {
+    // Check for device ID header
+    const deviceIdHeader = request.headers['x-device-id'];
+    if (!deviceIdHeader || typeof deviceIdHeader !== 'string') {
       return reply.status(400).send({
         error: 'X-Device-ID header is required',
       });
     }
+
+    // Validate user context (Package 4 Stage 12: local users need municipality)
+    const contextResult = extractUserContext(request);
+    if (!contextResult.valid) {
+      return reply.status(400).send({
+        error: contextResult.error,
+        code: contextResult.code,
+      });
+    }
+    const context = contextResult.context;
 
     const page = Math.max(1, parseInt(request.query.page ?? '1', 10));
     const pageSize = Math.min(50, Math.max(1, parseInt(request.query.page_size ?? '20', 10)));
