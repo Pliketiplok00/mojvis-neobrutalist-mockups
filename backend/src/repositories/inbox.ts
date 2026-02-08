@@ -21,6 +21,9 @@ interface InboxMessageRow {
   updated_at: Date;
   created_by: string | null;
   deleted_at: Date | null;
+  // Package 2: Draft/Publish fields
+  published_at: Date | null;
+  published_by: string | null;
   // Phase 7: Push notification fields
   is_locked: boolean;
   pushed_at: Date | null;
@@ -48,11 +51,13 @@ const EXCLUDED_SOURCE_TYPES_ADMIN = [
 ];
 
 /**
- * Get paginated list of inbox messages (excludes soft-deleted)
+ * Get paginated list of inbox messages (excludes soft-deleted and drafts)
  * Ordered by created_at descending (newest first)
  *
- * NOTE: This is for PUBLIC endpoints. Soft-deleted messages are excluded.
- * NOTE: System-generated messages (Click&Fix, Feedback confirmations/replies) are excluded.
+ * NOTE: This is for PUBLIC endpoints.
+ * - Soft-deleted messages are excluded (deleted_at IS NULL)
+ * - Draft messages are excluded (published_at IS NOT NULL)
+ * - System-generated messages (Click&Fix, Feedback confirmations/replies) are excluded
  */
 export async function getInboxMessages(
   page: number = 1,
@@ -63,20 +68,20 @@ export async function getInboxMessages(
   // Build exclusion clause for source_type
   const excludeClause = `(source_type IS NULL OR source_type NOT IN (${EXCLUDED_SOURCE_TYPES_PUBLIC.map((_, i) => `$${i + 1}`).join(', ')}))`;
 
-  // Get total count (excluding soft-deleted and system-generated)
+  // Get total count (excluding soft-deleted, drafts, and system-generated)
   const countResult = await query<{ count: string }>(
-    `SELECT COUNT(*) as count FROM inbox_messages WHERE deleted_at IS NULL AND ${excludeClause}`,
+    `SELECT COUNT(*) as count FROM inbox_messages WHERE deleted_at IS NULL AND published_at IS NOT NULL AND ${excludeClause}`,
     EXCLUDED_SOURCE_TYPES_PUBLIC
   );
   const total = parseInt(countResult.rows[0]?.count ?? '0', 10);
 
-  // Get paginated messages (excluding soft-deleted and system-generated)
+  // Get paginated messages (excluding soft-deleted, drafts, and system-generated)
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
-            is_locked, pushed_at, pushed_by
+            published_at, published_by, is_locked, pushed_at, pushed_by
      FROM inbox_messages
-     WHERE deleted_at IS NULL AND ${excludeClause}
+     WHERE deleted_at IS NULL AND published_at IS NOT NULL AND ${excludeClause}
      ORDER BY created_at DESC
      LIMIT $${EXCLUDED_SOURCE_TYPES_PUBLIC.length + 1} OFFSET $${EXCLUDED_SOURCE_TYPES_PUBLIC.length + 2}`,
     [...EXCLUDED_SOURCE_TYPES_PUBLIC, pageSize, offset]
@@ -89,9 +94,11 @@ export async function getInboxMessages(
 }
 
 /**
- * Get a single inbox message by ID (excludes soft-deleted)
+ * Get a single inbox message by ID (excludes soft-deleted and drafts)
  *
- * NOTE: This is for PUBLIC endpoints. Soft-deleted messages return null (404).
+ * NOTE: This is for PUBLIC endpoints.
+ * - Soft-deleted messages return null (404)
+ * - Draft messages return null (404)
  */
 export async function getInboxMessageById(
   id: string
@@ -99,9 +106,9 @@ export async function getInboxMessageById(
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
-            is_locked, pushed_at, pushed_by
+            published_at, published_by, is_locked, pushed_at, pushed_by
      FROM inbox_messages
-     WHERE id = $1 AND deleted_at IS NULL`,
+     WHERE id = $1 AND deleted_at IS NULL AND published_at IS NOT NULL`,
     [id]
   );
 
@@ -113,7 +120,7 @@ export async function getInboxMessageById(
 }
 
 /**
- * Get a single inbox message by ID (admin view, includes soft-deleted)
+ * Get a single inbox message by ID (admin view, includes soft-deleted and drafts)
  *
  * NOTE: This is for ADMIN endpoints only.
  */
@@ -123,7 +130,7 @@ export async function getInboxMessageByIdAdmin(
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
-            is_locked, pushed_at, pushed_by
+            published_at, published_by, is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE id = $1`,
     [id]
@@ -137,19 +144,22 @@ export async function getInboxMessageByIdAdmin(
 }
 
 /**
- * Get all messages that could potentially be banners (excludes soft-deleted)
+ * Get all messages that could potentially be banners (excludes soft-deleted and drafts)
  * (have an active window defined)
  *
- * NOTE: This is for PUBLIC endpoints. Soft-deleted messages are excluded.
+ * NOTE: This is for PUBLIC endpoints.
+ * - Soft-deleted messages are excluded
+ * - Draft messages are excluded (published_at IS NOT NULL)
  */
 export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
-            is_locked, pushed_at, pushed_by
+            published_at, published_by, is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE (active_from IS NOT NULL OR active_to IS NOT NULL)
        AND deleted_at IS NULL
+       AND published_at IS NOT NULL
      ORDER BY created_at DESC`
   );
 
@@ -157,10 +167,13 @@ export async function getPotentialBannerMessages(): Promise<InboxMessage[]> {
 }
 
 /**
- * Create a new inbox message
+ * Create a new inbox message (as DRAFT by default)
+ *
+ * NOTE: New messages are created as drafts (published_at = NULL).
+ * Use publishMessage() to publish.
  */
 export async function createInboxMessage(
-  message: Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'is_locked' | 'pushed_at' | 'pushed_by'>
+  message: Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'published_at' | 'published_by' | 'is_locked' | 'pushed_at' | 'pushed_by'>
 ): Promise<InboxMessage> {
   const result = await query<InboxMessageRow>(
     `INSERT INTO inbox_messages
@@ -168,7 +181,7 @@ export async function createInboxMessage(
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
      RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
-               is_locked, pushed_at, pushed_by`,
+               published_at, published_by, is_locked, pushed_at, pushed_by`,
     [
       message.title_hr,
       message.title_en,
@@ -189,10 +202,11 @@ export async function createInboxMessage(
  *
  * NOTE: Soft-deleted messages cannot be updated via this function.
  * NOTE: Locked messages cannot be updated (returns null).
+ * NOTE: Both drafts and published messages can be updated (unless locked).
  */
 export async function updateInboxMessage(
   id: string,
-  updates: Partial<Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'is_locked' | 'pushed_at' | 'pushed_by'>>
+  updates: Partial<Omit<InboxMessage, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'published_at' | 'published_by' | 'is_locked' | 'pushed_at' | 'pushed_by'>>
 ): Promise<InboxMessage | null> {
   // Build dynamic update query
   const fields: string[] = [];
@@ -229,7 +243,7 @@ export async function updateInboxMessage(
   }
 
   if (fields.length === 0) {
-    return getInboxMessageById(id);
+    return getInboxMessageByIdAdmin(id);
   }
 
   values.push(id);
@@ -239,7 +253,7 @@ export async function updateInboxMessage(
      WHERE id = $${paramIndex} AND deleted_at IS NULL AND is_locked = false
      RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
-               is_locked, pushed_at, pushed_by`,
+               published_at, published_by, is_locked, pushed_at, pushed_by`,
     values
   );
 
@@ -264,7 +278,7 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
      WHERE id = $1 AND deleted_at IS NULL
      RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
-               is_locked, pushed_at, pushed_by`,
+               published_at, published_by, is_locked, pushed_at, pushed_by`,
     [id]
   );
 
@@ -276,7 +290,7 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
 }
 
 /**
- * Get paginated list of inbox messages (admin view)
+ * Get paginated list of inbox messages (admin view, includes drafts)
  *
  * @param page - Page number (1-indexed)
  * @param pageSize - Number of items per page
@@ -287,6 +301,7 @@ export async function softDeleteInboxMessage(id: string): Promise<InboxMessage |
  *
  * NOTE: System-generated messages (Click&Fix, Feedback confirmations/replies) are excluded.
  * These appear in their respective admin sections (Click&Fix, Feedback).
+ * NOTE: Drafts (published_at IS NULL) ARE included in admin view.
  */
 export async function getInboxMessagesAdmin(
   page: number = 1,
@@ -319,7 +334,7 @@ export async function getInboxMessagesAdmin(
   const result = await query<InboxMessageRow>(
     `SELECT id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
             active_from, active_to, created_at, updated_at, created_by, deleted_at,
-            is_locked, pushed_at, pushed_by
+            published_at, published_by, is_locked, pushed_at, pushed_by
      FROM inbox_messages
      WHERE ${excludeClause} ${archivedClause}
      ORDER BY created_at DESC
@@ -343,7 +358,7 @@ export async function restoreInboxMessage(id: string): Promise<InboxMessage | nu
      WHERE id = $1 AND deleted_at IS NOT NULL
      RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
-               is_locked, pushed_at, pushed_by`,
+               published_at, published_by, is_locked, pushed_at, pushed_by`,
     [id]
   );
 
@@ -367,7 +382,34 @@ export async function markMessageAsLocked(
      WHERE id = $1 AND is_locked = false AND deleted_at IS NULL
      RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
                active_from, active_to, created_at, updated_at, created_by, deleted_at,
-               is_locked, pushed_at, pushed_by`,
+               published_at, published_by, is_locked, pushed_at, pushed_by`,
+    [id, adminId]
+  );
+
+  if (result.rows.length === 0) {
+    return null;
+  }
+
+  return rowToInboxMessage(result.rows[0]);
+}
+
+/**
+ * Publish a draft message (Package 2)
+ *
+ * Sets published_at and published_by. Only works on unpublished drafts.
+ * Returns null if message doesn't exist, is already published, or is deleted.
+ */
+export async function publishMessage(
+  id: string,
+  adminId: string | null
+): Promise<InboxMessage | null> {
+  const result = await query<InboxMessageRow>(
+    `UPDATE inbox_messages
+     SET published_at = NOW(), published_by = $2
+     WHERE id = $1 AND published_at IS NULL AND deleted_at IS NULL
+     RETURNING id, title_hr, title_en, body_hr, body_en, tags::text[] AS tags,
+               active_from, active_to, created_at, updated_at, created_by, deleted_at,
+               published_at, published_by, is_locked, pushed_at, pushed_by`,
     [id, adminId]
   );
 
@@ -403,6 +445,10 @@ function rowToInboxMessage(row: InboxMessageRow): InboxMessage {
     updated_at: row.updated_at,
     created_by: row.created_by,
     deleted_at: row.deleted_at,
+    // Package 2: Draft/Publish fields
+    published_at: row.published_at,
+    published_by: row.published_by,
+    // Phase 7: Push notification fields
     is_locked: row.is_locked ?? false,
     pushed_at: row.pushed_at,
     pushed_by: row.pushed_by,
