@@ -35,6 +35,7 @@ import { deviceRoutes } from './routes/device.js';
 import { menuExtrasRoutes } from './routes/menu-extras.js';
 import { adminMenuExtrasRoutes } from './routes/admin-menu-extras.js';
 import { adminAuthRoutes } from './routes/admin-auth.js';
+import { adminTranslateRoutes } from './routes/admin-translate.js';
 import { adminAuthHook } from './middleware/auth.js';
 
 // Create Fastify instance with logging
@@ -128,6 +129,9 @@ async function registerPlugins(): Promise<void> {
   // Menu extras routes (Phase 8) - dynamic menu items
   await fastify.register(menuExtrasRoutes);
   await fastify.register(adminMenuExtrasRoutes);
+
+  // Admin translation routes (DeepL HR → EN)
+  await fastify.register(adminTranslateRoutes);
 }
 
 /**

@@ -41,6 +41,9 @@ export interface EnvConfig {
   BREAKGLASS_USERNAME: string | null;
   BREAKGLASS_PASSWORD: string | null;
   BREAKGLASS_MUNICIPALITY: 'vis' | 'komiza' | null;
+
+  // DeepL Translation API (optional, for admin HR→EN translation)
+  DEEPL_API_KEY: string | null;
 }
 
 function getEnvVar(key: string, defaultValue?: string): string {
@@ -109,6 +112,9 @@ export function loadEnvConfig(): EnvConfig {
     BREAKGLASS_USERNAME: process.env['BREAKGLASS_USERNAME'] ?? null,
     BREAKGLASS_PASSWORD: process.env['BREAKGLASS_PASSWORD'] ?? null,
     BREAKGLASS_MUNICIPALITY: parseBreakglassMunicipality(process.env['BREAKGLASS_MUNICIPALITY']),
+
+    // DeepL Translation API - optional
+    DEEPL_API_KEY: process.env['DEEPL_API_KEY'] ?? null,
   };
 }
 

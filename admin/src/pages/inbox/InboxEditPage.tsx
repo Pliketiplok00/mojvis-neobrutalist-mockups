@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminInboxApi } from '../../services/api';
+import { adminInboxApi, adminTranslateApi } from '../../services/api';
 import { useAuth } from '../../services/AuthContext';
 import type { InboxTag, InboxMessageInput } from '../../types/inbox';
 import {
@@ -48,6 +48,8 @@ export function InboxEditPage() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const [showTranslateWarning, setShowTranslateWarning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form state
@@ -241,6 +243,44 @@ export function InboxEditPage() {
     }
   };
 
+  /**
+   * Translate Croatian content to English using DeepL
+   */
+  const handleTranslate = async () => {
+    // Validate HR content exists
+    if (!titleHr.trim() || !bodyHr.trim()) {
+      setError('Unesite hrvatski sadržaj prije prijevoda.');
+      return;
+    }
+
+    // Confirm overwrite if EN content exists
+    if ((titleEn.trim() || bodyEn.trim()) && !showTranslateWarning) {
+      if (!window.confirm('Engleski sadržaj već postoji. Želite li ga zamijeniti?')) {
+        return;
+      }
+    }
+
+    setError(null);
+    setTranslating(true);
+
+    try {
+      const result = await adminTranslateApi.translateHrToEn(titleHr, bodyHr);
+      setTitleEn(result.title_en);
+      setBodyEn(result.body_en);
+      setShowTranslateWarning(true); // Show warning after translation
+    } catch (err: unknown) {
+      console.error('[Admin] Translation error:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Greška pri prijevodu';
+      if (errorMessage.includes('503') || errorMessage.includes('not configured')) {
+        setError('Usluga prijevoda nije dostupna. Kontaktirajte administratora.');
+      } else {
+        setError('Prijevod nije uspio. Pokušajte ponovo.');
+      }
+    } finally {
+      setTranslating(false);
+    }
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -362,13 +402,29 @@ export function InboxEditPage() {
 
           {/* English content */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>
-              Sadržaj (Engleski) {needsEnglish ? '*' : '(opcionalno)'}
-            </h2>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>
+                Sadržaj (Engleski) {needsEnglish ? '*' : '(opcionalno)'}
+              </h2>
+              <button
+                type="button"
+                style={styles.translateButton}
+                onClick={() => void handleTranslate()}
+                disabled={translating || !titleHr.trim() || !bodyHr.trim() || isLocked || isForbidden}
+                title={!titleHr.trim() || !bodyHr.trim() ? 'Unesite hrvatski sadržaj' : 'Prevedi na engleski'}
+              >
+                {translating ? 'Prevodim...' : 'Auto-prevedi (HR → EN)'}
+              </button>
+            </div>
             {!needsEnglish && (
               <p style={styles.hint}>
                 Općinske poruke mogu biti samo na hrvatskom.
               </p>
+            )}
+            {showTranslateWarning && (
+              <div style={styles.translateWarning}>
+                Provjerite prijevod prije objave.
+              </div>
             )}
 
             <div style={styles.field}>
@@ -659,7 +715,35 @@ const styles: Record<string, React.CSSProperties> = {
   sectionTitle: {
     fontSize: '16px',
     fontWeight: '600',
-    margin: '0 0 8px 0',
+    margin: 0,
+  },
+  sectionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+    flexWrap: 'wrap',
+    gap: '8px',
+  },
+  translateButton: {
+    padding: '6px 12px',
+    backgroundColor: '#3b82f6',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '13px',
+    fontWeight: '500',
+    cursor: 'pointer',
+  },
+  translateWarning: {
+    padding: '10px 14px',
+    backgroundColor: '#fef3c7',
+    color: '#92400e',
+    borderRadius: '4px',
+    marginBottom: '16px',
+    fontSize: '13px',
+    fontWeight: '500',
+    border: '1px solid #fbbf24',
   },
   hint: {
     fontSize: '13px',

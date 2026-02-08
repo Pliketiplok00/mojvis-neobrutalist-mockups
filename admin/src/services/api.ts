@@ -612,4 +612,35 @@ export const adminAuthApi = {
   },
 };
 
+/**
+ * Translation response from backend
+ */
+interface TranslateResponse {
+  title_en: string;
+  body_en: string;
+}
+
+/**
+ * Admin Translation API
+ *
+ * Server-side proxy for DeepL translation (HR → EN).
+ */
+export const adminTranslateApi = {
+  /**
+   * Translate Croatian title and body to English
+   */
+  async translateHrToEn(
+    titleHr: string,
+    bodyHr: string
+  ): Promise<TranslateResponse> {
+    return apiRequest<TranslateResponse>('/admin/translate/hr-to-en', {
+      method: 'POST',
+      body: JSON.stringify({
+        title_hr: titleHr,
+        body_hr: bodyHr,
+      }),
+    });
+  },
+};
+
 export default adminInboxApi;
