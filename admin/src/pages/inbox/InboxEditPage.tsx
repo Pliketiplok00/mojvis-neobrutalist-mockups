@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminInboxApi } from '../../services/api';
+import { adminInboxApi, adminTranslateApi } from '../../services/api';
 import { useAuth } from '../../services/AuthContext';
 import type { InboxTag, InboxMessageInput } from '../../types/inbox';
 import {
@@ -39,6 +39,58 @@ import {
   getMunicipalityFromTags,
 } from '../../types/inbox';
 
+/**
+ * Backend error code to Croatian message mapping
+ */
+const ERROR_MESSAGES: Record<string, string> = {
+  // Inbox errors
+  MESSAGE_LOCKED: 'Ova poruka je zaključana jer je poslana push obavijest. Nije moguće uređivati.',
+  ALREADY_PUBLISHED: 'Poruka je već objavljena.',
+  MESSAGE_DELETED: 'Poruka je obrisana.',
+  NOT_ARCHIVED: 'Poruka nije arhivirana.',
+  TAGS_EMPTY: 'Odaberite barem jednu oznaku.',
+  TAGS_MAX_EXCEEDED: 'Maksimalno 2 oznake su dozvoljene.',
+  HITNO_MISSING_CONTEXT: 'Hitno poruke moraju imati jednu kontekst oznaku.',
+  HITNO_MISSING_DATES: 'Hitno poruke moraju imati definirani aktivni period.',
+  // Auth errors
+  UNAUTHENTICATED: 'Niste prijavljeni. Prijavite se ponovo.',
+  SESSION_INVALID: 'Sesija je istekla. Prijavite se ponovo.',
+  // Translation errors
+  TRANSLATION_NOT_CONFIGURED: 'Usluga prijevoda nije dostupna.',
+  TRANSLATION_FAILED: 'Prijevod nije uspio. Pokušajte ponovo.',
+};
+
+/**
+ * Parse error response and return Croatian message
+ */
+function getErrorMessage(error: unknown): string {
+  if (!(error instanceof Error)) {
+    return 'Dogodila se neočekivana greška.';
+  }
+
+  const message = error.message;
+
+  // Check for known error codes in the message
+  for (const [code, croatianMessage] of Object.entries(ERROR_MESSAGES)) {
+    if (message.includes(code)) {
+      return croatianMessage;
+    }
+  }
+
+  // Check for HTTP status codes
+  if (message.includes('409')) {
+    return 'Konflikt: poruka je već objavljena ili zaključana.';
+  }
+  if (message.includes('403')) {
+    return 'Nemate ovlasti za ovu radnju.';
+  }
+  if (message.includes('404')) {
+    return 'Poruka nije pronađena.';
+  }
+
+  return 'Greška pri spremanju. Pokušajte ponovo.';
+}
+
 export function InboxEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -48,6 +100,8 @@ export function InboxEditPage() {
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const [showTranslateWarning, setShowTranslateWarning] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form state
@@ -124,14 +178,24 @@ export function InboxEditPage() {
 
   const handleTagToggle = (tag: InboxTag) => {
     setSelectedTags((prev) => {
+      // If deselecting, just remove it
       if (prev.includes(tag)) {
         return prev.filter((t) => t !== tag);
       }
-      if (prev.length >= 2) {
-        // Max 2 tags - replace oldest
-        return [prev[1], tag];
+
+      // vis + komiza are mutually exclusive
+      let newTags = prev;
+      if (tag === 'vis' && prev.includes('komiza')) {
+        newTags = prev.filter((t) => t !== 'komiza');
+      } else if (tag === 'komiza' && prev.includes('vis')) {
+        newTags = prev.filter((t) => t !== 'vis');
       }
-      return [...prev, tag];
+
+      // Max 2 tags - replace oldest if at limit
+      if (newTags.length >= 2) {
+        return [newTags[1], tag];
+      }
+      return [...newTags, tag];
     });
   };
 
@@ -146,6 +210,10 @@ export function InboxEditPage() {
     }
     if (!bodyHr.trim()) {
       setError('Sadržaj (HR) je obavezan.');
+      return;
+    }
+    if (selectedTags.length === 0) {
+      setError('Odaberite barem jednu oznaku.');
       return;
     }
     if (!validateTags(selectedTags)) {
@@ -198,13 +266,11 @@ export function InboxEditPage() {
       }
     } catch (err: unknown) {
       console.error('[Admin] Error saving message:', err);
-      // Phase 7: Handle locked message error (409)
-      const errorMessage = err instanceof Error ? err.message : '';
-      if (errorMessage.includes('locked') || errorMessage.includes('409')) {
-        setError('Ova poruka je zaključana jer je poslana push obavijest. Nije moguće uređivati.');
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      // Check if locked
+      if (err instanceof Error && (err.message.includes('locked') || err.message.includes('MESSAGE_LOCKED'))) {
         setIsLocked(true);
-      } else {
-        setError('Greška pri spremanju poruke. Pokušajte ponovo.');
       }
     } finally {
       setSaving(false);
@@ -218,6 +284,13 @@ export function InboxEditPage() {
     if (!id || isNew || publishedAt) return;
 
     setError(null);
+
+    // Validate EN fields before publish (same as save)
+    if (requiresEnglish(selectedTags) && (!titleEn.trim() || !bodyEn.trim())) {
+      setError('Engleski prijevod je obavezan za ne-općinske poruke.');
+      return;
+    }
+
     setPublishing(true);
 
     try {
@@ -229,15 +302,51 @@ export function InboxEditPage() {
       navigate('/messages');
     } catch (err: unknown) {
       console.error('[Admin] Error publishing message:', err);
-      const errorMessage = err instanceof Error ? err.message : '';
-      if (errorMessage.includes('already published') || errorMessage.includes('409')) {
-        setError('Poruka je već objavljena.');
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      // Check if already published
+      if (err instanceof Error && (err.message.includes('ALREADY_PUBLISHED') || err.message.includes('409'))) {
         setPublishedAt(new Date().toISOString()); // Mark as published to update UI
-      } else {
-        setError('Greška pri objavljivanju poruke. Pokušajte ponovo.');
       }
     } finally {
       setPublishing(false);
+    }
+  };
+
+  /**
+   * Translate Croatian content to English using DeepL
+   */
+  const handleTranslate = async () => {
+    // Validate HR content exists
+    if (!titleHr.trim() || !bodyHr.trim()) {
+      setError('Unesite hrvatski sadržaj prije prijevoda.');
+      return;
+    }
+
+    // Confirm overwrite if EN content exists
+    if ((titleEn.trim() || bodyEn.trim()) && !showTranslateWarning) {
+      if (!window.confirm('Engleski sadržaj već postoji. Želite li ga zamijeniti?')) {
+        return;
+      }
+    }
+
+    setError(null);
+    setTranslating(true);
+
+    try {
+      const result = await adminTranslateApi.translateHrToEn(titleHr, bodyHr);
+      setTitleEn(result.title_en);
+      setBodyEn(result.body_en);
+      setShowTranslateWarning(true); // Show warning after translation
+    } catch (err: unknown) {
+      console.error('[Admin] Translation error:', err);
+      if (err instanceof Error && (err.message.includes('503') || err.message.includes('TRANSLATION_NOT_CONFIGURED'))) {
+        setError('Usluga prijevoda nije dostupna. Kontaktirajte administratora.');
+      } else {
+        setError('Prijevod nije uspio. Pokušajte ponovo.');
+      }
+    } finally {
+      setTranslating(false);
     }
   };
 
@@ -362,13 +471,29 @@ export function InboxEditPage() {
 
           {/* English content */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>
-              Sadržaj (Engleski) {needsEnglish ? '*' : '(opcionalno)'}
-            </h2>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>
+                Sadržaj (Engleski) {needsEnglish ? '*' : '(opcionalno)'}
+              </h2>
+              <button
+                type="button"
+                style={styles.translateButton}
+                onClick={() => void handleTranslate()}
+                disabled={translating || !titleHr.trim() || !bodyHr.trim() || isLocked || isForbidden}
+                title={!titleHr.trim() || !bodyHr.trim() ? 'Unesite hrvatski sadržaj' : 'Prevedi na engleski'}
+              >
+                {translating ? 'Prevodim...' : 'Auto-prevedi (HR → EN)'}
+              </button>
+            </div>
             {!needsEnglish && (
               <p style={styles.hint}>
                 Općinske poruke mogu biti samo na hrvatskom.
               </p>
+            )}
+            {showTranslateWarning && (
+              <div style={styles.translateWarning}>
+                ⚠️ Provjerite prijevod prije objave.
+              </div>
             )}
 
             <div style={styles.field}>
@@ -659,7 +784,35 @@ const styles: Record<string, React.CSSProperties> = {
   sectionTitle: {
     fontSize: '16px',
     fontWeight: '600',
-    margin: '0 0 8px 0',
+    margin: 0,
+  },
+  sectionHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px',
+    flexWrap: 'wrap',
+    gap: '8px',
+  },
+  translateButton: {
+    padding: '6px 12px',
+    backgroundColor: '#3b82f6',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '13px',
+    fontWeight: '500',
+    cursor: 'pointer',
+  },
+  translateWarning: {
+    padding: '10px 14px',
+    backgroundColor: '#fef3c7',
+    color: '#92400e',
+    borderRadius: '4px',
+    marginBottom: '16px',
+    fontSize: '13px',
+    fontWeight: '500',
+    border: '1px solid #fbbf24',
   },
   hint: {
     fontSize: '13px',
