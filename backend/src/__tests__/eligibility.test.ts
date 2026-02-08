@@ -44,6 +44,10 @@ function createMessage(
     updated_at: new Date(),
     created_by: null,
     deleted_at: null,
+    // Package 2: Draft/Publish fields
+    published_at: new Date(),
+    published_by: null,
+    // Phase 7: Push notification fields
     is_locked: false,
     pushed_at: null,
     pushed_by: null,

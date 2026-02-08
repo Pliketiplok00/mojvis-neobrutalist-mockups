@@ -197,6 +197,19 @@ export const adminInboxApi = {
     });
     return normalizeInboxMessage(message);
   },
+
+  /**
+   * Publish a draft message (Package 2)
+   *
+   * Makes the message visible to public endpoints.
+   * Triggers push notification if hitno rules are met.
+   */
+  async publishMessage(id: string): Promise<InboxMessage> {
+    const message = await apiRequest<InboxMessage>(`/admin/inbox/${id}/publish`, {
+      method: 'POST',
+    });
+    return normalizeInboxMessage(message);
+  },
 };
 
 /**

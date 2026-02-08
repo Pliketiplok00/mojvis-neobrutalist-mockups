@@ -6,8 +6,12 @@
  * Rules (per spec):
  * - Max 2 tags per message
  * - HR content required, EN optional for municipal
- * - Messages are LIVE ON SAVE (no draft workflow)
  * - HR-only admin UI
+ *
+ * Package 2: Draft/Publish workflow
+ * - New messages are saved as DRAFTS (not visible to public)
+ * - Drafts can be edited freely
+ * - Publish action makes message visible and triggers push if hitno
  *
  * Phase 7: Locked messages
  * - Messages with hitno tag that triggered push are LOCKED
@@ -43,6 +47,7 @@ export function InboxEditPage() {
 
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Form state
@@ -53,6 +58,9 @@ export function InboxEditPage() {
   const [selectedTags, setSelectedTags] = useState<InboxTag[]>([]);
   const [activeFrom, setActiveFrom] = useState('');
   const [activeTo, setActiveTo] = useState('');
+
+  // Package 2: Draft/Publish state
+  const [publishedAt, setPublishedAt] = useState<string | null>(null);
 
   // Phase 7: Locked state
   const [isLocked, setIsLocked] = useState(false);
@@ -79,6 +87,8 @@ export function InboxEditPage() {
       setSelectedTags(message.tags);
       setActiveFrom(message.active_from ? formatDateTimeLocal(message.active_from) : '');
       setActiveTo(message.active_to ? formatDateTimeLocal(message.active_to) : '');
+      // Package 2: Load draft/publish state
+      setPublishedAt(message.published_at);
       // Phase 7: Load locked state
       setIsLocked(message.is_locked);
       setPushedAt(message.pushed_at);
@@ -178,11 +188,14 @@ export function InboxEditPage() {
 
     try {
       if (isNew) {
-        await adminInboxApi.createMessage(input);
+        // Package 2: Create as draft, then navigate to edit page
+        const newMessage = await adminInboxApi.createMessage(input);
+        navigate(`/messages/${newMessage.id}`, { replace: true });
       } else if (id) {
         await adminInboxApi.updateMessage(id, input);
+        // Stay on page after save (user may want to publish)
+        setError(null);
       }
-      navigate('/messages');
     } catch (err: unknown) {
       console.error('[Admin] Error saving message:', err);
       // Phase 7: Handle locked message error (409)
@@ -195,6 +208,36 @@ export function InboxEditPage() {
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  /**
+   * Package 2: Publish a draft message
+   */
+  const handlePublish = async () => {
+    if (!id || isNew || publishedAt) return;
+
+    setError(null);
+    setPublishing(true);
+
+    try {
+      const publishedMessage = await adminInboxApi.publishMessage(id);
+      setPublishedAt(publishedMessage.published_at);
+      setIsLocked(publishedMessage.is_locked);
+      setPushedAt(publishedMessage.pushed_at);
+      // Navigate to list after successful publish
+      navigate('/messages');
+    } catch (err: unknown) {
+      console.error('[Admin] Error publishing message:', err);
+      const errorMessage = err instanceof Error ? err.message : '';
+      if (errorMessage.includes('already published') || errorMessage.includes('409')) {
+        setError('Poruka je već objavljena.');
+        setPublishedAt(new Date().toISOString()); // Mark as published to update UI
+      } else {
+        setError('Greška pri objavljivanju poruke. Pokušajte ponovo.');
+      }
+    } finally {
+      setPublishing(false);
     }
   };
 
@@ -249,10 +292,31 @@ export function InboxEditPage() {
           </div>
         )}
 
-        {/* Warning about live publishing */}
-        {!isLocked && (
-          <div style={styles.warning}>
-            ⚠️ Poruke se objavljuju odmah nakon spremanja. Nema draft verzije.
+        {/* Package 2: Draft indicator */}
+        {!isNew && !publishedAt && !isLocked && (
+          <div style={styles.draftBanner} data-testid="inbox-draft-badge">
+            📝 Ova poruka je <strong>skica</strong> i nije vidljiva javnosti.
+            <br />
+            <span style={styles.draftNote}>Kliknite "Objavi" kada ste spremni objaviti poruku.</span>
+          </div>
+        )}
+
+        {/* Info for published messages */}
+        {publishedAt && !isLocked && (
+          <div style={styles.publishedBanner}>
+            ✓ Poruka je objavljena i vidljiva javnosti.
+            {publishedAt && (
+              <span style={styles.publishedAt}>
+                {' '}(Objavljeno: {new Date(publishedAt).toLocaleString('hr-HR')})
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Info for new messages */}
+        {isNew && (
+          <div style={styles.info}>
+            ℹ️ Nova poruka će biti spremljena kao skica. Nakon spremanja možete je objaviti.
           </div>
         )}
 
@@ -452,14 +516,28 @@ export function InboxEditPage() {
               {(isLocked || isForbidden) ? 'Natrag' : 'Odustani'}
             </button>
             {!isLocked && !isForbidden && (
-              <button
-                type="submit"
-                style={styles.saveButton}
-                disabled={saving}
-                data-testid="inbox-submit"
-              >
-                {saving ? 'Spremanje...' : 'Spremi i objavi'}
-              </button>
+              <>
+                <button
+                  type="submit"
+                  style={styles.saveButton}
+                  disabled={saving || publishing}
+                  data-testid="inbox-submit"
+                >
+                  {saving ? 'Spremanje...' : 'Spremi'}
+                </button>
+                {/* Package 2: Publish button for saved drafts */}
+                {!isNew && !publishedAt && (
+                  <button
+                    type="button"
+                    style={styles.publishButton}
+                    onClick={() => void handlePublish()}
+                    disabled={saving || publishing}
+                    data-testid="inbox-publish"
+                  >
+                    {publishing ? 'Objavljujem...' : 'Objavi'}
+                  </button>
+                )}
+              </>
             )}
           </div>
           </fieldset>
@@ -690,6 +768,55 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '14px',
     fontWeight: '600',
     cursor: 'pointer',
+  },
+  // Package 2: Publish button
+  publishButton: {
+    padding: '12px 24px',
+    backgroundColor: '#059669',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '4px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+  },
+  // Package 2: Draft indicator
+  draftBanner: {
+    padding: '16px',
+    backgroundColor: '#fef3c7',
+    color: '#92400e',
+    borderRadius: '4px',
+    marginBottom: '24px',
+    fontSize: '14px',
+    border: '2px solid #fbbf24',
+  },
+  draftNote: {
+    color: '#b45309',
+    fontSize: '13px',
+    fontStyle: 'italic',
+  },
+  // Package 2: Published indicator
+  publishedBanner: {
+    padding: '12px 16px',
+    backgroundColor: '#d1fae5',
+    color: '#065f46',
+    borderRadius: '4px',
+    marginBottom: '24px',
+    fontSize: '14px',
+    border: '1px solid #6ee7b7',
+  },
+  publishedAt: {
+    color: '#047857',
+    fontSize: '13px',
+  },
+  // Info banner for new messages
+  info: {
+    padding: '12px 16px',
+    backgroundColor: '#dbeafe',
+    color: '#1e40af',
+    borderRadius: '4px',
+    marginBottom: '24px',
+    fontSize: '14px',
   },
 };
 

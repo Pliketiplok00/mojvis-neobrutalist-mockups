@@ -112,7 +112,14 @@ export interface UserContext {
  * - deleted_at timestamp indicates soft-deleted state
  * - Public endpoints MUST exclude messages where deleted_at IS NOT NULL
  *
+ * Draft/Publish policy (Package 2):
+ * - New messages are drafts by default (published_at = NULL)
+ * - Drafts are NOT visible to public endpoints
+ * - published_at = timestamp when message was published
+ * - published_by = admin who published the message
+ *
  * Push notification policy (Phase 7):
+ * - Push is triggered ONLY on publish action (not on save)
  * - is_locked = true after push sent (no edits allowed)
  * - pushed_at = timestamp when push was sent
  * - pushed_by = admin who triggered the push
@@ -130,6 +137,9 @@ export interface InboxMessage {
   updated_at: Date;
   created_by: string | null; // admin user ID
   deleted_at: Date | null; // soft delete timestamp (NULL = active)
+  // Package 2: Draft/Publish fields
+  published_at: Date | null; // When message was published (NULL = draft)
+  published_by: string | null; // Admin who published the message
   // Phase 7: Push notification fields
   is_locked: boolean; // TRUE if pushed (no edits allowed)
   pushed_at: Date | null; // When push was sent
@@ -178,6 +188,9 @@ export interface AdminInboxMessageResponse {
   created_by: string | null;
   deleted_at: string | null; // soft delete timestamp (NULL = active)
   is_urgent: boolean;
+  // Package 2: Draft/Publish fields
+  published_at: string | null; // When message was published (NULL = draft)
+  published_by: string | null; // Admin who published the message
   // Phase 7: Push notification fields
   is_locked: boolean; // TRUE if pushed (no edits allowed)
   pushed_at: string | null; // When push was sent

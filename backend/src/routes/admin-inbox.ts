@@ -4,21 +4,26 @@
  * CRUD endpoints for inbox messages (admin panel).
  *
  * Endpoints:
- * - GET /admin/inbox - list messages (admin view)
+ * - GET /admin/inbox - list messages (admin view, includes drafts)
  *   - ?archived=false (default): active messages only
  *   - ?archived=true: archived messages only
- * - GET /admin/inbox/:id - single message (includes soft-deleted)
- * - POST /admin/inbox - create message (triggers push if hitno + active window)
+ * - GET /admin/inbox/:id - single message (includes soft-deleted and drafts)
+ * - POST /admin/inbox - create message (as DRAFT, no push)
  * - PATCH /admin/inbox/:id - update message (409 if locked)
  * - DELETE /admin/inbox/:id - SOFT delete (archive) message (sets deleted_at)
  * - POST /admin/inbox/:id/restore - restore archived message (sets deleted_at = NULL)
+ * - POST /admin/inbox/:id/publish - publish draft (triggers push if hitno + active window)
  *
- * Note: Per spec, messages are LIVE ON SAVE (no draft workflow).
  * IMPORTANT: Hard delete is NOT allowed. All deletes are soft deletes.
  *
- * Phase 3: Municipal notice authorization applies to create, update, delete, restore.
+ * Package 2 (Draft/Publish workflow):
+ * - New messages are DRAFTS by default (published_at = NULL)
+ * - Drafts are NOT visible to public endpoints
+ * - Push is triggered ONLY on publish action, not on save
+ *
+ * Phase 3: Municipal notice authorization applies to create, update, delete, restore, publish.
  * Phase 7: Push notifications for hitno messages.
- * - On save, if message has hitno tag + active window + now is within window => send push
+ * - On PUBLISH, if message has hitno tag + active window + now is within window => send push
  * - After push, message is LOCKED (no edits allowed)
  * - Update returns 409 if message is locked
  */
@@ -33,10 +38,12 @@ import {
   restoreInboxMessage,
   markMessageAsLocked,
   isMessageLocked,
+  publishMessage,
 } from '../repositories/inbox.js';
 import type {
   InboxMessage,
   AdminInboxListResponse,
+  AdminInboxMessageResponse,
   InboxTag,
 } from '../types/inbox.js';
 import { validateTagsCanonical, isUrgent, validateHitnoRules, validateDualMunicipalTags } from '../types/inbox.js';
@@ -78,24 +85,7 @@ if (env.PUSH_MOCK_MODE) {
 /**
  * Transform InboxMessage to admin API response
  */
-function toAdminResponse(message: InboxMessage): {
-  id: string;
-  title_hr: string;
-  title_en: string | null;
-  body_hr: string;
-  body_en: string | null;
-  tags: InboxTag[];
-  active_from: string | null;
-  active_to: string | null;
-  created_at: string;
-  updated_at: string;
-  created_by: string | null;
-  deleted_at: string | null;
-  is_urgent: boolean;
-  is_locked: boolean;
-  pushed_at: string | null;
-  pushed_by: string | null;
-} {
+function toAdminResponse(message: InboxMessage): AdminInboxMessageResponse {
   return {
     id: message.id,
     title_hr: message.title_hr,
@@ -110,6 +100,10 @@ function toAdminResponse(message: InboxMessage): {
     created_by: message.created_by,
     deleted_at: message.deleted_at?.toISOString() ?? null,
     is_urgent: isUrgent(message.tags),
+    // Package 2: Draft/Publish fields
+    published_at: message.published_at?.toISOString() ?? null,
+    published_by: message.published_by,
+    // Phase 7: Push notification fields
     is_locked: message.is_locked,
     pushed_at: message.pushed_at?.toISOString() ?? null,
     pushed_by: message.pushed_by,
@@ -324,6 +318,7 @@ export async function adminInboxRoutes(
     try {
 
       const adminId = getAdminId(request);
+      // Package 2: Messages are created as DRAFTS by default (no push on save)
       const message = await createInboxMessage({
         title_hr: body.title_hr.trim(),
         title_en: body.title_en?.trim() || null,
@@ -335,22 +330,7 @@ export async function adminInboxRoutes(
         created_by: adminId,
       });
 
-      // Phase 7: Check if push should be triggered
-      if (shouldTriggerPush(message.tags, activeFrom, activeTo)) {
-        console.info('[Admin] Triggering push for hitno message:', message.id);
-        try {
-          await sendPushForMessage(message, adminId);
-          // Refetch message to get locked state
-          const updatedMessage = await getInboxMessageByIdAdmin(message.id);
-          if (updatedMessage) {
-            return reply.status(201).send(toAdminResponse(updatedMessage));
-          }
-        } catch (pushError) {
-          console.error('[Admin] Push failed, but message created:', pushError);
-          // Return the message even if push failed
-        }
-      }
-
+      // Note: Push is triggered on PUBLISH action, not on save
       return reply.status(201).send(toAdminResponse(message));
     } catch (error) {
       console.error('[Admin] Error creating message:', error);
@@ -456,7 +436,6 @@ export async function adminInboxRoutes(
     }
 
     try {
-      const adminId = getAdminId(request);
       const updates: Parameters<typeof updateInboxMessage>[1] = {};
 
       if (body.title_hr !== undefined) {
@@ -487,21 +466,7 @@ export async function adminInboxRoutes(
         return reply.status(404).send({ error: 'Message not found' });
       }
 
-      // Phase 7: Check if push should be triggered after update
-      if (shouldTriggerPush(message.tags, message.active_from, message.active_to)) {
-        console.info('[Admin] Triggering push for updated hitno message:', message.id);
-        try {
-          await sendPushForMessage(message, adminId);
-          // Refetch message to get locked state
-          const updatedMessage = await getInboxMessageByIdAdmin(message.id);
-          if (updatedMessage) {
-            return reply.status(200).send(toAdminResponse(updatedMessage));
-          }
-        } catch (pushError) {
-          console.error('[Admin] Push failed after update:', pushError);
-        }
-      }
-
+      // Note: Push is triggered on PUBLISH action, not on save (Package 2)
       return reply.status(200).send(toAdminResponse(message));
     } catch (error) {
       console.error(`[Admin] Error updating message ${id}:`, error);
@@ -616,6 +581,95 @@ export async function adminInboxRoutes(
       return reply.status(200).send(toAdminResponse(restoredMessage));
     } catch (error) {
       console.error(`[Admin] Error restoring message ${id}:`, error);
+      return reply.status(500).send({ error: 'Internal server error' });
+    }
+  });
+
+  /**
+   * POST /admin/inbox/:id/publish
+   *
+   * Publish a draft message (Package 2).
+   * - Sets published_at and published_by
+   * - Makes message visible to public endpoints
+   * - Triggers push notification if hitno rules are met
+   * - Returns 409 if already published
+   * - Returns 404 if not found or deleted
+   */
+  fastify.post<{
+    Params: { id: string };
+  }>('/admin/inbox/:id/publish', async (request, reply) => {
+    const { id } = request.params;
+    const adminId = getAdminId(request);
+
+    console.info(`[Admin] POST /admin/inbox/${id}/publish`);
+
+    // Fetch message to validate state
+    const existingMessage = await getInboxMessageByIdAdmin(id);
+    if (!existingMessage) {
+      return reply.status(404).send({ error: 'Message not found' });
+    }
+
+    // Check if already published
+    if (existingMessage.published_at) {
+      return reply.status(409).send({
+        error: 'Message is already published',
+        code: 'ALREADY_PUBLISHED',
+      });
+    }
+
+    // Check if deleted
+    if (existingMessage.deleted_at) {
+      return reply.status(400).send({
+        error: 'Cannot publish a deleted message',
+        code: 'MESSAGE_DELETED',
+      });
+    }
+
+    // Phase 3: Check municipal notice authorization
+    const authCheck = checkMunicipalNoticeAuthFromRequest(request, existingMessage.tags);
+    if (!authCheck.allowed) {
+      return reply.status(403).send({
+        error: authCheck.reason,
+        code: authCheck.code,
+      });
+    }
+
+    try {
+      // Publish the message (sets published_at)
+      const publishedMessage = await publishMessage(id, adminId);
+
+      if (!publishedMessage) {
+        return reply.status(500).send({ error: 'Failed to publish message' });
+      }
+
+      // Log publish action
+      console.info(JSON.stringify({
+        action: 'admin_inbox_publish',
+        message_id: id,
+        admin_id: adminId,
+        timestamp: new Date().toISOString(),
+        request_id: request.id,
+      }));
+
+      // Phase 7: Check if push should be triggered on publish
+      if (shouldTriggerPush(publishedMessage.tags, publishedMessage.active_from, publishedMessage.active_to)) {
+        console.info('[Admin] Triggering push for published hitno message:', id);
+        try {
+          await sendPushForMessage(publishedMessage, adminId);
+          // Refetch message to get locked state
+          const updatedMessage = await getInboxMessageByIdAdmin(id);
+          if (updatedMessage) {
+            return reply.status(200).send(toAdminResponse(updatedMessage));
+          }
+        } catch (pushError) {
+          console.error('[Admin] Push failed on publish:', pushError);
+          // Return the published message even if push failed
+        }
+      }
+
+      return reply.status(200).send(toAdminResponse(publishedMessage));
+    } catch (error) {
+      console.error(`[Admin] Error publishing message ${id}:`, error);
       return reply.status(500).send({ error: 'Internal server error' });
     }
   });
