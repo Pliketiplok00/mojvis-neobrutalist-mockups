@@ -45,7 +45,7 @@ import { getEligibleDevicesForPush, createPushLog } from '../repositories/push.j
 import { PushService, type PushContent } from '../lib/push/index.js';
 import { defaultPushProvider, MockExpoPushProvider } from '../lib/push/expo.js';
 import { env } from '../config/env.js';
-import { checkMunicipalNoticeAuthFromRequest } from '../middleware/auth.js';
+import { checkMunicipalNoticeAuthFromRequest, getAdminId } from '../middleware/auth.js';
 
 interface CreateMessageBody {
   title_hr: string;
@@ -323,6 +323,7 @@ export async function adminInboxRoutes(
 
     try {
 
+      const adminId = getAdminId(request);
       const message = await createInboxMessage({
         title_hr: body.title_hr.trim(),
         title_en: body.title_en?.trim() || null,
@@ -331,14 +332,14 @@ export async function adminInboxRoutes(
         tags: tags,
         active_from: activeFrom,
         active_to: activeTo,
-        created_by: null, // TODO: Get from admin auth context
+        created_by: adminId,
       });
 
       // Phase 7: Check if push should be triggered
       if (shouldTriggerPush(message.tags, activeFrom, activeTo)) {
         console.info('[Admin] Triggering push for hitno message:', message.id);
         try {
-          await sendPushForMessage(message, null); // TODO: Get admin ID from auth
+          await sendPushForMessage(message, adminId);
           // Refetch message to get locked state
           const updatedMessage = await getInboxMessageByIdAdmin(message.id);
           if (updatedMessage) {
@@ -455,6 +456,7 @@ export async function adminInboxRoutes(
     }
 
     try {
+      const adminId = getAdminId(request);
       const updates: Parameters<typeof updateInboxMessage>[1] = {};
 
       if (body.title_hr !== undefined) {
@@ -489,7 +491,7 @@ export async function adminInboxRoutes(
       if (shouldTriggerPush(message.tags, message.active_from, message.active_to)) {
         console.info('[Admin] Triggering push for updated hitno message:', message.id);
         try {
-          await sendPushForMessage(message, null); // TODO: Get admin ID from auth
+          await sendPushForMessage(message, adminId);
           // Refetch message to get locked state
           const updatedMessage = await getInboxMessageByIdAdmin(message.id);
           if (updatedMessage) {
