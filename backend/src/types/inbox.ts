@@ -46,6 +46,12 @@ export type InboxTag = (typeof INBOX_TAGS)[number];
 export const DEPRECATED_TRANSPORT_TAGS: readonly InboxTag[] = ['cestovni_promet', 'pomorski_promet'];
 
 /**
+ * Canonical tags allowed for NEW admin-created messages.
+ * Excludes deprecated tags which are rejected on create/update.
+ */
+export const CANONICAL_INBOX_TAGS: readonly string[] = ['promet', 'kultura', 'opcenito', 'hitno', 'komiza', 'vis'];
+
+/**
  * Context tags that can be paired with 'hitno' for banners
  */
 export const BANNER_CONTEXT_TAGS: readonly InboxTag[] = ['promet', 'kultura', 'opcenito', 'vis', 'komiza'];
@@ -206,11 +212,75 @@ export interface InboxListParams {
 
 /**
  * Validate that tags array has max 2 tags from the taxonomy
+ * @deprecated Use validateTagsCanonical for admin create/update validation
  */
 export function validateTags(tags: string[]): tags is InboxTag[] {
   if (!Array.isArray(tags)) return false;
   if (tags.length > 2) return false;
   return tags.every((tag) => INBOX_TAGS.includes(tag as InboxTag));
+}
+
+/**
+ * Validation result with error details
+ */
+export type TagValidationResult =
+  | { valid: true }
+  | { valid: false; error: string; code: string };
+
+/**
+ * Validate tags for admin create/update operations.
+ *
+ * Rules enforced:
+ * - Must have at least 1 tag (TAGS_EMPTY)
+ * - Must have at most 2 tags (TAGS_TOO_MANY)
+ * - No duplicate tags (TAGS_DUPLICATE)
+ * - Tags must be from canonical taxonomy (TAG_INVALID)
+ * - Deprecated tags are rejected (TAG_DEPRECATED)
+ *
+ * Note: hitno rules and dual-municipal rules are validated separately.
+ */
+export function validateTagsCanonical(tags: string[]): TagValidationResult {
+  if (!Array.isArray(tags)) {
+    return { valid: false, error: 'Tags must be an array.', code: 'TAG_INVALID' };
+  }
+
+  // Min 1 tag
+  if (tags.length === 0) {
+    return { valid: false, error: 'At least one tag is required.', code: 'TAGS_EMPTY' };
+  }
+
+  // Max 2 tags
+  if (tags.length > 2) {
+    return { valid: false, error: 'Maximum 2 tags allowed.', code: 'TAGS_TOO_MANY' };
+  }
+
+  // No duplicates
+  if (new Set(tags).size !== tags.length) {
+    return { valid: false, error: 'Duplicate tags are not allowed.', code: 'TAGS_DUPLICATE' };
+  }
+
+  // Check each tag
+  for (const tag of tags) {
+    // Check for deprecated tags first (more specific error)
+    if (DEPRECATED_TRANSPORT_TAGS.includes(tag as InboxTag)) {
+      return {
+        valid: false,
+        error: `Tag '${tag}' is deprecated. Use 'promet' instead.`,
+        code: 'TAG_DEPRECATED',
+      };
+    }
+
+    // Check canonical taxonomy
+    if (!CANONICAL_INBOX_TAGS.includes(tag)) {
+      return {
+        valid: false,
+        error: `Tag '${tag}' is not a valid tag.`,
+        code: 'TAG_INVALID',
+      };
+    }
+  }
+
+  return { valid: true };
 }
 
 /**
