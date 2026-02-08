@@ -55,7 +55,11 @@ jobs:
         with:
           version: 9
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install mobile dependencies
+        working-directory: mobile
         run: pnpm install --frozen-lockfile
 
       - name: Verify mobile baseline
