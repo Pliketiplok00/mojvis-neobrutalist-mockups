@@ -217,8 +217,6 @@ export const inboxLabels = {
  * Tag display labels
  */
 export const tagLabels: Record<string, string> = {
-  cestovni_promet: 'Cestovni promet',
-  pomorski_promet: 'Pomorski promet',
   promet: 'Promet',
   kultura: 'Kultura',
   opcenito: 'Općenito',

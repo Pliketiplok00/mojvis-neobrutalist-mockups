@@ -9,15 +9,13 @@
  */
 
 /**
- * Fixed tag taxonomy (Phase 2)
+ * Fixed tag taxonomy
  *
- * DEPRECATED: cestovni_promet, pomorski_promet (normalized to 'promet')
- * ACTIVE: hitno, promet, kultura, opcenito, vis, komiza
+ * Canonical tags: hitno, promet, kultura, opcenito, vis, komiza
+ * Note: Backend normalizes legacy transport tags to 'promet'
  */
 export const INBOX_TAGS = [
-  'cestovni_promet', // DEPRECATED
-  'pomorski_promet', // DEPRECATED
-  'promet', // unified transport (new)
+  'promet',
   'kultura',
   'opcenito',
   'hitno',
@@ -28,8 +26,7 @@ export const INBOX_TAGS = [
 export type InboxTag = (typeof INBOX_TAGS)[number];
 
 /**
- * Tags that should be shown in admin UI for NEW messages
- * (excludes deprecated tags)
+ * Tags available for selection in admin UI
  */
 export const ACTIVE_INBOX_TAGS: readonly InboxTag[] = [
   'hitno',
@@ -44,8 +41,6 @@ export const ACTIVE_INBOX_TAGS: readonly InboxTag[] = [
  * Tag labels for display (HR-only for admin)
  */
 export const TAG_LABELS: Record<InboxTag, string> = {
-  cestovni_promet: 'Cestovni promet (zastarjelo)',
-  pomorski_promet: 'Pomorski promet (zastarjelo)',
   promet: 'Promet',
   kultura: 'Kultura',
   opcenito: 'Općenito',
@@ -130,11 +125,6 @@ export function requiresEnglish(tags: InboxTag[]): boolean {
 }
 
 /**
- * Deprecated transport tags (kept for backward compatibility)
- */
-export const DEPRECATED_TAGS: readonly InboxTag[] = ['cestovni_promet', 'pomorski_promet'];
-
-/**
  * Context tags that can be paired with 'hitno' for banners
  */
 export const BANNER_CONTEXT_TAGS: readonly InboxTag[] = ['promet', 'kultura', 'opcenito', 'vis', 'komiza'];
@@ -184,13 +174,6 @@ export function validateHitnoRules(
   }
 
   return { valid: true };
-}
-
-/**
- * Check if a tag is deprecated
- */
-export function isDeprecatedTag(tag: InboxTag): boolean {
-  return DEPRECATED_TAGS.includes(tag);
 }
 
 /**

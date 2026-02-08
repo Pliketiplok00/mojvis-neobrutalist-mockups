@@ -5,7 +5,7 @@
  * Phase 4: Full lines list with today's departures and contacts.
  *
  * Banner placement rules (per spec):
- * - ONLY pomorski_promet OR hitno tags
+ * - ONLY promet OR hitno tags
  * - NO opcenito, kultura, or municipal-only messages
  *
  * Sections:

@@ -159,12 +159,12 @@ export function InboxDetailScreen(): React.JSX.Element {
  */
 function formatTag(tag: string): string {
   const tagLabels: Record<string, string> = {
-    cestovni_promet: 'Cestovni promet',
-    pomorski_promet: 'Pomorski promet',
+    promet: 'Promet',
     kultura: 'Kultura',
     opcenito: 'Općenito',
     komiza: 'Komiža',
     vis: 'Vis',
+    hitno: 'Hitno',
   };
   return tagLabels[tag] || tag;
 }
