@@ -52,10 +52,19 @@ import type {
   MenuExtrasResponse,
 } from '../types/menu-extras';
 
-// TODO: Move to config/environment
-const API_BASE_URL = __DEV__
-  ? 'http://localhost:3000'
-  : 'https://api.mojvis.hr';
+/**
+ * API base URL resolution:
+ * 1. EXPO_PUBLIC_API_URL env var (for staging/custom deployments)
+ * 2. Development: http://localhost:3000
+ * 3. Production: https://api.mojvis.hr
+ */
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL
+  ?? (__DEV__ ? 'http://localhost:3000' : 'https://api.mojvis.hr');
+
+// Log API base URL in development for verification
+if (__DEV__) {
+  console.log('[API] Base URL:', API_BASE_URL);
+}
 
 /**
  * Get the full URL for a relative API path (e.g., for uploaded images)
