@@ -207,6 +207,7 @@ export const adminInboxApi = {
   async publishMessage(id: string): Promise<InboxMessage> {
     const message = await apiRequest<InboxMessage>(`/admin/inbox/${id}/publish`, {
       method: 'POST',
+      body: JSON.stringify({}),
     });
     return normalizeInboxMessage(message);
   },
@@ -375,6 +376,7 @@ export const adminStaticPagesApi = {
   async publishPage(id: string): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${id}/publish`, {
       method: 'POST',
+      body: JSON.stringify({}),
     });
   },
 
@@ -384,6 +386,7 @@ export const adminStaticPagesApi = {
   async unpublishPage(id: string): Promise<StaticPageAdmin> {
     return apiRequest<StaticPageAdmin>(`/admin/pages/${id}/unpublish`, {
       method: 'POST',
+      body: JSON.stringify({}),
     });
   },
 
