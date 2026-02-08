@@ -65,10 +65,10 @@ async function translateWithDeepL(
   return data.translations.map(t => t.text);
 }
 
-export async function adminTranslateRoutes(
+export function adminTranslateRoutes(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions
-): Promise<void> {
+): void {
   /**
    * POST /admin/translate/hr-to-en
    *
