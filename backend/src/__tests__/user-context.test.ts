@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { extractUserContext, type UserContextResult } from '../middleware/user-context.js';
+import { extractUserContext } from '../middleware/user-context.js';
 import type { FastifyRequest } from 'fastify';
 
 /**
