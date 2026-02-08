@@ -386,3 +386,38 @@ export function validateDualMunicipalTags(
 
   return { valid: true };
 }
+
+/**
+ * Validate language requirement for inbox messages.
+ *
+ * Rules:
+ * - Municipal messages (vis OR komiza tag): EN is optional
+ * - Non-municipal messages: EN title AND body are REQUIRED
+ * - Whitespace-only strings count as empty
+ *
+ * Returns { valid: true } or { valid: false, error: string, code: string }
+ */
+export function validateLanguageRequirement(
+  tags: InboxTag[],
+  titleEn: string | null | undefined,
+  bodyEn: string | null | undefined
+): { valid: true } | { valid: false; error: string; code: string } {
+  // Municipal messages can be HR-only
+  if (isMunicipal(tags)) {
+    return { valid: true };
+  }
+
+  // Non-municipal messages require EN
+  const hasEnTitle = titleEn != null && titleEn.trim().length > 0;
+  const hasEnBody = bodyEn != null && bodyEn.trim().length > 0;
+
+  if (!hasEnTitle || !hasEnBody) {
+    return {
+      valid: false,
+      error: 'Engleski prijevod je obavezan za ne-općinske poruke (title_en i body_en).',
+      code: 'EN_REQUIRED',
+    };
+  }
+
+  return { valid: true };
+}
