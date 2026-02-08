@@ -7,6 +7,9 @@
  * - Wrap app with OnboardingProvider
  * - Use useOnboarding() hook to check/complete onboarding
  * - AppNavigator uses isComplete to decide which stack to show
+ *
+ * Package 4 Stage 13: Local users MUST have municipality selected.
+ * If a local user is missing municipality, they are forced to re-onboard.
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
@@ -86,12 +89,24 @@ export function OnboardingProvider({ children }: OnboardingProviderProps): React
             AsyncStorage.getItem(STORAGE_KEYS.MUNICIPALITY),
           ]);
 
-          setData({
-            language: (language as Language) || 'hr',
-            userMode: (userMode as UserMode) || 'visitor',
-            municipality: municipality as Municipality | null,
-          });
-          setIsComplete(true);
+          const parsedUserMode = (userMode as UserMode) || 'visitor';
+          const parsedMunicipality = municipality as Municipality | null;
+
+          // Package 4 Stage 13: Local users MUST have municipality selected
+          // If a local user is missing municipality, force re-onboarding
+          if (parsedUserMode === 'local' && !parsedMunicipality) {
+            console.warn('[Onboarding] Local user missing municipality - forcing re-onboarding');
+            // Clear the invalid state
+            await AsyncStorage.removeItem(STORAGE_KEYS.ONBOARDING_COMPLETE);
+            // Don't set isComplete - user will go through onboarding
+          } else {
+            setData({
+              language: (language as Language) || 'hr',
+              userMode: parsedUserMode,
+              municipality: parsedMunicipality,
+            });
+            setIsComplete(true);
+          }
         }
       } catch (error) {
         console.error('[Onboarding] Error loading state:', error);
@@ -106,6 +121,13 @@ export function OnboardingProvider({ children }: OnboardingProviderProps): React
 
   // Complete onboarding and persist data
   const completeOnboarding = useCallback(async (onboardingData: OnboardingData) => {
+    // Package 4 Stage 13: Validate local users have municipality
+    if (onboardingData.userMode === 'local' && !onboardingData.municipality) {
+      const error = new Error('Local users must select a municipality');
+      console.error('[Onboarding] Validation failed:', error.message);
+      throw error;
+    }
+
     try {
       await Promise.all([
         AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETE, 'true'),
