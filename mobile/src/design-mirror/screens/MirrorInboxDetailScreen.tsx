@@ -29,6 +29,7 @@ import {
 import { skin } from '../../ui/skin';
 import { Badge } from '../../ui/Badge';
 import { H1, H2, Body, Meta } from '../../ui/Text';
+import { LinkText } from '../../ui/LinkText';
 import {
   inboxDetailFixture,
   inboxLabels,
@@ -105,8 +106,8 @@ export function MirrorInboxDetailScreen(): React.JSX.Element {
         {/* Date */}
         <Meta style={styles.date}>{formatDateTimeSlash(message.created_at)}</Meta>
 
-        {/* Body */}
-        <Body style={styles.body}>{message.body}</Body>
+        {/* Body - with clickable links */}
+        <LinkText style={styles.body}>{message.body}</LinkText>
       </ScrollView>
     </SafeAreaView>
   );
@@ -153,6 +154,9 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   body: {
+    fontSize: skin.typography.fontSize.lg,
+    fontFamily: skin.typography.fontFamily.body.regular,
+    color: skin.colors.textSecondary,
     lineHeight: skin.typography.fontSize.lg * skin.typography.lineHeight.relaxed,
   },
 });
