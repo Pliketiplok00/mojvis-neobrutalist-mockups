@@ -39,7 +39,7 @@ import type {
   AdminInboxListResponse,
   InboxTag,
 } from '../types/inbox.js';
-import { validateTags, isUrgent, validateHitnoRules, validateDualMunicipalTags } from '../types/inbox.js';
+import { validateTagsCanonical, isUrgent, validateHitnoRules, validateDualMunicipalTags } from '../types/inbox.js';
 import { shouldTriggerPush } from '../types/push.js';
 import { getEligibleDevicesForPush, createPushLog } from '../repositories/push.js';
 import { PushService, type PushContent } from '../lib/push/index.js';
@@ -271,11 +271,13 @@ export async function adminInboxRoutes(
       return reply.status(400).send({ error: 'body_hr is required' });
     }
 
-    // Validate tags
-    const tags = body.tags || [];
-    if (!validateTags(tags)) {
+    // Validate tags (canonical rules: min 1, max 2, no duplicates, no deprecated)
+    const tags = body.tags ?? [];
+    const tagValidation = validateTagsCanonical(tags);
+    if (!tagValidation.valid) {
       return reply.status(400).send({
-        error: 'Invalid tags. Max 2 tags allowed from fixed taxonomy.',
+        error: tagValidation.error,
+        code: tagValidation.code,
       });
     }
 
@@ -380,15 +382,6 @@ export async function adminInboxRoutes(
       });
     }
 
-    // Validate tags if provided
-    if (body.tags !== undefined) {
-      if (!validateTags(body.tags)) {
-        return reply.status(400).send({
-          error: 'Invalid tags. Max 2 tags allowed from fixed taxonomy.',
-        });
-      }
-    }
-
     // Validate date range if both provided
     if (body.active_from !== undefined && body.active_to !== undefined) {
       if (body.active_from && body.active_to) {
@@ -417,6 +410,15 @@ export async function adminInboxRoutes(
     const mergedActiveTo = body.active_to !== undefined
       ? (body.active_to ? new Date(body.active_to) : null)
       : existingMessage.active_to;
+
+    // Validate tags on merged state (canonical rules: min 1, max 2, no duplicates, no deprecated)
+    const tagValidation = validateTagsCanonical(mergedTags);
+    if (!tagValidation.valid) {
+      return reply.status(400).send({
+        error: tagValidation.error,
+        code: tagValidation.code,
+      });
+    }
 
     const hitnoValidation = validateHitnoRules(mergedTags, mergedActiveFrom, mergedActiveTo);
     if (!hitnoValidation.valid) {
