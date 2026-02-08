@@ -46,7 +46,7 @@ import type {
   AdminInboxMessageResponse,
   InboxTag,
 } from '../types/inbox.js';
-import { validateTagsCanonical, isUrgent, validateHitnoRules, validateDualMunicipalTags } from '../types/inbox.js';
+import { validateTagsCanonical, isUrgent, validateHitnoRules, validateDualMunicipalTags, validateLanguageRequirement } from '../types/inbox.js';
 import { shouldTriggerPush } from '../types/push.js';
 import { getEligibleDevicesForPush, createPushLog } from '../repositories/push.js';
 import { PushService, type PushContent } from '../lib/push/index.js';
@@ -284,6 +284,15 @@ export async function adminInboxRoutes(
       });
     }
 
+    // Validate language requirement (EN required for non-municipal messages)
+    const langValidation = validateLanguageRequirement(tags, body.title_en, body.body_en);
+    if (!langValidation.valid) {
+      return reply.status(400).send({
+        error: langValidation.error,
+        code: langValidation.code,
+      });
+    }
+
     // Validate date range
     if (body.active_from && body.active_to) {
       const from = new Date(body.active_from);
@@ -415,6 +424,17 @@ export async function adminInboxRoutes(
       return reply.status(400).send({
         error: dualTagValidation.error,
         code: dualTagValidation.code,
+      });
+    }
+
+    // Validate language requirement on merged state (EN required for non-municipal messages)
+    const mergedTitleEn = body.title_en !== undefined ? body.title_en : existingMessage.title_en;
+    const mergedBodyEn = body.body_en !== undefined ? body.body_en : existingMessage.body_en;
+    const langValidation = validateLanguageRequirement(mergedTags, mergedTitleEn, mergedBodyEn);
+    if (!langValidation.valid) {
+      return reply.status(400).send({
+        error: langValidation.error,
+        code: langValidation.code,
       });
     }
 
@@ -631,6 +651,19 @@ export async function adminInboxRoutes(
       return reply.status(403).send({
         error: authCheck.reason,
         code: authCheck.code,
+      });
+    }
+
+    // Validate language requirement (EN required for non-municipal messages)
+    const langValidation = validateLanguageRequirement(
+      existingMessage.tags,
+      existingMessage.title_en,
+      existingMessage.body_en
+    );
+    if (!langValidation.valid) {
+      return reply.status(400).send({
+        error: langValidation.error,
+        code: langValidation.code,
       });
     }
 
