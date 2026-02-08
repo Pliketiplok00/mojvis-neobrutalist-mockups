@@ -39,6 +39,7 @@ import {
   Body,
   Meta,
   Icon,
+  LinkText,
 } from '../../ui';
 import { formatDateTimeSlash } from '../../utils/dateFormat';
 
@@ -146,8 +147,8 @@ export function InboxDetailScreen(): React.JSX.Element {
         {/* Date */}
         <Meta style={styles.date}>{formatDateTimeSlash(message.created_at)}</Meta>
 
-        {/* Body */}
-        <Body style={styles.body}>{message.body}</Body>
+        {/* Body - with clickable links */}
+        <LinkText style={styles.body}>{message.body}</LinkText>
       </ScrollView>
     </SafeAreaView>
   );
@@ -218,6 +219,9 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.xxl,
   },
   body: {
+    fontSize: skin.typography.fontSize.lg,
+    fontFamily: skin.typography.fontFamily.body.regular,
+    color: skin.colors.textSecondary,
     lineHeight: skin.typography.fontSize.lg * skin.typography.lineHeight.relaxed,
   },
 });

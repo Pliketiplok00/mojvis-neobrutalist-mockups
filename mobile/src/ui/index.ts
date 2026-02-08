@@ -15,6 +15,7 @@ export { Section } from './Section';
 export { Card } from './Card';
 export { Button } from './Button';
 export { H1, H2, Label, Body, Meta, ButtonText } from './Text';
+export { LinkText } from './LinkText';
 export { ListRow } from './ListRow';
 export { Badge } from './Badge';
 export { Icon } from './Icon';
