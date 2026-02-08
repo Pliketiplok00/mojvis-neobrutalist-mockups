@@ -9,14 +9,13 @@
  */
 
 /**
- * Tag types from fixed taxonomy (Phase 2)
+ * Tag types from fixed taxonomy
  *
- * DEPRECATED: cestovni_promet, pomorski_promet (normalized to 'promet' server-side)
+ * Canonical tags: promet, kultura, opcenito, hitno, komiza, vis
+ * Note: Backend normalizes legacy transport tags to 'promet'
  */
 export type InboxTag =
-  | 'cestovni_promet' // DEPRECATED
-  | 'pomorski_promet' // DEPRECATED
-  | 'promet' // unified transport (new)
+  | 'promet'
   | 'kultura'
   | 'opcenito'
   | 'hitno'

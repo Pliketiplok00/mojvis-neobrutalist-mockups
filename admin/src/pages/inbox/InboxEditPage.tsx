@@ -33,8 +33,6 @@ import {
   requiresEnglish,
   isHitno,
   validateHitnoRules,
-  isDeprecatedTag,
-  DEPRECATED_TAGS,
   isMunicipalTag,
   getMunicipalityFromTags,
 } from '../../types/inbox';
@@ -570,29 +568,10 @@ export function InboxEditPage() {
                   </label>
                 );
               })}
-              {/* Show deprecated tags as read-only if message has them */}
-              {DEPRECATED_TAGS.filter(tag => selectedTags.includes(tag)).map((tag) => (
-                <label key={tag} style={{ ...styles.tagLabel, ...styles.deprecatedTagLabel }}>
-                  <input
-                    type="checkbox"
-                    checked={true}
-                    onChange={() => handleTagToggle(tag)}
-                    style={styles.checkbox}
-                  />
-                  <span style={{ ...styles.tagText, ...styles.tagTextSelected, ...styles.deprecatedTagText }}>
-                    {TAG_LABELS[tag]}
-                  </span>
-                </label>
-              ))}
             </div>
             {selectedTags.length > 0 && (
               <p style={styles.selectedTags}>
                 Odabrano: {selectedTags.map((t) => TAG_LABELS[t]).join(', ')}
-                {selectedTags.some(isDeprecatedTag) && (
-                  <span style={styles.deprecatedWarning}>
-                    {' '}(Zastarjele oznake će biti zamijenjene s "promet" pri spremanju)
-                  </span>
-                )}
               </p>
             )}
           </div>
@@ -880,18 +859,6 @@ const styles: Record<string, React.CSSProperties> = {
   hitnoHint: {
     color: '#dc2626',
     fontWeight: '500',
-  },
-  deprecatedTagLabel: {
-    backgroundColor: '#f3f4f6',
-    borderColor: '#d1d5db',
-  },
-  deprecatedTagText: {
-    color: '#6b7280',
-    fontStyle: 'italic',
-  },
-  deprecatedWarning: {
-    color: '#b45309',
-    fontStyle: 'italic',
   },
   dateRow: {
     display: 'flex',
