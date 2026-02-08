@@ -65,10 +65,11 @@ async function translateWithDeepL(
   return data.translations.map(t => t.text);
 }
 
-export function adminTranslateRoutes(
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function adminTranslateRoutes(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions
-): void {
+): Promise<void> {
   /**
    * POST /admin/translate/hr-to-en
    *
