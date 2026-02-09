@@ -47,7 +47,7 @@ export default function OnboardingSplashPage() {
             </Button>
             <Button 
               size="lg" 
-              className="bg-primary text-white hover:bg-primary/90 font-display text-lg py-6 rounded-lg font-bold"
+              className="bg-white text-primary hover:bg-white/90 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("en")}
             >
               ENGLISH
