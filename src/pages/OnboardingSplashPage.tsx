@@ -1,7 +1,7 @@
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import mojvisLogo from "@/assets/mojvisapp.svg";
 
 export default function OnboardingSplashPage() {
   const navigate = useNavigate();
@@ -14,72 +14,55 @@ export default function OnboardingSplashPage() {
 
   return (
     <MobileFrame>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#399FD9' }}>
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="w-full h-full" style={{
-              backgroundImage: `repeating-linear-gradient(
-                45deg,
-                hsl(var(--border)),
-                hsl(var(--border)) 2px,
-                transparent 2px,
-                transparent 20px
-              )`
-            }} />
-          </div>
-
-          {/* Logo Mark */}
+          {/* Logo */}
           <div className="relative mb-8">
-            <div className="w-32 h-32 bg-primary neo-border-heavy neo-shadow-lg flex items-center justify-center">
-              <MapPin size={64} strokeWidth={2.5} className="text-primary-foreground" />
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-accent neo-border-heavy" />
-            <div className="absolute -top-2 -left-2 w-8 h-8 bg-secondary neo-border-heavy" />
+            <img src={mojvisLogo} alt="MOJ VIS" className="w-48 h-48 rounded-2xl" />
           </div>
 
           {/* Title */}
-          <h1 className="font-display font-bold text-5xl text-center mb-4 tracking-tight">
+          <h1 className="font-display font-bold text-5xl text-center mb-4 tracking-tight text-white">
             MOJVIS
           </h1>
           
-          <p className="font-body text-center text-muted-foreground text-lg mb-2">
+          <p className="font-body text-center text-white/80 text-lg mb-2">
             GRAĐANSKI SERVIS
           </p>
 
           {/* Tagline */}
-          <div className="bg-foreground neo-border-heavy px-6 py-3 mt-6">
-            <p className="font-display font-bold text-background text-center">
-              TVOJ GRAD. TVOJ GLAS.
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 mt-6 border border-white/30">
+            <p className="font-display font-bold text-white text-center">
+              ZAJEDNICA U POKRETU
             </p>
           </div>
         </div>
 
         {/* Language Selection */}
-        <div className="p-6 bg-card neo-border-t">
-          <p className="font-display font-bold text-center text-sm text-muted-foreground mb-4 uppercase">
+        <div className="p-6 bg-white/10 backdrop-blur-sm border-t border-white/20">
+          <p className="font-display font-bold text-center text-sm text-white/70 mb-4 uppercase">
             Odaberi jezik / Select language
           </p>
           
           <div className="grid grid-cols-2 gap-4">
             <Button 
               size="lg" 
-              className="bg-primary text-primary-foreground neo-border-heavy neo-shadow font-display text-lg py-6"
+              className="bg-white text-[#399FD9] hover:bg-white/90 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("hr")}
             >
               HRVATSKI
             </Button>
             <Button 
               size="lg" 
-              className="bg-secondary text-secondary-foreground neo-border-heavy neo-shadow font-display text-lg py-6"
+              className="bg-white/20 text-white hover:bg-white/30 border border-white/40 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("en")}
             >
               ENGLISH
             </Button>
           </div>
           
-          <p className="text-center font-body text-xs text-muted-foreground mt-4">
+          <p className="text-center font-body text-xs text-white/60 mt-4">
             Jezik možeš promijeniti kasnije u Postavkama
           </p>
         </div>
