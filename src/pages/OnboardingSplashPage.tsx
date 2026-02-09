@@ -32,7 +32,7 @@ export default function OnboardingSplashPage() {
         </div>
 
         {/* Language Selection */}
-        <div className="p-6 bg-white/10 backdrop-blur-sm border-t border-white/20">
+        <div className="p-6 bg-secondary border-t border-white/20">
           <p className="font-display font-bold text-center text-sm text-white/70 mb-4 uppercase">
             Odaberi jezik / Select language
           </p>
