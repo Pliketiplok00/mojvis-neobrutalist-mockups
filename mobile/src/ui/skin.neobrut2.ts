@@ -418,6 +418,9 @@ export const components = {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.semiBold,
     disabledOpacity: 0.5,
+    // Neobrut shadow offset (same as card shadow)
+    shadowOffset: 4,
+    shadowColor: colors.border,
   },
 
   listRow: {
@@ -812,6 +815,19 @@ export const components = {
 
   // Onboarding role card (split-card pattern: colored header + white body)
   onboarding: {
+    // Welcome/Language selection screen zones
+    welcomeScreen: {
+      identityZone: {
+        background: palette.primary, // Mediterranean blue
+        textColor: colors.primaryText, // White
+      },
+      actionZone: {
+        background: palette.amber, // Warm amber/tan
+        textColor: colors.textPrimary, // Dark
+        mutedTextColor: colors.textMuted,
+      },
+    },
+
     roleCard: {
       // Outer card structure
       borderWidth: bordersToken.widthCard,

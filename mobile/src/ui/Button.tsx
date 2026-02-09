@@ -17,8 +17,6 @@ import {
 import { skin } from './skin';
 import { ButtonText } from './Text';
 
-const SHADOW_OFFSET = 4;
-
 interface ButtonProps {
   /** Button label */
   children: string;
@@ -30,7 +28,7 @@ interface ButtonProps {
   disabled?: boolean;
   /** Loading state */
   loading?: boolean;
-  /** Enable neobrut offset shadow */
+  /** Enable neobrut offset shadow (default: true for primary variant) */
   shadow?: boolean;
   /** Additional style (applied to outer container when shadow=true, else to button) */
   style?: ViewStyle;
@@ -44,10 +42,12 @@ export function Button({
   variant = 'primary',
   disabled = false,
   loading = false,
-  shadow = false,
+  shadow,
   style,
   accessibilityLabel,
 }: ButtonProps): React.JSX.Element {
+  // Default shadow to true for primary variant (neobrut design)
+  const showShadow = shadow ?? (variant === 'primary');
   const getButtonStyle = () => {
     switch (variant) {
       case 'secondary':
@@ -72,7 +72,7 @@ export function Button({
 
   const button = (
     <TouchableOpacity
-      style={[styles.base, getButtonStyle(), disabled && styles.disabled, !shadow && style]}
+      style={[styles.base, getButtonStyle(), disabled && styles.disabled, !showShadow && style]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
@@ -87,7 +87,7 @@ export function Button({
     </TouchableOpacity>
   );
 
-  if (!shadow) {
+  if (!showShadow) {
     return button;
   }
 
@@ -127,17 +127,17 @@ const styles = StyleSheet.create({
   disabled: {
     opacity: components.button.disabledOpacity,
   },
-  // Neobrut shadow styles
+  // Neobrut shadow styles (using skin tokens)
   shadowContainer: {
     position: 'relative',
   },
   shadowLayer: {
     position: 'absolute',
-    top: SHADOW_OFFSET,
-    left: SHADOW_OFFSET,
-    right: -SHADOW_OFFSET,
-    bottom: -SHADOW_OFFSET,
-    backgroundColor: skin.colors.border,
+    top: components.button.shadowOffset,
+    left: components.button.shadowOffset,
+    right: -components.button.shadowOffset,
+    bottom: -components.button.shadowOffset,
+    backgroundColor: components.button.shadowColor,
     borderRadius: components.button.borderRadius,
   },
 });
