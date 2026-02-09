@@ -18,15 +18,15 @@ export default function OnboardingSplashPage() {
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           <div className="flex flex-col items-stretch">
-            {/* Logo */}
-            <div className="relative mb-8">
-              <img src={mojvisLogo} alt="MOJ VIS" className="w-full rounded-2xl" />
-            </div>
-
             {/* Tagline */}
-            <p className="font-display font-bold text-white text-center">
+            <p className="font-display font-bold text-white text-center mb-8">
               ZAJEDNICA U POKRETU
             </p>
+
+            {/* Logo */}
+            <div className="relative">
+              <img src={mojvisLogo} alt="MOJ VIS" className="w-full rounded-2xl" />
+            </div>
           </div>
         </div>
 
