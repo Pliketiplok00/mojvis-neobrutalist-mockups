@@ -195,7 +195,7 @@ export default function InboxPage() {
         ) : (
           <div className="flex flex-col">
           {activeTab === "received" ? (
-            receivedMessages.map((msg, index) => {
+            filteredReceived.map((msg, index) => {
               const Icon = typeIcons[msg.type] || AlertCircle;
               const bgColor = typeColors[msg.type] || "bg-muted";
               return (
