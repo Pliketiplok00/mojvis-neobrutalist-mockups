@@ -12,12 +12,12 @@ type TabType = "received" | "sent";
 
 type FilterTag = "all" | "promet" | "kultura" | "opcenito" | "hitno";
 
-const filterTags: { value: FilterTag; label: string }[] = [
-  { value: "all", label: "Sve" },
-  { value: "hitno", label: "Hitno" },
-  { value: "promet", label: "Promet" },
-  { value: "kultura", label: "Kultura" },
-  { value: "opcenito", label: "Općenito" },
+const filterTags: { value: FilterTag; label: string; activeBg: string; activeText: string; inactiveBg: string }[] = [
+  { value: "all", label: "Sve", activeBg: "bg-foreground", activeText: "text-background", inactiveBg: "bg-background" },
+  { value: "hitno", label: "Hitno", activeBg: "bg-destructive", activeText: "text-destructive-foreground", inactiveBg: "bg-destructive/15" },
+  { value: "promet", label: "Promet", activeBg: "bg-primary", activeText: "text-primary-foreground", inactiveBg: "bg-primary/15" },
+  { value: "kultura", label: "Kultura", activeBg: "bg-lavender", activeText: "text-foreground", inactiveBg: "bg-lavender/15" },
+  { value: "opcenito", label: "Općenito", activeBg: "bg-teal", activeText: "text-white", inactiveBg: "bg-teal/15" },
 ];
 
 const receivedMessages = [
@@ -174,8 +174,8 @@ export default function InboxPage() {
                 onClick={() => setActiveFilter(tag.value)}
                 className={`shrink-0 border-3 border-foreground px-3 py-1.5 font-display text-xs font-bold uppercase tracking-wide transition-all ${
                   activeFilter === tag.value
-                    ? "bg-foreground text-background shadow-none translate-x-0 translate-y-0"
-                    : "bg-background text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_0_hsl(var(--foreground))]"
+                    ? `${tag.activeBg} ${tag.activeText} shadow-none translate-x-0 translate-y-0`
+                    : `${tag.inactiveBg} text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_0_hsl(var(--foreground))]`
                 }`}
                 style={{ borderWidth: "3px" }}
               >
