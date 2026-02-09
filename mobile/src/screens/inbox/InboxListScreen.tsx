@@ -476,29 +476,28 @@ export function InboxListScreen(): React.JSX.Element {
           >
             {availableTags.map((tag) => {
               const isActive = selectedTags.includes(tag);
-              // Per-tag background and text colors from skin tokens
+              // Per-tag background and text colors (always applied)
               const tagBackground = inboxTokens.tagFilter.chipBackgrounds[tag];
               const tagTextColor = inboxTokens.tagFilter.chipTextColors[tag];
               return (
-                <Pressable
-                  key={tag}
-                  style={[
-                    styles.tagChip,
-                    isActive && { backgroundColor: tagBackground },
-                  ]}
-                  onPress={() => handleTagToggle(tag)}
-                  accessibilityRole="button"
-                  accessibilityState={{ selected: isActive }}
-                >
-                  <Label
+                <View key={tag} style={styles.tagChipWrapper}>
+                  {/* Neobrut shadow layer - only visible when selected */}
+                  {isActive && <View style={styles.tagChipShadow} />}
+                  <Pressable
                     style={[
-                      styles.tagChipText,
-                      isActive && { color: tagTextColor },
+                      styles.tagChip,
+                      { backgroundColor: tagBackground },
+                      isActive && styles.tagChipSelected,
                     ]}
+                    onPress={() => handleTagToggle(tag)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: isActive }}
                   >
-                    {t(`inbox.tags.${tag}`)}
-                  </Label>
-                </Pressable>
+                    <Label style={[styles.tagChipText, { color: tagTextColor }]}>
+                      {t(`inbox.tags.${tag}`)}
+                    </Label>
+                  </Pressable>
+                </View>
               );
             })}
           </ScrollView>
@@ -609,20 +608,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: inboxTokens.tagFilter.containerPadding,
     gap: inboxTokens.tagFilter.chipGap,
   },
+  // Chip wrapper for shadow positioning
+  tagChipWrapper: {
+    position: 'relative',
+  },
+  // Neobrut shadow layer (visible only when selected)
+  tagChipShadow: {
+    position: 'absolute',
+    top: inboxTokens.tagFilter.chipShadowOffset,
+    left: inboxTokens.tagFilter.chipShadowOffset,
+    right: -inboxTokens.tagFilter.chipShadowOffset,
+    bottom: -inboxTokens.tagFilter.chipShadowOffset,
+    backgroundColor: inboxTokens.tagFilter.chipShadowColor,
+    borderRadius: inboxTokens.tagFilter.chipBorderRadius,
+  },
+  // Chip base style (category background applied via inline style)
   tagChip: {
     paddingHorizontal: inboxTokens.tagFilter.chipPaddingHorizontal,
     paddingVertical: inboxTokens.tagFilter.chipPaddingVertical,
-    borderWidth: inboxTokens.tagFilter.chipBorderWidth,
+    borderWidth: inboxTokens.tagFilter.chipBorderWidthDefault,
     borderColor: inboxTokens.tagFilter.chipBorderColor,
     borderRadius: inboxTokens.tagFilter.chipBorderRadius,
-    backgroundColor: inboxTokens.tagFilter.chipInactiveBackground,
   },
-  // Active chip background applied dynamically per-tag via inline style
+  // Selected chip: thicker outline
+  tagChipSelected: {
+    borderWidth: inboxTokens.tagFilter.chipBorderWidthSelected,
+  },
+  // Chip text (color applied via inline style for per-tag legibility)
   tagChipText: {
-    color: inboxTokens.tagFilter.chipInactiveTextColor,
     textTransform: 'uppercase',
   },
-  // Active chip text color applied dynamically per-tag via inline style
 
   // List content container (spacing from filter bar)
   listContentContainer: {

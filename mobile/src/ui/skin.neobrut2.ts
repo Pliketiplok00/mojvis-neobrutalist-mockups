@@ -911,15 +911,15 @@ export const components = {
       chipGap: spacing.sm,
       chipPaddingHorizontal: spacing.md,
       chipPaddingVertical: spacing.sm,
-      chipBorderWidth: bordersToken.widthThin,
       chipBorderColor: colors.border,
       chipBorderRadius: bordersToken.radiusSharp, // Neobrut: sharp corners
-      // Default chip colors (when not using per-tag colors)
-      chipActiveBackground: palette.primary,
-      chipActiveTextColor: colors.primaryText,
-      chipInactiveBackground: colors.background,
-      chipInactiveTextColor: colors.textPrimary,
-      // Per-tag chip backgrounds (reuse icon slab category colors)
+      // Border width: default vs selected (thicker outline on selection)
+      chipBorderWidthDefault: bordersToken.widthThin,
+      chipBorderWidthSelected: bordersToken.widthCard,
+      // Shadow for selected chips (reuse button shadow tokens)
+      chipShadowOffset: 4, // Same as button shadowOffset
+      chipShadowColor: colors.border,
+      // Per-tag chip backgrounds (always visible - category colors)
       chipBackgrounds: {
         promet: palette.primary, // Blue (transport)
         kultura: palette.lavender, // Purple (culture)
@@ -928,7 +928,7 @@ export const components = {
         vis: palette.amber, // Amber (municipal)
         komiza: palette.amber, // Amber (municipal)
       },
-      // Per-tag text colors for legibility
+      // Per-tag text colors for legibility (always applied)
       chipTextColors: {
         promet: colors.primaryText, // White on blue
         kultura: colors.textPrimary, // Dark on lavender
