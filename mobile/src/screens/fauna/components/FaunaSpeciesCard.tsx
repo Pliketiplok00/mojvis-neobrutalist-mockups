@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   // Critical shadow uses urgent color with reduced opacity for cleaner look
   shadowLayerCritical: {
-    backgroundColor: 'rgba(215, 72, 47, 0.5)', // urgent color at 50% opacity
+    backgroundColor: colors.sensitiveAreaBadge,
     top: 6,
     left: 6,
     right: -6,

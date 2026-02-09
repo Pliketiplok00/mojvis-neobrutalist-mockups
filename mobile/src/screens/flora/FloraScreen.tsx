@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   // Shadow for warning card uses urgent color with reduced opacity
   shadowLayerWarning: {
-    backgroundColor: 'rgba(215, 72, 47, 0.4)', // urgent color at 40% opacity
+    backgroundColor: colors.sensitiveAreaBg,
   },
   warningHeader: {
     flexDirection: 'row',

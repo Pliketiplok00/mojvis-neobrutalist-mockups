@@ -256,6 +256,14 @@ export const colors = {
   // Optional overlay
   overlay: hsla(220, 20, 10, 0.6),
 
+  // Icon box overlays (white transparency on colored surfaces)
+  iconBoxOverlayBg: hsla(0, 0, 100, 0.2), // White 20%
+  iconBoxOverlayBorder: hsla(0, 0, 100, 0.3), // White 30%
+
+  // Sensitive area indicators (destructive-derived with transparency)
+  sensitiveAreaBg: hsla(12, 55, 50, 0.4), // Destructive 40%
+  sensitiveAreaBadge: hsla(12, 55, 50, 0.5), // Destructive 50%
+
   // Test watermark (if still present somewhere)
   testWatermarkBg: borders.color,
   testWatermarkText: "white",
