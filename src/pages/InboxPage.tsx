@@ -12,12 +12,12 @@ type TabType = "received" | "sent";
 
 type FilterTag = "all" | "promet" | "kultura" | "opcenito" | "hitno";
 
-const filterTags: { value: FilterTag; label: string }[] = [
-  { value: "all", label: "Sve" },
-  { value: "hitno", label: "Hitno" },
-  { value: "promet", label: "Promet" },
-  { value: "kultura", label: "Kultura" },
-  { value: "opcenito", label: "Općenito" },
+const filterTags: { value: FilterTag; label: string; activeBg: string; activeText: string; inactiveBg: string }[] = [
+  { value: "all", label: "Sve", activeBg: "bg-foreground", activeText: "text-background", inactiveBg: "bg-background" },
+  { value: "hitno", label: "Hitno", activeBg: "bg-destructive", activeText: "text-destructive-foreground", inactiveBg: "bg-destructive/15" },
+  { value: "promet", label: "Promet", activeBg: "bg-primary", activeText: "text-primary-foreground", inactiveBg: "bg-primary/15" },
+  { value: "kultura", label: "Kultura", activeBg: "bg-lavender", activeText: "text-foreground", inactiveBg: "bg-lavender/15" },
+  { value: "opcenito", label: "Općenito", activeBg: "bg-teal", activeText: "text-white", inactiveBg: "bg-teal/15" },
 ];
 
 const receivedMessages = [
