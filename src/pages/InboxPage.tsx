@@ -10,10 +10,21 @@ import { Bell, Send, AlertCircle, MessageSquare, Calendar, AlertTriangle, ArrowR
 
 type TabType = "received" | "sent";
 
+type FilterTag = "all" | "promet" | "kultura" | "opcenito" | "hitno";
+
+const filterTags: { value: FilterTag; label: string }[] = [
+  { value: "all", label: "Sve" },
+  { value: "hitno", label: "Hitno" },
+  { value: "promet", label: "Promet" },
+  { value: "kultura", label: "Kultura" },
+  { value: "opcenito", label: "Općenito" },
+];
+
 const receivedMessages = [
   { 
     id: 1, 
     type: "notice", 
+    tags: ["promet", "hitno"] as FilterTag[],
     title: "Road Works Notice", 
     preview: "Main road closed until 18:00 today due to maintenance...",
     date: "07/01",
@@ -24,6 +35,7 @@ const receivedMessages = [
   { 
     id: 2, 
     type: "reminder", 
+    tags: ["kultura"] as FilterTag[],
     title: "Event Reminder: Summer Festival", 
     preview: "The Summer Festival starts today at 19:00...",
     date: "07/01",
@@ -34,6 +46,7 @@ const receivedMessages = [
   { 
     id: 3, 
     type: "notice", 
+    tags: ["promet"] as FilterTag[],
     title: "Ferry Schedule Update", 
     preview: "Due to weather conditions, the afternoon ferry has been...",
     date: "06/01",
@@ -44,6 +57,7 @@ const receivedMessages = [
   { 
     id: 4, 
     type: "reply", 
+    tags: ["opcenito"] as FilterTag[],
     title: "Re: Broken Street Light", 
     preview: "Thank you for reporting. Our team has been dispatched...",
     date: "05/01",
@@ -109,10 +123,14 @@ const typeColors: Record<string, string> = {
 export default function InboxPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("received");
+  const [activeFilter, setActiveFilter] = useState<FilterTag>("all");
   const navigate = useNavigate();
   const { t } = useI18n();
 
-  const currentMessages = activeTab === "received" ? receivedMessages : sentMessages;
+  const filteredReceived = activeFilter === "all" 
+    ? receivedMessages 
+    : receivedMessages.filter(msg => msg.tags.includes(activeFilter));
+  const currentMessages = activeTab === "received" ? filteredReceived : sentMessages;
 
   return (
     <MobileFrame>
@@ -147,6 +165,26 @@ export default function InboxPage() {
           </button>
         </div>
 
+        {/* Filter Tags - only show on received tab */}
+        {activeTab === "received" && (
+          <div className="flex gap-2 overflow-x-auto border-b-3 border-foreground bg-background px-4 py-3 scrollbar-hide" style={{ borderBottomWidth: "3px" }}>
+            {filterTags.map((tag) => (
+              <button
+                key={tag.value}
+                onClick={() => setActiveFilter(tag.value)}
+                className={`shrink-0 border-3 border-foreground px-3 py-1.5 font-display text-xs font-bold uppercase tracking-wide transition-all ${
+                  activeFilter === tag.value
+                    ? "bg-foreground text-background shadow-none translate-x-0 translate-y-0"
+                    : "bg-background text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_0_hsl(var(--foreground))]"
+                }`}
+                style={{ borderWidth: "3px" }}
+              >
+                {tag.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Messages List or Empty State */}
         {currentMessages.length === 0 ? (
           <EmptyState 
@@ -157,7 +195,7 @@ export default function InboxPage() {
         ) : (
           <div className="flex flex-col">
           {activeTab === "received" ? (
-            receivedMessages.map((msg, index) => {
+            filteredReceived.map((msg, index) => {
               const Icon = typeIcons[msg.type] || AlertCircle;
               const bgColor = typeColors[msg.type] || "bg-muted";
               return (
