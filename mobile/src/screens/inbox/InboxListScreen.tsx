@@ -476,12 +476,15 @@ export function InboxListScreen(): React.JSX.Element {
           >
             {availableTags.map((tag) => {
               const isActive = selectedTags.includes(tag);
+              // Per-tag background and text colors from skin tokens
+              const tagBackground = inboxTokens.tagFilter.chipBackgrounds[tag];
+              const tagTextColor = inboxTokens.tagFilter.chipTextColors[tag];
               return (
                 <Pressable
                   key={tag}
                   style={[
                     styles.tagChip,
-                    isActive && styles.tagChipActive,
+                    isActive && { backgroundColor: tagBackground },
                   ]}
                   onPress={() => handleTagToggle(tag)}
                   accessibilityRole="button"
@@ -490,7 +493,7 @@ export function InboxListScreen(): React.JSX.Element {
                   <Label
                     style={[
                       styles.tagChipText,
-                      isActive && styles.tagChipTextActive,
+                      isActive && { color: tagTextColor },
                     ]}
                   >
                     {t(`inbox.tags.${tag}`)}
@@ -614,16 +617,12 @@ const styles = StyleSheet.create({
     borderRadius: inboxTokens.tagFilter.chipBorderRadius,
     backgroundColor: inboxTokens.tagFilter.chipInactiveBackground,
   },
-  tagChipActive: {
-    backgroundColor: inboxTokens.tagFilter.chipActiveBackground,
-  },
+  // Active chip background applied dynamically per-tag via inline style
   tagChipText: {
     color: inboxTokens.tagFilter.chipInactiveTextColor,
     textTransform: 'uppercase',
   },
-  tagChipTextActive: {
-    color: inboxTokens.tagFilter.chipActiveTextColor,
-  },
+  // Active chip text color applied dynamically per-tag via inline style
 
   // List content container (spacing from filter bar)
   listContentContainer: {

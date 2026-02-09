@@ -913,18 +913,37 @@ export const components = {
       chipPaddingVertical: spacing.sm,
       chipBorderWidth: bordersToken.widthThin,
       chipBorderColor: colors.border,
-      chipBorderRadius: bordersToken.radiusSmall,
+      chipBorderRadius: bordersToken.radiusSharp, // Neobrut: sharp corners
+      // Default chip colors (when not using per-tag colors)
       chipActiveBackground: palette.primary,
       chipActiveTextColor: colors.primaryText,
       chipInactiveBackground: colors.background,
       chipInactiveTextColor: colors.textPrimary,
+      // Per-tag chip backgrounds (reuse icon slab category colors)
+      chipBackgrounds: {
+        promet: palette.primary, // Blue (transport)
+        kultura: palette.lavender, // Purple (culture)
+        opcenito: palette.secondary, // Green (general)
+        hitno: palette.destructive, // Terracotta (urgent)
+        vis: palette.amber, // Amber (municipal)
+        komiza: palette.amber, // Amber (municipal)
+      },
+      // Per-tag text colors for legibility
+      chipTextColors: {
+        promet: colors.primaryText, // White on blue
+        kultura: colors.textPrimary, // Dark on lavender
+        opcenito: colors.primaryText, // White on green
+        hitno: colors.primaryText, // White on terracotta
+        vis: colors.textPrimary, // Dark on amber
+        komiza: colors.textPrimary, // Dark on amber
+      },
       // Spacing between filter bar and list
       listTopPadding: spacing.md,
     },
 
     // Banner-style tabs (stronger typography hierarchy)
     tabs: {
-      borderBottomWidth: bordersToken.widthCard,
+      borderBottomWidth: bordersToken.widthHeavy, // Match header divider weight
       borderBottomColor: colors.border,
       // Active tab (filled)
       activeBackground: palette.primary,
