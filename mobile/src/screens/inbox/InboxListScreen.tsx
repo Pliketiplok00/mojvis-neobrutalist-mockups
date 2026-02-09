@@ -605,7 +605,11 @@ const styles = StyleSheet.create({
     borderBottomColor: skin.colors.border,
   },
   tagFilterScrollContent: {
-    paddingHorizontal: inboxTokens.tagFilter.containerPadding,
+    paddingLeft: inboxTokens.tagFilter.containerPadding,
+    // Right padding: container padding + shadow offset to prevent clipping
+    paddingRight: inboxTokens.tagFilter.containerPadding + inboxTokens.tagFilter.chipShadowOffset,
+    // Bottom padding for shadow visibility (derived from shadow offset)
+    paddingBottom: inboxTokens.tagFilter.chipShadowOffset,
     gap: inboxTokens.tagFilter.chipGap,
   },
   // Chip wrapper for shadow positioning

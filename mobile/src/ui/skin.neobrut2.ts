@@ -63,6 +63,7 @@ const borders = {
   widthThin: 2,
   widthCard: 3,
   widthHeavy: 4,
+  widthExtraHeavy: 8, // Double-weight divider for emphasis
   radiusSharp: 0, // neobrutalist: sharp corners everywhere
   radiusSoft: 4, // small elements (badges) - per design system --radius-soft
   radiusCard: 0, // cards/containers: sharp corners (neobrutalist principle)
@@ -266,6 +267,7 @@ export const bordersToken = {
   widthThin: borders.widthThin,
   widthCard: borders.widthCard,
   widthHeavy: borders.widthHeavy,
+  widthExtraHeavy: borders.widthExtraHeavy,
   radiusSharp: borders.radiusSharp, // neobrutalist: 0
   radiusSmall: borders.radiusSoft,
   radiusMedium: borders.radiusSharp,
@@ -943,7 +945,7 @@ export const components = {
 
     // Banner-style tabs (stronger typography hierarchy)
     tabs: {
-      borderBottomWidth: bordersToken.widthHeavy, // Match header divider weight
+      borderBottomWidth: bordersToken.widthExtraHeavy, // Heavy neobrut rule (2x widthHeavy)
       borderBottomColor: colors.border,
       // Active tab (filled)
       activeBackground: palette.primary,
