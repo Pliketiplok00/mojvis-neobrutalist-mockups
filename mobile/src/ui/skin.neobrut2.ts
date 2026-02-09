@@ -904,6 +904,24 @@ export const components = {
 
   // Inbox screen component tokens (V1 banner list style)
   inbox: {
+    // Tag filter bar (horizontal scrollable chips)
+    tagFilter: {
+      containerPadding: spacing.md,
+      containerBackground: colors.backgroundSecondary,
+      chipGap: spacing.sm,
+      chipPaddingHorizontal: spacing.md,
+      chipPaddingVertical: spacing.sm,
+      chipBorderWidth: bordersToken.widthThin,
+      chipBorderColor: colors.border,
+      chipBorderRadius: bordersToken.radiusSmall,
+      chipActiveBackground: palette.primary,
+      chipActiveTextColor: colors.primaryText,
+      chipInactiveBackground: colors.background,
+      chipInactiveTextColor: colors.textPrimary,
+      // Spacing between filter bar and list
+      listTopPadding: spacing.md,
+    },
+
     // Banner-style tabs (stronger typography hierarchy)
     tabs: {
       borderBottomWidth: bordersToken.widthCard,
