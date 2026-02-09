@@ -18,8 +18,8 @@ export default function OnboardingSplashPage() {
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           {/* Logo */}
-          <div className="relative mb-8">
-            <img src={mojvisLogo} alt="MOJ VIS" className="w-48 h-48 rounded-2xl" />
+          <div className="relative mb-8 w-fit">
+            <img src={mojvisLogo} alt="MOJ VIS" className="w-auto h-auto max-w-full rounded-2xl" />
           </div>
 
 
