@@ -17,16 +17,17 @@ export default function OnboardingSplashPage() {
       <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#399FD9' }}>
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
-          {/* Logo */}
-          <div className="relative mb-8">
-            <img src={mojvisLogo} alt="MOJ VIS" className="w-48 h-48 rounded-2xl" />
+          <div className="flex flex-col items-stretch">
+            {/* Logo */}
+            <div className="relative mb-8">
+              <img src={mojvisLogo} alt="MOJ VIS" className="w-full rounded-2xl" />
+            </div>
+
+            {/* Tagline */}
+            <p className="font-display font-bold text-white text-center">
+              ZAJEDNICA U POKRETU
+            </p>
           </div>
-
-
-          {/* Tagline */}
-          <p className="font-display font-bold text-white text-center mt-6">
-            ZAJEDNICA U POKRETU
-          </p>
         </div>
 
         {/* Language Selection */}
