@@ -123,10 +123,14 @@ const typeColors: Record<string, string> = {
 export default function InboxPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("received");
+  const [activeFilter, setActiveFilter] = useState<FilterTag>("all");
   const navigate = useNavigate();
   const { t } = useI18n();
 
-  const currentMessages = activeTab === "received" ? receivedMessages : sentMessages;
+  const filteredReceived = activeFilter === "all" 
+    ? receivedMessages 
+    : receivedMessages.filter(msg => msg.tags.includes(activeFilter));
+  const currentMessages = activeTab === "received" ? filteredReceived : sentMessages;
 
   return (
     <MobileFrame>
