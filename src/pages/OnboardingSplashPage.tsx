@@ -14,7 +14,7 @@ export default function OnboardingSplashPage() {
 
   return (
     <MobileFrame>
-      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#399FD9' }}>
+      <div className="min-h-screen flex flex-col bg-background">
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           {/* Logo */}
