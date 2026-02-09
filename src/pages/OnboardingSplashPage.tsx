@@ -24,7 +24,7 @@ export default function OnboardingSplashPage() {
             </div>
 
             {/* Tagline */}
-            <p className="font-display font-bold text-white text-right">
+            <p className="font-display font-bold text-white text-center">
               ZAJEDNICA U POKRETU
             </p>
           </div>
