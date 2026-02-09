@@ -14,7 +14,7 @@ export default function OnboardingSplashPage() {
 
   return (
     <MobileFrame>
-      <div className="min-h-screen flex flex-col bg-background">
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#399FD9' }}>
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
           {/* Logo */}
@@ -24,7 +24,7 @@ export default function OnboardingSplashPage() {
 
 
           {/* Tagline */}
-          <p className="font-display font-bold text-foreground text-center mt-6">
+          <p className="font-display font-bold text-white text-center mt-6">
             ZAJEDNICA U POKRETU
           </p>
         </div>
