@@ -25,8 +25,8 @@ type Props = {
 
 export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Element {
   const { width: screenWidth } = useWindowDimensions();
-  // Logo size: ~30% of screen width, square aspect ratio
-  const logoSize = Math.round(screenWidth * 0.3);
+  // Logo size: ~40% of screen width for hero effect, square aspect ratio
+  const logoSize = Math.round(screenWidth * 0.4);
 
   const handleLanguageSelect = (language: 'hr' | 'en'): void => {
     // TODO: Apply language to app UI
@@ -37,35 +37,42 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* App logo */}
-        <View style={styles.logoContainer}>
-          <Image
-            source={skin.images.appLogo}
-            style={{ width: logoSize, height: logoSize }}
-            resizeMode="contain"
-            accessibilityLabel="MOJ VIS"
-          />
+        {/* Identity zone: logo + welcome text (takes available space, top-heavy) */}
+        <View style={styles.identityZone}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={skin.images.appLogo}
+              style={{ width: logoSize, height: logoSize }}
+              resizeMode="contain"
+              accessibilityLabel="MOJ VIS"
+            />
+          </View>
+          <H2 style={styles.title}>Dobrodošli / Welcome</H2>
         </View>
 
-        <H2 style={styles.title}>Dobrodošli / Welcome</H2>
-        <Body style={styles.subtitle}>Odaberite jezik / Select language</Body>
-
-        <View style={styles.buttonContainer}>
-          <Button
-            variant="primary"
-            onPress={() => handleLanguageSelect('hr')}
-            accessibilityLabel="Hrvatski"
-          >
-            Hrvatski
-          </Button>
-
-          <Button
-            variant="primary"
-            onPress={() => handleLanguageSelect('en')}
-            accessibilityLabel="English"
-          >
-            English
-          </Button>
+        {/* Action zone: language selection */}
+        <View style={styles.actionZone}>
+          <Body style={styles.subtitle}>Odaberite jezik / Select language</Body>
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
+              <Button
+                variant="primary"
+                onPress={() => handleLanguageSelect('hr')}
+                accessibilityLabel="Hrvatski"
+              >
+                Hrvatski
+              </Button>
+            </View>
+            <View style={styles.buttonWrapper}>
+              <Button
+                variant="secondary"
+                onPress={() => handleLanguageSelect('en')}
+                accessibilityLabel="English"
+              >
+                English
+              </Button>
+            </View>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -79,25 +86,38 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    paddingHorizontal: skin.spacing.xxl,
+    paddingTop: skin.spacing.xxxl,
+    paddingBottom: skin.spacing.xxl,
+  },
+  // Identity zone: logo + welcome (flex to take available space)
+  identityZone: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: skin.spacing.xxl,
   },
   logoContainer: {
-    marginBottom: skin.spacing.xxxl,
+    marginBottom: skin.spacing.xxl,
   },
   title: {
-    marginBottom: skin.spacing.sm,
     textAlign: 'center',
+  },
+  // Action zone: language prompt + buttons (fixed at bottom)
+  actionZone: {
+    width: '100%',
+    paddingTop: skin.spacing.xxxl,
   },
   subtitle: {
     color: skin.colors.textMuted,
-    marginBottom: skin.spacing.xxxl,
+    marginBottom: skin.spacing.xl,
     textAlign: 'center',
   },
   buttonContainer: {
-    width: '100%',
-    gap: skin.spacing.lg,
+    flexDirection: 'row',
+    gap: skin.spacing.md,
+  },
+  buttonWrapper: {
+    flex: 1,
   },
 });
 
