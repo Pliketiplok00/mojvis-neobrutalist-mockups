@@ -12,18 +12,22 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, SafeAreaView } from 'react-native';
+import { View, StyleSheet, SafeAreaView, Image, useWindowDimensions } from 'react-native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
-import { H1, H2, Body } from '../../ui/Text';
+import { H2, Body } from '../../ui/Text';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'LanguageSelection'>;
 };
 
 export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Element {
+  const { width: screenWidth } = useWindowDimensions();
+  // Logo size: ~30% of screen width, square aspect ratio
+  const logoSize = Math.round(screenWidth * 0.3);
+
   const handleLanguageSelect = (language: 'hr' | 'en'): void => {
     // TODO: Apply language to app UI
     console.info(`Selected language: ${language}`);
@@ -33,9 +37,14 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        {/* Logo placeholder */}
+        {/* App logo */}
         <View style={styles.logoContainer}>
-          <H1>MOJ VIS</H1>
+          <Image
+            source={skin.images.appLogo}
+            style={{ width: logoSize, height: logoSize }}
+            resizeMode="contain"
+            accessibilityLabel="MOJ VIS"
+          />
         </View>
 
         <H2 style={styles.title}>Dobrodošli / Welcome</H2>

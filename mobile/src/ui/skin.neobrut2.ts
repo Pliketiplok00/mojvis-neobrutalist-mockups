@@ -147,6 +147,13 @@ const sizes = {
   calendarDayMinHeight: 40, // Minimum height for calendar day tiles
 } as const;
 
+// Image assets - registered in skin for centralized asset management
+const images = {
+  // App logo for welcome screen and branding
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  appLogo: require("../../assets/icon.png") as number,
+} as const;
+
 const hardShadow = (offset: number, color: string = borders.color): ShadowToken => ({
   ios: {
     shadowColor: color,
@@ -956,6 +963,7 @@ export const skinNeobrut2 = {
   typography,
   icons,
   sizes,
+  images,
   components,
 
   // Optional: for future "external shadow layer" (fake neo shadow)
