@@ -24,11 +24,9 @@ export default function OnboardingSplashPage() {
 
 
           {/* Tagline */}
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 mt-6 border border-white/30">
-            <p className="font-display font-bold text-white text-center">
-              ZAJEDNICA U POKRETU
-            </p>
-          </div>
+          <p className="font-display font-bold text-white text-center mt-6">
+            ZAJEDNICA U POKRETU
+          </p>
         </div>
 
         {/* Language Selection */}
