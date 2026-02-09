@@ -165,6 +165,26 @@ export default function InboxPage() {
           </button>
         </div>
 
+        {/* Filter Tags - only show on received tab */}
+        {activeTab === "received" && (
+          <div className="flex gap-2 overflow-x-auto border-b-3 border-foreground bg-background px-4 py-3 scrollbar-hide" style={{ borderBottomWidth: "3px" }}>
+            {filterTags.map((tag) => (
+              <button
+                key={tag.value}
+                onClick={() => setActiveFilter(tag.value)}
+                className={`shrink-0 border-3 border-foreground px-3 py-1.5 font-display text-xs font-bold uppercase tracking-wide transition-all ${
+                  activeFilter === tag.value
+                    ? "bg-foreground text-background shadow-none translate-x-0 translate-y-0"
+                    : "bg-background text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_0_hsl(var(--foreground))]"
+                }`}
+                style={{ borderWidth: "3px" }}
+              >
+                {tag.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Messages List or Empty State */}
         {currentMessages.length === 0 ? (
           <EmptyState 
