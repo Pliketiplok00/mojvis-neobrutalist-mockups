@@ -1,7 +1,7 @@
 import { MobileFrame } from "@/components/layout/MobileFrame";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import mojvisLogo from "@/assets/mojvisapp.svg";
 
 export default function OnboardingSplashPage() {
   const navigate = useNavigate();
