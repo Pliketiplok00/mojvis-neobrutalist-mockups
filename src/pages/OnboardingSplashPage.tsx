@@ -22,6 +22,11 @@ export default function OnboardingSplashPage() {
             <div className="relative">
               <img src={mojvisLogo} alt="MOJ VIS" className="w-full rounded-2xl" />
             </div>
+
+            {/* Welcome text */}
+            <p className="font-display font-bold text-white text-center mt-8">
+              DOBRODOŠLI / WELCOME
+            </p>
           </div>
         </div>
 
