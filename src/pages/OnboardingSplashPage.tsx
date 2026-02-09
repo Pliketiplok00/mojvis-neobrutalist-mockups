@@ -14,44 +14,27 @@ export default function OnboardingSplashPage() {
 
   return (
     <MobileFrame>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#399FD9' }}>
         {/* Hero Section */}
         <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="w-full h-full" style={{
-              backgroundImage: `repeating-linear-gradient(
-                45deg,
-                hsl(var(--border)),
-                hsl(var(--border)) 2px,
-                transparent 2px,
-                transparent 20px
-              )`
-            }} />
-          </div>
-
-          {/* Logo Mark */}
+          {/* Logo */}
           <div className="relative mb-8">
-            <div className="w-32 h-32 bg-primary neo-border-heavy neo-shadow-lg flex items-center justify-center">
-              <MapPin size={64} strokeWidth={2.5} className="text-primary-foreground" />
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-accent neo-border-heavy" />
-            <div className="absolute -top-2 -left-2 w-8 h-8 bg-secondary neo-border-heavy" />
+            <img src={mojvisLogo} alt="MOJ VIS" className="w-48 h-48 rounded-2xl" />
           </div>
 
           {/* Title */}
-          <h1 className="font-display font-bold text-5xl text-center mb-4 tracking-tight">
+          <h1 className="font-display font-bold text-5xl text-center mb-4 tracking-tight text-white">
             MOJVIS
           </h1>
           
-          <p className="font-body text-center text-muted-foreground text-lg mb-2">
+          <p className="font-body text-center text-white/80 text-lg mb-2">
             GRAĐANSKI SERVIS
           </p>
 
           {/* Tagline */}
-          <div className="bg-foreground neo-border-heavy px-6 py-3 mt-6">
-            <p className="font-display font-bold text-background text-center">
-              TVOJ GRAD. TVOJ GLAS.
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 mt-6 border border-white/30">
+            <p className="font-display font-bold text-white text-center">
+              ZAJEDNICA U POKRETU
             </p>
           </div>
         </div>
