@@ -10,10 +10,21 @@ import { Bell, Send, AlertCircle, MessageSquare, Calendar, AlertTriangle, ArrowR
 
 type TabType = "received" | "sent";
 
+type FilterTag = "all" | "promet" | "kultura" | "opcenito" | "hitno";
+
+const filterTags: { value: FilterTag; label: string }[] = [
+  { value: "all", label: "Sve" },
+  { value: "hitno", label: "Hitno" },
+  { value: "promet", label: "Promet" },
+  { value: "kultura", label: "Kultura" },
+  { value: "opcenito", label: "Općenito" },
+];
+
 const receivedMessages = [
   { 
     id: 1, 
     type: "notice", 
+    tags: ["promet", "hitno"] as FilterTag[],
     title: "Road Works Notice", 
     preview: "Main road closed until 18:00 today due to maintenance...",
     date: "07/01",
@@ -24,6 +35,7 @@ const receivedMessages = [
   { 
     id: 2, 
     type: "reminder", 
+    tags: ["kultura"] as FilterTag[],
     title: "Event Reminder: Summer Festival", 
     preview: "The Summer Festival starts today at 19:00...",
     date: "07/01",
@@ -34,6 +46,7 @@ const receivedMessages = [
   { 
     id: 3, 
     type: "notice", 
+    tags: ["promet"] as FilterTag[],
     title: "Ferry Schedule Update", 
     preview: "Due to weather conditions, the afternoon ferry has been...",
     date: "06/01",
@@ -44,6 +57,7 @@ const receivedMessages = [
   { 
     id: 4, 
     type: "reply", 
+    tags: ["opcenito"] as FilterTag[],
     title: "Re: Broken Street Light", 
     preview: "Thank you for reporting. Our team has been dispatched...",
     date: "05/01",
