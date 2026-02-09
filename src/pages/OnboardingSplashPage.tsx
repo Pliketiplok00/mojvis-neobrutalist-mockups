@@ -22,14 +22,6 @@ export default function OnboardingSplashPage() {
             <img src={mojvisLogo} alt="MOJ VIS" className="w-48 h-48 rounded-2xl" />
           </div>
 
-          {/* Title */}
-          <h1 className="font-display font-bold text-5xl text-center mb-4 tracking-tight text-white">
-            MOJVIS
-          </h1>
-          
-          <p className="font-body text-center text-white/80 text-lg mb-2">
-            GRAĐANSKI SERVIS
-          </p>
 
           {/* Tagline */}
           <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3 mt-6 border border-white/30">
