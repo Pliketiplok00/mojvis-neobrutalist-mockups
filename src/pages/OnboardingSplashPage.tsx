@@ -40,14 +40,14 @@ export default function OnboardingSplashPage() {
           <div className="grid grid-cols-2 gap-4">
             <Button 
               size="lg" 
-              className="bg-accent-foreground text-accent hover:bg-accent-foreground/90 font-display text-lg py-6 rounded-lg font-bold"
+              className="bg-primary text-white hover:bg-primary/90 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("hr")}
             >
               HRVATSKI
             </Button>
             <Button 
               size="lg" 
-              className="bg-accent-foreground/10 text-accent-foreground hover:bg-accent-foreground/20 border border-accent-foreground/30 font-display text-lg py-6 rounded-lg font-bold"
+              className="bg-primary text-white hover:bg-primary/90 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("en")}
             >
               ENGLISH
