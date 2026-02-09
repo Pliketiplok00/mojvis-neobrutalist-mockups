@@ -174,8 +174,8 @@ export default function InboxPage() {
                 onClick={() => setActiveFilter(tag.value)}
                 className={`shrink-0 border-3 border-foreground px-3 py-1.5 font-display text-xs font-bold uppercase tracking-wide transition-all ${
                   activeFilter === tag.value
-                    ? "bg-foreground text-background shadow-none translate-x-0 translate-y-0"
-                    : "bg-background text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_0_hsl(var(--foreground))]"
+                    ? `${tag.activeBg} ${tag.activeText} shadow-none translate-x-0 translate-y-0`
+                    : `${tag.inactiveBg} text-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0_0_hsl(var(--foreground))]`
                 }`}
                 style={{ borderWidth: "3px" }}
               >
