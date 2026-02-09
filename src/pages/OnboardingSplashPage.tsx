@@ -33,28 +33,28 @@ export default function OnboardingSplashPage() {
 
         {/* Language Selection */}
         <div className="p-6 bg-accent border-t border-white/20">
-          <p className="font-display font-bold text-center text-sm text-white/70 mb-4 uppercase">
+          <p className="font-display font-bold text-center text-sm text-accent-foreground/70 mb-4 uppercase">
             Odaberi jezik / Select language
           </p>
           
           <div className="grid grid-cols-2 gap-4">
             <Button 
               size="lg" 
-              className="bg-white text-[#399FD9] hover:bg-white/90 font-display text-lg py-6 rounded-lg font-bold"
+              className="bg-accent-foreground text-accent hover:bg-accent-foreground/90 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("hr")}
             >
               HRVATSKI
             </Button>
             <Button 
               size="lg" 
-              className="bg-white/20 text-white hover:bg-white/30 border border-white/40 font-display text-lg py-6 rounded-lg font-bold"
+              className="bg-accent-foreground/10 text-accent-foreground hover:bg-accent-foreground/20 border border-accent-foreground/30 font-display text-lg py-6 rounded-lg font-bold"
               onClick={() => handleLanguageSelect("en")}
             >
               ENGLISH
             </Button>
           </div>
           
-          <p className="text-center font-body text-xs text-white/60 mt-4">
+          <p className="text-center font-body text-xs text-accent-foreground/60 mt-4">
             Jezik možeš promijeniti kasnije u Postavkama
           </p>
         </div>
