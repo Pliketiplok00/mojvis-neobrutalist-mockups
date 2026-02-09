@@ -33,28 +33,28 @@ const palette = {
   mutedText: hsl(220, 10, 40), // --muted-foreground
 
   // Primary - Mediterranean Blue
-  primary: hsl(210, 80, 45),
+  primary: hsl(201, 68, 47), // #2788C9
   // Secondary - Olive Green
-  secondary: hsl(160, 45, 38),
+  secondary: hsl(143, 79, 38), // #15AF50
   // Accent - Sun Yellow
-  accent: hsl(45, 92, 55),
+  accent: hsl(45, 98, 53), // #FDC010
   // Destructive - Terracotta Red
-  destructive: hsl(12, 55, 50),
+  destructive: hsl(12, 69, 51), // #D64E2D
 
   // Extended Mediterranean Palette
-  lavender: hsl(270, 35, 70), // Feedback section
-  amber: hsl(35, 83, 61), // Banner fill - #eeab4b
-  orange: hsl(25, 85, 55), // Click-Fix section
+  lavender: hsl(281, 31, 68), // #B796C6
+  amber: hsl(33, 94, 54), // Banner fill - #F8961D (merged with orange)
+  orange: hsl(33, 94, 54), // Click-Fix section - #F8961D
   teal: hsl(180, 45, 42), // Catamaran transport
   pink: hsl(350, 50, 65), // Decorative accents
 
   // UI extras
   chevron: hsl(220, 10, 50),
   typeBadge: hsl(270, 40, 52),
-  unreadIndicator: hsl(210, 80, 45), // matches primary
+  unreadIndicator: hsl(201, 68, 47), // matches primary
 
   // Link color
-  link: hsl(210, 80, 45), // same as primary for consistency
+  link: hsl(201, 68, 47), // same as primary for consistency
 };
 
 const borders = {
