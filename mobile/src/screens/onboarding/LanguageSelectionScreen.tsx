@@ -57,6 +57,9 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
         <H2 style={styles.welcomeText}>Dobrodošli / Welcome</H2>
       </View>
 
+      {/* Zone divider: black line between identity and action zones */}
+      <View style={styles.zoneDivider} />
+
       {/* Action zone: amber background with language selection */}
       <View style={styles.actionZone}>
         <Body style={styles.promptText}>Odaberite jezik / Select language</Body>
@@ -104,6 +107,11 @@ const styles = StyleSheet.create({
   welcomeText: {
     color: welcomeScreen.identityZone.textColor,
     textAlign: 'center',
+  },
+  // Zone divider: black line between zones
+  zoneDivider: {
+    height: skin.borders.widthHeavy,
+    backgroundColor: skin.colors.border,
   },
   // Action zone: amber background, fixed height for buttons
   actionZone: {
