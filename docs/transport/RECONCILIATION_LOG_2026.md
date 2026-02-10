@@ -54,9 +54,36 @@ Line 659 (Jadrolinija katamaran, summer-only) has no repo file.
 
 ## 2. Change Log
 
-### [PENDING] STEP 1: Line 9602 Corrections
+### [COMPLETED] STEP 1: Line 9602 Corrections
 
-_Manifest to be produced before any edits._
+**Date:** 2026-02-10
+**Files:** `backend/src/data/lines/line-9602.json`
+**Commits:**
+- `7cb5f68` - docs(9602): add correction manifest before applying fixes
+- `e6841d7` - fix(9602): correct all 26 stop pattern errors
+
+**Canonical rules implemented:**
+- VIS → SPLIT (Route 0):
+  - PON/ČET/PET/SUB: Direct service (skip HVAR, skip MILNA)
+  - UTORAK: All stops (HVAR 07:45, MILNA 08:00)
+  - SRIJEDA: Skip HVAR, stop at MILNA (08:00)
+- SPLIT → VIS (Route 1):
+  - PON/ČET/SUB (OFF): All stops
+  - PON/ČET/SUB (PRE/POST): All stops (MILNA 16:35, HVAR 16:55)
+  - UTORAK: Skip MILNA, stop at HVAR
+  - SRIJEDA: Stop at MILNA, skip HVAR
+
+**Changes made:**
+- 12 departures corrected in Route 0
+- 14 departures corrected in Route 1
+- All corrections documented in `docs/transport/9602_CORRECTION_MANIFEST.md`
+
+**Verification:**
+```bash
+# Route 0 OFF TUE - Expected: ["07:00", "07:45", "08:00", "08:35"]
+jq '.lines[0].routes[0].departures[] | select(.day_type == "TUE" and .season_type == "OFF") | .stop_times' backend/src/data/lines/line-9602.json
+# Result: PASS
+```
 
 ### [PENDING] STEP 2: Line 659 Creation
 
