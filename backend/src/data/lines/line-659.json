@@ -1,0 +1,103 @@
+{
+  "stops": [
+    { "id": "stop-split-port", "name_hr": "Split", "name_en": "Split", "transport_type": "sea" },
+    { "id": "stop-bol-port", "name_hr": "Bol", "name_en": "Bol", "transport_type": "sea" },
+    { "id": "stop-hvar-port", "name_hr": "Hvar", "name_en": "Hvar", "transport_type": "sea" },
+    { "id": "stop-vis-port", "name_hr": "Vis", "name_en": "Vis", "transport_type": "sea" }
+  ],
+  "seasons": [
+    {
+      "id": "season-659-2026-summer",
+      "season_type": "HIGH",
+      "year": 2026,
+      "date_from": "2026-06-19",
+      "date_to": "2026-09-13",
+      "label_hr": "Ljeto",
+      "label_en": "Summer"
+    }
+  ],
+  "lines": [
+    {
+      "id": "659",
+      "transport_type": "sea",
+      "name_hr": "Split – Hvar – Vis",
+      "name_en": "Split – Hvar – Vis",
+      "subtype_hr": "Katamaran",
+      "subtype_en": "Catamaran",
+      "display_order": 659,
+      "contacts": [],
+      "routes": [
+        {
+          "direction": 0,
+          "direction_label_hr": "Split → Hvar → Vis",
+          "direction_label_en": "Split → Hvar → Vis",
+          "origin_stop_id": "stop-split-port",
+          "destination_stop_id": "stop-vis-port",
+          "typical_duration_minutes": 115,
+          "marker_note_hr": null,
+          "marker_note_en": null,
+          "stops": [
+            { "stop_id": "stop-split-port", "stop_order": 0 },
+            { "stop_id": "stop-bol-port", "stop_order": 1 },
+            { "stop_id": "stop-hvar-port", "stop_order": 2 },
+            { "stop_id": "stop-vis-port", "stop_order": 3 }
+          ],
+          "departures": [
+            { "day_type": "MON", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "THU", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "SAT", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "SUN", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "PRAZNIK", "season_type": "HIGH", "departure_time": "07:30", "stop_times": ["07:30", null, "08:45", "09:25"], "marker": "I", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+
+            { "day_type": "MON", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "THU", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "SAT", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "SUN", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "PRAZNIK", "season_type": "HIGH", "departure_time": "15:30", "stop_times": ["15:30", "16:45", "17:45", "18:20"], "marker": "III", "notes_hr": "Sve stanice", "notes_en": "All stops" }
+          ]
+        },
+        {
+          "direction": 1,
+          "direction_label_hr": "Vis → Hvar → Split",
+          "direction_label_en": "Vis → Hvar → Split",
+          "origin_stop_id": "stop-vis-port",
+          "destination_stop_id": "stop-split-port",
+          "typical_duration_minutes": 180,
+          "marker_note_hr": null,
+          "marker_note_en": null,
+          "stops": [
+            { "stop_id": "stop-vis-port", "stop_order": 0 },
+            { "stop_id": "stop-hvar-port", "stop_order": 1 },
+            { "stop_id": "stop-bol-port", "stop_order": 2 },
+            { "stop_id": "stop-split-port", "stop_order": 3 }
+          ],
+          "departures": [
+            { "day_type": "MON", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "THU", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "SAT", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "SUN", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+            { "day_type": "PRAZNIK", "season_type": "HIGH", "departure_time": "10:10", "stop_times": ["10:10", "11:10", "12:10", "13:10"], "marker": "I", "notes_hr": "Sve stanice", "notes_en": "All stops" },
+
+            { "day_type": "MON", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "THU", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "FRI", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "SAT", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "SUN", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" },
+            { "day_type": "PRAZNIK", "season_type": "HIGH", "departure_time": "19:35", "stop_times": ["19:35", "20:30", null, "21:35"], "marker": "III", "notes_hr": "Ne staje u Bolu", "notes_en": "Does not stop in Bol" }
+          ]
+        }
+      ]
+    }
+  ]
+}
