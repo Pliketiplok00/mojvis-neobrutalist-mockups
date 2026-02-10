@@ -348,6 +348,8 @@ export async function getDeparturesForRouteAndDate(
          WHERE any_season.season_type = linked.season_type
            AND any_season.year = linked.year
            AND $3::DATE BETWEEN any_season.date_from AND any_season.date_to
+           -- Only match seasons from the same line (by ID prefix: season-{lineNum}-...)
+           AND SPLIT_PART(any_season.id::TEXT, '-', 2) = SPLIT_PART(linked.id::TEXT, '-', 2)
        )
      ORDER BY d.departure_time`,
     [routeId, dayType, dateStr]
@@ -451,6 +453,8 @@ export async function getTodaysDepartures(
          WHERE any_season.season_type = linked.season_type
            AND any_season.year = linked.year
            AND $3::DATE BETWEEN any_season.date_from AND any_season.date_to
+           -- Only match seasons from the same line (by ID prefix: season-{lineNum}-...)
+           AND SPLIT_PART(any_season.id::TEXT, '-', 2) = SPLIT_PART(linked.id::TEXT, '-', 2)
        )
        AND origin.name_hr NOT IN (${MAINLAND_STOP_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
      ORDER BY d.departure_time`,
