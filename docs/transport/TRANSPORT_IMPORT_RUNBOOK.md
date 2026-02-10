@@ -8,6 +8,25 @@ This document describes the **canonical procedure** for importing transport sche
 - The production backend container does not include `tsx` or dev dependencies
 - Host Node.js version may be too old (requires Node >= 18)
 - Import must be deterministic, repeatable, and auditable
+- We use a Docker-based runner to avoid host/node version drift
+
+---
+
+## When to Run Import
+
+Run the import command in these scenarios:
+
+| Scenario | Action |
+|----------|--------|
+| After merging transport JSON changes | Run import to apply schedule changes |
+| After deploying new backend code | Run import if transport logic changed |
+| After database reset/migration | Run import to repopulate transport data |
+| After modifying line files locally | Run import to apply to staging/prod |
+| Debugging transport issues | Run import to ensure data is fresh |
+
+**Do NOT run import:**
+- On every deploy (only when transport data/logic changed)
+- Without verifying preflight checks pass
 
 ---
 
@@ -204,6 +223,31 @@ sleep 10
 curl -s http://localhost:3100/transport/sea/lines | jq '.lines | length'
 ```
 
+### "scripts/transport-import.ts not found" in prod container
+
+**Cause**: You tried to run import inside the production backend container. The prod image only includes compiled `dist/` files, not TypeScript sources or dev scripts.
+
+**Solution**: Use the canonical command which mounts the source directory into a temporary Node 20 container:
+```bash
+cd /opt/mojvis && ./src/backend/scripts/transport-import-docker.sh
+```
+
+### "Docker is not available or not running"
+
+**Cause**: Docker daemon is not running or the current user doesn't have Docker permissions.
+
+**Solution**:
+```bash
+# Check if Docker is running
+systemctl status docker
+
+# If not running, start it
+sudo systemctl start docker
+
+# Verify
+docker info
+```
+
 ---
 
 ## Manual Import (Fallback)
@@ -236,14 +280,18 @@ docker run --rm \
 
 All import runs are logged to:
 ```
-docs/transport/import_runs/IMPORT_<YYYY-MM-DD_HH-mm-ss>.md
+docs/transport/import_runs/IMPORT_<YYYY-MM-DD_HH-mm-ss>_CET.md
 ```
 
 Each log contains:
-- Timestamp (Europe/Zagreb)
+- Timestamp (Europe/Zagreb / CET)
+- Hostname and environment label
 - Git branch and SHA
-- Command executed
+- Full command executed (with secrets redacted)
 - Summary counts (lines, routes, departures)
+- Detailed postflight API checks:
+  - Line 602: both directions, with departure times
+  - Line 659: summer vs winter verification
 - Pre-flight, import, post-flight status
 - Final PASS/FAIL verdict
 
