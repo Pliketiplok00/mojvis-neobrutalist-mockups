@@ -57,20 +57,74 @@ That's it. This script handles everything:
 - Checks holidays file exists (`holidays-hr-2026.json`)
 
 ### Import Execution
+
+**IMPORTANT: The import is a FULL REPLACE operation.**
+
+1. **DELETE**: All existing transport data is deleted from the database (lines, routes, departures)
+2. **INSERT**: Fresh data is inserted from JSON files in `src/data/lines/`
+
+This ensures the database always matches the JSON source files exactly. There is no incremental update - every import is a clean slate.
+
+**Technical details:**
 - Runs in a temporary `node:20-alpine` container
 - Mounts backend source from `/opt/mojvis/src/backend`
 - Connects to Docker network for DB access
 - Installs dependencies (`npm install --legacy-peer-deps`)
 - Runs: `npx tsx scripts/transport-import.ts --all --dir src/data/lines`
 
-### Post-flight Checks
-- Verifies API returns >= 4 SEA lines
-- Verifies line 602 returns departures for 2026-07-15 (HIGH season)
-- Verifies line 602 returns departures for 2026-10-15 (OFF-B season, previously failing)
+### Post-flight Checks (Verification Gate)
+
+The script performs **exact count verification** to ensure data integrity:
+
+| Check | Expected | Description |
+|-------|----------|-------------|
+| SEA lines count | **exactly 4** | Lines 602, 612, 659, 9602 |
+| Line 602 (2026-07-15) | **exactly 3 per direction** | HIGH season departures |
+| Line 602 (2026-10-15) | **exactly 2 per direction** | OFF-B season departures |
+| Line 659 (2026-07-15) | **> 0** | Summer (seasonal line should have departures) |
+| Line 659 (2026-01-15) | **== 0** | Winter (seasonal line should have no departures) |
+
+If any check fails, the script exits with FAIL verdict.
 
 ### Execution Logging
-- Writes log file to `docs/transport/import_runs/IMPORT_<timestamp>.md`
-- Records: git SHA, command, summary counts, PASS/FAIL verdict
+- Writes log file to `docs/transport/import_runs/IMPORT_<timestamp>_CET.md`
+- Records: git SHA, command, summary counts, detailed API checks, PASS/FAIL verdict
+
+---
+
+## How to Verify Manually
+
+If you need to verify the import independently of the script:
+
+```bash
+# Set base URL (adjust for your environment)
+BASE=http://localhost:3100  # or https://api.mojvis-test.pliketiplok.com
+
+# 1. Check SEA lines count (expect exactly 4)
+curl -s "$BASE/transport/sea/lines" | jq '.lines | length'
+
+# 2. Get line 602 ID
+LINE_602=$(curl -s "$BASE/transport/sea/lines" | jq -r '.lines[] | select(.subtype == "Trajekt") | .id' | head -1)
+echo "Line 602 ID: $LINE_602"
+
+# 3. Line 602 - HIGH season (2026-07-15) - expect 3 departures per direction
+curl -s "$BASE/transport/sea/lines/$LINE_602/departures?date=2026-07-15&direction=0" | jq '.departures | length'
+curl -s "$BASE/transport/sea/lines/$LINE_602/departures?date=2026-07-15&direction=1" | jq '.departures | length'
+
+# 4. Line 602 - OFF-B season (2026-10-15) - expect 2 departures per direction
+curl -s "$BASE/transport/sea/lines/$LINE_602/departures?date=2026-10-15&direction=0" | jq '.departures | length'
+curl -s "$BASE/transport/sea/lines/$LINE_602/departures?date=2026-10-15&direction=1" | jq '.departures | length'
+
+# 5. Get line 659 ID and check seasonality
+LINE_659=$(curl -s "$BASE/transport/sea/lines" | jq -r '.lines[] | select(.name | contains("Split – Hvar – Vis")) | .id' | head -1)
+echo "Line 659 ID: $LINE_659"
+
+# Line 659 - summer (expect > 0)
+curl -s "$BASE/transport/sea/lines/$LINE_659/departures?date=2026-07-15&direction=0" | jq '.departures | length'
+
+# Line 659 - winter (expect 0)
+curl -s "$BASE/transport/sea/lines/$LINE_659/departures?date=2026-01-15&direction=0" | jq '.departures | length'
+```
 
 ---
 
@@ -143,11 +197,17 @@ Import SUCCESSFUL
 POST-FLIGHT CHECKS
 ============================================================
 [INFO] Checking SEA lines via API...
-[PASS] API returns 4 SEA lines (expected >= 4)
-[INFO] Checking line 602 departures for 2026-07-15...
-[PASS] Line 602 returns 3 departures for 2026-07-15
-[INFO] Checking line 602 departures for 2026-10-15 (previously failing)...
-[PASS] Line 602 returns 2 departures for 2026-10-15 (OFF-B season)
+[PASS] API returns 4 SEA lines (expected exactly 4)
+[INFO] Checking line 602 departures for 2026-07-15 (HIGH season)...
+[PASS] Line 602 dir 0: 3 departures (expected 3) [05:30:00,12:00:00,18:00:00]
+[PASS] Line 602 dir 1: 3 departures (expected 3) [09:00:00,15:00:00,21:00:00]
+[INFO] Checking line 602 departures for 2026-10-15 (OFF-B season)...
+[PASS] Line 602 dir 0: 2 departures (expected 2) [05:30:00,15:30:00]
+[PASS] Line 602 dir 1: 2 departures (expected 2) [11:00:00,18:30:00]
+[INFO] Checking line 659 departures for 2026-07-15 (summer)...
+[PASS] Line 659 summer (2026-07-15): 2 departures
+[INFO] Checking line 659 departures for 2026-01-15 (non-summer)...
+[PASS] Line 659 winter (2026-01-15): 0 departures (expected)
 
 ============================================================
 POST-FLIGHT PASSED
