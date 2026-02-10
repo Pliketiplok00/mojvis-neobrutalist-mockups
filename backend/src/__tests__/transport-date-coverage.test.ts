@@ -151,7 +151,7 @@ describe('Transport Date Coverage', () => {
 
     test.each(testCases)(
       'should have >= $expectedMin departures on $date ($description)',
-      ({ date, expectedMin }: { date: string; expectedMin: number }) => {
+      ({ date, expectedMin }) => {
         const count = countExpectedDepartures(lineData, date, 0);
         expect(count).toBeGreaterThanOrEqual(expectedMin);
       }
@@ -194,7 +194,7 @@ describe('Transport Date Coverage', () => {
 
     test.each(testCases)(
       'should have >= $expectedMin departures on $date ($description)',
-      ({ date, expectedMin }: { date: string; expectedMin: number }) => {
+      ({ date, expectedMin }) => {
         const count = countExpectedDepartures(lineData, date, 0);
         expect(count).toBeGreaterThanOrEqual(expectedMin);
       }
