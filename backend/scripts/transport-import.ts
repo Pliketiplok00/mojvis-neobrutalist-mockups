@@ -74,6 +74,71 @@ const VALID_SEASON_TYPES: SeasonType[] = ['OFF', 'PRE', 'HIGH', 'POST'];
 const VALID_DAY_TYPES: DayType[] = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN', 'PRAZNIK'];
 
 // ============================================================
+// Stop Time Parsing (supports time ranges like "08:45–08:50")
+// ============================================================
+
+/**
+ * Regex for valid stop time formats:
+ * - Simple: "HH:MM" (e.g., "08:45")
+ * - Range: "HH:MM–HH:MM" or "HH:MM-HH:MM" (en-dash or hyphen, optional spaces)
+ * Examples: "08:45", "08:45–08:50", "08:45 - 08:50", "08:45-08:50"
+ */
+const STOP_TIME_REGEX = /^\d{2}:\d{2}(?:\s*[-–]\s*\d{2}:\d{2})?$/;
+
+/**
+ * Check if a stop time string is valid (null, simple HH:MM, or range HH:MM-HH:MM)
+ */
+function isValidStopTime(time: string | null): boolean {
+  if (time === null) return true;
+  return STOP_TIME_REGEX.test(time);
+}
+
+/**
+ * Normalize a stop time to simple HH:MM format.
+ * For ranges like "08:45–08:50", returns the SECOND time (departure from stop).
+ * For simple times, returns as-is.
+ * For null, returns null.
+ */
+function normalizeStopTime(time: string | null): string | null {
+  if (time === null) return null;
+
+  // Check if it's a range (contains dash or en-dash)
+  const rangeMatch = time.match(/^(\d{2}:\d{2})\s*[-–]\s*(\d{2}:\d{2})$/);
+  if (rangeMatch) {
+    // Return the second time (departure from this stop)
+    return rangeMatch[2];
+  }
+
+  // Simple HH:MM format, return as-is
+  return time;
+}
+
+/**
+ * Normalize all stop_times in a departure, converting ranges to departure times.
+ */
+function normalizeStopTimes(stopTimes: (string | null)[]): (string | null)[] {
+  return stopTimes.map(normalizeStopTime);
+}
+
+// Self-check: verify the parsing logic works correctly
+(function validateStopTimeLogic() {
+  const testCases: [string | null, string | null][] = [
+    [null, null],
+    ['08:45', '08:45'],
+    ['08:45–08:50', '08:50'],  // en-dash
+    ['08:45-08:50', '08:50'],  // hyphen
+    ['08:45 – 08:50', '08:50'], // spaces around en-dash
+    ['08:45 - 08:50', '08:50'], // spaces around hyphen
+  ];
+  for (const [input, expected] of testCases) {
+    const result = normalizeStopTime(input);
+    if (result !== expected) {
+      throw new Error(`Stop time normalization failed: normalizeStopTime(${JSON.stringify(input)}) = ${JSON.stringify(result)}, expected ${JSON.stringify(expected)}`);
+    }
+  }
+})();
+
+// ============================================================
 // UUID Generation (Deterministic from seed ID)
 // ============================================================
 
@@ -522,11 +587,11 @@ function validateDeparture(
       message: `stop_times length (${dep.stop_times.length}) must match route stops count (${stopCount})`,
     });
   } else {
-    // Validate each stop time format
+    // Validate each stop time format (accepts HH:MM or HH:MM–HH:MM ranges)
     for (let i = 0; i < dep.stop_times.length; i++) {
       const time = dep.stop_times[i];
-      if (time !== null && !/^\d{2}:\d{2}$/.test(time)) {
-        errors.push({ field: `${prefix}.stop_times[${i}]`, message: 'Stop time must be HH:MM or null' });
+      if (!isValidStopTime(time)) {
+        errors.push({ field: `${prefix}.stop_times[${i}]`, message: 'Stop time must be HH:MM, HH:MM–HH:MM range, or null' });
       }
     }
   }
@@ -859,6 +924,9 @@ async function importLine(
         }
       }
 
+      // Normalize stop_times: convert ranges like "08:45–08:50" to "08:50" (departure from stop)
+      const normalizedStopTimes = normalizeStopTimes(dep.stop_times);
+
       await client.query(
         `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en, marker, date_from, date_to, include_dates, exclude_dates)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
@@ -867,7 +935,7 @@ async function importLine(
           seasonUuid,
           dep.day_type,
           dep.departure_time,
-          JSON.stringify(dep.stop_times),
+          JSON.stringify(normalizedStopTimes),
           dep.notes_hr ?? null,
           dep.notes_en ?? null,
           dep.marker ?? null,
