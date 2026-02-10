@@ -313,6 +313,9 @@ export async function getSeasonsForYear(year: number): Promise<TransportSeason[]
  * Get departures for a route on a specific date
  * Automatically determines season and day type
  * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
+ *
+ * NOTE: Uses date-based season matching via JOIN instead of a single global season_id.
+ * Different lines can have different season definitions with overlapping dates.
  */
 export async function getDeparturesForRouteAndDate(
   routeId: string,
@@ -321,28 +324,26 @@ export async function getDeparturesForRouteAndDate(
   const date = parseDateInZagreb(dateStr);
   const dayType = getDayType(date);
   const isHoliday = dayType === 'PRAZNIK';
-  const season = await getSeasonForDate(date);
 
-  if (!season) {
-    return { departures: [], dayType, isHoliday };
-  }
-
+  // Query departures where the linked season's date range covers the requested date.
+  // This handles different lines having different season definitions.
   const result = await query<DepartureRow>(
-    `SELECT id, route_id, season_id, day_type,
-            departure_time::TEXT as departure_time,
-            stop_times::TEXT as stop_times,
-            notes_hr, notes_en, marker,
-            date_from::TEXT as date_from,
-            date_to::TEXT as date_to,
-            include_dates::TEXT as include_dates,
-            exclude_dates::TEXT as exclude_dates,
-            created_at, updated_at
-     FROM transport_departures
-     WHERE route_id = $1
-       AND season_id = $2
-       AND day_type = $3
-     ORDER BY departure_time`,
-    [routeId, season.id, dayType]
+    `SELECT d.id, d.route_id, d.season_id, d.day_type,
+            d.departure_time::TEXT as departure_time,
+            d.stop_times::TEXT as stop_times,
+            d.notes_hr, d.notes_en, d.marker,
+            d.date_from::TEXT as date_from,
+            d.date_to::TEXT as date_to,
+            d.include_dates::TEXT as include_dates,
+            d.exclude_dates::TEXT as exclude_dates,
+            d.created_at, d.updated_at
+     FROM transport_departures d
+     JOIN transport_seasons s ON d.season_id = s.id
+     WHERE d.route_id = $1
+       AND d.day_type = $2
+       AND $3::DATE BETWEEN s.date_from AND s.date_to
+     ORDER BY d.departure_time`,
+    [routeId, dayType, dateStr]
   );
 
   // Convert rows to departures and apply date exception filtering
@@ -368,6 +369,9 @@ const MAINLAND_STOP_NAMES = ['Split'];
  * Get today's departures for a transport type (aggregated across all lines)
  * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
  * IMPORTANT: Only returns island-origin departures (excludes Split-origin routes)
+ *
+ * NOTE: Uses date-based season matching via JOIN instead of a single global season_id.
+ * Different lines can have different season definitions with overlapping dates.
  */
 export async function getTodaysDepartures(
   transportType: TransportType,
@@ -391,13 +395,9 @@ export async function getTodaysDepartures(
   const date = parseDateInZagreb(dateStr);
   const dayType = getDayType(date);
   const isHoliday = dayType === 'PRAZNIK';
-  const season = await getSeasonForDate(date);
-
-  if (!season) {
-    return { departures: [], dayType, isHoliday };
-  }
 
   // Extended query to include date exception fields for filtering
+  // Uses date-based season matching via JOIN instead of a single global season_id
   const result = await query<{
     departure_time: string;
     line_id: string;
@@ -431,17 +431,18 @@ export async function getTodaysDepartures(
        d.include_dates::TEXT as include_dates,
        d.exclude_dates::TEXT as exclude_dates
      FROM transport_departures d
+     JOIN transport_seasons s ON d.season_id = s.id
      JOIN transport_routes r ON d.route_id = r.id
      JOIN transport_lines l ON r.line_id = l.id
      JOIN transport_stops dest ON r.destination_stop_id = dest.id
      JOIN transport_stops origin ON r.origin_stop_id = origin.id
      WHERE l.transport_type = $1
        AND l.is_active = TRUE
-       AND d.season_id = $2
-       AND d.day_type = $3
+       AND d.day_type = $2
+       AND $3::DATE BETWEEN s.date_from AND s.date_to
        AND origin.name_hr NOT IN (${MAINLAND_STOP_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
      ORDER BY d.departure_time`,
-    [transportType, season.id, dayType, ...MAINLAND_STOP_NAMES]
+    [transportType, dayType, dateStr, ...MAINLAND_STOP_NAMES]
   );
 
   // Apply date exception filtering
