@@ -79,13 +79,13 @@
             { "stop_id": "stop-split-port", "stop_order": 3 }
           ],
           "departures": [
-            { "day_type": "MON", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:40", null, "08:10"], "marker": null },
-            { "day_type": "THU", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:40", null, "08:10"], "marker": null },
-            { "day_type": "FRI", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:40", null, "08:10"], "marker": null },
-            { "day_type": "SAT", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:40", null, "08:10"], "marker": null },
+            { "day_type": "MON", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
+            { "day_type": "THU", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
+            { "day_type": "FRI", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
+            { "day_type": "SAT", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:40", null, "08:35"], "marker": null },
-            { "day_type": "WED", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:55", null, "08:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", "07:45", "08:00", "08:35"], "marker": null },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "07:00", "stop_times": ["07:00", null, "08:00", "08:30"], "marker": null },
 
             { "day_type": "SUN", "season_type": "OFF", "departure_time": "18:00", "stop_times": ["18:00", null, null, "19:10"], "marker": null },
             { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "18:00", "stop_times": ["18:00", null, null, "19:10"], "marker": null },
@@ -95,8 +95,8 @@
             { "day_type": "FRI", "season_type": "PRE", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
             { "day_type": "SAT", "season_type": "PRE", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "PRE", "departure_time": "07:05", "stop_times": ["07:05", "07:45", null, "08:45"], "marker": null },
-            { "day_type": "WED", "season_type": "PRE", "departure_time": "07:00", "stop_times": ["07:00", "07:55", null, "08:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "PRE", "departure_time": "07:05", "stop_times": ["07:05", "07:55", "08:00", "08:45"], "marker": null },
+            { "day_type": "WED", "season_type": "PRE", "departure_time": "07:00", "stop_times": ["07:00", null, "08:00", "08:30"], "marker": null },
 
             { "day_type": "SUN", "season_type": "PRE", "departure_time": "19:00", "stop_times": ["19:00", null, null, "20:10"], "marker": null },
             { "day_type": "PRAZNIK", "season_type": "PRE", "departure_time": "19:00", "stop_times": ["19:00", null, null, "20:10"], "marker": null },
@@ -107,16 +107,16 @@
             { "day_type": "SAT", "season_type": "HIGH", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
             { "day_type": "SUN", "season_type": "HIGH", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "07:05", "stop_times": ["07:05", "07:45", null, "08:45"], "marker": null },
-            { "day_type": "WED", "season_type": "HIGH", "departure_time": "07:00", "stop_times": ["07:00", "07:55", null, "08:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "07:05", "stop_times": ["07:05", "07:55", "08:00", "08:45"], "marker": null },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "07:00", "stop_times": ["07:00", null, "08:00", "08:30"], "marker": null },
 
             { "day_type": "MON", "season_type": "POST", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
             { "day_type": "THU", "season_type": "POST", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
             { "day_type": "FRI", "season_type": "POST", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
             { "day_type": "SAT", "season_type": "POST", "departure_time": "07:00", "stop_times": ["07:00", null, null, "08:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "POST", "departure_time": "07:05", "stop_times": ["07:05", "07:45", null, "08:45"], "marker": null },
-            { "day_type": "WED", "season_type": "POST", "departure_time": "07:00", "stop_times": ["07:00", "07:55", null, "08:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "POST", "departure_time": "07:05", "stop_times": ["07:05", "07:55", "08:00", "08:45"], "marker": null },
+            { "day_type": "WED", "season_type": "POST", "departure_time": "07:00", "stop_times": ["07:00", null, "08:00", "08:30"], "marker": null },
 
             { "day_type": "SUN", "season_type": "POST", "departure_time": "19:00", "stop_times": ["19:00", null, null, "20:10"], "marker": null },
             { "day_type": "PRAZNIK", "season_type": "POST", "departure_time": "19:00", "stop_times": ["19:00", null, null, "20:10"], "marker": null }
@@ -142,8 +142,8 @@
             { "day_type": "THU", "season_type": "OFF", "departure_time": "15:00", "stop_times": ["15:00", "15:35", "15:55", "16:10"], "marker": null },
             { "day_type": "SAT", "season_type": "OFF", "departure_time": "15:00", "stop_times": ["15:00", "15:35", "15:55", "16:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "OFF", "departure_time": "15:00", "stop_times": ["15:00", "15:30", "15:50", "16:35"], "marker": null },
-            { "day_type": "WED", "season_type": "OFF", "departure_time": "15:00", "stop_times": ["15:00", "15:35", "15:50", "16:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "OFF", "departure_time": "15:00", "stop_times": ["15:00", null, "15:55", "16:35"], "marker": null },
+            { "day_type": "WED", "season_type": "OFF", "departure_time": "15:00", "stop_times": ["15:00", "15:35", null, "16:30"], "marker": null },
 
             { "day_type": "FRI", "season_type": "OFF", "departure_time": "20:30", "stop_times": ["20:30", null, null, "21:40"], "marker": null },
 
@@ -157,12 +157,12 @@
             { "day_type": "SUN", "season_type": "OFF", "departure_time": "19:30", "date_from": "2026-09-28", "date_to": "2026-11-29", "stop_times": ["19:30", null, null, "20:40"], "marker": null },
             { "day_type": "PRAZNIK", "season_type": "OFF", "departure_time": "19:30", "date_from": "2026-09-28", "date_to": "2026-11-29", "stop_times": ["19:30", null, null, "20:40"], "marker": null },
 
-            { "day_type": "MON", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", null, null, "17:10"], "marker": null },
-            { "day_type": "THU", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", null, null, "17:10"], "marker": null },
-            { "day_type": "SAT", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", null, null, "17:10"], "marker": null },
+            { "day_type": "MON", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", "16:35", "16:55", "17:10"], "marker": null },
+            { "day_type": "THU", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", "16:35", "16:55", "17:10"], "marker": null },
+            { "day_type": "SAT", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", "16:35", "16:55", "17:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", null, "16:50", "17:35"], "marker": null },
-            { "day_type": "WED", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", "16:30", null, "17:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", null, "16:55", "17:35"], "marker": null },
+            { "day_type": "WED", "season_type": "PRE", "departure_time": "16:00", "stop_times": ["16:00", "16:35", null, "17:30"], "marker": null },
 
             { "day_type": "FRI", "season_type": "PRE", "departure_time": "20:30", "stop_times": ["20:30", null, null, "21:40"], "marker": null },
             { "day_type": "SUN", "season_type": "PRE", "departure_time": "20:30", "stop_times": ["20:30", null, null, "21:40"], "marker": null },
@@ -174,15 +174,15 @@
             { "day_type": "SAT", "season_type": "HIGH", "departure_time": "18:00", "stop_times": ["18:00", null, null, "19:10"], "marker": null },
             { "day_type": "SUN", "season_type": "HIGH", "departure_time": "18:00", "stop_times": ["18:00", null, null, "19:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "20:00", "stop_times": ["20:00", null, "20:50", "21:40"], "marker": null },
-            { "day_type": "WED", "season_type": "HIGH", "departure_time": "18:00", "stop_times": ["18:00", "18:30", null, "19:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "HIGH", "departure_time": "20:00", "stop_times": ["20:00", null, "21:00", "21:40"], "marker": null },
+            { "day_type": "WED", "season_type": "HIGH", "departure_time": "18:00", "stop_times": ["18:00", "18:35", null, "19:30"], "marker": null },
 
-            { "day_type": "MON", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", null, null, "17:10"], "marker": null },
-            { "day_type": "THU", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", null, null, "17:10"], "marker": null },
-            { "day_type": "SAT", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", null, null, "17:10"], "marker": null },
+            { "day_type": "MON", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:35", "16:55", "17:10"], "marker": null },
+            { "day_type": "THU", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:35", "16:55", "17:10"], "marker": null },
+            { "day_type": "SAT", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:35", "16:55", "17:10"], "marker": null },
 
-            { "day_type": "TUE", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", null, "16:50", "17:35"], "marker": null },
-            { "day_type": "WED", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:30", null, "17:30"], "marker": null },
+            { "day_type": "TUE", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", null, "16:55", "17:35"], "marker": null },
+            { "day_type": "WED", "season_type": "POST", "departure_time": "16:00", "stop_times": ["16:00", "16:35", null, "17:30"], "marker": null },
 
             { "day_type": "FRI", "season_type": "POST", "departure_time": "20:30", "stop_times": ["20:30", null, null, "21:40"], "marker": null },
             { "day_type": "SUN", "season_type": "POST", "departure_time": "20:30", "stop_times": ["20:30", null, null, "21:40"], "marker": null },
