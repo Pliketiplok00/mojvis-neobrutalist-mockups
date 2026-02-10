@@ -113,9 +113,28 @@ Excluded Bol-only routes that never touch Vis:
 **New stop introduced:**
 - `stop-bol-port` (Bol) - required for intermediate stop patterns
 
-### [PENDING] STEP 3: Date Exception Encoding
+### [COMPLETED] STEP 3: Date Exception Encoding
 
-_All special dates from canonical._
+**Date:** 2026-02-10
+**Files:** `backend/src/data/lines/line-612.json`
+**Commits:**
+- `8563500` - fix(612): add exclude_dates for 27.12 override
+
+**Canonical date exceptions verified:**
+
+| Line | Exception | Status |
+|------|-----------|--------|
+| 602 | 25.12 no 11:00 Split→Vis, no 16:30 Vis→Split | PRE-EXISTING (date_from/date_to excludes 25.12) |
+| 612 | 25.12 line does NOT operate | HANDLED (no PRAZNIK departures) |
+| 612 | 05.04 (Uskrs) line does NOT operate | HANDLED (no PRAZNIK departures) |
+| 612 | 24.12 special schedule | PRE-EXISTING (4 exception departures) |
+| 612 | 31.12 special schedule | PRE-EXISTING (2 exception departures) |
+| 612 | 06.04 special schedule | PRE-EXISTING (2 exception departures) |
+| 612 | 27.12 Porat 13:00 instead of 14:30 | FIXED (added exclude_dates) |
+| 659 | None | N/A (summer-only, no exceptions) |
+| 9602 | None | N/A (no canonical exceptions) |
+
+**Key finding:** Line 612 holiday blackouts are implicitly handled by absence of PRAZNIK day_type departures.
 
 ### [PENDING] STEP 4: Global Validation
 
