@@ -314,8 +314,9 @@ export async function getSeasonsForYear(year: number): Promise<TransportSeason[]
  * Automatically determines season and day type
  * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
  *
- * NOTE: Uses date-based season matching via JOIN instead of a single global season_id.
- * Different lines can have different season definitions with overlapping dates.
+ * NOTE: Handles disjoint seasons (e.g., OFF season split into Jan-May and Sep-Dec).
+ * A departure is returned if ANY season of the same season_type covers the requested date,
+ * regardless of which specific season row the departure was linked to during import.
  */
 export async function getDeparturesForRouteAndDate(
   routeId: string,
@@ -325,8 +326,9 @@ export async function getDeparturesForRouteAndDate(
   const dayType = getDayType(date);
   const isHoliday = dayType === 'PRAZNIK';
 
-  // Query departures where the linked season's date range covers the requested date.
-  // This handles different lines having different season definitions.
+  // Query departures where ANY season of the same type covers the requested date.
+  // This handles disjoint seasons (e.g., OFF: Jan-May AND Sep-Dec) where departures
+  // may be linked to only one period but should appear in both.
   const result = await query<DepartureRow>(
     `SELECT d.id, d.route_id, d.season_id, d.day_type,
             d.departure_time::TEXT as departure_time,
@@ -338,10 +340,15 @@ export async function getDeparturesForRouteAndDate(
             d.exclude_dates::TEXT as exclude_dates,
             d.created_at, d.updated_at
      FROM transport_departures d
-     JOIN transport_seasons s ON d.season_id = s.id
+     JOIN transport_seasons linked ON d.season_id = linked.id
      WHERE d.route_id = $1
        AND d.day_type = $2
-       AND $3::DATE BETWEEN s.date_from AND s.date_to
+       AND EXISTS (
+         SELECT 1 FROM transport_seasons any_season
+         WHERE any_season.season_type = linked.season_type
+           AND any_season.year = linked.year
+           AND $3::DATE BETWEEN any_season.date_from AND any_season.date_to
+       )
      ORDER BY d.departure_time`,
     [routeId, dayType, dateStr]
   );
@@ -370,8 +377,8 @@ const MAINLAND_STOP_NAMES = ['Split'];
  * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
  * IMPORTANT: Only returns island-origin departures (excludes Split-origin routes)
  *
- * NOTE: Uses date-based season matching via JOIN instead of a single global season_id.
- * Different lines can have different season definitions with overlapping dates.
+ * NOTE: Handles disjoint seasons (e.g., OFF season split into Jan-May and Sep-Dec).
+ * A departure is returned if ANY season of the same season_type covers the requested date.
  */
 export async function getTodaysDepartures(
   transportType: TransportType,
@@ -397,7 +404,7 @@ export async function getTodaysDepartures(
   const isHoliday = dayType === 'PRAZNIK';
 
   // Extended query to include date exception fields for filtering
-  // Uses date-based season matching via JOIN instead of a single global season_id
+  // Handles disjoint seasons by checking if ANY season of the same type covers the date
   const result = await query<{
     departure_time: string;
     line_id: string;
@@ -431,7 +438,7 @@ export async function getTodaysDepartures(
        d.include_dates::TEXT as include_dates,
        d.exclude_dates::TEXT as exclude_dates
      FROM transport_departures d
-     JOIN transport_seasons s ON d.season_id = s.id
+     JOIN transport_seasons linked ON d.season_id = linked.id
      JOIN transport_routes r ON d.route_id = r.id
      JOIN transport_lines l ON r.line_id = l.id
      JOIN transport_stops dest ON r.destination_stop_id = dest.id
@@ -439,7 +446,12 @@ export async function getTodaysDepartures(
      WHERE l.transport_type = $1
        AND l.is_active = TRUE
        AND d.day_type = $2
-       AND $3::DATE BETWEEN s.date_from AND s.date_to
+       AND EXISTS (
+         SELECT 1 FROM transport_seasons any_season
+         WHERE any_season.season_type = linked.season_type
+           AND any_season.year = linked.year
+           AND $3::DATE BETWEEN any_season.date_from AND any_season.date_to
+       )
        AND origin.name_hr NOT IN (${MAINLAND_STOP_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
      ORDER BY d.departure_time`,
     [transportType, dayType, dateStr, ...MAINLAND_STOP_NAMES]
