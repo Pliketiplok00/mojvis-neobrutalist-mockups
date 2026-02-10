@@ -85,9 +85,33 @@ jq '.lines[0].routes[0].departures[] | select(.day_type == "TUE" and .season_typ
 # Result: PASS
 ```
 
-### [PENDING] STEP 2: Line 659 Creation
+### [COMPLETED] STEP 2: Line 659 Creation
 
-_VIS-only routes with summer date bounds._
+**Date:** 2026-02-10
+**Files:** `backend/src/data/lines/line-659.json` (NEW)
+**Commits:**
+- `efd04db` - feat(659): add VIS-only summer catamaran line
+
+**Canonical rules implemented:**
+- Summer-only operation: 2026-06-19 to 2026-09-13
+- SPLIT → VIS route with 2 departure patterns
+- VIS → SPLIT route with 2 departure patterns
+
+**VIS-relevance constraint applied:**
+Excluded Bol-only routes that never touch Vis:
+- SPLIT → BOL 13:00→14:00 (terminates at Bol) - EXCLUDED
+- BOL → SPLIT 14:15→15:15 (originates at Bol) - EXCLUDED
+
+**Included VIS-relevant departures:**
+| Route | Departure | Stop Pattern |
+|-------|-----------|--------------|
+| SPLIT→VIS | 07:30 (I) | Skip Bol, stop Hvar 08:45, arrive Vis 09:25 |
+| SPLIT→VIS | 15:30 (III) | All stops: Bol 16:45, Hvar 17:45, Vis 18:20 |
+| VIS→SPLIT | 10:10 (I) | All stops: Hvar 11:10, Bol 12:10, Split 13:10 |
+| VIS→SPLIT | 19:35 (III) | Skip Bol, stop Hvar 20:30, arrive Split 21:35 |
+
+**New stop introduced:**
+- `stop-bol-port` (Bol) - required for intermediate stop patterns
 
 ### [PENDING] STEP 3: Date Exception Encoding
 
