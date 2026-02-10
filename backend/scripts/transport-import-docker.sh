@@ -252,11 +252,11 @@ postflight_checks() {
   local lines_count
   lines_count=$(echo "$lines_response" | jq '.lines | length' 2>/dev/null || echo "0")
 
-  if [[ "$lines_count" -ge 4 ]]; then
-    log_success "API returns $lines_count SEA lines (expected >= 4)"
+  if [[ "$lines_count" -eq 4 ]]; then
+    log_success "API returns $lines_count SEA lines (expected exactly 4)"
     POSTFLIGHT_RESULTS+="| SEA Lines Count | $lines_count | PASS |\n"
   else
-    log_error "API returns only $lines_count SEA lines (expected >= 4)"
+    log_error "API returns $lines_count SEA lines (expected exactly 4: 602, 612, 659, 9602)"
     POSTFLIGHT_RESULTS+="| SEA Lines Count | $lines_count | FAIL |\n"
     failed=1
   fi
@@ -266,8 +266,9 @@ postflight_checks() {
   line_602_id=$(echo "$lines_response" | jq -r '.lines[] | select(.subtype == "Trajekt") | .id' | head -1)
   line_659_id=$(echo "$lines_response" | jq -r '.lines[] | select(.name | contains("Split – Hvar – Vis")) | .id' | head -1)
 
-  # Check 2: Line 602 - 2026-07-15 (HIGH season) - Both directions
+  # Check 2: Line 602 - 2026-07-15 (HIGH season) - Both directions - EXPECT EXACTLY 3
   log_info "Checking line 602 departures for 2026-07-15 (HIGH season)..."
+  local expected_jul=3
   if [[ -n "$line_602_id" && "$line_602_id" != "null" ]]; then
     for dir in 0 1; do
       local deps_response deps_count deps_times
@@ -275,12 +276,12 @@ postflight_checks() {
       deps_count=$(echo "$deps_response" | jq '.departures | length' 2>/dev/null || echo "0")
       deps_times=$(echo "$deps_response" | jq -r '.departures[].departure_time' 2>/dev/null | sort | tr '\n' ', ' | sed 's/,$//' || echo "none")
 
-      if [[ "$deps_count" -gt 0 ]]; then
-        log_success "Line 602 dir $dir: $deps_count departures [$deps_times]"
+      if [[ "$deps_count" -eq $expected_jul ]]; then
+        log_success "Line 602 dir $dir: $deps_count departures (expected $expected_jul) [$deps_times]"
         POSTFLIGHT_RESULTS+="| Line 602 (2026-07-15) dir $dir | $deps_count | $deps_times |\n"
       else
-        log_error "Line 602 dir $dir: 0 departures (expected > 0)"
-        POSTFLIGHT_RESULTS+="| Line 602 (2026-07-15) dir $dir | 0 | FAIL |\n"
+        log_error "Line 602 dir $dir: $deps_count departures (expected exactly $expected_jul)"
+        POSTFLIGHT_RESULTS+="| Line 602 (2026-07-15) dir $dir | $deps_count | FAIL (expected $expected_jul) |\n"
         failed=1
       fi
 
@@ -294,11 +295,13 @@ postflight_checks() {
       fi
     done
   else
-    log_warn "Could not find line 602 ID - skipping"
+    log_error "Could not find line 602 ID - FAIL"
+    failed=1
   fi
 
-  # Check 3: Line 602 - 2026-10-15 (OFF-B season) - Both directions
+  # Check 3: Line 602 - 2026-10-15 (OFF-B season) - Both directions - EXPECT EXACTLY 2
   log_info "Checking line 602 departures for 2026-10-15 (OFF-B season)..."
+  local expected_oct=2
   if [[ -n "$line_602_id" && "$line_602_id" != "null" ]]; then
     for dir in 0 1; do
       local deps_response deps_count deps_times
@@ -306,12 +309,12 @@ postflight_checks() {
       deps_count=$(echo "$deps_response" | jq '.departures | length' 2>/dev/null || echo "0")
       deps_times=$(echo "$deps_response" | jq -r '.departures[].departure_time' 2>/dev/null | sort | tr '\n' ', ' | sed 's/,$//' || echo "none")
 
-      if [[ "$deps_count" -gt 0 ]]; then
-        log_success "Line 602 dir $dir: $deps_count departures [$deps_times]"
+      if [[ "$deps_count" -eq $expected_oct ]]; then
+        log_success "Line 602 dir $dir: $deps_count departures (expected $expected_oct) [$deps_times]"
         POSTFLIGHT_RESULTS+="| Line 602 (2026-10-15) dir $dir | $deps_count | $deps_times |\n"
       else
-        log_error "Line 602 dir $dir: 0 departures (expected > 0)"
-        POSTFLIGHT_RESULTS+="| Line 602 (2026-10-15) dir $dir | 0 | FAIL |\n"
+        log_error "Line 602 dir $dir: $deps_count departures (expected exactly $expected_oct)"
+        POSTFLIGHT_RESULTS+="| Line 602 (2026-10-15) dir $dir | $deps_count | FAIL (expected $expected_oct) |\n"
         failed=1
       fi
 
