@@ -67,7 +67,7 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
       {/* Icon box on left - red accent */}
       <View style={styles.iconBox}>
         <Icon
-          name="alert-triangle"
+          name="shield-alert"
           size="md"
           colorToken="primaryText"
           stroke="strong"

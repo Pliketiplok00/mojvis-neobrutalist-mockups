@@ -84,7 +84,15 @@
       "urgent": "HITNO",
       "report": "PRIJAVA"
     },
-    "photoCount": "slika"
+    "photoCount": "slika",
+    "tags": {
+      "promet": "Promet",
+      "kultura": "Kultura",
+      "opcenito": "Opcenito",
+      "hitno": "Hitno",
+      "vis": "Vis",
+      "komiza": "Komiza"
+    }
   },
   "inboxDetail": {
     "notFound": "Poruka nije pronadena",

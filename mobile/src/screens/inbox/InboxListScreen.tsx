@@ -14,7 +14,7 @@
  * REFACTORED: Now uses UI primitives from src/ui/
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   FlatList,
@@ -22,6 +22,7 @@ import {
   StyleSheet,
   SafeAreaView,
   RefreshControl,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -59,19 +60,30 @@ const { inbox: inboxTokens } = skin.components;
 
 /**
  * Get icon and background color for message based on tags
+ *
+ * Icon mapping (canonical):
+ * - hitno (urgent) → shield-alert
+ * - promet → traffic-cone
+ * - kultura → calendar-heart
+ * - opcenito → newspaper
+ * - municipal (vis/komiza) → megaphone
+ * - default → mail
  */
 function getMessageIconConfig(tags: InboxTag[], isUrgent: boolean): { icon: IconName; background: string } {
   if (isUrgent) {
-    return { icon: 'alert-triangle', background: inboxTokens.listItem.iconSlabBackgroundUrgent };
+    return { icon: 'shield-alert', background: inboxTokens.listItem.iconSlabBackgroundUrgent };
   }
   if (tags.includes('promet')) {
-    return { icon: 'ship', background: inboxTokens.listItem.iconSlabBackgroundTransport };
+    return { icon: 'traffic-cone', background: inboxTokens.listItem.iconSlabBackgroundTransport };
   }
   if (tags.includes('kultura')) {
-    return { icon: 'calendar', background: inboxTokens.listItem.iconSlabBackgroundCulture };
+    return { icon: 'calendar-heart', background: inboxTokens.listItem.iconSlabBackgroundCulture };
   }
   if (tags.includes('opcenito')) {
-    return { icon: 'message-circle', background: inboxTokens.listItem.iconSlabBackgroundGeneral };
+    return { icon: 'newspaper', background: inboxTokens.listItem.iconSlabBackgroundGeneral };
+  }
+  if (tags.includes('vis') || tags.includes('komiza')) {
+    return { icon: 'megaphone', background: inboxTokens.listItem.iconSlabBackgroundDefault };
   }
   return { icon: 'mail', background: inboxTokens.listItem.iconSlabBackgroundDefault };
 }
@@ -105,7 +117,47 @@ export function InboxListScreen(): React.JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sentError, setSentError] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<InboxTag[]>([]);
   const userContext = useUserContext();
+
+  // Define available filter tags based on user's municipality
+  // Municipal tags are shown ONLY to users whose municipality matches
+  const availableTags = useMemo((): InboxTag[] => {
+    const baseTags: InboxTag[] = ['promet', 'kultura', 'opcenito', 'hitno'];
+    if (userContext.municipality === 'vis') {
+      return [...baseTags, 'vis'];
+    }
+    if (userContext.municipality === 'komiza') {
+      return [...baseTags, 'komiza'];
+    }
+    return baseTags;
+  }, [userContext.municipality]);
+
+  // Filter messages based on selected tags (client-side)
+  const filteredMessages = useMemo(() => {
+    if (selectedTags.length === 0) {
+      return messages;
+    }
+    return messages.filter((msg) =>
+      msg.tags.some((tag) => selectedTags.includes(tag)) ||
+      (selectedTags.includes('hitno') && msg.is_urgent)
+    );
+  }, [messages, selectedTags]);
+
+  // Reset filter when switching tabs
+  const handleTabChange = (tab: TabType): void => {
+    setActiveTab(tab);
+    setSelectedTags([]);
+  };
+
+  // Toggle tag selection
+  const handleTagToggle = (tag: InboxTag): void => {
+    setSelectedTags((prev) =>
+      prev.includes(tag)
+        ? prev.filter((t) => t !== tag)
+        : [...prev, tag]
+    );
+  };
 
   const fetchMessages = useCallback(async (showRefresh = false) => {
     if (showRefresh) {
@@ -378,7 +430,7 @@ export function InboxListScreen(): React.JSX.Element {
       <View style={styles.tabBar}>
         <Pressable
           style={[styles.tab, activeTab === 'received' && styles.tabActive]}
-          onPress={() => setActiveTab('received')}
+          onPress={() => handleTabChange('received')}
         >
           <Icon
             name="inbox"
@@ -396,7 +448,7 @@ export function InboxListScreen(): React.JSX.Element {
         </Pressable>
         <Pressable
           style={[styles.tab, activeTab === 'sent' && styles.tabActive]}
-          onPress={() => setActiveTab('sent')}
+          onPress={() => handleTabChange('sent')}
         >
           <Icon
             name="send"
@@ -414,6 +466,44 @@ export function InboxListScreen(): React.JSX.Element {
         </Pressable>
       </View>
 
+      {/* Tag Filter Bar - only visible on received tab */}
+      {activeTab === 'received' && (
+        <View style={styles.tagFilterContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tagFilterScrollContent}
+          >
+            {availableTags.map((tag) => {
+              const isActive = selectedTags.includes(tag);
+              // Per-tag background and text colors (always applied)
+              const tagBackground = inboxTokens.tagFilter.chipBackgrounds[tag];
+              const tagTextColor = inboxTokens.tagFilter.chipTextColors[tag];
+              return (
+                <View key={tag} style={styles.tagChipWrapper}>
+                  {/* Neobrut shadow layer - only visible when selected */}
+                  {isActive && <View style={styles.tagChipShadow} />}
+                  <Pressable
+                    style={[
+                      styles.tagChip,
+                      { backgroundColor: tagBackground },
+                      isActive && styles.tagChipSelected,
+                    ]}
+                    onPress={() => handleTagToggle(tag)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: isActive }}
+                  >
+                    <Label style={[styles.tagChipText, { color: tagTextColor }]}>
+                      {t(`inbox.tags.${tag}`)}
+                    </Label>
+                  </Pressable>
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
       {/* Content */}
       {activeTab === 'received' ? (
         loading ? (
@@ -422,14 +512,17 @@ export function InboxListScreen(): React.JSX.Element {
           renderErrorState()
         ) : (
           <FlatList
-            data={messages}
+            data={filteredMessages}
             keyExtractor={(item) => item.id}
             renderItem={renderMessage}
             ListEmptyComponent={renderEmptyState}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
             }
-            contentContainerStyle={messages.length === 0 ? styles.listEmpty : undefined}
+            contentContainerStyle={[
+              filteredMessages.length === 0 ? styles.listEmpty : undefined,
+              styles.listContentContainer,
+            ]}
           />
         )
       ) : (
@@ -502,6 +595,57 @@ const styles = StyleSheet.create({
   },
   tabTextActive: {
     color: inboxTokens.tabs.activeTextColor,
+  },
+
+  // Tag filter bar
+  tagFilterContainer: {
+    backgroundColor: inboxTokens.tagFilter.containerBackground,
+    paddingVertical: inboxTokens.tagFilter.containerPadding,
+    borderBottomWidth: skin.borders.widthThin,
+    borderBottomColor: skin.colors.border,
+  },
+  tagFilterScrollContent: {
+    paddingLeft: inboxTokens.tagFilter.containerPadding,
+    // Right padding: container padding + shadow offset to prevent clipping
+    paddingRight: inboxTokens.tagFilter.containerPadding + inboxTokens.tagFilter.chipShadowOffset,
+    // Bottom padding for shadow visibility (derived from shadow offset)
+    paddingBottom: inboxTokens.tagFilter.chipShadowOffset,
+    gap: inboxTokens.tagFilter.chipGap,
+  },
+  // Chip wrapper for shadow positioning
+  tagChipWrapper: {
+    position: 'relative',
+  },
+  // Neobrut shadow layer (visible only when selected)
+  tagChipShadow: {
+    position: 'absolute',
+    top: inboxTokens.tagFilter.chipShadowOffset,
+    left: inboxTokens.tagFilter.chipShadowOffset,
+    right: -inboxTokens.tagFilter.chipShadowOffset,
+    bottom: -inboxTokens.tagFilter.chipShadowOffset,
+    backgroundColor: inboxTokens.tagFilter.chipShadowColor,
+    borderRadius: inboxTokens.tagFilter.chipBorderRadius,
+  },
+  // Chip base style (category background applied via inline style)
+  tagChip: {
+    paddingHorizontal: inboxTokens.tagFilter.chipPaddingHorizontal,
+    paddingVertical: inboxTokens.tagFilter.chipPaddingVertical,
+    borderWidth: inboxTokens.tagFilter.chipBorderWidthDefault,
+    borderColor: inboxTokens.tagFilter.chipBorderColor,
+    borderRadius: inboxTokens.tagFilter.chipBorderRadius,
+  },
+  // Selected chip: thicker outline
+  tagChipSelected: {
+    borderWidth: inboxTokens.tagFilter.chipBorderWidthSelected,
+  },
+  // Chip text (color applied via inline style for per-tag legibility)
+  tagChipText: {
+    textTransform: 'uppercase',
+  },
+
+  // List content container (spacing from filter bar)
+  listContentContainer: {
+    paddingTop: inboxTokens.tagFilter.listTopPadding,
   },
 
   listEmpty: {

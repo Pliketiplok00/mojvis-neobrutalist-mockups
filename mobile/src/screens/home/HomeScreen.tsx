@@ -490,9 +490,9 @@ const styles = StyleSheet.create({
   ctaIconBox: {
     width: 48,
     height: 48,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: skin.colors.iconBoxOverlayBg,
     borderWidth: skin.borders.widthThin,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: skin.colors.iconBoxOverlayBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },

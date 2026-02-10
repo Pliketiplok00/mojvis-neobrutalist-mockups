@@ -84,7 +84,15 @@
       "urgent": "URGENT",
       "report": "REPORT"
     },
-    "photoCount": "photos"
+    "photoCount": "photos",
+    "tags": {
+      "promet": "Transport",
+      "kultura": "Culture",
+      "opcenito": "General",
+      "hitno": "Urgent",
+      "vis": "Vis",
+      "komiza": "Komiza"
+    }
   },
   "inboxDetail": {
     "notFound": "Message not found",

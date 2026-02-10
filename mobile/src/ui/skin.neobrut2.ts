@@ -33,28 +33,28 @@ const palette = {
   mutedText: hsl(220, 10, 40), // --muted-foreground
 
   // Primary - Mediterranean Blue
-  primary: hsl(210, 80, 45),
+  primary: hsl(201, 68, 47), // #2788C9
   // Secondary - Olive Green
-  secondary: hsl(160, 45, 38),
+  secondary: hsl(143, 79, 38), // #15AF50
   // Accent - Sun Yellow
-  accent: hsl(45, 92, 55),
+  accent: hsl(45, 98, 53), // #FDC010
   // Destructive - Terracotta Red
-  destructive: hsl(12, 55, 50),
+  destructive: hsl(12, 69, 51), // #D64E2D
 
   // Extended Mediterranean Palette
-  lavender: hsl(270, 35, 70), // Feedback section
-  amber: hsl(35, 83, 61), // Banner fill - #eeab4b
-  orange: hsl(25, 85, 55), // Click-Fix section
+  lavender: hsl(281, 31, 68), // #B796C6
+  amber: hsl(33, 94, 54), // Banner fill - #F8961D (merged with orange)
+  orange: hsl(33, 94, 54), // Click-Fix section - #F8961D
   teal: hsl(180, 45, 42), // Catamaran transport
   pink: hsl(350, 50, 65), // Decorative accents
 
   // UI extras
   chevron: hsl(220, 10, 50),
   typeBadge: hsl(270, 40, 52),
-  unreadIndicator: hsl(210, 80, 45), // matches primary
+  unreadIndicator: hsl(201, 68, 47), // matches primary
 
   // Link color
-  link: hsl(210, 80, 45), // same as primary for consistency
+  link: hsl(201, 68, 47), // same as primary for consistency
 };
 
 const borders = {
@@ -63,6 +63,7 @@ const borders = {
   widthThin: 2,
   widthCard: 3,
   widthHeavy: 4,
+  widthExtraHeavy: 8, // Double-weight divider for emphasis
   radiusSharp: 0, // neobrutalist: sharp corners everywhere
   radiusSoft: 4, // small elements (badges) - per design system --radius-soft
   radiusCard: 0, // cards/containers: sharp corners (neobrutalist principle)
@@ -255,6 +256,14 @@ export const colors = {
   // Optional overlay
   overlay: hsla(220, 20, 10, 0.6),
 
+  // Icon box overlays (white transparency on colored surfaces)
+  iconBoxOverlayBg: hsla(0, 0, 100, 0.2), // White 20%
+  iconBoxOverlayBorder: hsla(0, 0, 100, 0.3), // White 30%
+
+  // Sensitive area indicators (destructive-derived with transparency)
+  sensitiveAreaBg: hsla(12, 55, 50, 0.4), // Destructive 40%
+  sensitiveAreaBadge: hsla(12, 55, 50, 0.5), // Destructive 50%
+
   // Test watermark (if still present somewhere)
   testWatermarkBg: borders.color,
   testWatermarkText: "white",
@@ -266,6 +275,7 @@ export const bordersToken = {
   widthThin: borders.widthThin,
   widthCard: borders.widthCard,
   widthHeavy: borders.widthHeavy,
+  widthExtraHeavy: borders.widthExtraHeavy,
   radiusSharp: borders.radiusSharp, // neobrutalist: 0
   radiusSmall: borders.radiusSoft,
   radiusMedium: borders.radiusSharp,
@@ -904,9 +914,46 @@ export const components = {
 
   // Inbox screen component tokens (V1 banner list style)
   inbox: {
+    // Tag filter bar (horizontal scrollable chips)
+    tagFilter: {
+      containerPadding: spacing.md,
+      containerBackground: colors.backgroundSecondary,
+      chipGap: spacing.sm,
+      chipPaddingHorizontal: spacing.md,
+      chipPaddingVertical: spacing.sm,
+      chipBorderColor: colors.border,
+      chipBorderRadius: bordersToken.radiusSharp, // Neobrut: sharp corners
+      // Border width: default vs selected (thicker outline on selection)
+      chipBorderWidthDefault: bordersToken.widthThin,
+      chipBorderWidthSelected: bordersToken.widthCard,
+      // Shadow for selected chips (reuse button shadow tokens)
+      chipShadowOffset: 4, // Same as button shadowOffset
+      chipShadowColor: colors.border,
+      // Per-tag chip backgrounds (always visible - category colors)
+      chipBackgrounds: {
+        promet: palette.primary, // Blue (transport)
+        kultura: palette.lavender, // Purple (culture)
+        opcenito: palette.secondary, // Green (general)
+        hitno: palette.destructive, // Terracotta (urgent)
+        vis: palette.amber, // Amber (municipal)
+        komiza: palette.amber, // Amber (municipal)
+      },
+      // Per-tag text colors for legibility (always applied)
+      chipTextColors: {
+        promet: colors.primaryText, // White on blue
+        kultura: colors.textPrimary, // Dark on lavender
+        opcenito: colors.primaryText, // White on green
+        hitno: colors.primaryText, // White on terracotta
+        vis: colors.textPrimary, // Dark on amber
+        komiza: colors.textPrimary, // Dark on amber
+      },
+      // Spacing between filter bar and list
+      listTopPadding: spacing.md,
+    },
+
     // Banner-style tabs (stronger typography hierarchy)
     tabs: {
-      borderBottomWidth: bordersToken.widthCard,
+      borderBottomWidth: bordersToken.widthExtraHeavy, // Heavy neobrut rule (2x widthHeavy)
       borderBottomColor: colors.border,
       // Active tab (filled)
       activeBackground: palette.primary,

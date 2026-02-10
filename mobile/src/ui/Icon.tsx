@@ -16,6 +16,7 @@ import {
   Inbox,
   Home,
   Calendar,
+  CalendarHeart,
   Bus,
   Ship,
   Anchor,
@@ -34,6 +35,7 @@ import {
   ChevronDown,
   X,
   AlertTriangle,
+  ShieldAlert,
   Send,
   MailOpen,
   Camera,
@@ -45,6 +47,9 @@ import {
   Cat,
   Car,
   Landmark,
+  TrafficCone,
+  Newspaper,
+  Megaphone,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -62,6 +67,7 @@ export type IconName =
   | 'inbox'
   | 'home'
   | 'calendar'
+  | 'calendar-heart'
   | 'bus'
   | 'ship'
   | 'anchor'
@@ -81,6 +87,7 @@ export type IconName =
   | 'chevron-down'
   | 'close'
   | 'alert-triangle'
+  | 'shield-alert'
   | 'send'
   | 'camera'
   | 'check'
@@ -90,7 +97,10 @@ export type IconName =
   | 'hospital'
   | 'cat'
   | 'car'
-  | 'landmark';
+  | 'landmark'
+  | 'traffic-cone'
+  | 'newspaper'
+  | 'megaphone';
 
 /**
  * Icon size tokens from skin.
@@ -116,6 +126,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'inbox': Inbox,
   'home': Home,
   'calendar': Calendar,
+  'calendar-heart': CalendarHeart,
   'bus': Bus,
   'ship': Ship,
   'anchor': Anchor,
@@ -135,6 +146,7 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'chevron-down': ChevronDown,
   'close': X,
   'alert-triangle': AlertTriangle,
+  'shield-alert': ShieldAlert,
   'send': Send,
   'camera': Camera,
   'check': Check,
@@ -145,6 +157,9 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'cat': Cat,
   'car': Car,
   'landmark': Landmark,
+  'traffic-cone': TrafficCone,
+  'newspaper': Newspaper,
+  'megaphone': Megaphone,
 };
 
 interface IconProps {
