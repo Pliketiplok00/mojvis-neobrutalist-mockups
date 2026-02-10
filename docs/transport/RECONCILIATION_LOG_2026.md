@@ -136,9 +136,42 @@ Excluded Bol-only routes that never touch Vis:
 
 **Key finding:** Line 612 holiday blackouts are implicitly handled by absence of PRAZNIK day_type departures.
 
-### [PENDING] STEP 4: Global Validation
+### [COMPLETED] STEP 4: Global Validation
 
-_Representative date testing._
+**Date:** 2026-02-10
+**Method:** Structural validation + canonical spot checks
+
+**Validation Tests (7/7 PASS):**
+
+| Test | Description | Result |
+|------|-------------|--------|
+| 1 | Line 9602 OFF TUE stop pattern | PASS |
+| 2 | Line 9602 PRE MON Route 1 all stops | PASS |
+| 3 | Line 659 structure (2 routes, 32 deps) | PASS |
+| 4 | Line 659 VIS-relevance (no Bol-only) | PASS |
+| 5 | Line 612 27.12 exclude_dates | PASS |
+| 6 | Line 612 holiday blackout (no PRAZNIK) | PASS |
+| 7 | Line 602 Christmas exclusion | PASS |
+
+**Canonical Spot Checks (4/4 PASS):**
+
+| Check | Description | Result |
+|-------|-------------|--------|
+| 1 | 9602 HIGH WED SPLIT→VIS: MILNA 18:35, HVAR null | PASS |
+| 2 | 659 Route 0 07:30: BOL null, HVAR 08:45 | PASS |
+| 3 | 659 Route 1 19:35: HVAR 20:30, BOL null | PASS |
+| 4 | 612 24.12 exception times | PASS |
+
+**Verification Commands:**
+```bash
+# 9602 stop pattern check
+jq '.lines[0].routes[0].departures[] | select(.day_type == "TUE" and .season_type == "OFF") | .stop_times' backend/src/data/lines/line-9602.json
+# Expected: ["07:00", "07:45", "08:00", "08:35"]
+
+# 659 structure check
+jq '.lines[0].routes | length' backend/src/data/lines/line-659.json  # Expected: 2
+jq '[.lines[0].routes[].departures | length] | add' backend/src/data/lines/line-659.json  # Expected: 32
+```
 
 ---
 
@@ -165,9 +198,44 @@ When canonical requires the same departure to operate in multiple disjoint perio
 
 ---
 
-## 4. Validation Evidence
+## 4. Final Summary
 
-_To be added after each step._
+### What Was Changed
+
+| Line | Changes |
+|------|---------|
+| 9602 | 26 stop pattern corrections (HVAR/MILNA values) |
+| 659 | Created new file (VIS-only routes, summer 2026) |
+| 612 | Added exclude_dates for 27.12 exception |
+| 602 | No changes (pre-existing date handling correct) |
+
+### What Was Validated
+
+- All 4 lines have correct stop patterns matching canonical
+- Date exceptions properly encoded via date_from/date_to and exclude_dates
+- Holiday blackouts work via absence of PRAZNIK departures (Line 612)
+- VIS-relevance constraint enforced (Line 659 excludes Bol-only routes)
+
+### Intentionally Unsupported
+
+| Item | Reason |
+|------|--------|
+| Pricing data | Out of scope per constraints |
+| Line 01 | Not in canonical scope |
+| Weather-based cancellations | Runtime operational, not data model |
+
+### Git History
+
+```
+38b6f74 docs(transport): add reconciliation log for 2026 data sync
+7cb5f68 docs(9602): add correction manifest before applying fixes
+e6841d7 fix(9602): correct all 26 stop pattern errors
+fd2c215 docs(transport): update reconciliation log with Step 1 completion
+efd04db feat(659): add VIS-only summer catamaran line
+fee9236 docs(transport): update reconciliation log with Step 2 completion
+8563500 fix(612): add exclude_dates for 27.12 override
+18a2073 docs(transport): update reconciliation log with Step 3 completion
+```
 
 ---
 
