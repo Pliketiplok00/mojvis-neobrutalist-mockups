@@ -694,19 +694,30 @@ async function importLine(
     );
   }
 
-  // Step 2: Upsert provided seasons
+  // Step 2: Upsert provided seasons (keyed by id, allows multiple seasons of same type per year)
+  // Build map: season_type-year -> [seasons] for departure linking
+  const seasonsByTypeYear = new Map<string, SeedSeason[]>();
   for (const season of providedSeasons) {
     const seasonUuid = seedIdToUuid(season.id);
     await client.query(
       `INSERT INTO transport_seasons (id, season_type, year, date_from, date_to, label_hr, label_en)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
-       ON CONFLICT (season_type, year) DO UPDATE SET
+       ON CONFLICT (id) DO UPDATE SET
+         season_type = EXCLUDED.season_type,
+         year = EXCLUDED.year,
          date_from = EXCLUDED.date_from,
          date_to = EXCLUDED.date_to,
          label_hr = EXCLUDED.label_hr,
          label_en = EXCLUDED.label_en`,
       [seasonUuid, season.season_type, season.year, season.date_from, season.date_to, season.label_hr, season.label_en]
     );
+
+    // Track seasons by type+year for departure linking
+    const key = `${season.season_type}-${season.year}`;
+    if (!seasonsByTypeYear.has(key)) {
+      seasonsByTypeYear.set(key, []);
+    }
+    seasonsByTypeYear.get(key)!.push(season);
   }
 
   // Step 3: Delete existing line (CASCADE deletes routes, departures, contacts)
@@ -778,19 +789,75 @@ async function importLine(
       );
     }
 
-    // Insert departures
+    // Insert departures with date-aware season linking
     for (const dep of route.departures) {
-      // Look up season UUID
-      const seasonResult = await client.query(
-        'SELECT id FROM transport_seasons WHERE season_type = $1 AND year = $2',
-        [dep.season_type, 2026]
-      );
+      const year = 2026;
+      const key = `${dep.season_type}-${year}`;
+      const providedSeasons = seasonsByTypeYear.get(key) || [];
 
-      if (seasonResult.rows.length === 0) {
-        throw new Error(`Season not found: ${dep.season_type} 2026`);
+      let seasonUuid: string;
+
+      if (dep.date_from) {
+        // Departure has explicit date range - find the season containing that date
+        let matchedSeason: SeedSeason | null = null;
+
+        // First try provided seasons from this line's JSON
+        for (const season of providedSeasons) {
+          if (dep.date_from >= season.date_from && dep.date_from <= season.date_to) {
+            matchedSeason = season;
+            break;
+          }
+        }
+
+        // Fallback: query DB for season containing this date
+        if (!matchedSeason) {
+          const seasonResult = await client.query(
+            `SELECT id FROM transport_seasons
+             WHERE season_type = $1 AND year = $2
+               AND $3::DATE BETWEEN date_from AND date_to
+             LIMIT 1`,
+            [dep.season_type, year, dep.date_from]
+          );
+          if (seasonResult.rows.length > 0) {
+            seasonUuid = seasonResult.rows[0].id;
+          } else {
+            throw new Error(
+              `No season found for departure ${dep.departure_time} ${dep.day_type} ` +
+              `with date_from=${dep.date_from} (season_type=${dep.season_type}, year=${year})`
+            );
+          }
+        } else {
+          seasonUuid = seedIdToUuid(matchedSeason.id);
+        }
+      } else {
+        // No explicit date range - use provided seasons or DB lookup
+        if (providedSeasons.length > 0) {
+          // Line provides its own seasons - use the first one
+          // (for lines with proper seasons like line-9602, departures without date_from
+          // apply to all seasons of that type, but we link to one; the API filters by date)
+          seasonUuid = seedIdToUuid(providedSeasons[0].id);
+        } else {
+          // Line doesn't provide seasons - must exist in DB from another line
+          const seasonResult = await client.query(
+            `SELECT id, date_from, date_to FROM transport_seasons
+             WHERE season_type = $1 AND year = $2
+             ORDER BY date_from
+             LIMIT 1`,
+            [dep.season_type, year]
+          );
+          if (seasonResult.rows.length === 0) {
+            throw new Error(
+              `No season found in DB for ${dep.season_type} ${year}. ` +
+              `Line must provide seasons array or import a line with seasons first.`
+            );
+          }
+          seasonUuid = seasonResult.rows[0].id;
+          console.warn(
+            `  [WARN] Departure ${dep.departure_time} ${dep.day_type} linked to existing DB season ` +
+            `${dep.season_type} (${seasonResult.rows[0].date_from} to ${seasonResult.rows[0].date_to})`
+          );
+        }
       }
-
-      const seasonUuid = seasonResult.rows[0].id;
 
       await client.query(
         `INSERT INTO transport_departures (route_id, season_id, day_type, departure_time, stop_times, notes_hr, notes_en, marker, date_from, date_to, include_dates, exclude_dates)
