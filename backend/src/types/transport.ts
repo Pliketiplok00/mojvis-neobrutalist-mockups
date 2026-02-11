@@ -197,6 +197,7 @@ export interface ContactInfo {
  */
 export interface LineDetailResponse {
   id: string;
+  line_number: string | null;
   name: string;
   subtype: string | null;
   routes: RouteInfo[];

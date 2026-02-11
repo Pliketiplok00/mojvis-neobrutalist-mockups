@@ -194,6 +194,7 @@ function createTransportRoutes(transportType: TransportType) {
 
           const response: LineDetailResponse = {
             id: line.id,
+            line_number: line.line_number,
             name: language === 'en' ? line.name_en : line.name_hr,
             subtype: language === 'en' ? line.subtype_en : line.subtype_hr,
             routes: routeInfos,

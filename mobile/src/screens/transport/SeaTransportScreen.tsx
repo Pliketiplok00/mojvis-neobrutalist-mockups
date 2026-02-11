@@ -44,6 +44,7 @@ import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
 import { formatDayWithDate } from '../../utils/dateFormat';
+import { formatLineTitle } from '../../utils/transportFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -88,20 +89,6 @@ function getSeaHeaderBackground(subtype: string | null, lineNumber: string | nul
   const lower = subtype.toLowerCase();
   if (lower.includes('katamaran')) return listTokens.lineCardHeaderBackgroundSeaCatamaran;
   return listTokens.lineCardHeaderBackgroundSea;
-}
-
-/**
- * Format line title using structured origin/destination data
- * Format: "<line_number>: <origin>-<destination>"
- * E.g., "602: Vis-Split"
- */
-function formatLineTitle(
-  lineNumber: string | null,
-  origin: string,
-  destination: string
-): string {
-  const prefix = lineNumber ?? '';
-  return `${prefix}: ${origin}-${destination}`;
 }
 
 export function SeaTransportScreen(): React.JSX.Element {

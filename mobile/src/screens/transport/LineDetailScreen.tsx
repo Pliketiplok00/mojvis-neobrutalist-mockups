@@ -39,7 +39,8 @@ import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
-import { formatDateISO, formatDisplayDate } from '../../utils/dateFormat';
+import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
+import { formatLineTitle } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
@@ -61,7 +62,7 @@ export function LineDetailScreen({
   lineId,
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const userContext = useUserContext();
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
@@ -149,6 +150,8 @@ export function LineDetailScreen({
   // Get routes for direction toggle
   const routes: RouteInfo[] = lineDetailData?.routes || [];
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
+  // Direction 0 route for canonical header title (matches list view)
+  const dir0Route = routes.find((r) => r.direction === 0);
 
   // Date navigation
   const adjustDate = (days: number) => {
@@ -241,7 +244,13 @@ export function LineDetailScreen({
               />
             </View>
             <View style={styles.headerTextContainer}>
-              <H1 style={styles.headerTitle}>{lineDetailData.name}</H1>
+              <H1 style={styles.headerTitle}>
+                {formatLineTitle(
+                  lineDetailData.line_number,
+                  dir0Route?.origin ?? '',
+                  dir0Route?.destination ?? ''
+                )}
+              </H1>
               <View style={styles.headerMetaRow}>
                 {lineDetailData.subtype && (
                   <Meta style={styles.headerMeta}>{lineDetailData.subtype}</Meta>
@@ -273,14 +282,9 @@ export function LineDetailScreen({
               accessibilityLabel={t('transport.lineDetail.selectDate')}
               accessibilityRole="button"
             >
-              <Label style={styles.dateSelectorLabel}>DATUM</Label>
-              <H2 style={styles.dateText}>{formatDisplayDate(selectedDate)}</H2>
-              {departures && (
-                <Meta style={styles.dayTypeText}>
-                  {DAY_TYPE_LABELS[departures.day_type]}
-                  {departures.is_holiday && ` (${t('transport.holiday')})`}
-                </Meta>
-              )}
+              <Label style={styles.dateText}>
+                {formatDayWithDate(new Date(selectedDate), language)}
+              </Label>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.dateArrow}
@@ -569,11 +573,12 @@ const styles = StyleSheet.create({
     borderWidth: lineDetail.dateSelectorBorderWidth,
     borderColor: lineDetail.dateSelectorBorderColor,
     borderRadius: lineDetail.dateSelectorRadius,
-    padding: lineDetail.dateSelectorPadding,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   dateArrow: {
-    width: lineDetail.dateSelectorArrowSize,
-    height: lineDetail.dateSelectorArrowSize,
+    width: 36,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -581,16 +586,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  dateSelectorLabel: {
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
-  },
   dateText: {
     color: colors.textPrimary,
-  },
-  dayTypeText: {
-    marginTop: spacing.xs,
   },
 
   // Direction Toggle Tabs
