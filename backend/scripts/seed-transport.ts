@@ -181,11 +181,12 @@ async function insertLine(line: SeedLine): Promise<void> {
 
   // Insert line
   await pool.query(
-    `INSERT INTO transport_lines (id, transport_type, name_hr, name_en, subtype_hr, subtype_en, display_order, is_active)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)`,
+    `INSERT INTO transport_lines (id, transport_type, line_number, name_hr, name_en, subtype_hr, subtype_en, display_order, is_active)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE)`,
     [
       lineUuid,
       line.transport_type,
+      line.line_number ?? null,
       line.name_hr,
       line.name_en,
       line.subtype_hr ?? null,
