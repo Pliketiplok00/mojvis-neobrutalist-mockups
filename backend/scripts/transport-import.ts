@@ -785,16 +785,29 @@ async function importLine(
     seasonsByTypeYear.get(key)!.push(season);
   }
 
-  // Step 3: Delete existing line (CASCADE deletes routes, departures, contacts)
+  // Step 3: Preserve existing line_number before DELETE (if JSON doesn't provide one)
+  let lineNumber: string | null = line.line_number ?? null;
+  if (!lineNumber) {
+    const existingLineData = await client.query<{ line_number: string | null }>(
+      'SELECT line_number FROM transport_lines WHERE id = $1',
+      [lineUuid]
+    );
+    if (existingLineData.rows.length > 0 && existingLineData.rows[0].line_number) {
+      lineNumber = existingLineData.rows[0].line_number;
+    }
+  }
+
+  // Step 4: Delete existing line (CASCADE deletes routes, departures, contacts)
   await client.query('DELETE FROM transport_lines WHERE id = $1', [lineUuid]);
 
-  // Step 4: Insert new line
+  // Step 5: Insert new line (preserving line_number)
   await client.query(
-    `INSERT INTO transport_lines (id, transport_type, name_hr, name_en, subtype_hr, subtype_en, display_order, is_active)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, TRUE)`,
+    `INSERT INTO transport_lines (id, transport_type, line_number, name_hr, name_en, subtype_hr, subtype_en, display_order, is_active)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE)`,
     [
       lineUuid,
       line.transport_type,
+      lineNumber,
       line.name_hr,
       line.name_en,
       line.subtype_hr ?? null,
@@ -803,7 +816,7 @@ async function importLine(
     ]
   );
 
-  // Step 5: Insert contacts
+  // Step 6: Insert contacts
   for (let i = 0; i < line.contacts.length; i++) {
     const contact = line.contacts[i];
     await client.query(
@@ -821,7 +834,7 @@ async function importLine(
     );
   }
 
-  // Step 6: Insert routes with stops and departures
+  // Step 7: Insert routes with stops and departures
   for (const route of line.routes) {
     const routeUuid = seedIdToUuid(`${line.id}-route-${route.direction}`);
     const originUuid = seedIdToUuid(route.origin_stop_id);
