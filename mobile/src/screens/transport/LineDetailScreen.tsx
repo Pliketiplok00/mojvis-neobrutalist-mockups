@@ -62,7 +62,7 @@ export function LineDetailScreen({
   lineId,
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const userContext = useUserContext();
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
@@ -282,14 +282,9 @@ export function LineDetailScreen({
               accessibilityLabel={t('transport.lineDetail.selectDate')}
               accessibilityRole="button"
             >
-              <Label style={styles.dateSelectorLabel}>DATUM</Label>
-              <H2 style={styles.dateText}>{formatDisplayDate(selectedDate)}</H2>
-              {departures && (
-                <Meta style={styles.dayTypeText}>
-                  {DAY_TYPE_LABELS[departures.day_type]}
-                  {departures.is_holiday && ` (${t('transport.holiday')})`}
-                </Meta>
-              )}
+              <Label style={styles.dateText}>
+                {formatDayWithDate(new Date(selectedDate), language)}
+              </Label>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.dateArrow}
@@ -578,11 +573,12 @@ const styles = StyleSheet.create({
     borderWidth: lineDetail.dateSelectorBorderWidth,
     borderColor: lineDetail.dateSelectorBorderColor,
     borderRadius: lineDetail.dateSelectorRadius,
-    padding: lineDetail.dateSelectorPadding,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   dateArrow: {
-    width: lineDetail.dateSelectorArrowSize,
-    height: lineDetail.dateSelectorArrowSize,
+    width: 36,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -590,16 +586,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
-  dateSelectorLabel: {
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
-  },
   dateText: {
     color: colors.textPrimary,
-  },
-  dayTypeText: {
-    marginTop: spacing.xs,
   },
 
   // Direction Toggle Tabs
