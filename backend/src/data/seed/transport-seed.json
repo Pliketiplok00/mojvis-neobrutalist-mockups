@@ -100,6 +100,7 @@
     {
       "id": "line-split-vis-catamaran",
       "transport_type": "sea",
+      "line_number": "659",
       "name_hr": "Split - Milna - Hvar - Vis (katamaran)",
       "name_en": "Split - Milna - Hvar - Vis (catamaran)",
       "subtype_hr": "Katamaran",
@@ -773,6 +774,7 @@
     {
       "id": "line-602",
       "transport_type": "sea",
+      "line_number": "602",
       "name_hr": "Trajekt 602 Vis – Split",
       "name_en": "Ferry 602 Vis – Split",
       "subtype_hr": "Trajekt",

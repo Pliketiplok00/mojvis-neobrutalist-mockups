@@ -95,10 +95,33 @@ function createTransportRoutes(transportType: TransportType) {
 
             const stops = language === 'en' ? stops_en : stops_hr;
 
+            // Get origin and destination from direction 0 route
+            const dir0Route = routes.find((r) => r.direction === 0);
+            let origin = '';
+            let destination = '';
+            if (dir0Route) {
+              const routeStops = await getStopsForRoute(dir0Route.id);
+              const firstStop = routeStops[0];
+              const lastStop = routeStops[routeStops.length - 1];
+              origin = firstStop
+                ? language === 'en'
+                  ? firstStop.name_en
+                  : firstStop.name_hr
+                : '';
+              destination = lastStop
+                ? language === 'en'
+                  ? lastStop.name_en
+                  : lastStop.name_hr
+                : '';
+            }
+
             return {
               id: line.id,
+              line_number: line.line_number,
               name: language === 'en' ? line.name_en : line.name_hr,
               subtype: language === 'en' ? line.subtype_en : line.subtype_hr,
+              origin,
+              destination,
               stops_summary: stops.join(' - '),
               stops_count: stops.length,
               typical_duration_minutes: duration,

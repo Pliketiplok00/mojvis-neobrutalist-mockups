@@ -34,6 +34,7 @@ import type {
 interface LineRow {
   id: string;
   transport_type: TransportType;
+  line_number: string | null;
   name_hr: string;
   name_en: string;
   subtype_hr: string | null;
@@ -631,6 +632,7 @@ function rowToLine(row: LineRow): TransportLine {
   return {
     id: row.id,
     transport_type: row.transport_type,
+    line_number: row.line_number,
     name_hr: row.name_hr,
     name_en: row.name_en,
     subtype_hr: row.subtype_hr,

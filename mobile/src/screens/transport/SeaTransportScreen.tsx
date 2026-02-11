@@ -75,15 +75,15 @@ function getSeaTypeIcon(subtype: string | null): IconName {
 }
 
 /**
- * Get header background color based on sea transport subtype
+ * Get header background color based on sea transport subtype and line number
+ * - Line 659 -> yellow highlight (special seasonal line)
  * - KATAMARAN -> teal
  * - TRAJEKT -> blue (primary)
- * - Line 659 -> yellow highlight
  * - Default -> blue (primary)
  */
-function getSeaHeaderBackground(subtype: string | null, lineId: string): string {
+function getSeaHeaderBackground(subtype: string | null, lineNumber: string | null): string {
   // Line 659 gets special yellow highlight
-  if (lineId === '659') return listTokens.lineCardHeaderBackgroundHighlight;
+  if (lineNumber === '659') return listTokens.lineCardHeaderBackgroundHighlight;
   if (!subtype) return listTokens.lineCardHeaderBackgroundSea;
   const lower = subtype.toLowerCase();
   if (lower.includes('katamaran')) return listTokens.lineCardHeaderBackgroundSeaCatamaran;
@@ -91,19 +91,17 @@ function getSeaHeaderBackground(subtype: string | null, lineId: string): string 
 }
 
 /**
- * Format line title as "lineId: start-end"
- * E.g., "Vis – Split" with id "602" -> "602: Vis-Split"
+ * Format line title using structured origin/destination data
+ * Format: "<line_number>: <origin>-<destination>"
+ * E.g., "602: Vis-Split"
  */
-function formatLineTitle(lineId: string, lineName: string): string {
-  // Extract start-end from line name (handles "Start – End" or "Start - End")
-  const parts = lineName.split(/\s*[–-]\s*/);
-  if (parts.length >= 2) {
-    const start = parts[0].trim();
-    const end = parts[parts.length - 1].trim();
-    return `${lineId}: ${start}-${end}`;
-  }
-  // Fallback: just prepend lineId
-  return `${lineId}: ${lineName}`;
+function formatLineTitle(
+  lineNumber: string | null,
+  origin: string,
+  destination: string
+): string {
+  const prefix = lineNumber ?? '';
+  return `${prefix}: ${origin}-${destination}`;
 }
 
 export function SeaTransportScreen(): React.JSX.Element {
@@ -255,7 +253,7 @@ export function SeaTransportScreen(): React.JSX.Element {
                   {/* TOP: Colored header slab with icon + title + badge */}
                   <View style={[
                     styles.lineCardHeader,
-                    { backgroundColor: getSeaHeaderBackground(line.subtype, line.id) }
+                    { backgroundColor: getSeaHeaderBackground(line.subtype, line.line_number) }
                   ]}>
                     <View style={styles.lineCardHeaderIconBox}>
                       <Icon
@@ -267,11 +265,11 @@ export function SeaTransportScreen(): React.JSX.Element {
                     <View style={styles.lineCardHeaderTextContainer}>
                       <H2 style={[
                         styles.lineCardHeaderTitle,
-                        line.id === '659' && styles.lineCardHeaderTitleHighlight,
+                        line.line_number === '659' && styles.lineCardHeaderTitleHighlight,
                       ]} numberOfLines={2}>
-                        {formatLineTitle(line.id, line.name)}
+                        {formatLineTitle(line.line_number, line.origin, line.destination)}
                       </H2>
-                      {line.id === '659' && (
+                      {line.line_number === '659' && (
                         <Meta style={styles.line659Subtitle}>
                           {t('transport.line659Seasonal')}
                         </Meta>
