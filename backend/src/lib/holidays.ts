@@ -140,6 +140,17 @@ function jsDayToDayType(jsDay: number): DayType {
 }
 
 /**
+ * Get the actual weekday for a date, ignoring holidays.
+ * Used for PRAZNIK fallback when a line has no PRAZNIK departures.
+ *
+ * @param date - Date to check
+ * @returns DayType (MON, TUE, WED, THU, FRI, SAT, SUN) - never returns PRAZNIK
+ */
+export function getActualWeekday(date: Date): DayType {
+  return jsDayToDayType(date.getDay());
+}
+
+/**
  * Determine the day type for a given date
  *
  * Priority:

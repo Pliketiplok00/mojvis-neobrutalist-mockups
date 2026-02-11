@@ -14,7 +14,7 @@
  */
 
 import { query } from '../lib/database.js';
-import { getDayType, parseDateInZagreb } from '../lib/holidays.js';
+import { getDayType, getActualWeekday, parseDateInZagreb } from '../lib/holidays.js';
 import type {
   TransportType,
   TransportLine,
@@ -310,28 +310,13 @@ export async function getSeasonsForYear(year: number): Promise<TransportSeason[]
 // ============================================================
 
 /**
- * Get departures for a route on a specific date
- * Automatically determines season and day type
- * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
- *
- * DATE FILTERING STRATEGY (permanent fix for disjoint seasons):
- * - All departures MUST have explicit date_from/date_to populated during import
- * - Runtime filtering uses ONLY departure-level dates, NOT season dates
- * - This eliminates issues with disjoint seasons (e.g., OFF: Jan-May AND Sep-Dec)
- * - The season_id remains for metadata/grouping but does NOT affect date filtering
+ * Helper: Query departures for a specific day type
  */
-export async function getDeparturesForRouteAndDate(
+async function queryDeparturesForDayType(
   routeId: string,
+  dayType: DayType,
   dateStr: string
-): Promise<{ departures: TransportDeparture[]; dayType: DayType; isHoliday: boolean }> {
-  const date = parseDateInZagreb(dateStr);
-  const dayType = getDayType(date);
-  const isHoliday = dayType === 'PRAZNIK';
-
-  // Query departures by route and day_type only.
-  // Date filtering is done via departure-level date_from/date_to fields,
-  // applied in the WHERE clause and post-filter via isDepartureValidForDate.
-  // Season JOIN is kept for potential metadata retrieval but NOT for date filtering.
+): Promise<TransportDeparture[]> {
   const result = await query<DepartureRow>(
     `SELECT d.id, d.route_id, d.season_id, d.day_type,
             d.departure_time::TEXT as departure_time,
@@ -367,15 +352,67 @@ export async function getDeparturesForRouteAndDate(
     [routeId, dayType, dateStr]
   );
 
-  // Convert rows to departures and apply full date exception filtering
-  // (handles include_dates, exclude_dates, and edge cases)
   const allDepartures = result.rows.map(rowToDeparture);
-  const filteredDepartures = allDepartures.filter((dep) =>
-    isDepartureValidForDate(dep, dateStr)
-  );
+  return allDepartures.filter((dep) => isDepartureValidForDate(dep, dateStr));
+}
+
+/**
+ * Get departures for a route on a specific date
+ * Automatically determines season and day type
+ * Applies date exception filtering (date_from/date_to, include_dates, exclude_dates)
+ *
+ * HOLIDAY FALLBACK STRATEGY:
+ * - If date is a holiday (PRAZNIK):
+ *   1. Check for NO_SERVICE markers → return empty (explicit no service)
+ *   2. If PRAZNIK entries exist → return them
+ *   3. If no PRAZNIK entries → fall back to actual weekday
+ * - If not a holiday → query by actual weekday
+ *
+ * DATE FILTERING STRATEGY (permanent fix for disjoint seasons):
+ * - All departures MUST have explicit date_from/date_to populated during import
+ * - Runtime filtering uses ONLY departure-level dates, NOT season dates
+ * - This eliminates issues with disjoint seasons (e.g., OFF: Jan-May AND Sep-Dec)
+ * - The season_id remains for metadata/grouping but does NOT affect date filtering
+ */
+export async function getDeparturesForRouteAndDate(
+  routeId: string,
+  dateStr: string
+): Promise<{ departures: TransportDeparture[]; dayType: DayType; isHoliday: boolean }> {
+  const date = parseDateInZagreb(dateStr);
+  const dayType = getDayType(date);
+  const isHoliday = dayType === 'PRAZNIK';
+
+  let departures: TransportDeparture[];
+
+  if (isHoliday) {
+    // Query PRAZNIK departures
+    const praznikDepartures = await queryDeparturesForDayType(routeId, 'PRAZNIK', dateStr);
+
+    // Check for NO_SERVICE marker - explicit no service on this date
+    const hasNoService = praznikDepartures.some((dep) => dep.marker === 'NO_SERVICE');
+    if (hasNoService) {
+      return {
+        departures: [],
+        dayType,
+        isHoliday,
+      };
+    }
+
+    // If PRAZNIK entries exist, use them
+    if (praznikDepartures.length > 0) {
+      departures = praznikDepartures;
+    } else {
+      // Fallback to actual weekday
+      const actualWeekday = getActualWeekday(date);
+      departures = await queryDeparturesForDayType(routeId, actualWeekday, dateStr);
+    }
+  } else {
+    // Normal day - query by day type
+    departures = await queryDeparturesForDayType(routeId, dayType, dateStr);
+  }
 
   return {
-    departures: filteredDepartures,
+    departures,
     dayType,
     isHoliday,
   };
