@@ -158,7 +158,7 @@
       "title": "Pomorski promet"
     },
     "lines": "Linije",
-    "todaysDepartures": "Polasci danas",
+    "todaysDepartures": "Današnji polasci s otoka Visa",
     "noLines": "Nema dostupnih linija",
     "noDepartures": "Nema polazaka danas",
     "loading": "Ucitavanje...",
@@ -176,6 +176,7 @@
       "PRAZNIK": "Praznik"
     },
     "note": "Naknadne izmjene voznih redova bit će objavljene kroz poruke i obavijesti u aplikaciji. Ako želite biti pravovremeno obaviješteni o istima, molimo vas da omogućite push notifikacije u postavkama.",
+    "line659Seasonal": "Samo sezonski / ljeto 2026",
     "lineDetail": {
       "departures": "Polasci",
       "route": "Ruta",

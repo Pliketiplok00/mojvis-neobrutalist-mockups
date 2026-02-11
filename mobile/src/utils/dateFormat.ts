@@ -124,3 +124,23 @@ export function formatDisplayDate(isoString: string): string {
   const year = date.getFullYear();
   return `${day}.${month}.${year}.`;
 }
+
+/**
+ * Day with full date format (locale-aware)
+ * Used by: SeaTransportScreen header
+ *
+ * HR: "Srijeda, 11.02.2026."
+ * EN: "Wednesday, 11.02.2026"
+ */
+export function formatDayWithDate(date: Date, locale: 'hr' | 'en'): string {
+  const localeCode = locale === 'hr' ? 'hr-HR' : 'en-US';
+  const dayName = date.toLocaleDateString(localeCode, { weekday: 'long' });
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+
+  // HR uses trailing period, EN does not
+  return locale === 'hr'
+    ? `${dayName}, ${day}.${month}.${year}.`
+    : `${dayName}, ${day}.${month}.${year}`;
+}

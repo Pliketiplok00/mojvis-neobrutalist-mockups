@@ -158,7 +158,7 @@
       "title": "Sea Transport"
     },
     "lines": "Lines",
-    "todaysDepartures": "Today's departures",
+    "todaysDepartures": "Today's departures from Vis island",
     "noLines": "No lines available",
     "noDepartures": "No departures today",
     "loading": "Loading...",
@@ -176,6 +176,7 @@
       "PRAZNIK": "Holiday"
     },
     "note": "Any timetable changes will be announced through messages and notifications in the app. If you wish to be notified promptly, please enable push notifications in settings.",
+    "line659Seasonal": "Seasonal only / Summer 2026",
     "lineDetail": {
       "departures": "Departures",
       "route": "Route",

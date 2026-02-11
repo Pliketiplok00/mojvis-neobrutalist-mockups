@@ -450,6 +450,10 @@ export const components = {
     borderColor: colors.border,
     fontSize: typography.fontSize.xs,
     fontWeight: typography.fontWeight.bold,
+    // Large variant (2x larger for readability)
+    paddingHorizontalLarge: spacing.md,
+    paddingVerticalLarge: spacing.xs,
+    fontSizeLarge: typography.fontSize.sm,
   },
 
   tab: {
@@ -686,6 +690,7 @@ export const components = {
       lineCardHeaderBackgroundSea: palette.primary, // Blue for sea ferry
       lineCardHeaderBackgroundSeaCatamaran: palette.teal, // Teal for catamaran
       lineCardHeaderBackgroundRoad: palette.secondary, // Green for road
+      lineCardHeaderBackgroundHighlight: palette.accent, // Yellow highlight for line 659
       lineCardHeaderIconBoxSize: 40,
       lineCardHeaderIconBoxBackground: colors.background,
       lineCardHeaderIconBoxBorderWidth: bordersToken.widthThin,

@@ -30,8 +30,8 @@ interface BadgeProps {
   backgroundColor?: string;
   /** Custom text color */
   textColor?: string;
-  /** Size variant - compact for inline use */
-  size?: 'default' | 'compact';
+  /** Size variant - compact for inline use, large for emphasis */
+  size?: 'default' | 'compact' | 'large';
   /** Additional style */
   style?: ViewStyle;
 }
@@ -57,17 +57,24 @@ export function Badge({
 }: BadgeProps): React.JSX.Element {
   const colors = variantColors[variant];
   const isCompact = size === 'compact';
+  const isLarge = size === 'large';
 
   return (
     <View
       style={[
         styles.container,
         isCompact && styles.containerCompact,
+        isLarge && styles.containerLarge,
         { backgroundColor: backgroundColor ?? colors.bg },
         style,
       ]}
     >
-      <Text style={[styles.text, isCompact && styles.textCompact, { color: textColor ?? colors.text }]}>
+      <Text style={[
+        styles.text,
+        isCompact && styles.textCompact,
+        isLarge && styles.textLarge,
+        { color: textColor ?? colors.text },
+      ]}>
         {children}
       </Text>
     </View>
@@ -89,6 +96,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: components.badge.paddingHorizontal * 0.75,
     paddingVertical: components.badge.paddingVertical * 0.5,
   },
+  containerLarge: {
+    paddingHorizontal: components.badge.paddingHorizontalLarge,
+    paddingVertical: components.badge.paddingVerticalLarge,
+  },
   text: {
     fontFamily: typography.fontFamily.body.regular,
     fontSize: components.badge.fontSize,
@@ -97,6 +108,9 @@ const styles = StyleSheet.create({
   },
   textCompact: {
     fontSize: components.badge.fontSize - 2,
+  },
+  textLarge: {
+    fontSize: components.badge.fontSizeLarge,
   },
 });
 
