@@ -57,6 +57,16 @@ interface LineDetailScreenProps {
 
 const { colors, spacing, borders, components } = skin;
 const lineDetail = components.transport.lineDetail;
+const { note } = components.transport;
+
+/**
+ * Carrier ticket purchase URLs
+ * Maps carrier operator name to their official ticket booking URL.
+ */
+const CARRIER_TICKET_URLS: Record<string, string> = {
+  Jadrolinija: 'https://shop.jadrolinija.hr/shop/index.php?what=booking',
+  Krilo: 'https://krilo.aktiva-info.hr/',
+};
 
 export function LineDetailScreen({
   lineId,
@@ -385,6 +395,35 @@ export function LineDetailScreen({
           )}
         </View>
 
+        {/* Carrier Ticket Info Box */}
+        {lineDetailData.contacts.length > 0 &&
+          lineDetailData.contacts[0].operator &&
+          CARRIER_TICKET_URLS[lineDetailData.contacts[0].operator] && (
+            <View style={styles.ticketBoxContainer}>
+              <View style={styles.ticketBox}>
+                <Meta style={styles.ticketBoxTitle}>
+                  {t('transport.lineDetail.tickets.title')}
+                </Meta>
+                <Body style={styles.ticketBoxBody}>
+                  {t('transport.lineDetail.tickets.body')}
+                </Body>
+                <TouchableOpacity
+                  style={styles.ticketBoxLink}
+                  onPress={() =>
+                    handleWebsitePress(
+                      CARRIER_TICKET_URLS[lineDetailData.contacts[0].operator]
+                    )
+                  }
+                >
+                  <Icon name="globe" size="sm" colorToken="link" />
+                  <Label style={styles.ticketBoxLinkText}>
+                    {lineDetailData.contacts[0].operator}
+                  </Label>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
         {/* Section Divider */}
         {lineDetailData.contacts.length > 0 && <View style={styles.sectionDivider} />}
 
@@ -698,6 +737,36 @@ const styles = StyleSheet.create({
   emptyStateText: {
     color: colors.textMuted,
     textAlign: 'center',
+  },
+
+  // Carrier Ticket Info Box
+  ticketBoxContainer: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+  },
+  ticketBox: {
+    borderWidth: note.noteBorderWidth,
+    borderColor: note.noteBorderColor,
+    backgroundColor: note.noteBackground,
+    borderRadius: note.noteRadius,
+    padding: note.notePadding,
+  },
+  ticketBoxTitle: {
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.xs,
+  },
+  ticketBoxBody: {
+    color: note.noteTextColor,
+    marginBottom: spacing.md,
+  },
+  ticketBoxLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  ticketBoxLinkText: {
+    color: colors.link,
   },
 
   // Contact Card with Offset Shadow
