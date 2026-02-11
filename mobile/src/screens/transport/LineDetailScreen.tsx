@@ -378,12 +378,6 @@ export function LineDetailScreen({
                   />
                 ))}
               </View>
-              {/* Marker Note (displayed below departures list) */}
-              {departures.marker_note && (
-                <View style={styles.markerNoteContainer}>
-                  <Meta style={styles.markerNoteText}>{departures.marker_note}</Meta>
-                </View>
-              )}
             </>
           ) : (
             <View style={styles.emptyState}>
@@ -716,14 +710,6 @@ const styles = StyleSheet.create({
   },
   departuresList: {
     gap: lineDetail.departureRowGap,
-  },
-  markerNoteContainer: {
-    marginTop: spacing.md,
-    paddingHorizontal: spacing.sm,
-  },
-  markerNoteText: {
-    color: colors.textSecondary,
-    fontStyle: 'italic',
   },
   emptyState: {
     padding: spacing.xxl,
