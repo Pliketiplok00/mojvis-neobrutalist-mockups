@@ -29,8 +29,8 @@
       "routes": [
         {
           "direction": 0,
-          "direction_label_hr": "Split → Hvar → Vis",
-          "direction_label_en": "Split → Hvar → Vis",
+          "direction_label_hr": "Split-Bol-Hvar-Vis",
+          "direction_label_en": "Split-Bol-Hvar-Vis",
           "origin_stop_id": "stop-split-port",
           "destination_stop_id": "stop-vis-port",
           "typical_duration_minutes": 115,
@@ -64,8 +64,8 @@
         },
         {
           "direction": 1,
-          "direction_label_hr": "Vis → Hvar → Split",
-          "direction_label_en": "Vis → Hvar → Split",
+          "direction_label_hr": "Vis-Hvar-Bol-Split",
+          "direction_label_en": "Vis-Hvar-Bol-Split",
           "origin_stop_id": "stop-vis-port",
           "destination_stop_id": "stop-split-port",
           "typical_duration_minutes": 180,
