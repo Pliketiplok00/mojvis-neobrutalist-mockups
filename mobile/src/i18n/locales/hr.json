@@ -191,7 +191,11 @@
       "noDeparturesForDate": "Nema polazaka za odabrani datum",
       "stopTimes": "Vremena zaustavljanja",
       "error": "Greska pri ucitavanju linije",
-      "notFound": "Linija nije pronadena"
+      "notFound": "Linija nije pronadena",
+      "tickets": {
+        "title": "Karte",
+        "body": "Kupnju karte mozete obaviti na sluzbenim stranicama prijevoznika."
+      }
     }
   },
   "feedback": {

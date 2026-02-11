@@ -191,7 +191,11 @@
       "noDeparturesForDate": "No departures for selected date",
       "stopTimes": "Stop times",
       "error": "Error loading line",
-      "notFound": "Line not found"
+      "notFound": "Line not found",
+      "tickets": {
+        "title": "Tickets",
+        "body": "You can purchase tickets on the carrier's official website."
+      }
     }
   },
   "feedback": {
