@@ -149,13 +149,6 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
           )}
         </View>
 
-        {/* Notes Badge */}
-        {departure.notes && (
-          <View style={styles.notesBadge}>
-            <Meta style={styles.notesText}>{departure.notes}</Meta>
-          </View>
-        )}
-
         {/* Expanded Timeline */}
         {expanded && hasStopTimes && (
           <View style={styles.timeline}>
@@ -263,17 +256,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  notesBadge: {
-    backgroundColor: lineDetail.notesBadgeBackground,
-    paddingHorizontal: lineDetail.notesBadgePadding,
-    paddingVertical: spacing.xs,
-    marginHorizontal: spacing.md,
-    marginBottom: spacing.md,
-  },
-  notesText: {
-    color: colors.textPrimary,
-  },
-
   // Timeline (expanded)
   timeline: {
     paddingHorizontal: spacing.md,
