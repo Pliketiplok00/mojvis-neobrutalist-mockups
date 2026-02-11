@@ -43,6 +43,7 @@ import { inboxApi, transportApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
+import { formatDayWithDate } from '../../utils/dateFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -77,18 +78,37 @@ function getSeaTypeIcon(subtype: string | null): IconName {
  * Get header background color based on sea transport subtype
  * - KATAMARAN -> teal
  * - TRAJEKT -> blue (primary)
+ * - Line 659 -> yellow highlight
  * - Default -> blue (primary)
  */
-function getSeaHeaderBackground(subtype: string | null): string {
+function getSeaHeaderBackground(subtype: string | null, lineId: string): string {
+  // Line 659 gets special yellow highlight
+  if (lineId === '659') return listTokens.lineCardHeaderBackgroundHighlight;
   if (!subtype) return listTokens.lineCardHeaderBackgroundSea;
   const lower = subtype.toLowerCase();
   if (lower.includes('katamaran')) return listTokens.lineCardHeaderBackgroundSeaCatamaran;
   return listTokens.lineCardHeaderBackgroundSea;
 }
 
+/**
+ * Format line title as "lineId: start-end"
+ * E.g., "Vis – Split" with id "602" -> "602: Vis-Split"
+ */
+function formatLineTitle(lineId: string, lineName: string): string {
+  // Extract start-end from line name (handles "Start – End" or "Start - End")
+  const parts = lineName.split(/\s*[–-]\s*/);
+  if (parts.length >= 2) {
+    const start = parts[0].trim();
+    const end = parts[parts.length - 1].trim();
+    return `${lineId}: ${start}-${end}`;
+  }
+  // Fallback: just prepend lineId
+  return `${lineId}: ${lineName}`;
+}
+
 export function SeaTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const [banners, setBanners] = useState<InboxMessage[]>([]);
   const [lines, setLines] = useState<LineListItem[]>([]);
   const [todaysDepartures, setTodaysDepartures] = useState<TodayDepartureItem[]>([]);
@@ -194,12 +214,10 @@ export function SeaTransportScreen(): React.JSX.Element {
             </View>
             <View style={styles.headerTextContainer}>
               <H1 style={styles.headerTitle}>{t('transport.sea.title')}</H1>
-              {dayType && (
-                <Meta style={styles.headerMeta}>
-                  {DAY_TYPE_LABELS[dayType]}
-                  {isHoliday && ` (${t('transport.holiday')})`}
-                </Meta>
-              )}
+              <Meta style={styles.headerMeta}>
+                {formatDayWithDate(new Date(), language)}
+                {isHoliday && ` (${t('transport.holiday')})`}
+              </Meta>
             </View>
           </View>
         </View>
@@ -237,7 +255,7 @@ export function SeaTransportScreen(): React.JSX.Element {
                   {/* TOP: Colored header slab with icon + title + badge */}
                   <View style={[
                     styles.lineCardHeader,
-                    { backgroundColor: getSeaHeaderBackground(line.subtype) }
+                    { backgroundColor: getSeaHeaderBackground(line.subtype, line.id) }
                   ]}>
                     <View style={styles.lineCardHeaderIconBox}>
                       <Icon
@@ -246,11 +264,21 @@ export function SeaTransportScreen(): React.JSX.Element {
                         colorToken="textPrimary"
                       />
                     </View>
-                    <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
-                      {line.name}
-                    </H2>
+                    <View style={styles.lineCardHeaderTextContainer}>
+                      <H2 style={[
+                        styles.lineCardHeaderTitle,
+                        line.id === '659' && styles.lineCardHeaderTitleHighlight,
+                      ]} numberOfLines={2}>
+                        {formatLineTitle(line.id, line.name)}
+                      </H2>
+                      {line.id === '659' && (
+                        <Meta style={styles.line659Subtitle}>
+                          {t('transport.line659Seasonal')}
+                        </Meta>
+                      )}
+                    </View>
                     {line.subtype && (
-                      <Badge variant="transport" size="compact" style={styles.lineSubtypeBadge}>
+                      <Badge variant="transport" size="large" style={styles.lineSubtypeBadge}>
                         {line.subtype}
                       </Badge>
                     )}
@@ -461,9 +489,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: listTokens.lineCardHeaderIconGap,
   },
-  lineCardHeaderTitle: {
+  lineCardHeaderTextContainer: {
     flex: 1,
+  },
+  lineCardHeaderTitle: {
     color: listTokens.lineCardHeaderTitleColor,
+  },
+  lineCardHeaderTitleHighlight: {
+    color: colors.textPrimary, // Dark text on yellow background
+  },
+  line659Subtitle: {
+    color: colors.textPrimary, // Dark text on yellow background
+    marginTop: spacing.xs,
   },
   // Position-only: Badge component handles appearance
   lineSubtypeBadge: {
