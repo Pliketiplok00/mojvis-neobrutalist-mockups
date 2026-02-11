@@ -29,8 +29,11 @@ export type DayType = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN' | 'P
  */
 export interface LineListItem {
   id: string;
+  line_number: string | null; // Public line number (e.g., "602", "659")
   name: string;
   subtype: string | null;
+  origin: string; // First stop name (localized)
+  destination: string; // Last stop name (localized)
   stops_summary: string;
   stops_count: number;
   typical_duration_minutes: number | null;
