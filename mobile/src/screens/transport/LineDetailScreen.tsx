@@ -61,11 +61,27 @@ const { note } = components.transport;
 
 /**
  * Carrier ticket purchase URLs
- * Maps carrier operator name to their official ticket booking URL.
+ * Maps carrier name to their official ticket booking URL.
  */
 const CARRIER_TICKET_URLS: Record<string, string> = {
   Jadrolinija: 'https://shop.jadrolinija.hr/shop/index.php?what=booking',
   Krilo: 'https://krilo.aktiva-info.hr/',
+};
+
+/**
+ * Sea line carrier mapping by line_number
+ * Used when contacts array is empty to determine carrier info.
+ */
+interface SeaLineCarrier {
+  name: string;
+  ticketUrl: string | null; // null = boarding purchase only
+}
+
+const SEA_LINE_CARRIERS: Record<string, SeaLineCarrier> = {
+  '602': { name: 'Jadrolinija', ticketUrl: CARRIER_TICKET_URLS.Jadrolinija },
+  '659': { name: 'Jadrolinija', ticketUrl: CARRIER_TICKET_URLS.Jadrolinija },
+  '9602': { name: 'Krilo', ticketUrl: CARRIER_TICKET_URLS.Krilo },
+  '612': { name: 'Nautički centar Komiža', ticketUrl: null },
 };
 
 export function LineDetailScreen({
@@ -389,34 +405,57 @@ export function LineDetailScreen({
           )}
         </View>
 
-        {/* Carrier Ticket Info Box */}
-        {lineDetailData.contacts.length > 0 &&
-          lineDetailData.contacts[0].operator &&
-          CARRIER_TICKET_URLS[lineDetailData.contacts[0].operator] && (
+        {/* Carrier Ticket Info Box - Always shown */}
+        {(() => {
+          // Determine carrier info: prefer sea line mapping, fall back to contacts
+          const seaCarrier = lineDetailData.line_number
+            ? SEA_LINE_CARRIERS[lineDetailData.line_number]
+            : undefined;
+          const contactOperator = lineDetailData.contacts[0]?.operator;
+          const contactTicketUrl = contactOperator
+            ? CARRIER_TICKET_URLS[contactOperator]
+            : undefined;
+
+          // Resolve carrier name and ticket URL
+          const carrierName = seaCarrier?.name ?? contactOperator ?? null;
+          const ticketUrl = seaCarrier?.ticketUrl ?? contactTicketUrl ?? null;
+          const isBoardingOnly = seaCarrier && seaCarrier.ticketUrl === null;
+
+          // Determine body text
+          let bodyText: string;
+          if (isBoardingOnly) {
+            bodyText = t('transport.lineDetail.tickets.boardingOnlyBody');
+          } else if (ticketUrl) {
+            bodyText = t('transport.lineDetail.tickets.body');
+          } else {
+            bodyText = t('transport.lineDetail.tickets.fallbackBody');
+          }
+
+          return (
             <View style={styles.ticketBoxContainer}>
               <View style={styles.ticketBox}>
                 <Meta style={styles.ticketBoxTitle}>
                   {t('transport.lineDetail.tickets.title')}
                 </Meta>
-                <Body style={styles.ticketBoxBody}>
-                  {t('transport.lineDetail.tickets.body')}
-                </Body>
-                <TouchableOpacity
-                  style={styles.ticketBoxLink}
-                  onPress={() =>
-                    handleWebsitePress(
-                      CARRIER_TICKET_URLS[lineDetailData.contacts[0].operator]
-                    )
-                  }
-                >
-                  <Icon name="globe" size="sm" colorToken="link" />
-                  <Label style={styles.ticketBoxLinkText}>
-                    {lineDetailData.contacts[0].operator}
-                  </Label>
-                </TouchableOpacity>
+                <Body style={styles.ticketBoxBody}>{bodyText}</Body>
+                {carrierName && ticketUrl && (
+                  <TouchableOpacity
+                    style={styles.ticketBoxLink}
+                    onPress={() => handleWebsitePress(ticketUrl)}
+                  >
+                    <Icon name="globe" size="sm" colorToken="link" />
+                    <Label style={styles.ticketBoxLinkText}>{carrierName}</Label>
+                  </TouchableOpacity>
+                )}
+                {carrierName && !ticketUrl && (
+                  <View style={styles.ticketBoxCarrierPlain}>
+                    <Label style={styles.ticketBoxCarrierText}>{carrierName}</Label>
+                  </View>
+                )}
               </View>
             </View>
-          )}
+          );
+        })()}
 
         {/* Section Divider */}
         {lineDetailData.contacts.length > 0 && <View style={styles.sectionDivider} />}
@@ -753,6 +792,13 @@ const styles = StyleSheet.create({
   },
   ticketBoxLinkText: {
     color: colors.link,
+  },
+  ticketBoxCarrierPlain: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ticketBoxCarrierText: {
+    color: colors.textSecondary,
   },
 
   // Contact Card with Offset Shadow
