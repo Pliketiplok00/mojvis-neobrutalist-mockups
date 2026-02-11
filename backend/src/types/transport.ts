@@ -57,6 +57,7 @@ export interface TransportStop {
 export interface TransportLine {
   id: string;
   transport_type: TransportType;
+  line_number: string | null; // Public line number (e.g., "602", "659")
   name_hr: string;
   name_en: string;
   subtype_hr: string | null;
@@ -141,8 +142,11 @@ export interface TransportDeparture {
  */
 export interface LineListItem {
   id: string;
+  line_number: string | null; // Public line number (e.g., "602", "659")
   name: string;
   subtype: string | null;
+  origin: string; // First stop name (localized)
+  destination: string; // Last stop name (localized)
   stops_summary: string; // e.g., "Split - Milna - Hvar - Vis"
   stops_count: number;
   typical_duration_minutes: number | null;
@@ -402,6 +406,7 @@ export interface SeedRoute {
 export interface SeedLine {
   id: string;
   transport_type: TransportType;
+  line_number?: string; // Public line number (e.g., "602", "659")
   name_hr: string;
   name_en: string;
   subtype_hr?: string;
