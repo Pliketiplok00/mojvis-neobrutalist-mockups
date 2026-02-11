@@ -194,7 +194,9 @@
       "notFound": "Linija nije pronadena",
       "tickets": {
         "title": "Karte",
-        "body": "Kupnju karte mozete obaviti na sluzbenim stranicama prijevoznika."
+        "body": "Kupnju karte mozete obaviti na sluzbenim stranicama prijevoznika.",
+        "fallbackBody": "Za kupnju karata kontaktirajte prijevoznika.",
+        "boardingOnlyBody": "Karte se kupuju pri ukrcaju."
       }
     }
   },
