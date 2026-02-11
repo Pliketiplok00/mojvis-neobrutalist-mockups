@@ -147,9 +147,9 @@
     "hub": {
       "title": "Timetables",
       "road": "Road Transport",
-      "roadDescription": "Bus lines",
+      "roadDescription": "Local bus lines",
       "sea": "Sea Transport",
-      "seaDescription": "Ferries and catamarans"
+      "seaDescription": "Connections to the mainland and nearby islands"
     },
     "road": {
       "title": "Road Transport"
@@ -175,7 +175,7 @@
       "SUN": "Sunday",
       "PRAZNIK": "Holiday"
     },
-    "note": "Timetables are updated automatically. For the latest information, check the official carrier websites.",
+    "note": "Any timetable changes will be announced through messages and notifications in the app. If you wish to be notified promptly, please enable push notifications in settings.",
     "lineDetail": {
       "departures": "Departures",
       "route": "Route",
