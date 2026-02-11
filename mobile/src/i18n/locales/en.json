@@ -194,7 +194,9 @@
       "notFound": "Line not found",
       "tickets": {
         "title": "Tickets",
-        "body": "You can purchase tickets on the carrier's official website."
+        "body": "You can purchase tickets on the carrier's official website.",
+        "fallbackBody": "Contact the carrier for ticket information.",
+        "boardingOnlyBody": "Tickets are purchased at boarding."
       }
     }
   },
