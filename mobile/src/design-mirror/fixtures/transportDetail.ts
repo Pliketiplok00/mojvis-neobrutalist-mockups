@@ -27,6 +27,7 @@ import type {
  */
 export const roadLineDetailFixture: LineDetailResponse = {
   id: 'road-vis-komiza',
+  line_number: null,
   name: 'Vis – Komiža',
   subtype: 'Lokalna linija',
   routes: [
@@ -190,6 +191,7 @@ export const roadDeparturesEmptyFixture: DeparturesListResponse = {
  */
 export const seaLineDetailFixture: LineDetailResponse = {
   id: 'sea-split-vis',
+  line_number: '602',
   name: 'Split – Vis',
   subtype: 'Trajekt',
   routes: [

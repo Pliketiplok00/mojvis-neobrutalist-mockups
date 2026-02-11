@@ -39,7 +39,8 @@ import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
-import { formatDateISO, formatDisplayDate } from '../../utils/dateFormat';
+import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
+import { formatLineTitle } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
@@ -149,6 +150,8 @@ export function LineDetailScreen({
   // Get routes for direction toggle
   const routes: RouteInfo[] = lineDetailData?.routes || [];
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
+  // Direction 0 route for canonical header title (matches list view)
+  const dir0Route = routes.find((r) => r.direction === 0);
 
   // Date navigation
   const adjustDate = (days: number) => {
@@ -241,7 +244,13 @@ export function LineDetailScreen({
               />
             </View>
             <View style={styles.headerTextContainer}>
-              <H1 style={styles.headerTitle}>{lineDetailData.name}</H1>
+              <H1 style={styles.headerTitle}>
+                {formatLineTitle(
+                  lineDetailData.line_number,
+                  dir0Route?.origin ?? '',
+                  dir0Route?.destination ?? ''
+                )}
+              </H1>
               <View style={styles.headerMetaRow}>
                 {lineDetailData.subtype && (
                   <Meta style={styles.headerMeta}>{lineDetailData.subtype}</Meta>
