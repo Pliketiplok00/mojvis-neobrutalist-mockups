@@ -40,7 +40,7 @@ interface DepartureItemProps {
   transportType: TransportType;
 }
 
-const { colors, spacing, borders, components } = skin;
+const { colors, spacing, borders, components, opacity } = skin;
 const lineDetail = components.transport.lineDetail;
 
 /**
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   containerPressed: {
-    opacity: 0.7,
+    opacity: opacity.muted,
   },
   header: {
     flexDirection: 'row',

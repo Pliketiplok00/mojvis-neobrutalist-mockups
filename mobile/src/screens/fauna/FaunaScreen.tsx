@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay,
     color: colors.primaryText,
     paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
+    paddingVertical: spacing.micro,
   },
   sensitiveTextArea: {
     padding: spacing.lg,

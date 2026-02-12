@@ -56,7 +56,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const { colors, spacing, borders, components } = skin;
+const { colors, spacing, borders, components, opacity } = skin;
 const lineDetail = components.transport.lineDetail;
 
 // ============================================================
@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   departureContainerPressed: {
-    opacity: 0.7,
+    opacity: opacity.muted,
   },
   departureHeader: {
     flexDirection: 'row',

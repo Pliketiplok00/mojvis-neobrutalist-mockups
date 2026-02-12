@@ -52,7 +52,7 @@ interface FloraSpeciesCardProps {
   criticalTag: BilingualText;
 }
 
-const { colors, spacing, borders } = skin;
+const { colors, spacing, borders, opacity } = skin;
 
 // Wikimedia requires User-Agent header to avoid 429 rate limits
 const WIKI_IMAGE_HEADERS = {
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
     borderColor: colors.urgent,
   },
   cardPressed: {
-    opacity: 0.9,
+    opacity: opacity.strong,
   },
 
   // Header (collapsed state)
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.overlay,
     color: colors.primaryText,
     paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
+    paddingVertical: spacing.micro,
   },
   galleryChevron: {
     position: 'absolute',

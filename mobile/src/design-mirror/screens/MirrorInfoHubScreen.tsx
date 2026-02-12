@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     marginTop: skin.spacing.sm,
   },
   categoryDescription: {
-    opacity: 0.8,
+    opacity: skin.opacity.soft,
   },
 
   // Tile Rows

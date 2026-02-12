@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
   },
   // Yellow icon box for menu (V1 poster style - squared tile with thick border)
   menuIconBox: {
-    width: 44,
-    height: 44,
+    width: skin.components.header.iconBoxSize,
+    height: skin.components.header.iconBoxSize,
     backgroundColor: skin.colors.warningAccent, // Yellow
     borderWidth: skin.borders.widthCard, // Thick border per poster
     borderColor: skin.colors.border,
@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
   },
   // Blue icon box for inbox (V1 poster style - squared tile with thick border)
   inboxIconBox: {
-    width: 44,
-    height: 44,
+    width: skin.components.header.iconBoxSize,
+    height: skin.components.header.iconBoxSize,
     backgroundColor: skin.colors.primary, // Blue
     borderWidth: skin.borders.widthCard, // Thick border per poster
     borderColor: skin.colors.border,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   hidden: {
-    opacity: 0,
+    opacity: skin.opacity.hidden,
   },
   // Badge - square style for poster look (skin tokens)
   badge: {

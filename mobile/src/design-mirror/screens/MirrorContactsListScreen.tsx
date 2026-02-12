@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     color: skin.colors.urgentText,
-    opacity: 0.9,
+    opacity: skin.opacity.strong,
   },
 
   // Section

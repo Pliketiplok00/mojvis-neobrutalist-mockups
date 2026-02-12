@@ -28,7 +28,7 @@ interface EmergencyTileProps {
   textColor?: string;
 }
 
-const { colors, spacing, borders } = skin;
+const { colors, spacing, borders, opacity } = skin;
 
 export function EmergencyTile({
   icon,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   pressed: {
-    opacity: 0.8,
+    opacity: opacity.soft,
   },
   iconContainer: {
     marginBottom: spacing.sm,
