@@ -48,7 +48,7 @@ import { formatLineTitle } from '../../utils/transportFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
-const { colors, spacing, borders, typography, components } = skin;
+const { colors, spacing, borders, components } = skin;
 const overviewHeader = components.transport.overviewHeader;
 const listTokens = components.transport.list;
 
@@ -77,10 +77,10 @@ function getSeaTypeIcon(subtype: string | null): IconName {
 
 /**
  * Get header background color for sea transport line cards
- * All sea lines use the same blue background
+ * All sea lines use teal background
  */
 function getSeaHeaderBackground(): string {
-  return listTokens.lineCardHeaderBackgroundSea;
+  return listTokens.lineCardHeaderBackgroundSeaCatamaran;
 }
 
 export function SeaTransportScreen(): React.JSX.Element {
@@ -242,14 +242,11 @@ export function SeaTransportScreen(): React.JSX.Element {
                       />
                     </View>
                     <View style={styles.lineCardHeaderTextContainer}>
-                      <H2 style={[
-                        styles.lineCardHeaderTitle,
-                        line.line_number === '659' && styles.lineCardHeaderTitleHighlight,
-                      ]} numberOfLines={2}>
+                      <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
                         {formatLineTitle(line.line_number, line.origin, line.destination)}
                       </H2>
                       {line.line_number === '659' && (
-                        <Meta style={styles.line659Subtitle}>
+                        <Meta style={styles.lineCardHeaderSubtitle}>
                           {t('transport.line659Seasonal')}
                         </Meta>
                       )}
@@ -263,11 +260,14 @@ export function SeaTransportScreen(): React.JSX.Element {
                           </Badge>
                         )}
                         {line.line_number === '659' && (
-                          <View style={styles.seasonalBadge}>
-                            <Label style={styles.seasonalBadgeText}>
-                              {t('transport.seasonal')}
-                            </Label>
-                          </View>
+                          <Badge
+                            variant="transport"
+                            size="large"
+                            backgroundColor={listTokens.lineCardHeaderBackgroundHighlight}
+                            textColor={colors.textPrimary}
+                          >
+                            {t('transport.seasonal')}
+                          </Badge>
                         )}
                       </View>
                     )}
@@ -484,11 +484,8 @@ const styles = StyleSheet.create({
   lineCardHeaderTitle: {
     color: listTokens.lineCardHeaderTitleColor,
   },
-  lineCardHeaderTitleHighlight: {
-    color: colors.textPrimary, // Dark text on yellow background
-  },
-  line659Subtitle: {
-    color: colors.textPrimary, // Dark text on yellow background
+  lineCardHeaderSubtitle: {
+    color: listTokens.lineCardHeaderTitleColor, // White text on teal background
     marginTop: spacing.xs,
   },
   // Badge stack: vertical column for subtype + seasonal badges
@@ -498,20 +495,6 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     flexShrink: 0,
     marginLeft: spacing.sm,
-  },
-  // Seasonal badge (yellow highlight)
-  seasonalBadge: {
-    backgroundColor: listTokens.lineCardHeaderBackgroundHighlight,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderWidth: borders.widthThin,
-    borderColor: colors.border,
-  },
-  seasonalBadgeText: {
-    fontSize: typography.fontSize.xs,
-    fontWeight: '700',
-    color: colors.textPrimary,
-    textTransform: 'uppercase',
   },
   // BOTTOM: White body with meta + chevron
   lineCardBody: {
