@@ -35,6 +35,7 @@ import { DepartureItem } from '../../components/DepartureItem';
 import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
+import { Badge } from '../../ui/Badge';
 import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
@@ -57,6 +58,7 @@ interface LineDetailScreenProps {
 
 const { colors, spacing, borders, components } = skin;
 const lineDetail = components.transport.lineDetail;
+const listTokens = components.transport.list;
 const { note } = components.transport;
 
 /**
@@ -278,7 +280,8 @@ export function LineDetailScreen({
                 )}
               </H1>
               <View style={styles.headerMetaRow}>
-                {lineDetailData.subtype && (
+                {/* Subtype as meta only for road transport (sea shows it as badge) */}
+                {transportType !== 'sea' && lineDetailData.subtype && (
                   <Meta style={styles.headerMeta}>{lineDetailData.subtype}</Meta>
                 )}
                 {currentRoute?.typical_duration_minutes && (
@@ -288,6 +291,26 @@ export function LineDetailScreen({
                 )}
               </View>
             </View>
+            {/* Badge stack: subtype + seasonal (right-aligned, sea only) */}
+            {transportType === 'sea' && (lineDetailData.subtype || lineDetailData.line_number === '659') && (
+              <View style={styles.headerBadgeStack}>
+                {lineDetailData.subtype && (
+                  <Badge variant="transport" size="large">
+                    {lineDetailData.subtype}
+                  </Badge>
+                )}
+                {lineDetailData.line_number === '659' && (
+                  <Badge
+                    variant="transport"
+                    size="large"
+                    backgroundColor={listTokens.lineCardHeaderBackgroundHighlight}
+                    textColor={colors.textPrimary}
+                  >
+                    {t('transport.seasonal')}
+                  </Badge>
+                )}
+              </View>
+            )}
           </View>
         </View>
 
@@ -622,6 +645,12 @@ const styles = StyleSheet.create({
   },
   headerMeta: {
     color: lineDetail.headerMetaColor,
+  },
+  // Badge stack (right side of header, sea only)
+  headerBadgeStack: {
+    alignItems: 'flex-end',
+    gap: spacing.xs,
+    marginLeft: spacing.md,
   },
 
   // Date Selector with Offset Shadow
