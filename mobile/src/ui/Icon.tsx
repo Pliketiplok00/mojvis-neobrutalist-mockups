@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   fallback: {
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderRadius: 4,
+    borderRadius: skin.borders.radiusSharp,
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     top: -4,
     right: -4,
     backgroundColor: skin.colors.urgent,
-    borderRadius: skin.borders.radiusPill,
+    borderRadius: skin.borders.radiusSharp,
     minWidth: 20,
     height: 20,
     justifyContent: 'center',

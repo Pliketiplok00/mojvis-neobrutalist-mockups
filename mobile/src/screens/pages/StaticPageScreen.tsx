@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
     color: skin.colors.urgentText,
     paddingHorizontal: skin.spacing.sm,
     paddingVertical: skin.spacing.micro,
-    borderRadius: skin.spacing.xs,
+    borderRadius: skin.borders.radiusSharp,
     marginRight: skin.spacing.sm,
     overflow: 'hidden',
   },

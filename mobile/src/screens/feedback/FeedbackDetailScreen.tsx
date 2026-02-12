@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingHorizontal: skin.spacing.lg,
     paddingVertical: skin.spacing.sm,
-    borderRadius: skin.borders.radiusPill,
+    borderRadius: skin.borders.radiusSharp,
     marginBottom: skin.spacing.lg,
   },
   statusText: {
