@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingHorizontal: skin.spacing.lg,
     paddingVertical: skin.spacing.sm,
-    borderRadius: skin.borders.radiusPill,
+    borderRadius: skin.borders.radiusSharp,
     marginBottom: skin.spacing.lg,
   },
   statusText: {
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     right: 20,
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: skin.borders.radiusSharp,
     backgroundColor: skin.colors.background,
     justifyContent: 'center',
     alignItems: 'center',

@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     backgroundColor: skin.colors.testWatermarkBg,
     borderWidth: 3,
     borderColor: skin.colors.testWatermarkText,
-    borderRadius: 4,
+    borderRadius: skin.borders.radiusSharp,
     paddingHorizontal: 8,
     paddingVertical: 6,
   },

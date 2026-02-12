@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     right: spacing.xs,
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: borders.radiusSharp,
     backgroundColor: colors.errorText,
     justifyContent: 'center',
     alignItems: 'center',
