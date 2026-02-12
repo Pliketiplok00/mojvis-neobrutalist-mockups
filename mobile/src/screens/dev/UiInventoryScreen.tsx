@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
   },
   swatchInner: {
     flex: 1,
-    margin: 2,
+    margin: spacing.micro,
     borderWidth: borders.widthHairline,
     borderColor: colors.borderLight,
     borderRadius: borders.radiusSmall - 2,

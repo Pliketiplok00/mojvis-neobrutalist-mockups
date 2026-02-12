@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     // Inherited from ButtonText primitive
   },
   mapPinDesc: {
-    marginTop: 2,
+    marginTop: skin.spacing.micro,
     color: skin.colors.textMuted,
   },
   mapPinCoords: {
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     backgroundColor: skin.colors.urgent,
     color: skin.colors.urgentText,
     paddingHorizontal: skin.spacing.sm,
-    paddingVertical: 2,
+    paddingVertical: skin.spacing.micro,
     borderRadius: skin.spacing.xs,
     marginRight: skin.spacing.sm,
     overflow: 'hidden',

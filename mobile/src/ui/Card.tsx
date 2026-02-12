@@ -67,7 +67,7 @@ export function Card({
   );
 }
 
-const { components, colors, borders } = skin;
+const { components, colors, borders, opacity } = skin;
 
 type CardVariant = NonNullable<CardProps['variant']>;
 type FeedbackToken = NonNullable<CardProps['pressFeedbackColorToken']>;
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: borders.radiusCard,
   },
   disabled: {
-    opacity: 0.6,
+    opacity: opacity.subtle,
   },
 });
 

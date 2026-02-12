@@ -71,6 +71,8 @@ const borders = {
 };
 
 const spacing = {
+  hairline: 1,
+  micro: 2,
   xs: 4,
   sm: 8,
   md: 12,
@@ -78,6 +80,17 @@ const spacing = {
   xl: 20,
   xxl: 24,
   xxxl: 32,
+} as const;
+
+// Opacity tokens for consistent transparency values
+const opacity = {
+  hidden: 0,
+  disabled: 0.5,
+  subtle: 0.6,
+  muted: 0.7,
+  soft: 0.8,
+  strong: 0.9,
+  full: 1,
 } as const;
 
 const typography = {
@@ -337,6 +350,8 @@ export const components = {
     borderBottomColor: colors.border,
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
+    // Icon box size (menu and inbox buttons)
+    iconBoxSize: 44,
     // Inbox badge (unread indicator)
     inboxBadge: {
       backgroundColor: palette.destructive, // Terracotta red for urgency
@@ -444,7 +459,7 @@ export const components = {
 
   badge: {
     paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
+    paddingVertical: spacing.micro,
     borderRadius: bordersToken.radiusSharp, // neobrutalist: sharp corners
     borderWidth: bordersToken.widthThin, // design system: border-2 border-foreground
     borderColor: colors.border,
@@ -1033,6 +1048,7 @@ export const skinNeobrut2 = {
   sizes,
   images,
   components,
+  opacity,
 
   // Optional: for future "external shadow layer" (fake neo shadow)
   externalShadowLayer: {

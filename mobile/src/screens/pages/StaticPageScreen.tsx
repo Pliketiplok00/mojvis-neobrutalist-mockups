@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
   highlightBulletIcon: {
     width: 24,
     marginRight: skin.spacing.sm,
-    paddingTop: 2,
+    paddingTop: skin.spacing.micro,
   },
   highlightBulletText: {
     flex: 1,
@@ -699,7 +699,7 @@ const styles = StyleSheet.create({
     // Inherited from ButtonText primitive
   },
   mapPinDesc: {
-    marginTop: 2,
+    marginTop: skin.spacing.micro,
     color: skin.colors.textMuted,
   },
   mapPinCoords: {
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     backgroundColor: skin.colors.urgent,
     color: skin.colors.urgentText,
     paddingHorizontal: skin.spacing.sm,
-    paddingVertical: 2,
+    paddingVertical: skin.spacing.micro,
     borderRadius: skin.spacing.xs,
     marginRight: skin.spacing.sm,
     overflow: 'hidden',
