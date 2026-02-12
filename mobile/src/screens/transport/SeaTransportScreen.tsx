@@ -76,18 +76,10 @@ function getSeaTypeIcon(subtype: string | null): IconName {
 }
 
 /**
- * Get header background color based on sea transport subtype and line number
- * - Line 659 -> yellow highlight (special seasonal line)
- * - KATAMARAN -> teal
- * - TRAJEKT -> blue (primary)
- * - Default -> blue (primary)
+ * Get header background color for sea transport line cards
+ * All sea lines use the same blue background
  */
-function getSeaHeaderBackground(subtype: string | null, lineNumber: string | null): string {
-  // Line 659 gets special yellow highlight
-  if (lineNumber === '659') return listTokens.lineCardHeaderBackgroundHighlight;
-  if (!subtype) return listTokens.lineCardHeaderBackgroundSea;
-  const lower = subtype.toLowerCase();
-  if (lower.includes('katamaran')) return listTokens.lineCardHeaderBackgroundSeaCatamaran;
+function getSeaHeaderBackground(): string {
   return listTokens.lineCardHeaderBackgroundSea;
 }
 
@@ -240,7 +232,7 @@ export function SeaTransportScreen(): React.JSX.Element {
                   {/* TOP: Colored header slab with icon + title + badge */}
                   <View style={[
                     styles.lineCardHeader,
-                    { backgroundColor: getSeaHeaderBackground(line.subtype, line.line_number) }
+                    { backgroundColor: getSeaHeaderBackground() }
                   ]}>
                     <View style={styles.lineCardHeaderIconBox}>
                       <Icon
@@ -262,10 +254,22 @@ export function SeaTransportScreen(): React.JSX.Element {
                         </Meta>
                       )}
                     </View>
-                    {line.subtype && (
-                      <Badge variant="transport" size="large" style={styles.lineSubtypeBadge}>
-                        {line.subtype}
-                      </Badge>
+                    {/* Badge stack: subtype + seasonal (for 659) */}
+                    {(line.subtype || line.line_number === '659') && (
+                      <View style={styles.lineCardBadgeStack}>
+                        {line.subtype && (
+                          <Badge variant="transport" size="large">
+                            {line.subtype}
+                          </Badge>
+                        )}
+                        {line.line_number === '659' && (
+                          <View style={styles.seasonalBadge}>
+                            <Label style={styles.seasonalBadgeText}>
+                              {t('transport.seasonal')}
+                            </Label>
+                          </View>
+                        )}
+                      </View>
                     )}
                   </View>
                   {/* BOTTOM: White body with meta + chevron */}
@@ -487,9 +491,27 @@ const styles = StyleSheet.create({
     color: colors.textPrimary, // Dark text on yellow background
     marginTop: spacing.xs,
   },
-  // Position-only: Badge component handles appearance
-  lineSubtypeBadge: {
+  // Badge stack: vertical column for subtype + seasonal badges
+  lineCardBadgeStack: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: spacing.xs,
+    flexShrink: 0,
     marginLeft: spacing.sm,
+  },
+  // Seasonal badge (yellow highlight)
+  seasonalBadge: {
+    backgroundColor: listTokens.lineCardHeaderBackgroundHighlight,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderWidth: borders.widthThin,
+    borderColor: colors.border,
+  },
+  seasonalBadgeText: {
+    fontSize: typography.fontSize.xs,
+    fontWeight: '700',
+    color: colors.textPrimary,
+    textTransform: 'uppercase',
   },
   // BOTTOM: White body with meta + chevron
   lineCardBody: {
