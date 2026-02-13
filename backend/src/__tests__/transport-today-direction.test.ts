@@ -15,8 +15,12 @@ import { describe, it, expect } from 'vitest';
 /**
  * Known mainland stop names - departures from these origins are excluded.
  * This mirrors the constant in repositories/transport.ts
+ *
+ * Includes all name variations for mainland ports:
+ * - "Split" - used in some seed data (stop-split)
+ * - "Split (luka)" - used in ferry/catamaran routes (stop-split-port)
  */
-const MAINLAND_STOP_NAMES = ['Split'];
+const MAINLAND_STOP_NAMES = ['Split', 'Split (luka)'];
 
 /**
  * Known island stop names for testing
@@ -42,6 +46,10 @@ describe('Today Departures Direction Filter', () => {
   describe('MAINLAND_STOP_NAMES constant', () => {
     it('should include Split', () => {
       expect(MAINLAND_STOP_NAMES).toContain('Split');
+    });
+
+    it('should include Split (luka) port variant', () => {
+      expect(MAINLAND_STOP_NAMES).toContain('Split (luka)');
     });
 
     it('should NOT include Vis', () => {

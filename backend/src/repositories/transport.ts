@@ -422,8 +422,12 @@ export async function getDeparturesForRouteAndDate(
 /**
  * Known mainland stop names - departures from these origins are excluded from "today" view.
  * The "Polasci danas" feature shows only departures that START ON THE ISLAND.
+ *
+ * IMPORTANT: Must include all name variations for mainland ports.
+ * - "Split" - used in some seed data (stop-split)
+ * - "Split (luka)" - used in ferry/catamaran routes (stop-split-port)
  */
-const MAINLAND_STOP_NAMES = ['Split'];
+const MAINLAND_STOP_NAMES = ['Split', 'Split (luka)'];
 
 /**
  * Get today's departures for a transport type (aggregated across all lines)
