@@ -91,10 +91,8 @@ export function ServiceAccordionCard({
           accessibilityState={{ expanded }}
           accessibilityLabel={`${title}, ${subtitle}`}
         >
-          {/* Icon box */}
-          <View style={[styles.iconBox, { backgroundColor: iconBackgroundColor }]}>
-            <Icon name={icon} size="md" colorToken="textPrimary" />
-          </View>
+          {/* Icon (unboxed) */}
+          <Icon name={icon} size="lg" colorToken="textPrimary" />
 
           {/* Title area */}
           <View style={styles.titleContainer}>
@@ -146,7 +144,6 @@ export function ServiceAccordionCard({
   );
 }
 
-const ICON_BOX_SIZE = 44;
 const SHADOW_OFFSET = 4;
 
 const styles = StyleSheet.create({
@@ -171,18 +168,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-  },
-  iconBox: {
-    width: ICON_BOX_SIZE,
-    height: ICON_BOX_SIZE,
-    borderWidth: borders.widthThin,
-    borderColor: colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
+    gap: spacing.md,
   },
   titleContainer: {
     flex: 1,
-    marginLeft: spacing.md,
   },
   title: {
     color: colors.textPrimary,

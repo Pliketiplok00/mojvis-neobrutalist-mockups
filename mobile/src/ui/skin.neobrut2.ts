@@ -141,12 +141,22 @@ const typography = {
 
 // Icon tokens for lucide-react-native
 const icons = {
+  // Legacy size tokens (kept for backwards compatibility)
   size: {
     xs: 14,
     sm: 18,
     md: 24,
     lg: 32,
     xl: 40,
+  },
+  // Unified unboxed icon sizes (new semantic system)
+  // All icons should use these sizes - no visual boxes
+  unboxed: {
+    sm: 24,   // Small: list meta, chevrons, form icons
+    md: 32,   // Medium: menu items, list icons, contact links
+    lg: 48,   // Large: hero/header icons, navigation
+    xl: 64,   // Extra large: onboarding emphasis
+    xxl: 80,  // Double extra large: confirmation screens
   },
   strokeWidth: {
     light: 1.5,
@@ -269,7 +279,8 @@ export const colors = {
   // Optional overlay
   overlay: hsla(220, 20, 10, 0.6),
 
-  // Icon box overlays (white transparency on colored surfaces)
+  // @deprecated Icon box overlays - unused in real app since icon unboxing migration
+  // Kept for design-mirror compatibility
   iconBoxOverlayBg: hsla(0, 0, 100, 0.2), // White 20%
   iconBoxOverlayBorder: hsla(0, 0, 100, 0.3), // White 30%
 
@@ -350,7 +361,7 @@ export const components = {
     borderBottomColor: colors.border,
     backgroundColor: colors.background,
     paddingHorizontal: spacing.lg,
-    // Icon box size (menu and inbox buttons)
+    // @deprecated iconBoxSize - unused since icon unboxing migration (kept for design-mirror)
     iconBoxSize: 44,
     // Inbox badge (unread indicator)
     inboxBadge: {
@@ -561,7 +572,8 @@ export const components = {
       titleBorderColor: colors.border,
       titleBackground: palette.accent, // Yellow slab background
 
-      // Info tile tokens (icon tile row with square icon box)
+      // @deprecated Info tile icon box tokens - unused since icon unboxing migration
+      // Kept for design-mirror compatibility
       infoTileIconBoxSize: 44, // Square icon box size
       infoTileIconBoxBackground: colors.background,
       infoTileIconBoxBorderWidth: bordersToken.widthThin,
@@ -663,7 +675,8 @@ export const components = {
       backgroundSea: palette.primary,
       backgroundRoad: palette.secondary,
 
-      // Icon box (square container for icon)
+      // @deprecated Icon box tokens - unused since icon unboxing migration
+      // Kept for design-mirror compatibility
       iconBoxSize: 48,
       iconBoxBackground: colors.background,
       iconBoxBorderWidth: bordersToken.widthThin,
@@ -706,6 +719,7 @@ export const components = {
       lineCardHeaderBackgroundSeaCatamaran: palette.teal, // Teal for catamaran
       lineCardHeaderBackgroundRoad: palette.secondary, // Green for road
       lineCardHeaderBackgroundHighlight: palette.accent, // Yellow highlight for line 659
+      // @deprecated Icon box tokens - unused since icon unboxing migration
       lineCardHeaderIconBoxSize: 40,
       lineCardHeaderIconBoxBackground: colors.background,
       lineCardHeaderIconBoxBorderWidth: bordersToken.widthThin,
@@ -766,7 +780,7 @@ export const components = {
       headerBorderWidth: bordersToken.widthCard,
       headerBorderColor: colors.border,
 
-      // Header icon box
+      // @deprecated Header icon box tokens - unused since icon unboxing migration
       headerIconBoxSize: 52,
       headerIconBoxBackground: colors.background,
       headerIconBoxBorderWidth: bordersToken.widthThin,
@@ -874,7 +888,7 @@ export const components = {
         paddingHorizontal: spacing.lg,
       },
 
-      // Icon box (square container in header)
+      // @deprecated iconBox - unused since icon unboxing migration
       iconBox: {
         size: 48,
         borderWidth: bordersToken.widthThin,
@@ -914,6 +928,7 @@ export const components = {
       card: {
         contentGap: spacing.xxl,
       },
+      // @deprecated iconBox - unused since icon unboxing migration
       iconBox: {
         size: 64,
         backgroundColor: colors.backgroundSecondary,

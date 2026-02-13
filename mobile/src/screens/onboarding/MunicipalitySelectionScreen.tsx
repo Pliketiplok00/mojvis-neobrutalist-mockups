@@ -66,9 +66,7 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
             accessibilityLabel="Komiža"
           >
             <View style={styles.cardContent}>
-              <View style={styles.iconBox}>
-                <Icon name="file-text" size="lg" colorToken="textPrimary" />
-              </View>
+              <Icon name="file-text" size="lg" colorToken="textPrimary" />
               <View style={styles.textStack}>
                 <H1 style={styles.municipalityName}>Komiža</H1>
                 <Label style={styles.municipalityDescription}>Općina Komiža</Label>
@@ -82,9 +80,7 @@ export function MunicipalitySelectionScreen({ navigation, route }: Props): React
             accessibilityLabel="Vis"
           >
             <View style={styles.cardContent}>
-              <View style={styles.iconBox}>
-                <Icon name="file-text" size="lg" colorToken="textPrimary" />
-              </View>
+              <Icon name="file-text" size="lg" colorToken="textPrimary" />
               <View style={styles.textStack}>
                 <H1 style={styles.municipalityName}>Vis</H1>
                 <Label style={styles.municipalityDescription}>Grad Vis</Label>
@@ -136,16 +132,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: t.card.contentGap,
-  },
-  iconBox: {
-    width: t.iconBox.size,
-    height: t.iconBox.size,
-    backgroundColor: t.iconBox.backgroundColor,
-    borderWidth: t.iconBox.borderWidth,
-    borderColor: t.iconBox.borderColor,
-    borderRadius: t.iconBox.borderRadius,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   textStack: {
     flex: 1,

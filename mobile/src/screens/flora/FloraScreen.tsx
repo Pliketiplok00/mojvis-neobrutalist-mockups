@@ -100,9 +100,7 @@ export function FloraScreen(): React.JSX.Element {
             <View style={[styles.shadowLayer, styles.shadowLayerWarning]} />
             <View style={[styles.card, styles.warningCard]}>
               <View style={styles.warningHeader}>
-                <View style={styles.warningIconBox}>
-                  <Icon name="alert-triangle" size="md" color={colors.urgentText} />
-                </View>
+                <Icon name="alert-triangle" size="lg" colorToken="urgent" stroke="strong" />
                 <H2 style={styles.warningTitle}>{getText(floraContent.doNotTouch.title)}</H2>
               </View>
 
@@ -232,14 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.md,
-  },
-  warningIconBox: {
-    width: 44,
-    height: 44,
-    backgroundColor: colors.urgent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.md,
+    gap: spacing.md,
   },
   warningTitle: {
     flex: 1,

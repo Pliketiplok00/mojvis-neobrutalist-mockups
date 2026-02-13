@@ -104,8 +104,9 @@ export type IconName =
 
 /**
  * Icon size tokens from skin.
+ * Uses the unified unboxed icon sizes, with 'xs' for legacy compatibility.
  */
-export type IconSize = keyof typeof skin.icons.size;
+export type IconSize = keyof typeof skin.icons.unboxed | 'xs';
 
 /**
  * Stroke width tokens from skin.
@@ -253,7 +254,10 @@ export function Icon({
   color,
   accessibilityLabel,
 }: IconProps): React.JSX.Element {
-  const iconSize = skin.icons.size[size];
+  // Use legacy size token for 'xs', otherwise use unboxed sizes
+  const iconSize = size === 'xs'
+    ? skin.icons.size.xs
+    : skin.icons.unboxed[size];
   const strokeWidth = skin.icons.strokeWidth[stroke];
   const iconColor = color ?? skin.colors[colorToken];
 

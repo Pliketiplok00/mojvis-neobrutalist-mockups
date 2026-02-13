@@ -264,13 +264,11 @@ export function LineDetailScreen({
         {/* Poster Header Slab */}
         <View style={[styles.headerSlab, { backgroundColor: headerBackground }]}>
           <View style={styles.headerContent}>
-            <View style={styles.headerIconBox}>
-              <Icon
-                name={transportType === 'sea' ? 'ship' : 'bus'}
-                size="lg"
-                colorToken="textPrimary"
-              />
-            </View>
+            <Icon
+              name={transportType === 'sea' ? 'ship' : 'bus'}
+              size="lg"
+              colorToken="textPrimary"
+            />
             <View style={styles.headerTextContainer}>
               <H1 style={styles.headerTitle}>
                 {formatLineTitle(
@@ -497,9 +495,7 @@ export function LineDetailScreen({
                       style={styles.contactRow}
                       onPress={() => handlePhonePress(contact.phone!)}
                     >
-                      <View style={styles.contactIconBox}>
-                        <Icon name="phone" size="sm" colorToken="textPrimary" />
-                      </View>
+                      <Icon name="phone" size="md" colorToken="textPrimary" />
                       <Label style={styles.contactLink}>{contact.phone}</Label>
                     </TouchableOpacity>
                   )}
@@ -508,9 +504,7 @@ export function LineDetailScreen({
                       style={styles.contactRow}
                       onPress={() => handleEmailPress(contact.email!)}
                     >
-                      <View style={styles.contactIconBox}>
-                        <Icon name="mail" size="sm" colorToken="textPrimary" />
-                      </View>
+                      <Icon name="mail" size="md" colorToken="textPrimary" />
                       <Label style={styles.contactLink}>{contact.email}</Label>
                     </TouchableOpacity>
                   )}
@@ -519,9 +513,7 @@ export function LineDetailScreen({
                       style={styles.contactRow}
                       onPress={() => handleWebsitePress(contact.website!)}
                     >
-                      <View style={styles.contactIconBox}>
-                        <Icon name="globe" size="sm" colorToken="textPrimary" />
-                      </View>
+                      <Icon name="globe" size="md" colorToken="textPrimary" />
                       <Label style={styles.contactLink}>{contact.website}</Label>
                     </TouchableOpacity>
                   )}
@@ -621,16 +613,7 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  headerIconBox: {
-    width: lineDetail.headerIconBoxSize,
-    height: lineDetail.headerIconBoxSize,
-    backgroundColor: lineDetail.headerIconBoxBackground,
-    borderWidth: lineDetail.headerIconBoxBorderWidth,
-    borderColor: lineDetail.headerIconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
+    gap: spacing.md,
   },
   headerTextContainer: {
     flex: 1,
@@ -858,16 +841,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.sm,
-  },
-  contactIconBox: {
-    width: 32,
-    height: 32,
-    backgroundColor: colors.backgroundSecondary,
-    borderWidth: borders.widthThin,
-    borderColor: colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
+    gap: spacing.md,
   },
   contactLink: {
     flex: 1,

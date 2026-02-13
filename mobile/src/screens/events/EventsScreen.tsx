@@ -200,7 +200,7 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
                 </ButtonText>
                 {/* V1 Poster: Time row with clock icon */}
                 <View style={styles.eventMetaRow}>
-                  <Icon name="clock" size="xs" colorToken="textMuted" />
+                  <Icon name="clock" size="sm" colorToken="textMuted" />
                   <Meta style={styles.eventMetaText} numberOfLines={1}>
                     {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
                   </Meta>
@@ -208,7 +208,7 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
                 {/* V1 Poster: Location row with map-pin icon */}
                 {event.location && (
                   <View style={styles.eventMetaRow}>
-                    <Icon name="map-pin" size="xs" colorToken="textMuted" />
+                    <Icon name="map-pin" size="sm" colorToken="textMuted" />
                     <Meta style={styles.eventMetaText} numberOfLines={1}>
                       {event.location}
                     </Meta>

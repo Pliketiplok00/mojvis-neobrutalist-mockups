@@ -64,15 +64,13 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
       accessibilityHint={t('banner.accessibilityHint')}
       activeOpacity={0.8}
     >
-      {/* Icon box on left - red accent */}
-      <View style={styles.iconBox}>
-        <Icon
-          name="shield-alert"
-          size="md"
-          colorToken="primaryText"
-          stroke="strong"
-        />
-      </View>
+      {/* Icon on left (unboxed) */}
+      <Icon
+        name="shield-alert"
+        size="lg"
+        colorToken="urgent"
+        stroke="strong"
+      />
 
       {/* Text content - title only, 2-line clamp */}
       <View style={styles.textContent}>
@@ -148,16 +146,6 @@ const styles = StyleSheet.create({
   },
   containerUrgent: {
     backgroundColor: skin.colors.orange, // Warmer orange for urgent
-  },
-  // V1 Poster: Icon box with red accent
-  iconBox: {
-    width: 44,
-    height: 44,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    backgroundColor: skin.colors.urgent, // Red accent
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   // Text content
   textContent: {

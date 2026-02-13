@@ -159,9 +159,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         <View style={styles.infoTilesContainer}>
           {/* Date & Time Tile */}
           <View style={styles.infoTile}>
-            <View style={styles.infoTileIconBox}>
-              <Icon name="clock" size="md" colorToken="textPrimary" />
-            </View>
+            <Icon name="clock" size="lg" colorToken="textPrimary" />
             <View style={styles.infoTileContent}>
               <Body style={styles.infoTileValue}>{formatDateLocaleFull(event.start_datetime)}</Body>
               {event.is_all_day ? (
@@ -178,9 +176,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
           {/* Location Tile */}
           {event.location && (
             <View style={styles.infoTile}>
-              <View style={styles.infoTileIconBox}>
-                <Icon name="map-pin" size="md" colorToken="textPrimary" />
-              </View>
+              <Icon name="map-pin" size="lg" colorToken="textPrimary" />
               <View style={styles.infoTileContent}>
                 <Body style={styles.infoTileValue}>{event.location}</Body>
               </View>
@@ -189,9 +185,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
 
           {/* Organizer Tile */}
           <View style={styles.infoTile}>
-            <View style={styles.infoTileIconBox}>
-              <Icon name="user" size="md" colorToken="textPrimary" />
-            </View>
+            <Icon name="user" size="lg" colorToken="textPrimary" />
             <View style={styles.infoTileContent}>
               <Body style={styles.infoTileValue}>{event.organizer}</Body>
             </View>
@@ -284,15 +278,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
     borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
     gap: skin.components.events.detail.infoTileGap,
-  },
-  infoTileIconBox: {
-    width: skin.components.events.detail.infoTileIconBoxSize,
-    height: skin.components.events.detail.infoTileIconBoxSize,
-    backgroundColor: skin.components.events.detail.infoTileIconBoxBackground,
-    borderWidth: skin.components.events.detail.infoTileIconBoxBorderWidth,
-    borderColor: skin.components.events.detail.infoTileIconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   infoTileContent: {
     flex: 1,

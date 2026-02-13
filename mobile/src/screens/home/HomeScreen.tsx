@@ -38,7 +38,6 @@ import {
   Label,
   Meta,
   Icon,
-  IconBox,
 } from '../../ui';
 import type { IconName } from '../../ui/Icon';
 
@@ -199,14 +198,12 @@ export function HomeScreen(): React.JSX.Element {
                     { backgroundColor: category.backgroundColor },
                   ]}
                 >
-                  <IconBox size="lg" style={styles.categoryIconBox}>
-                    <Icon
-                      name={category.icon}
-                      size="lg"
-                      color={category.textColor}
-                      stroke="strong"
-                    />
-                  </IconBox>
+                  <Icon
+                    name={category.icon}
+                    size="lg"
+                    color={category.textColor}
+                    stroke="strong"
+                  />
                   <Label style={[styles.categoryLabel, { color: category.textColor }]}>
                     {t(`home.categoryLabels.${category.key}`).toUpperCase()}
                   </Label>
@@ -290,10 +287,8 @@ export function HomeScreen(): React.JSX.Element {
           <View style={styles.ctaShadow} />
           {/* CTA Panel */}
           <View style={styles.ctaPanel}>
-            {/* Icon box */}
-            <View style={styles.ctaIconBox}>
-              <Icon name="message-circle" size="lg" colorToken="primaryText" stroke="strong" />
-            </View>
+            {/* Icon (unboxed) */}
+            <Icon name="message-circle" size="lg" colorToken="primaryText" stroke="strong" />
             {/* Text */}
             <View style={styles.ctaTextContainer}>
               <Label style={styles.ctaTitle}>
@@ -387,9 +382,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: skin.spacing.sm,
     zIndex: 1,
-  },
-  categoryIconBox: {
-    // IconBox handles sizing
   },
   categoryLabel: {
     fontWeight: '700',
@@ -486,15 +478,6 @@ const styles = StyleSheet.create({
     borderColor: skin.colors.border,
     padding: skin.spacing.lg,
     gap: skin.spacing.md,
-  },
-  ctaIconBox: {
-    width: 48,
-    height: 48,
-    backgroundColor: skin.colors.iconBoxOverlayBg,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.iconBoxOverlayBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   ctaTextContainer: {
     flex: 1,

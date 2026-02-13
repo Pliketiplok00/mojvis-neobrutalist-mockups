@@ -186,9 +186,7 @@ export function SeaTransportScreen(): React.JSX.Element {
         {/* Poster Header Slab */}
         <View style={styles.headerSlab}>
           <View style={styles.headerContent}>
-            <View style={styles.headerIconBox}>
-              <Icon name="ship" size="lg" colorToken="textPrimary" />
-            </View>
+            <Icon name="ship" size="lg" colorToken="textPrimary" />
             <View style={styles.headerTextContainer}>
               <H1 style={styles.headerTitle}>{t('transport.sea.title')}</H1>
               <Meta style={styles.headerMeta}>
@@ -234,13 +232,11 @@ export function SeaTransportScreen(): React.JSX.Element {
                     styles.lineCardHeader,
                     { backgroundColor: getSeaHeaderBackground() }
                   ]}>
-                    <View style={styles.lineCardHeaderIconBox}>
-                      <Icon
-                        name={getSeaTypeIcon(line.subtype)}
-                        size="md"
-                        colorToken="textPrimary"
-                      />
-                    </View>
+                    <Icon
+                      name={getSeaTypeIcon(line.subtype)}
+                      size="md"
+                      colorToken="textPrimary"
+                    />
                     <View style={styles.lineCardHeaderTextContainer}>
                       <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
                         {formatLineTitle(line.line_number, line.origin, line.destination)}
@@ -383,16 +379,7 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  headerIconBox: {
-    width: overviewHeader.iconBoxSize,
-    height: overviewHeader.iconBoxSize,
-    backgroundColor: overviewHeader.iconBoxBackground,
-    borderWidth: overviewHeader.iconBoxBorderWidth,
-    borderColor: overviewHeader.iconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: overviewHeader.iconBoxGap,
+    gap: spacing.md,
   },
   headerTextContainer: {
     flex: 1,
@@ -467,16 +454,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: listTokens.lineCardHeaderPadding,
-  },
-  lineCardHeaderIconBox: {
-    width: listTokens.lineCardHeaderIconBoxSize,
-    height: listTokens.lineCardHeaderIconBoxSize,
-    backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
-    borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
-    borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: listTokens.lineCardHeaderIconGap,
+    gap: spacing.md,
   },
   lineCardHeaderTextContainer: {
     flex: 1,

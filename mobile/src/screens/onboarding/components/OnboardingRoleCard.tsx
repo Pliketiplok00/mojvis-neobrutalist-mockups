@@ -87,10 +87,8 @@ export function OnboardingRoleCard({
             { backgroundColor: variantTokens.headerBackground },
           ]}
         >
-          {/* Icon box */}
-          <View style={styles.iconBox}>
-            <Icon name={icon} size="lg" colorToken="textPrimary" />
-          </View>
+          {/* Icon (unboxed) */}
+          <Icon name={icon} size="lg" colorToken="textPrimary" />
 
           {/* Header text */}
           <View style={styles.headerText}>
@@ -139,16 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: tokens.header.paddingVertical,
     paddingHorizontal: tokens.header.paddingHorizontal,
-  },
-  iconBox: {
-    width: tokens.iconBox.size,
-    height: tokens.iconBox.size,
-    backgroundColor: tokens.iconBox.background,
-    borderWidth: tokens.iconBox.borderWidth,
-    borderColor: tokens.iconBox.borderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
+    gap: spacing.md,
   },
   headerText: {
     flex: 1,

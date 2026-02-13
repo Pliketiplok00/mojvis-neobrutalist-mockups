@@ -170,9 +170,7 @@ export function RoadTransportScreen(): React.JSX.Element {
         {/* Poster Header Slab */}
         <View style={styles.headerSlab}>
           <View style={styles.headerContent}>
-            <View style={styles.headerIconBox}>
-              <Icon name="bus" size="lg" colorToken="textPrimary" />
-            </View>
+            <Icon name="bus" size="lg" colorToken="textPrimary" />
             <View style={styles.headerTextContainer}>
               <H1 style={styles.headerTitle}>{t('transport.road.title')}</H1>
               {dayType && (
@@ -217,13 +215,11 @@ export function RoadTransportScreen(): React.JSX.Element {
                 <View style={styles.lineCard}>
                   {/* TOP: Colored header slab with icon + title */}
                   <View style={styles.lineCardHeader}>
-                    <View style={styles.lineCardHeaderIconBox}>
-                      <Icon
-                        name={getRoadTypeIcon(line.subtype)}
-                        size="md"
-                        colorToken="textPrimary"
-                      />
-                    </View>
+                    <Icon
+                      name={getRoadTypeIcon(line.subtype)}
+                      size="md"
+                      colorToken="textPrimary"
+                    />
                     <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
                       {line.name}
                     </H2>
@@ -344,16 +340,7 @@ const styles = StyleSheet.create({
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  headerIconBox: {
-    width: overviewHeader.iconBoxSize,
-    height: overviewHeader.iconBoxSize,
-    backgroundColor: overviewHeader.iconBoxBackground,
-    borderWidth: overviewHeader.iconBoxBorderWidth,
-    borderColor: overviewHeader.iconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: overviewHeader.iconBoxGap,
+    gap: spacing.md,
   },
   headerTextContainer: {
     flex: 1,
@@ -429,16 +416,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: listTokens.lineCardHeaderPadding,
     backgroundColor: listTokens.lineCardHeaderBackgroundRoad,
-  },
-  lineCardHeaderIconBox: {
-    width: listTokens.lineCardHeaderIconBoxSize,
-    height: listTokens.lineCardHeaderIconBoxSize,
-    backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
-    borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
-    borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: listTokens.lineCardHeaderIconGap,
+    gap: spacing.md,
   },
   lineCardHeaderTitle: {
     flex: 1,

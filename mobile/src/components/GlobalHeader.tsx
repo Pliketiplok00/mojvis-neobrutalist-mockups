@@ -76,15 +76,14 @@ export function GlobalHeader({
 
   return (
     <View style={styles.container}>
-      {/* Left: Hamburger Menu in yellow box (V1 poster style) */}
+      {/* Left: Hamburger Menu (unboxed) */}
       <TouchableOpacity
         style={styles.leftButton}
         onPress={handleLeftPress}
         accessibilityLabel="Open menu"
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
-        <View style={styles.menuIconBox}>
-          <Icon name="menu" size="md" colorToken="textPrimary" />
-        </View>
+        <Icon name="menu" size="lg" colorToken="textPrimary" />
       </TouchableOpacity>
 
       {/* Center: Always "MOJ VIS" */}
@@ -92,16 +91,17 @@ export function GlobalHeader({
         <H2 style={styles.title}>MOJ VIS</H2>
       </View>
 
-      {/* Right: Inbox in blue box (hidden on inbox screens) */}
+      {/* Right: Inbox (unboxed, hidden on inbox screens) */}
       <TouchableOpacity
         style={[styles.rightButton, !showInboxIcon && styles.hidden]}
         onPress={handleInboxPress}
         accessibilityLabel={`Inbox${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
         disabled={!showInboxIcon}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         {showInboxIcon && (
-          <View style={styles.inboxIconBox}>
-            <Icon name="inbox" size="md" colorToken="primaryText" />
+          <View style={styles.iconWithBadge}>
+            <Icon name="inbox" size="lg" colorToken="primary" />
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>
@@ -130,16 +130,8 @@ const styles = StyleSheet.create({
   leftButton: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-  },
-  // Yellow icon box for menu (V1 poster style - squared tile with thick border)
-  menuIconBox: {
-    width: skin.components.header.iconBoxSize,
-    height: skin.components.header.iconBoxSize,
-    backgroundColor: skin.colors.warningAccent, // Yellow
-    borderWidth: skin.borders.widthCard, // Thick border per poster
-    borderColor: skin.colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
+    minWidth: skin.icons.unboxed.lg,
+    minHeight: skin.icons.unboxed.lg,
   },
   titleContainer: {
     flex: 1,
@@ -151,16 +143,12 @@ const styles = StyleSheet.create({
   rightButton: {
     justifyContent: 'center',
     alignItems: 'flex-end',
+    minWidth: skin.icons.unboxed.lg,
+    minHeight: skin.icons.unboxed.lg,
   },
-  // Blue icon box for inbox (V1 poster style - squared tile with thick border)
-  inboxIconBox: {
-    width: skin.components.header.iconBoxSize,
-    height: skin.components.header.iconBoxSize,
-    backgroundColor: skin.colors.primary, // Blue
-    borderWidth: skin.borders.widthCard, // Thick border per poster
-    borderColor: skin.colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
+  // Container for icon with badge positioning
+  iconWithBadge: {
+    position: 'relative',
   },
   hidden: {
     opacity: skin.opacity.hidden,

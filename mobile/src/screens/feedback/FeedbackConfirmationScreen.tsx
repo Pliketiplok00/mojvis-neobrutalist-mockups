@@ -45,9 +45,9 @@ export function FeedbackConfirmationScreen(): React.JSX.Element {
       <GlobalHeader type="child" />
 
       <View style={styles.content}>
-        {/* Success Icon */}
+        {/* Success Icon (unboxed) */}
         <View style={styles.iconContainer}>
-          <Icon name="check" size="xl" colorToken="background" />
+          <Icon name="check" size="xxl" colorToken="textPrimary" />
         </View>
 
         {/* Success Message */}
@@ -83,12 +83,6 @@ const styles = StyleSheet.create({
     padding: skin.spacing.xxxl,
   },
   iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: skin.borders.radiusSharp,
-    backgroundColor: skin.colors.textPrimary,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginBottom: skin.spacing.xxl,
   },
   title: {
