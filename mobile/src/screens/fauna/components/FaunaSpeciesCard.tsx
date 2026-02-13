@@ -254,7 +254,7 @@ export function FaunaSpeciesCard({
                 </>
               ) : (
                 <View style={styles.galleryPlaceholder}>
-                  <Icon name="camera" size="xl" colorToken="textMuted" />
+                  <Icon name="camera" size="lg" colorToken="textMuted" />
                   <Meta style={styles.galleryPlaceholderText}>
                     {language === 'hr' ? 'Slika nije dostupna' : 'Image not available'}
                   </Meta>

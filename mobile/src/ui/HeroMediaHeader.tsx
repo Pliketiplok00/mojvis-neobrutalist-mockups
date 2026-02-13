@@ -171,7 +171,7 @@ export function HeroMediaHeader({
           <View style={styles.placeholderContainer}>
             {placeholder ?? (
               <View style={styles.defaultPlaceholder}>
-                <Icon name="leaf" size="xl" colorToken="textMuted" />
+                <Icon name="leaf" size="lg" colorToken="textMuted" />
               </View>
             )}
           </View>

@@ -126,25 +126,18 @@ export type IconColorToken = keyof typeof skin.colors;
 /**
  * Size-aware stroke width mapping for unboxed icon sizes.
  *
- * Maintains consistent visual weight across icon sizes by scaling
- * stroke width proportionally. Larger icons need thicker strokes
- * to maintain the same apparent line thickness ratio.
+ * CONSERVATIVE VALUES: All strokes capped at 2.5 to avoid overly thick icons.
+ * The original scaling approach (3.0-4.0 for large icons) was too aggressive
+ * and made icons visually broken.
  *
  * Unboxed sizes: sm=24, md=32, lg=48, xl=64, xxl=80
- *
- * Rationale (targeting ~6-8% stroke-to-size ratio for regular):
- * - sm(24):  2.0 → 8.3%
- * - md(32):  2.0 → 6.25%
- * - lg(48):  2.5 → 5.2%
- * - xl(64):  3.0 → 4.7%
- * - xxl(80): 3.5 → 4.4%
  */
 const STROKE_BY_SIZE: Record<IconSize, Record<IconStroke, number>> = {
   sm:  { light: 1.5, regular: 2.0, strong: 2.5 },  // 24px
   md:  { light: 1.5, regular: 2.0, strong: 2.5 },  // 32px
-  lg:  { light: 2.0, regular: 2.5, strong: 3.0 },  // 48px
-  xl:  { light: 2.5, regular: 3.0, strong: 3.5 },  // 64px
-  xxl: { light: 3.0, regular: 3.5, strong: 4.0 },  // 80px
+  lg:  { light: 1.5, regular: 2.0, strong: 2.5 },  // 48px
+  xl:  { light: 1.5, regular: 2.0, strong: 2.5 },  // 64px
+  xxl: { light: 1.5, regular: 2.0, strong: 2.5 },  // 80px
 };
 
 /**

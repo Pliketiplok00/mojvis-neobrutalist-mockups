@@ -98,7 +98,7 @@ export function InboxDetailScreen(): React.JSX.Element {
         <Header type="inbox" />
         <View style={styles.errorState}>
           <View style={styles.errorIconContainer}>
-            <Icon name="alert-triangle" size="xl" colorToken="errorText" />
+            <Icon name="alert-triangle" size="lg" colorToken="errorText" />
           </View>
           <Body style={styles.errorTitle}>
             {error || t('inboxDetail.notFound')}

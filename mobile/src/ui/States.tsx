@@ -67,7 +67,7 @@ export function EmptyState({ icon, title, subtitle, style }: EmptyStateProps): R
   return (
     <View style={[styles.container, style]}>
       <View style={styles.iconContainer}>
-        <Icon name={icon} size="xl" colorToken="textMuted" />
+        <Icon name={icon} size="lg" colorToken="textMuted" />
       </View>
       <H2 style={styles.title}>{title}</H2>
       {subtitle && (
@@ -106,7 +106,7 @@ export function ErrorState({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.iconContainer}>
-        <Icon name="alert-triangle" size="xl" colorToken="errorText" />
+        <Icon name="alert-triangle" size="lg" colorToken="errorText" />
       </View>
       <Body style={styles.errorMessage}>{message}</Body>
       {onRetry && (
