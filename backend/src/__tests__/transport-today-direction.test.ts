@@ -35,16 +35,6 @@ const VIS_ISLAND_STOP_NAMES = [
   'Komiža',
 ];
 
-/**
- * Other island stop names (NOT Vis island, but still islands)
- */
-const OTHER_ISLAND_STOP_NAMES = [
-  'Hvar',
-  'Milna',
-  'Porat (Biševo)',
-  'Mezuporat',
-  'Salbunara',
-];
 
 /**
  * Helper to check if an origin stop name represents a Vis island origin
