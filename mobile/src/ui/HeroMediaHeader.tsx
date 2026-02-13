@@ -132,7 +132,7 @@ export function HeroMediaHeader({
                 >
                   <Icon
                     name="chevron-left"
-                    size="md"
+                    size="xs"
                     color={colors.primaryText}
                   />
                 </TouchableOpacity>
@@ -145,7 +145,7 @@ export function HeroMediaHeader({
                 >
                   <Icon
                     name="chevron-right"
-                    size="md"
+                    size="xs"
                     color={colors.primaryText}
                   />
                 </TouchableOpacity>

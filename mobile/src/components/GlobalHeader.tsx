@@ -25,8 +25,8 @@ import { Icon } from '../ui/Icon';
 import { skin } from '../ui/skin';
 import { H2 } from '../ui/Text';
 
-// Header badge tokens
-const { inboxBadge } = skin.components.header;
+// Header tokens
+const { inboxBadge, globalHeader: headerTokens } = skin.components.header;
 
 export type HeaderType = 'root' | 'child' | 'inbox';
 
@@ -83,7 +83,7 @@ export function GlobalHeader({
         accessibilityLabel="Open menu"
       >
         <View style={styles.menuIconBox}>
-          <Icon name="menu" size="md" colorToken="textPrimary" />
+          <Icon name="menu" size="md" color={headerTokens.hamburger.foreground} />
         </View>
       </TouchableOpacity>
 
@@ -101,7 +101,7 @@ export function GlobalHeader({
       >
         {showInboxIcon && (
           <View style={styles.inboxIconBox}>
-            <Icon name="inbox" size="md" colorToken="primaryText" />
+            <Icon name="inbox" size="md" color={headerTokens.inbox.foreground} />
             {unreadCount > 0 && (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>
@@ -135,9 +135,9 @@ const styles = StyleSheet.create({
   menuIconBox: {
     width: skin.components.header.iconBoxSize,
     height: skin.components.header.iconBoxSize,
-    backgroundColor: skin.colors.warningAccent, // Yellow
-    borderWidth: skin.borders.widthCard, // Thick border per poster
-    borderColor: skin.colors.border,
+    backgroundColor: headerTokens.hamburger.background,
+    borderWidth: headerTokens.iconButton.borderWidth,
+    borderColor: headerTokens.iconButton.borderColor,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -156,9 +156,9 @@ const styles = StyleSheet.create({
   inboxIconBox: {
     width: skin.components.header.iconBoxSize,
     height: skin.components.header.iconBoxSize,
-    backgroundColor: skin.colors.primary, // Blue
-    borderWidth: skin.borders.widthCard, // Thick border per poster
-    borderColor: skin.colors.border,
+    backgroundColor: headerTokens.inbox.background,
+    borderWidth: headerTokens.iconButton.borderWidth,
+    borderColor: headerTokens.iconButton.borderColor,
     justifyContent: 'center',
     alignItems: 'center',
   },

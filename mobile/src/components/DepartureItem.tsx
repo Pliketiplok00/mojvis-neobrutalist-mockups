@@ -141,7 +141,7 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
             <View style={styles.expandIconContainer}>
               <Icon
                 name={expanded ? 'chevron-up' : 'chevron-down'}
-                size="md"
+                size="xs"
                 colorToken="textPrimary"
               />
             </View>

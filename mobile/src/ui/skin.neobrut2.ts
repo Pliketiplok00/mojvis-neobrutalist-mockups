@@ -141,12 +141,18 @@ const typography = {
 
 // Icon tokens for lucide-react-native
 const icons = {
+  // Legacy size tokens (used by existing screens)
   size: {
     xs: 14,
     sm: 18,
     md: 24,
     lg: 32,
     xl: 40,
+  },
+  // Unboxed icon sizes - for icons WITHOUT visual box containers
+  // xs (micro) is specifically for inline chevrons and expand icons
+  unboxed: {
+    xs: 20, // Micro: inline chevrons, expand icons
   },
   strokeWidth: {
     light: 1.5,
@@ -352,6 +358,24 @@ export const components = {
     paddingHorizontal: spacing.lg,
     // Icon box size (menu and inbox buttons)
     iconBoxSize: 44,
+    // GlobalHeader icon button tokens (boxed icons)
+    globalHeader: {
+      // Hamburger button (yellow bg, black icon)
+      hamburger: {
+        background: colors.warningAccent, // Yellow
+        foreground: colors.textPrimary, // Black
+      },
+      // Inbox button (blue bg, white icon)
+      inbox: {
+        background: colors.primary, // Blue
+        foreground: colors.primaryText, // White
+      },
+      // Shared icon button styling
+      iconButton: {
+        borderWidth: bordersToken.widthCard, // Thick border
+        borderColor: colors.border, // Black outline
+      },
+    },
     // Inbox badge (unread indicator)
     inboxBadge: {
       backgroundColor: palette.destructive, // Terracotta red for urgency

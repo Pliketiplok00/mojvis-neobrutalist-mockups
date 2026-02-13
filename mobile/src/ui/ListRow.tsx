@@ -42,7 +42,7 @@ export function ListRow({
       <View style={styles.content}>{children}</View>
       {rightAccessory ?? (showChevron && (
         <View style={styles.chevronContainer}>
-          <Icon name="chevron-right" size="md" stroke="regular" colorToken="chevron" />
+          <Icon name="chevron-right" size="xs" stroke="regular" colorToken="chevron" />
         </View>
       ))}
     </>

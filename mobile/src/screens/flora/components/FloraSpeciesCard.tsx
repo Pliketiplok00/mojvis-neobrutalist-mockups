@@ -171,7 +171,7 @@ export function FloraSpeciesCard({
           <View style={styles.chevronContainer}>
             <Icon
               name={expanded ? 'chevron-up' : 'chevron-down'}
-              size="md"
+              size="xs"
               colorToken="textPrimary"
             />
           </View>

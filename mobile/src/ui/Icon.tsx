@@ -253,7 +253,10 @@ export function Icon({
   color,
   accessibilityLabel,
 }: IconProps): React.JSX.Element {
-  const iconSize = skin.icons.size[size];
+  // Use unboxed.xs (20px) for micro chevrons, otherwise use standard sizes
+  const iconSize = size === 'xs' && skin.icons.unboxed?.xs
+    ? skin.icons.unboxed.xs
+    : skin.icons.size[size];
   const strokeWidth = skin.icons.strokeWidth[stroke];
   const iconColor = color ?? skin.colors[colorToken];
 
