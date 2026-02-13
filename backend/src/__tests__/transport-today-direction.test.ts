@@ -83,6 +83,16 @@ describe('Today Departures Direction Filter', () => {
     it('should REJECT Split origin', () => {
       expect(isIslandOrigin('Split')).toBe(false);
     });
+
+    /**
+     * FAILING TEST: Porat (Biševo) must NOT appear in "Today departures from Vis island"
+     * Biševo is a separate island, not part of Vis island.
+     * This test documents the required behavior - currently fails because
+     * MAINLAND_STOP_NAMES only contains 'Split'.
+     */
+    it('should REJECT Porat (Biševo) origin - Biševo is not Vis island', () => {
+      expect(isIslandOrigin('Porat (Biševo)')).toBe(false);
+    });
   });
 
   describe('Direction filtering business rules', () => {
