@@ -420,14 +420,21 @@ export async function getDeparturesForRouteAndDate(
 }
 
 /**
- * Known mainland stop names - departures from these origins are excluded from "today" view.
- * The "Polasci danas" feature shows only departures that START ON THE ISLAND.
+ * Stop names to exclude from "today's departures from Vis island" view.
  *
- * IMPORTANT: Must include all name variations for mainland ports.
- * - "Split" - used in some seed data (stop-split)
- * - "Split (luka)" - used in ferry/catamaran routes (stop-split-port)
+ * The "Polasci danas" feature shows ONLY departures that start on Vis island
+ * (from Vis or Komiža). This excludes:
+ * - Mainland stops: Split, Split (luka)
+ * - Biševo island stops: Porat, Porat (Biševo)
+ *
+ * Multiple name variations are included to handle potential database naming differences.
  */
-const MAINLAND_STOP_NAMES = ['Split', 'Split (luka)'];
+const NON_VIS_ISLAND_ORIGIN_NAMES = [
+  'Split',
+  'Split (luka)',
+  'Porat',
+  'Porat (Biševo)',
+];
 
 /**
  * Get today's departures for a transport type (aggregated across all lines)
@@ -521,9 +528,9 @@ export async function getTodaysDepartures(
          (d.date_from IS NULL AND d.date_to IS NULL
           AND (d.include_dates IS NULL OR d.include_dates = '[]'::jsonb))
        )
-       AND origin.name_hr NOT IN (${MAINLAND_STOP_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
+       AND origin.name_hr NOT IN (${NON_VIS_ISLAND_ORIGIN_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
      ORDER BY d.departure_time`,
-    [transportType, dayType, dateStr, ...MAINLAND_STOP_NAMES]
+    [transportType, dayType, dateStr, ...NON_VIS_ISLAND_ORIGIN_NAMES]
   );
 
   // Apply date exception filtering
