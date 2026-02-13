@@ -58,7 +58,6 @@ export function JavneUslugeScreen(): React.JSX.Element {
               title={service.title}
               subtitle={service.subtitle}
               badge={service.badge}
-              iconBackgroundColor={colors[service.iconBackgroundColor]}
               infoRows={service.infoRows}
               note={service.note}
             />

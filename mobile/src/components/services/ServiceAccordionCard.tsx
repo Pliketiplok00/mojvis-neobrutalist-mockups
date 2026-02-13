@@ -50,8 +50,6 @@ interface ServiceAccordionCardProps {
   subtitle: string;
   /** Optional badge text (e.g., "VELJAČA '26") */
   badge?: string;
-  /** Background color for the icon box (use skin.colors token) */
-  iconBackgroundColor?: string;
   /** Info rows to display when expanded */
   infoRows: ServiceInfoRow[];
   /** Optional note text at the bottom */
@@ -65,7 +63,6 @@ export function ServiceAccordionCard({
   title,
   subtitle,
   badge,
-  iconBackgroundColor = colors.backgroundSecondary,
   infoRows,
   note,
 }: ServiceAccordionCardProps): React.JSX.Element {
@@ -92,7 +89,7 @@ export function ServiceAccordionCard({
           accessibilityLabel={`${title}, ${subtitle}`}
         >
           {/* Icon box */}
-          <View style={[styles.iconBox, { backgroundColor: iconBackgroundColor }]}>
+          <View style={styles.iconBox}>
             <Icon name={icon} size="md" colorToken="textPrimary" />
           </View>
 
@@ -175,8 +172,6 @@ const styles = StyleSheet.create({
   iconBox: {
     width: ICON_BOX_SIZE,
     height: ICON_BOX_SIZE,
-    borderWidth: borders.widthThin,
-    borderColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },

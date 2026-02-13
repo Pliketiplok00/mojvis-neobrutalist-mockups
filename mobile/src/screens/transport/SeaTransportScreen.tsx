@@ -63,15 +63,9 @@ function formatTime(time: string): string {
 
 /**
  * Map sea transport subtype to icon name
- * - KATAMARAN -> anchor (fast vessel)
- * - TRAJEKT -> ship (ferry)
- * - Default -> ship
+ * All sea transport uses ship icon (per design spec).
  */
-function getSeaTypeIcon(subtype: string | null): IconName {
-  if (!subtype) return 'ship';
-  const lower = subtype.toLowerCase();
-  if (lower.includes('katamaran')) return 'anchor';
-  if (lower.includes('trajekt')) return 'ship';
+function getSeaTypeIcon(_subtype: string | null): IconName {
   return 'ship';
 }
 
