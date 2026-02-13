@@ -6,6 +6,11 @@
  *
  * Phase 1: Fonts + Icons Infrastructure
  * Hotfix: Added fallback mechanism with dev warning for unknown icons.
+ *
+ * Stroke Normalization:
+ * Stroke width is now size-aware to maintain consistent visual weight
+ * across different icon sizes. Larger icons use thicker strokes to
+ * preserve the same apparent line weight ratio.
  */
 
 import React from 'react';
@@ -103,10 +108,10 @@ export type IconName =
   | 'megaphone';
 
 /**
- * Icon size tokens from skin.
- * Uses the unified unboxed icon sizes, with 'xs' for legacy compatibility.
+ * Icon size tokens - unified unboxed sizes only.
+ * No legacy 'xs' support; use 'sm' (24px) as minimum.
  */
-export type IconSize = keyof typeof skin.icons.unboxed | 'xs';
+export type IconSize = keyof typeof skin.icons.unboxed;
 
 /**
  * Stroke width tokens from skin.
@@ -117,6 +122,30 @@ export type IconStroke = keyof typeof skin.icons.strokeWidth;
  * Color token keys from skin.colors.
  */
 export type IconColorToken = keyof typeof skin.colors;
+
+/**
+ * Size-aware stroke width mapping for unboxed icon sizes.
+ *
+ * Maintains consistent visual weight across icon sizes by scaling
+ * stroke width proportionally. Larger icons need thicker strokes
+ * to maintain the same apparent line thickness ratio.
+ *
+ * Unboxed sizes: sm=24, md=32, lg=48, xl=64, xxl=80
+ *
+ * Rationale (targeting ~6-8% stroke-to-size ratio for regular):
+ * - sm(24):  2.0 → 8.3%
+ * - md(32):  2.0 → 6.25%
+ * - lg(48):  2.5 → 5.2%
+ * - xl(64):  3.0 → 4.7%
+ * - xxl(80): 3.5 → 4.4%
+ */
+const STROKE_BY_SIZE: Record<IconSize, Record<IconStroke, number>> = {
+  sm:  { light: 1.5, regular: 2.0, strong: 2.5 },  // 24px
+  md:  { light: 1.5, regular: 2.0, strong: 2.5 },  // 32px
+  lg:  { light: 2.0, regular: 2.5, strong: 3.0 },  // 48px
+  xl:  { light: 2.5, regular: 3.0, strong: 3.5 },  // 64px
+  xxl: { light: 3.0, regular: 3.5, strong: 4.0 },  // 80px
+};
 
 /**
  * Icon component map.
@@ -170,7 +199,7 @@ interface IconProps {
   name: IconName;
 
   /**
-   * Size token from skin.icons.size.
+   * Size token from skin.icons.unboxed.
    * @default 'md'
    */
   size?: IconSize;
@@ -254,11 +283,9 @@ export function Icon({
   color,
   accessibilityLabel,
 }: IconProps): React.JSX.Element {
-  // Use legacy size token for 'xs', otherwise use unboxed sizes
-  const iconSize = size === 'xs'
-    ? skin.icons.size.xs
-    : skin.icons.unboxed[size];
-  const strokeWidth = skin.icons.strokeWidth[stroke];
+  const iconSize = skin.icons.unboxed[size];
+  // Size-aware stroke width for consistent visual weight across sizes
+  const strokeWidth = STROKE_BY_SIZE[size][stroke];
   const iconColor = color ?? skin.colors[colorToken];
 
   // Runtime safety check - should never trigger with proper TypeScript usage
