@@ -268,7 +268,7 @@ export function LineDetailScreen({
               <Icon
                 name={transportType === 'sea' ? 'ship' : 'bus'}
                 size="lg"
-                colorToken="textPrimary"
+                colorToken="primaryText"
               />
             </View>
             <View style={styles.headerTextContainer}>
