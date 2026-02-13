@@ -721,13 +721,10 @@ const styles = StyleSheet.create({
     fontSize: skin.typography.fontSize.xs,
   },
 
-  // Chevron box
+  // Chevron container
   chevronBox: {
     width: inboxTokens.listItem.chevronBoxSize,
     height: inboxTokens.listItem.chevronBoxSize,
-    backgroundColor: inboxTokens.listItem.chevronBoxBackground,
-    borderWidth: inboxTokens.listItem.chevronBoxBorderWidth,
-    borderColor: inboxTokens.listItem.chevronBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
   },

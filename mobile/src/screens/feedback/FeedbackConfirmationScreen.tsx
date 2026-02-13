@@ -85,8 +85,6 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 80,
     height: 80,
-    borderRadius: skin.borders.radiusSharp,
-    backgroundColor: skin.colors.textPrimary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: skin.spacing.xxl,

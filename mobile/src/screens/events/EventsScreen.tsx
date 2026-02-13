@@ -446,13 +446,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: skin.spacing.lg,
   },
-  // V1 Poster: Square nav buttons with thick borders
+  // Calendar navigation buttons
   calendarNavButton: {
     width: 44,
     height: 44,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    backgroundColor: skin.colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },

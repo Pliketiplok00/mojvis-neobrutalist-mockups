@@ -370,7 +370,6 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
   },
   thumbnailPlaceholder: {
-    backgroundColor: colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -434,7 +433,6 @@ const styles = StyleSheet.create({
     marginTop: -16,
     width: 32,
     height: 32,
-    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -466,7 +464,6 @@ const styles = StyleSheet.create({
   galleryPlaceholder: {
     width: '100%',
     height: GALLERY_HEIGHT,
-    backgroundColor: colors.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
     gap: spacing.sm,

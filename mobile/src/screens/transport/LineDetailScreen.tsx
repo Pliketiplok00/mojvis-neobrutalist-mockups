@@ -625,9 +625,6 @@ const styles = StyleSheet.create({
   headerIconBox: {
     width: lineDetail.headerIconBoxSize,
     height: lineDetail.headerIconBoxSize,
-    backgroundColor: lineDetail.headerIconBoxBackground,
-    borderWidth: lineDetail.headerIconBoxBorderWidth,
-    borderColor: lineDetail.headerIconBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
@@ -781,12 +778,8 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     padding: spacing.xxl,
-    backgroundColor: colors.backgroundSecondary,
     alignItems: 'center',
     gap: spacing.md,
-    borderWidth: borders.widthThin,
-    borderColor: colors.borderMuted,
-    borderStyle: 'dashed',
   },
   emptyStateText: {
     color: colors.textMuted,

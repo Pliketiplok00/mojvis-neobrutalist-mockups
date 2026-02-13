@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
     marginTop: -24,
     width: 48,
     height: 48,
-    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
