@@ -13,20 +13,19 @@
 import { describe, it, expect } from 'vitest';
 
 /**
- * Known mainland stop names - departures from these origins are excluded.
- * This mirrors the constant in repositories/transport.ts
+ * Origins excluded from "today" departures - mirrors repositories/transport.ts
+ * Includes mainland (Split) and Biševo island stops (not part of Vis island)
  */
-const MAINLAND_STOP_NAMES = ['Split'];
+const MAINLAND_STOP_NAMES = ['Split', 'Porat', 'Porat (Biševo)'];
 
 /**
- * Known island stop names for testing
+ * Known Vis island stop names for testing
  */
 const ISLAND_STOP_NAMES = [
   'Vis',
   'Komiža',
   'Hvar',
   'Milna',
-  'Porat (Biševo)',
   'Mezuporat',
   'Salbunara',
 ];
@@ -74,10 +73,6 @@ describe('Today Departures Direction Filter', () => {
 
     it('should ACCEPT Milna origin', () => {
       expect(isIslandOrigin('Milna')).toBe(true);
-    });
-
-    it('should ACCEPT Porat (Biševo) origin', () => {
-      expect(isIslandOrigin('Porat (Biševo)')).toBe(true);
     });
 
     it('should REJECT Split origin', () => {

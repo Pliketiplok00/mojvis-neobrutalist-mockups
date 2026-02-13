@@ -420,10 +420,14 @@ export async function getDeparturesForRouteAndDate(
 }
 
 /**
- * Known mainland stop names - departures from these origins are excluded from "today" view.
- * The "Polasci danas" feature shows only departures that START ON THE ISLAND.
+ * Origins excluded from "today" departures view.
+ * The "Polasci danas" feature shows only departures that START ON VIS ISLAND.
+ *
+ * Excluded:
+ * - Split (mainland)
+ * - Porat, Porat (Biševo) (Biševo island - separate from Vis)
  */
-const MAINLAND_STOP_NAMES = ['Split'];
+const MAINLAND_STOP_NAMES = ['Split', 'Porat', 'Porat (Biševo)'];
 
 /**
  * Get today's departures for a transport type (aggregated across all lines)
