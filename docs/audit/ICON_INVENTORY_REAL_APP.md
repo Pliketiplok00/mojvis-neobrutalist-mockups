@@ -1,6 +1,6 @@
 # Icon Usage Inventory - Real App Only
 
-Generated: 2026-02-13
+Generated: 2026-02-13 (CORRECTED)
 
 ## Scope
 
@@ -16,9 +16,9 @@ Generated: 2026-02-13
 
 | Metric | Count |
 |--------|-------|
-| Total `<Icon />` instances | 77 |
-| Boxed icon containers | 23 |
-| Unboxed icons | 54 |
+| Total `<Icon />` instances | 90 |
+| Boxed icon containers | 25 |
+| Unboxed icons | 65 |
 | Unique boxed container sizes | 7 |
 
 ### Unique Boxed Icon Sizes (sorted)
@@ -27,7 +27,7 @@ Generated: 2026-02-13
 |------|-------------|---------|
 | 32px | 4 | Contact links (LineDetail), MicroPrimitives `md` |
 | 40px | 2 | Transport line card headers |
-| 44px | 11 | Navigation header, Events info tiles, Service accordion, Banner, Warning boxes |
+| 44px | 13 | Navigation header, Events info tiles, Service accordion, Banner, Warning boxes |
 | 48px | 4 | Transport overview headers, HomeScreen CTA, OnboardingRoleCard |
 | 52px | 1 | LineDetail header hero |
 | 64px | 2 | Municipality selection cards |
@@ -81,7 +81,7 @@ Generated: 2026-02-13
 
 | Line | Icon | Container | Size Source |
 |------|------|-----------|-------------|
-| (icon varies by transport type) | bus/ship | headerIconBox | `lineDetail.headerIconBoxSize` (52) |
+| 268 | `bus`/`ship` (dynamic) | headerIconBox | `lineDetail.headerIconBoxSize` (52) |
 
 **Container style:**
 - width/height: 52px (via token)
@@ -129,6 +129,7 @@ Generated: 2026-02-13
 |------|------|-----------|-------------|
 | 295 | `message-circle` | ctaIconBox | Hardcoded 48x48 |
 | 202 | (varies) | IconBox `lg` | MicroPrimitives lg = 44 |
+| 203 | (category icon) | IconBox `lg` | MicroPrimitives lg = 44 |
 
 **ctaIconBox style:**
 - width/height: 48px (hardcoded)
@@ -160,14 +161,31 @@ Generated: 2026-02-13
 
 ---
 
-### 3. List Icons (Rows/Meta) - Mostly UNBOXED
+### 3. Banner Icons
+
+#### Banner.tsx - MIXED (BOXED + UNBOXED)
+
+| Line | Icon | Box Status | Size | Notes |
+|------|------|------------|------|-------|
+| 69 | `shield-alert` | BOXED (44x44) | md | Red icon box accent |
+| 86 | `chevron-right` | UNBOXED | md | Arrow indicator |
+
+**iconBox style (line 69):**
+- width/height: 44px (hardcoded)
+- backgroundColor: urgent (red)
+- borderWidth: widthThin
+- borderColor: border
+
+---
+
+### 4. List Icons (Rows/Meta) - Mostly UNBOXED
 
 #### Transport Line Cards - BOXED (40x40)
 
 | File | Line | Icon | Container | Size Source |
 |------|------|------|-----------|-------------|
-| RoadTransportScreen.tsx | 220 | `bus` | lineCardHeaderIconBox | `listTokens.lineCardHeaderIconBoxSize` (40) |
-| SeaTransportScreen.tsx | 237 | `ship`/`anchor` | lineCardHeaderIconBox | `listTokens.lineCardHeaderIconBoxSize` (40) |
+| RoadTransportScreen.tsx | 221 | `bus` | lineCardHeaderIconBox | `listTokens.lineCardHeaderIconBoxSize` (40) |
+| SeaTransportScreen.tsx | 238 | `ship`/`anchor` | lineCardHeaderIconBox | `listTokens.lineCardHeaderIconBoxSize` (40) |
 
 **Container style:**
 - width/height: 40px (via token)
@@ -189,29 +207,24 @@ Generated: 2026-02-13
 - borderWidth: widthThin
 - borderColor: border
 
-#### ServiceAccordionCard.tsx - BOXED (44x44)
+#### ServiceAccordionCard.tsx - MIXED
 
-| Line | Icon | Container | Size Source |
-|------|------|-----------|-------------|
-| 96 | (varies) | iconBox | Hardcoded constant ICON_BOX_SIZE = 44 |
+| Line | Icon | Box Status | Size | Notes |
+|------|------|------------|------|-------|
+| 96 | (varies) | BOXED (44x44) | md | Header icon box |
+| 114 | `chevron-up`/`chevron-down` | UNBOXED | sm | Expand indicator |
 
-**Container style:**
-- width/height: 44px (via constant)
+**iconBox style (line 96):**
+- width/height: 44px (via constant ICON_BOX_SIZE)
 - backgroundColor: (prop-driven)
 - borderWidth: widthThin
 - borderColor: border
 
-#### Banner.tsx - BOXED (44x44)
+#### DepartureItem.tsx - UNBOXED
 
-| Line | Icon | Container | Size Source |
-|------|------|-----------|-------------|
-| 68 | `megaphone` | iconBox | Hardcoded 44x44 |
-
-**Container style:**
-- width/height: 44px (hardcoded)
-- backgroundColor: urgent (red)
-- borderWidth: widthThin
-- borderColor: border
+| Line | Icon | Size | Notes |
+|------|------|------|-------|
+| 142 | `chevron-up`/`chevron-down` | md | Expand toggle |
 
 #### ListRow.tsx - UNBOXED
 
@@ -242,7 +255,10 @@ Generated: 2026-02-13
 | LineDetailScreen.tsx | 391 | `map-pin` | sm | Route info |
 | LineDetailScreen.tsx | 423 | `calendar` | lg | Empty state |
 | LineDetailScreen.tsx | 469 | `globe` | sm | Operator link |
+| InboxListScreen.tsx | 282 | (varies) | md | Message item icon |
 | InboxListScreen.tsx | 362 | (varies) | md | Message type icon |
+| InboxListScreen.tsx | 435 | (varies) | md | Empty state icon |
+| InboxListScreen.tsx | 453 | (varies) | md | Empty state icon (sent) |
 | JavneUslugeScreen.tsx | 97, 99 | (varies), `globe` | sm | Service links |
 | FormSectionHeader.tsx | 42 | (varies) | sm | Section icon |
 | InfoRow.tsx | 36 | (varies) | sm | Info icon |
@@ -251,12 +267,14 @@ Generated: 2026-02-13
 
 | File | Line | Icon | Size | Notes |
 |------|------|------|------|-------|
-| FloraSpeciesCard.tsx | 151 | `leaf` | md | Placeholder |
+| FloraSpeciesCard.tsx | 151 | `leaf` | md | Placeholder thumbnail |
+| FloraSpeciesCard.tsx | 172 | `chevron-up`/`chevron-down` | md | Expand indicator |
 | FloraSpeciesCard.tsx | 226, 233 | chevron-left/right | sm | Gallery nav |
 | FloraSpeciesCard.tsx | 257 | `camera` | xl | Empty gallery |
 | FloraSpeciesCard.tsx | 274 | `info` | sm | Section icon |
 | FloraSpeciesCard.tsx | 287 | `map-pin` | sm | Habitat |
-| FaunaSpeciesCard.tsx | 151 | `leaf` | md | Placeholder |
+| FaunaSpeciesCard.tsx | 151 | `leaf` | md | Placeholder thumbnail |
+| FaunaSpeciesCard.tsx | 172 | `chevron-up`/`chevron-down` | md | Expand indicator |
 | FaunaSpeciesCard.tsx | 226, 233 | chevron-left/right | sm | Gallery nav |
 | FaunaSpeciesCard.tsx | 257 | `camera` | xl | Empty gallery |
 | FaunaSpeciesCard.tsx | 274 | `info` | sm | Section icon |
@@ -264,7 +282,19 @@ Generated: 2026-02-13
 
 ---
 
-### 4. Onboarding Icons - BOXED
+### 5. Gallery/Carousel Icons - UNBOXED
+
+#### HeroMediaHeader.tsx - UNBOXED
+
+| Line | Icon | Size | Notes |
+|------|------|------|-------|
+| 133 | `chevron-left` | md | Gallery previous button |
+| 146 | `chevron-right` | md | Gallery next button |
+| 174 | `leaf` | xl | Placeholder |
+
+---
+
+### 6. Onboarding Icons - BOXED
 
 #### OnboardingRoleCard.tsx - BOXED (48x48)
 
@@ -294,16 +324,16 @@ Generated: 2026-02-13
 
 ---
 
-### 5. Other Icons
+### 7. Other Icons
 
-#### Confirmation Screens - BOXED (icon inside 80x80 circle, now square)
+#### Confirmation Screens - BOXED (icon inside 80x80 container)
 
 | File | Line | Icon | Notes |
 |------|------|------|-------|
 | ClickFixConfirmationScreen.tsx | 50 | `check` | 80x80 container |
 | FeedbackConfirmationScreen.tsx | 50 | `check` | 80x80 container |
 
-Note: Container is 80x80 but icon is `xl` size. These were recently changed to sharp corners.
+Note: Container is 80x80 but icon is `xl` size. Sharp corners (neobrutalist style).
 
 #### ClickFixDetailScreen.tsx - UNBOXED
 
@@ -338,12 +368,6 @@ Note: Container is 80x80 but icon is `xl` size. These were recently changed to s
 | 70 | (varies) | xl | Empty state |
 | 109 | `alert-triangle` | xl | Error state |
 
-#### HeroMediaHeader.tsx - UNBOXED
-
-| Line | Icon | Size | Notes |
-|------|------|------|-------|
-| 174 | `leaf` | xl | Placeholder |
-
 #### InboxDetailScreen.tsx - UNBOXED
 
 | Line | Icon | Size | Notes |
@@ -366,7 +390,7 @@ Note: Container is 80x80 but icon is `xl` size. These were recently changed to s
 |------|-------|-------|
 | 32px | 3 | LineDetailScreen (contact) |
 | 40px | 2 | RoadTransportScreen, SeaTransportScreen (line cards) |
-| 44px | 11 | GlobalHeader (2), EventDetailScreen (3), ServiceAccordionCard, Banner, FaunaScreen, FloraScreen, HomeScreen category |
+| 44px | 13 | GlobalHeader (2), EventDetailScreen (3), ServiceAccordionCard, Banner, FaunaScreen, FloraScreen, HomeScreen category (2) |
 | 48px | 4 | RoadTransportScreen, SeaTransportScreen, HomeScreen CTA, OnboardingRoleCard |
 | 52px | 1 | LineDetailScreen header |
 | 64px | 2 | MunicipalitySelectionScreen |
@@ -377,10 +401,54 @@ Note: Container is 80x80 but icon is `xl` size. These were recently changed to s
 | Size | Count | Usage |
 |------|-------|-------|
 | xs | 2 | EventsScreen meta |
-| sm | ~25 | Chevrons, meta icons, form icons |
-| md | ~15 | Menu icons, list icons, close buttons |
+| sm | ~30 | Chevrons, meta icons, form icons, gallery nav |
+| md | ~20 | Menu icons, list icons, close buttons, expand indicators |
 | lg | ~8 | Header icons, empty states |
 | xl | ~6 | Large empty states, confirmation icons |
+
+---
+
+## Complete File Index
+
+| File | Total Icons | Boxed | Unboxed |
+|------|-------------|-------|---------|
+| GlobalHeader.tsx | 2 | 2 | 0 |
+| Banner.tsx | 2 | 1 | 1 |
+| DepartureItem.tsx | 1 | 0 | 1 |
+| HeroMediaHeader.tsx | 3 | 0 | 3 |
+| LineDetailScreen.tsx | 10 | 4 | 6 |
+| RoadTransportScreen.tsx | 3 | 2 | 1 |
+| SeaTransportScreen.tsx | 3 | 2 | 1 |
+| EventDetailScreen.tsx | 3 | 3 | 0 |
+| EventsScreen.tsx | 5 | 0 | 5 |
+| HomeScreen.tsx | 5 | 3 | 2 |
+| TransportHubScreen.tsx | 4 | 0 | 4 |
+| FaunaScreen.tsx | 1 | 1 | 0 |
+| FloraScreen.tsx | 1 | 1 | 0 |
+| FaunaSpeciesCard.tsx | 7 | 0 | 7 |
+| FloraSpeciesCard.tsx | 7 | 0 | 7 |
+| ServiceAccordionCard.tsx | 2 | 1 | 1 |
+| ServicePageHeader.tsx | 1 | 0 | 1 |
+| InboxListScreen.tsx | 6 | 0 | 6 |
+| InboxDetailScreen.tsx | 1 | 0 | 1 |
+| OnboardingRoleCard.tsx | 1 | 1 | 0 |
+| MunicipalitySelectionScreen.tsx | 2 | 2 | 0 |
+| SettingsScreen.tsx | 1 | 0 | 1 |
+| JavneUslugeScreen.tsx | 2 | 0 | 2 |
+| ClickFixConfirmationScreen.tsx | 1 | 1 | 0 |
+| FeedbackConfirmationScreen.tsx | 1 | 1 | 0 |
+| ClickFixDetailScreen.tsx | 1 | 0 | 1 |
+| ClickFixFormScreen.tsx | 2 | 0 | 2 |
+| PhotoSlotTile.tsx | 2 | 0 | 2 |
+| EmergencyTile.tsx | 1 | 0 | 1 |
+| States.tsx | 2 | 0 | 2 |
+| ListRow.tsx | 1 | 0 | 1 |
+| StaticPageScreen.tsx | 3 | 0 | 3 |
+| FormSectionHeader.tsx | 1 | 0 | 1 |
+| InfoRow.tsx | 1 | 0 | 1 |
+| MenuOverlay.tsx | 1 | 0 | 1 |
+
+**Total: 90 icons across 36 files**
 
 ---
 
@@ -411,3 +479,24 @@ Note: Container is 80x80 but icon is `xl` size. These were recently changed to s
 1. **LineDetail contact icons (32px) are boxed** but per Decision Charter, list icons should be unboxed
 2. **Multiple similar sizes** (44, 48, 52) for hero/detail contexts - may need consolidation
 3. **Some hardcoded values** should be moved to skin tokens for consistency
+
+---
+
+## Corrections from Previous Version
+
+This version corrects the following missing entries from the initial inventory:
+
+1. **Banner.tsx** - Added 2 icons (was entirely missing)
+2. **DepartureItem.tsx** - Added 1 icon (was entirely missing)
+3. **HeroMediaHeader.tsx** - Added 2 gallery chevron icons (was partially documented)
+4. **InboxListScreen.tsx** - Added 3 dynamic icon references
+5. **HomeScreen.tsx** - Added 1 IconBox category icon
+6. **FaunaSpeciesCard.tsx** - Added 1 expand chevron icon
+7. **FloraSpeciesCard.tsx** - Added 1 expand chevron icon
+8. **LineDetailScreen.tsx** - Added 1 header icon (dynamic bus/ship)
+9. **RoadTransportScreen.tsx** - Added 1 line card header icon
+10. **SeaTransportScreen.tsx** - Added 1 line card header icon
+11. **ServiceAccordionCard.tsx** - Added 1 expand chevron icon
+
+**Previous totals:** 77 icons, 34 files
+**Corrected totals:** 90 icons, 36 files
