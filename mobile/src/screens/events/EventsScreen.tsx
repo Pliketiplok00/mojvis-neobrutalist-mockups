@@ -43,16 +43,9 @@ import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
-import { formatEventTime } from '../../utils/dateFormat';
+import { formatEventTime, formatDateISO } from '../../utils/dateFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
-
-/**
- * Get date string in YYYY-MM-DD format
- */
-function toDateString(date: Date): string {
-  return date.toISOString().split('T')[0];
-}
 
 /**
  * Simple calendar component
@@ -90,8 +83,8 @@ function Calendar({
 
   const renderDays = () => {
     const days: React.JSX.Element[] = [];
-    const today = toDateString(new Date());
-    const selected = toDateString(selectedDate);
+    const today = formatDateISO(new Date());
+    const selected = formatDateISO(selectedDate);
 
     // Empty cells for days before first day of month
     for (let i = 0; i < startDay; i++) {
@@ -105,7 +98,7 @@ function Calendar({
     // Days of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
-      const dateStr = toDateString(date);
+      const dateStr = formatDateISO(date);
       const isToday = dateStr === today;
       const isSelected = dateStr === selected;
       const hasEvents = eventDates.has(dateStr);
@@ -290,7 +283,7 @@ export function EventsScreen(): React.JSX.Element {
     setLoading(true);
     setError(null);
     try {
-      const dateStr = toDateString(date);
+      const dateStr = formatDateISO(date);
       const response = await eventsApi.getEvents(1, 50, dateStr);
       setEvents(response.events);
     } catch (err) {
