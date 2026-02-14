@@ -171,7 +171,7 @@ export function RoadTransportScreen(): React.JSX.Element {
         <View style={styles.headerSlab}>
           <View style={styles.headerContent}>
             <View style={styles.headerIconBox}>
-              <Icon name="bus" size="lg" colorToken="textPrimary" />
+              <Icon name="bus" size="lg" colorToken="primaryText" />
             </View>
             <View style={styles.headerTextContainer}>
               <H1 style={styles.headerTitle}>{t('transport.road.title')}</H1>
@@ -221,7 +221,7 @@ export function RoadTransportScreen(): React.JSX.Element {
                       <Icon
                         name={getRoadTypeIcon(line.subtype)}
                         size="md"
-                        colorToken="textPrimary"
+                        colorToken="primaryText"
                       />
                     </View>
                     <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>

@@ -187,7 +187,7 @@ export function SeaTransportScreen(): React.JSX.Element {
         <View style={styles.headerSlab}>
           <View style={styles.headerContent}>
             <View style={styles.headerIconBox}>
-              <Icon name="ship" size="lg" colorToken="textPrimary" />
+              <Icon name="ship" size="lg" colorToken="primaryText" />
             </View>
             <View style={styles.headerTextContainer}>
               <H1 style={styles.headerTitle}>{t('transport.sea.title')}</H1>
@@ -238,7 +238,7 @@ export function SeaTransportScreen(): React.JSX.Element {
                       <Icon
                         name={getSeaTypeIcon(line.subtype)}
                         size="md"
-                        colorToken="textPrimary"
+                        colorToken="primaryText"
                       />
                     </View>
                     <View style={styles.lineCardHeaderTextContainer}>
