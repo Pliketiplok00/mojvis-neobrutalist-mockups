@@ -38,6 +38,10 @@
   - Kreiran `useDepartures` hook
   - Izvučeni: departures, departuresLoading, selectedDirection, setSelectedDirection
   - Smanjeno: 830 → 813 linija (-17)
+- LineDetailScreen refaktoring - Faza 3a:
+  - Kreirana `DatePickerModal` komponenta
+  - Platform-specific rendering (iOS modal / Android native)
+  - Smanjeno: 813 → 740 linija (-73)
 
 #### Odluke donesene
 - Refaktoring LineDetailScreen u fazama - jedan commit po koraku za lako revertanje
