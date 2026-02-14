@@ -38,16 +38,14 @@ import { LoadingState, ErrorState } from '../../ui/States';
 import { Badge } from '../../ui/Badge';
 import { skin } from '../../ui/skin';
 import { useDatePicker } from '../../hooks/useDatePicker';
+import { useDepartures } from '../../hooks/useDepartures';
 import { useLineDetail } from '../../hooks/useLineDetail';
 import { useTranslations } from '../../i18n';
-import { transportApi } from '../../services/api';
 import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
 import { formatLineTitle, formatDuration } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
-  LineDetailResponse,
-  DeparturesListResponse,
   RouteInfo,
   DayType,
 } from '../../types/transport';
@@ -90,10 +88,6 @@ export function LineDetailScreen({
     refresh,
   } = useLineDetail({ lineId, transportType, language });
 
-  const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
-  const [selectedDirection, setSelectedDirection] = useState<number>(0);
-  const [departuresLoading, setDeparturesLoading] = useState(false);
-
   // Date picker hook
   const {
     selectedDate,
@@ -104,6 +98,20 @@ export function LineDetailScreen({
     adjustDate,
   } = useDatePicker();
 
+  // Departures hook
+  const {
+    departures,
+    departuresLoading,
+    selectedDirection,
+    setSelectedDirection,
+  } = useDepartures({
+    lineId,
+    transportType,
+    selectedDate,
+    language,
+    enabled: !!lineDetailData,
+  });
+
   // Get transport-type-specific colors
   const headerBackground = transportType === 'sea'
     ? lineDetail.headerBackgroundSea
@@ -111,31 +119,6 @@ export function LineDetailScreen({
   const timeBlockBackground = transportType === 'sea'
     ? lineDetail.timeBlockBackgroundSea
     : lineDetail.timeBlockBackgroundRoad;
-
-  // Fetch departures for selected date and direction
-  const fetchDepartures = useCallback(async () => {
-    setDeparturesLoading(true);
-    try {
-      const deps = await transportApi.getDepartures(
-        transportType,
-        lineId,
-        selectedDate,
-        selectedDirection,
-        language
-      );
-      setDepartures(deps);
-    } catch (err) {
-      console.error('[LineDetail] Error fetching departures:', err);
-    } finally {
-      setDeparturesLoading(false);
-    }
-  }, [lineId, transportType, selectedDate, selectedDirection, language]);
-
-  useEffect(() => {
-    if (lineDetailData) {
-      void fetchDepartures();
-    }
-  }, [lineDetailData, fetchDepartures]);
 
   // Get routes for direction toggle
   const routes: RouteInfo[] = lineDetailData?.routes || [];

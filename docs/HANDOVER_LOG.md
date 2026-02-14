@@ -34,6 +34,10 @@
   - Kreiran `useLineDetail` hook
   - Izvučeni: lineDetailData, banners, loading, error, refreshing, refresh
   - Smanjeno: 854 → 830 linija (-24)
+- LineDetailScreen refaktoring - Faza 2c:
+  - Kreiran `useDepartures` hook
+  - Izvučeni: departures, departuresLoading, selectedDirection, setSelectedDirection
+  - Smanjeno: 830 → 813 linija (-17)
 
 #### Odluke donesene
 - Refaktoring LineDetailScreen u fazama - jedan commit po koraku za lako revertanje
