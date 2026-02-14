@@ -176,6 +176,7 @@ function Calendar({
  */
 function EventItem({ event, allDayText }: { event: Event; allDayText: string }): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
+  const { language } = useTranslations();
 
   return (
     <View style={styles.eventItemWrapper}>
@@ -195,7 +196,7 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
                 <View style={styles.eventMetaRow}>
                   <Icon name="clock" size="xs" colorToken="textMuted" />
                   <Meta style={styles.eventMetaText} numberOfLines={1}>
-                    {formatEventTime(event.start_datetime, event.is_all_day, allDayText)}
+                    {formatEventTime(event.start_datetime, event.is_all_day, allDayText, language)}
                   </Meta>
                 </View>
                 {/* V1 Poster: Location row with map-pin icon */}

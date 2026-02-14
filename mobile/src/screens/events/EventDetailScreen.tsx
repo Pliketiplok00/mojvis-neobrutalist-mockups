@@ -39,7 +39,7 @@ import { Button } from '../../ui/Button';
 import { H1, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
-import { formatDateLocaleFull, formatTimeHrHR } from '../../utils/dateFormat';
+import { formatDateLocaleFull, formatTime } from '../../utils/dateFormat';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
 
@@ -109,7 +109,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     try {
       await Share.share({
         title: event.title,
-        message: `${event.title}\n${formatDateLocaleFull(event.start_datetime)}${
+        message: `${event.title}\n${formatDateLocaleFull(event.start_datetime, language)}${
           event.location ? `\n${event.location}` : ''
         }`,
       });
@@ -163,13 +163,13 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
               <Icon name="clock" size="md" colorToken="textPrimary" />
             </View>
             <View style={styles.infoTileContent}>
-              <Body style={styles.infoTileValue}>{formatDateLocaleFull(event.start_datetime)}</Body>
+              <Body style={styles.infoTileValue}>{formatDateLocaleFull(event.start_datetime, language)}</Body>
               {event.is_all_day ? (
                 <Label style={styles.infoTileSecondary}>{t('events.allDay')}</Label>
               ) : (
                 <Label style={styles.infoTileSecondary}>
-                  {formatTimeHrHR(event.start_datetime)}
-                  {event.end_datetime && ` - ${formatTimeHrHR(event.end_datetime)}`}
+                  {formatTime(event.start_datetime, language)}
+                  {event.end_datetime && ` - ${formatTime(event.end_datetime, language)}`}
                 </Label>
               )}
             </View>

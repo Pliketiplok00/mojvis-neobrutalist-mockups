@@ -56,12 +56,16 @@ export function formatDateTimeSlash(isoString: string): string {
 }
 
 /**
- * Croatian locale full date format
+ * Locale-aware full date format
  * Used by: EventDetailScreen
+ *
+ * HR: "petak, 14. veljače 2026."
+ * EN: "Friday, February 14, 2026"
  */
-export function formatDateLocaleFull(isoString: string): string {
+export function formatDateLocaleFull(isoString: string, locale: 'hr' | 'en' = 'hr'): string {
   const date = new Date(isoString);
-  return date.toLocaleDateString('hr-HR', {
+  const localeCode = locale === 'hr' ? 'hr-HR' : 'en-US';
+  return date.toLocaleDateString(localeCode, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -70,35 +74,44 @@ export function formatDateLocaleFull(isoString: string): string {
 }
 
 /**
- * Time only format: HH:mm (24-hour)
+ * Time only format: HH:mm (24-hour for HR, 12-hour for EN)
  * Used by: EventDetailScreen
+ *
+ * HR: "14:30"
+ * EN: "2:30 PM"
  */
-export function formatTimeHrHR(isoString: string): string {
+export function formatTime(isoString: string, locale: 'hr' | 'en' = 'hr'): string {
   const date = new Date(isoString);
-  return date.toLocaleTimeString('hr-HR', {
+  const localeCode = locale === 'hr' ? 'hr-HR' : 'en-US';
+  return date.toLocaleTimeString(localeCode, {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false,
+    hour12: locale === 'en',
   });
 }
 
 /**
  * Event time format - conditional on all-day flag
  * Used by: EventsScreen
+ *
+ * HR: "14:30" or allDayText
+ * EN: "2:30 PM" or allDayText
  */
 export function formatEventTime(
   isoString: string,
   isAllDay: boolean,
-  allDayText: string
+  allDayText: string,
+  locale: 'hr' | 'en' = 'hr'
 ): string {
   if (isAllDay) {
     return allDayText;
   }
   const date = new Date(isoString);
-  return date.toLocaleTimeString('hr-HR', {
+  const localeCode = locale === 'hr' ? 'hr-HR' : 'en-US';
+  return date.toLocaleTimeString(localeCode, {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false,
+    hour12: locale === 'en',
   });
 }
 
