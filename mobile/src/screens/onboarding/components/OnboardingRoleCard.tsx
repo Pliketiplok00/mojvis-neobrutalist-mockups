@@ -143,9 +143,6 @@ const styles = StyleSheet.create({
   iconBox: {
     width: tokens.iconBox.size,
     height: tokens.iconBox.size,
-    backgroundColor: tokens.iconBox.background,
-    borderWidth: tokens.iconBox.borderWidth,
-    borderColor: tokens.iconBox.borderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,

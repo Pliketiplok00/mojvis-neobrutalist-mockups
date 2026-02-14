@@ -215,14 +215,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // Chevron buttons
+  // Chevron buttons (unboxed)
   chevronButton: {
     position: 'absolute',
     top: '50%',
     marginTop: -24,
     width: 48,
     height: 48,
-    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },

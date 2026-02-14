@@ -149,13 +149,10 @@ const styles = StyleSheet.create({
   containerUrgent: {
     backgroundColor: skin.colors.orange, // Warmer orange for urgent
   },
-  // V1 Poster: Icon box with red accent
+  // V1 Poster: Icon box (unboxed per design guardrails)
   iconBox: {
     width: 44,
     height: 44,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    backgroundColor: skin.colors.urgent, // Red accent
     alignItems: 'center',
     justifyContent: 'center',
   },

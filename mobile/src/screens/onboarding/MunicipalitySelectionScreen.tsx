@@ -140,10 +140,6 @@ const styles = StyleSheet.create({
   iconBox: {
     width: t.iconBox.size,
     height: t.iconBox.size,
-    backgroundColor: t.iconBox.backgroundColor,
-    borderWidth: t.iconBox.borderWidth,
-    borderColor: t.iconBox.borderColor,
-    borderRadius: t.iconBox.borderRadius,
     alignItems: 'center',
     justifyContent: 'center',
   },

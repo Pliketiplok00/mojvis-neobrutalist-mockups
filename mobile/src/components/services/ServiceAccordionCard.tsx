@@ -175,8 +175,6 @@ const styles = StyleSheet.create({
   iconBox: {
     width: ICON_BOX_SIZE,
     height: ICON_BOX_SIZE,
-    borderWidth: borders.widthThin,
-    borderColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },

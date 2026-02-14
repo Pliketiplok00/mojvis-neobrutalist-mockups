@@ -625,9 +625,6 @@ const styles = StyleSheet.create({
   headerIconBox: {
     width: lineDetail.headerIconBoxSize,
     height: lineDetail.headerIconBoxSize,
-    backgroundColor: lineDetail.headerIconBoxBackground,
-    borderWidth: lineDetail.headerIconBoxBorderWidth,
-    borderColor: lineDetail.headerIconBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
@@ -862,9 +859,6 @@ const styles = StyleSheet.create({
   contactIconBox: {
     width: 32,
     height: 32,
-    backgroundColor: colors.backgroundSecondary,
-    borderWidth: borders.widthThin,
-    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,

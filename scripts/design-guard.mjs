@@ -42,7 +42,16 @@ const transportScreens = [
   path.join(repoRoot, "mobile", "src", "screens", "transport", "RoadTransportScreen.tsx"),
 ];
 
-const scanModes = new Set(["all", "hex", "lucide", "emoji", "poster", "button", "badge"]);
+// Boxed icon allowlist - only these files may have boxed icon patterns
+// Format: { file: relative path, allowedStyles: [style names that may be boxed] }
+const boxedIconAllowlist = [
+  { file: "mobile/src/components/GlobalHeader.tsx", allowedStyles: ["menuIconBox", "inboxIconBox"] },
+  { file: "mobile/src/components/common/PhotoSlotTile.tsx", allowedStyles: ["removeButton", "emptyContainer"] },
+  { file: "mobile/src/screens/inbox/InboxListScreen.tsx", allowedStyles: ["iconSlab"] },
+  { file: "mobile/src/screens/transport/TransportHubScreen.tsx", allowedStyles: ["tileIconSlab"] },
+];
+
+const scanModes = new Set(["all", "hex", "lucide", "emoji", "poster", "button", "badge", "boxed"]);
 const args = process.argv.slice(2);
 let mode = "all";
 let writeBaseline = false;
@@ -57,13 +66,13 @@ for (const arg of args) {
     continue;
   }
   console.error(`Unknown option: ${arg}`);
-  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji|poster|button|badge] [--write-baseline]");
+  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji|poster|button|badge|boxed] [--write-baseline]");
   process.exit(1);
 }
 
 if (!scanModes.has(mode)) {
   console.error(`Unknown mode: ${mode}`);
-  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji|poster|button|badge]");
+  console.error("Usage: node scripts/design-guard.mjs [all|hex|lucide|emoji|poster|button|badge|boxed]");
   process.exit(1);
 }
 
@@ -339,6 +348,124 @@ function scanBadgePatterns() {
   return matches;
 }
 
+/**
+ * Boxed Icon Guard
+ * Detects icon wrapper styles that have boxing properties (backgroundColor + size)
+ * when they're not in the allowed list.
+ *
+ * A "boxed icon" is a View wrapping an Icon with:
+ * - backgroundColor (not transparent/undefined)
+ * - Fixed width + height (forming a box)
+ * - Often borderWidth/borderColor
+ *
+ * Only allowed in specific semantic contexts (see boxedIconAllowlist).
+ */
+function scanBoxedIcons(files) {
+  const matches = [];
+
+  // Patterns that indicate a boxed icon style
+  // We look for style definitions with backgroundColor + width + height that suggest icon boxing
+  const boxingPatterns = [
+    /iconBox/i,
+    /IconContainer/i,
+    /chevronBox/i,
+    /chevronButton/i,
+    /removeButton/i,
+    /emptyContainer/i,
+    /iconSlab/i,
+    /tileIconSlab/i,
+  ];
+
+  for (const filePath of files) {
+    const relPath = relativePath(filePath);
+
+    // Check if this file is in the allowlist
+    const allowEntry = boxedIconAllowlist.find((entry) => entry.file === relPath);
+    const allowedStyles = allowEntry ? allowEntry.allowedStyles : [];
+
+    const content = fs.readFileSync(filePath, "utf8");
+    const lines = content.split(/\r?\n/);
+
+    // State machine to track StyleSheet.create block
+    let inStyleSheet = false;
+    let braceDepth = 0;
+    let currentStyleName = null;
+    let currentStyleStart = 0;
+    let styleContent = "";
+
+    lines.forEach((line, index) => {
+      // Detect StyleSheet.create start
+      if (/StyleSheet\.create\s*\(\s*\{/.test(line)) {
+        inStyleSheet = true;
+        braceDepth = 1;
+        return;
+      }
+
+      if (!inStyleSheet) return;
+
+      // Track brace depth
+      const openBraces = (line.match(/\{/g) || []).length;
+      const closeBraces = (line.match(/\}/g) || []).length;
+
+      // Detect style name at depth 1 (direct children of StyleSheet.create)
+      if (braceDepth === 1) {
+        const styleMatch = line.match(/^\s*(\w+):\s*\{/);
+        if (styleMatch) {
+          currentStyleName = styleMatch[1];
+          currentStyleStart = index + 1;
+          styleContent = line;
+        }
+      }
+
+      // Accumulate style content
+      if (currentStyleName && braceDepth >= 1) {
+        if (index > currentStyleStart - 1) {
+          styleContent += "\n" + line;
+        }
+      }
+
+      braceDepth += openBraces - closeBraces;
+
+      // When we exit a style definition (braceDepth back to 1)
+      if (currentStyleName && braceDepth === 1 && closeBraces > 0) {
+        // Check if this style name matches boxing patterns
+        const isBoxingName = boxingPatterns.some((pattern) => pattern.test(currentStyleName));
+
+        if (isBoxingName) {
+          // Check if it's in the allowlist for this file
+          const isAllowed = allowedStyles.includes(currentStyleName);
+
+          if (!isAllowed) {
+            // Check for boxing properties
+            const hasBackgroundColor = /backgroundColor\s*:/.test(styleContent);
+            const hasBorderWidth = /borderWidth\s*:/.test(styleContent);
+            const hasFixedSize = /width\s*:.*\d/.test(styleContent) && /height\s*:.*\d/.test(styleContent);
+
+            if (hasBackgroundColor || (hasBorderWidth && hasFixedSize)) {
+              matches.push({
+                filePath,
+                lineNumber: currentStyleStart,
+                match: `Boxed icon style "${currentStyleName}" not in allowlist`,
+                lineText: `${currentStyleName}: { ${hasBackgroundColor ? "backgroundColor" : ""}${hasBorderWidth ? " borderWidth" : ""} }`,
+              });
+            }
+          }
+        }
+
+        currentStyleName = null;
+        styleContent = "";
+      }
+
+      // Exit StyleSheet.create
+      if (braceDepth === 0) {
+        inStyleSheet = false;
+      }
+    });
+  }
+
+  return matches;
+}
+
 function formatMatches(matches) {
   return matches
     .map((match) => `${relativePath(match.filePath)}:${match.lineNumber}: ${match.match}`)
@@ -419,6 +546,14 @@ if (mode === "all" || mode === "badge") {
     ...matches.map((match) => ({ rule: "badge", ...match, fingerprint: fingerprint(match) }))
   );
   ok = reportMatches("Inline badge pattern (use Badge component)", matches, baselineSet) && ok;
+}
+
+if (mode === "all" || mode === "boxed") {
+  const matches = scanBoxedIcons(files);
+  violations.push(
+    ...matches.map((match) => ({ rule: "boxed", ...match, fingerprint: fingerprint(match) }))
+  );
+  ok = reportMatches("Boxed icon pattern (only allowed in GlobalHeader, PhotoSlotTile, InboxListScreen iconSlab, TransportHubScreen tileIconSlab)", matches, baselineSet) && ok;
 }
 
 if (writeBaseline) {

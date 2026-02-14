@@ -235,7 +235,6 @@ const styles = StyleSheet.create({
   warningIconBox: {
     width: 44,
     height: 44,
-    backgroundColor: colors.urgent,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.md,

@@ -199,14 +199,14 @@ export function HomeScreen(): React.JSX.Element {
                     { backgroundColor: category.backgroundColor },
                   ]}
                 >
-                  <IconBox size="lg" style={styles.categoryIconBox}>
+                  <View style={styles.categoryIconBox}>
                     <Icon
                       name={category.icon}
                       size="lg"
                       color={category.textColor}
                       stroke="strong"
                     />
-                  </IconBox>
+                  </View>
                   <Label style={[styles.categoryLabel, { color: category.textColor }]}>
                     {t(`home.categoryLabels.${category.key}`).toUpperCase()}
                   </Label>
@@ -490,9 +490,6 @@ const styles = StyleSheet.create({
   ctaIconBox: {
     width: 48,
     height: 48,
-    backgroundColor: skin.colors.iconBoxOverlayBg,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.iconBoxOverlayBorder,
     alignItems: 'center',
     justifyContent: 'center',
   },

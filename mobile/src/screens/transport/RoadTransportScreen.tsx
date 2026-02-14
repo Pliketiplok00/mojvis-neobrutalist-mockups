@@ -348,9 +348,6 @@ const styles = StyleSheet.create({
   headerIconBox: {
     width: overviewHeader.iconBoxSize,
     height: overviewHeader.iconBoxSize,
-    backgroundColor: overviewHeader.iconBoxBackground,
-    borderWidth: overviewHeader.iconBoxBorderWidth,
-    borderColor: overviewHeader.iconBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: overviewHeader.iconBoxGap,
@@ -433,9 +430,6 @@ const styles = StyleSheet.create({
   lineCardHeaderIconBox: {
     width: listTokens.lineCardHeaderIconBoxSize,
     height: listTokens.lineCardHeaderIconBoxSize,
-    backgroundColor: listTokens.lineCardHeaderIconBoxBackground,
-    borderWidth: listTokens.lineCardHeaderIconBoxBorderWidth,
-    borderColor: listTokens.lineCardHeaderIconBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: listTokens.lineCardHeaderIconGap,
@@ -469,9 +463,6 @@ const styles = StyleSheet.create({
   lineCardChevronBox: {
     width: listTokens.lineCardChevronBoxSize,
     height: listTokens.lineCardChevronBoxSize,
-    backgroundColor: listTokens.lineCardChevronBoxBackground,
-    borderWidth: listTokens.lineCardChevronBoxBorderWidth,
-    borderColor: listTokens.lineCardChevronBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: listTokens.lineCardChevronGap,

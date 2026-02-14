@@ -288,9 +288,6 @@ const styles = StyleSheet.create({
   infoTileIconBox: {
     width: skin.components.events.detail.infoTileIconBoxSize,
     height: skin.components.events.detail.infoTileIconBoxSize,
-    backgroundColor: skin.components.events.detail.infoTileIconBoxBackground,
-    borderWidth: skin.components.events.detail.infoTileIconBoxBorderWidth,
-    borderColor: skin.components.events.detail.infoTileIconBoxBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
   },
