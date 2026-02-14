@@ -43,7 +43,7 @@ import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { H1, H2, Label, Body, Meta, ButtonText } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
-import { formatEventTime, formatDateISO } from '../../utils/dateFormat';
+import { formatEventTime, formatDateISO, formatDateLocaleFull } from '../../utils/dateFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -346,12 +346,7 @@ export function EventsScreen(): React.JSX.Element {
         <View style={styles.dayEventsSection}>
           <View style={styles.dayHeader}>
             <Label style={styles.selectedDateTitle}>
-              {selectedDate.toLocaleDateString('hr-HR', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              }).toUpperCase()}
+              {formatDateLocaleFull(selectedDate.toISOString(), language).toUpperCase()}
             </Label>
           </View>
 
