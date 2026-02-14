@@ -107,7 +107,7 @@ export function LineDetailScreen({
   const [banners, setBanners] = useState<InboxMessage[]>([]);
   const [lineDetailData, setLineDetailData] = useState<LineDetailResponse | null>(null);
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>(getTodayString());
+  const [selectedDate, setSelectedDate] = useState<string>(formatDateISO(new Date()));
   const [selectedDirection, setSelectedDirection] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [departuresLoading, setDeparturesLoading] = useState(false);
@@ -581,13 +581,6 @@ export function LineDetailScreen({
     </SafeAreaView>
   );
 }
-
-// Helper functions
-function getTodayString(): string {
-  const today = new Date();
-  return formatDateISO(today);
-}
-
 
 const styles = StyleSheet.create({
   container: {
