@@ -23,15 +23,14 @@ import {
   TouchableOpacity,
   RefreshControl,
   Linking,
-  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
-import { DepartureItem } from '../../components/DepartureItem';
 import { ContactsSection } from './components/ContactsSection';
 import { DatePickerModal } from './components/DatePickerModal';
 import { DateSelector } from './components/DateSelector';
+import { DeparturesSection } from './components/DeparturesSection';
 import { DirectionTabs } from './components/DirectionTabs';
 import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
@@ -56,7 +55,7 @@ interface LineDetailScreenProps {
   transportType: TransportType;
 }
 
-const { colors, spacing, borders, components } = skin;
+const { colors, spacing, components } = skin;
 const lineDetail = components.transport.lineDetail;
 const listTokens = components.transport.list;
 const { note } = components.transport;
@@ -260,33 +259,13 @@ export function LineDetailScreen({
         <View style={styles.sectionDivider} />
 
         {/* Departures Section */}
-        <View style={styles.section}>
-          <Label style={styles.sectionLabel}>{t('transport.lineDetail.departures')}</Label>
-          {departuresLoading ? (
-            <View style={styles.departuresLoading}>
-              <ActivityIndicator size="small" color={colors.textSecondary} />
-            </View>
-          ) : departures && departures.departures.length > 0 ? (
-            <>
-              <View style={styles.departuresList}>
-                {departures.departures.map((dep) => (
-                  <DepartureItem
-                    key={dep.id}
-                    departure={dep}
-                    transportType={transportType}
-                  />
-                ))}
-              </View>
-            </>
-          ) : (
-            <View style={styles.emptyState}>
-              <Icon name="calendar" size="lg" colorToken="textMuted" />
-              <Body style={styles.emptyStateText}>
-                {t('transport.lineDetail.noDeparturesForDate')}
-              </Body>
-            </View>
-          )}
-        </View>
+        <DeparturesSection
+          departures={departures?.departures ?? []}
+          loading={departuresLoading}
+          transportType={transportType}
+          sectionLabel={t('transport.lineDetail.departures')}
+          emptyText={t('transport.lineDetail.noDeparturesForDate')}
+        />
 
         {/* Carrier Ticket Info Box - Always shown */}
         {(() => {
@@ -440,39 +419,6 @@ const styles = StyleSheet.create({
     backgroundColor: lineDetail.sectionDividerColor,
     marginHorizontal: spacing.lg,
     marginTop: spacing.xl,
-  },
-
-  // Section
-  section: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-  },
-  sectionLabel: {
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    marginBottom: spacing.md,
-  },
-
-  // Departures
-  departuresLoading: {
-    padding: spacing.xxl,
-    alignItems: 'center',
-  },
-  departuresList: {
-    gap: lineDetail.departureRowGap,
-  },
-  emptyState: {
-    padding: spacing.xxl,
-    backgroundColor: colors.backgroundSecondary,
-    alignItems: 'center',
-    gap: spacing.md,
-    borderWidth: borders.widthThin,
-    borderColor: colors.borderMuted,
-    borderStyle: 'dashed',
-  },
-  emptyStateText: {
-    color: colors.textMuted,
-    textAlign: 'center',
   },
 
   // Carrier Ticket Info Box
