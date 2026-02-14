@@ -44,6 +44,9 @@ Everything else must be unboxed.
 | Banner.tsx:68 | Alert icon | shield-alert | iconBox | bg: skin.colors.urgent, border: widthThin | NO | Remove bg/border |
 | ServiceAccordionCard.tsx:95 | Header icon | service icons | iconBox | bg: iconBackgroundColor, border: widthThin | NO | Remove bg/border |
 | InboxListScreen.tsx:316,397 | Chevron box | chevron-right | chevronBox | bg: chevronBoxBackground, border: chevronBoxBorderWidth | NO | Remove bg/border |
+| SeaTransportScreen.tsx:512 | Line card chevron | chevron-right | lineCardChevronBox | bg: lineCardChevronBoxBackground, border | NO | Remove bg/border |
+| RoadTransportScreen.tsx:463 | Line card chevron | chevron-right | lineCardChevronBox | bg: lineCardChevronBoxBackground, border | NO | Remove bg/border |
+| LineDetailScreen.tsx:859 | Contact icon | phone/mail | contactIconBox | bg: backgroundSecondary, border: widthThin | NO | Remove bg/border |
 | InboxListScreen.tsx:281,361 | Category slab | category icons | iconSlab | bg: category color, border: widthThin | **YES** | Keep (semantic) |
 | TransportHubScreen.tsx:103,132 | Transport tile | bus/ship | tileIconSlab | bg: tile color, size: token-based | **YES** | Keep (semantic) |
 | GlobalHeader.tsx:85 | Menu icon | menu | menuIconBox | bg: warningAccent, border: widthCard | **YES** | Keep (allowed) |
@@ -57,7 +60,7 @@ Everything else must be unboxed.
 
 | Status | Count |
 |--------|-------|
-| NOT ALLOWED (must unbox) | 24 |
+| NOT ALLOWED (must unbox) | 27 |
 | ALLOWED (keep as-is) | 7 |
 
 ### Files Requiring Changes (NOT ALLOWED)
