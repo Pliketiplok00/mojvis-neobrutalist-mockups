@@ -30,6 +30,10 @@
   - Kreiran `useDatePicker` hook
   - Izvučeni: selectedDate, isDatePickerOpen, openDatePicker, closeDatePicker, handleDateChange, adjustDate
   - Smanjeno: 872 → 854 linija (-18)
+- LineDetailScreen refaktoring - Faza 2b:
+  - Kreiran `useLineDetail` hook
+  - Izvučeni: lineDetailData, banners, loading, error, refreshing, refresh
+  - Smanjeno: 854 → 830 linija (-24)
 
 #### Odluke donesene
 - Refaktoring LineDetailScreen u fazama - jedan commit po koraku za lako revertanje

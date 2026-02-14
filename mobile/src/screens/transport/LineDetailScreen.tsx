@@ -37,10 +37,10 @@ import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
 import { Badge } from '../../ui/Badge';
 import { skin } from '../../ui/skin';
-import { useUserContext } from '../../hooks/useUserContext';
 import { useDatePicker } from '../../hooks/useDatePicker';
+import { useLineDetail } from '../../hooks/useLineDetail';
 import { useTranslations } from '../../i18n';
-import { inboxApi, transportApi } from '../../services/api';
+import { transportApi } from '../../services/api';
 import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
 import { formatLineTitle, formatDuration } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
@@ -68,7 +68,6 @@ export function LineDetailScreen({
   transportType,
 }: LineDetailScreenProps): React.JSX.Element {
   const { t, language } = useTranslations();
-  const userContext = useUserContext();
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
     MON: t('transport.dayTypes.MON'),
@@ -81,14 +80,19 @@ export function LineDetailScreen({
     PRAZNIK: t('transport.dayTypes.PRAZNIK'),
   };
 
-  const [banners, setBanners] = useState<InboxMessage[]>([]);
-  const [lineDetailData, setLineDetailData] = useState<LineDetailResponse | null>(null);
+  // Line detail hook
+  const {
+    lineDetailData,
+    banners,
+    loading,
+    error,
+    refreshing,
+    refresh,
+  } = useLineDetail({ lineId, transportType, language });
+
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
   const [selectedDirection, setSelectedDirection] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
   const [departuresLoading, setDeparturesLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   // Date picker hook
   const {
@@ -107,25 +111,6 @@ export function LineDetailScreen({
   const timeBlockBackground = transportType === 'sea'
     ? lineDetail.timeBlockBackgroundSea
     : lineDetail.timeBlockBackgroundRoad;
-
-  // Fetch line detail and banners
-  const fetchLineDetail = useCallback(async () => {
-    setError(null);
-    try {
-      const [detail, bannersRes] = await Promise.all([
-        transportApi.getLine(transportType, lineId, language),
-        inboxApi.getActiveBanners(userContext, 'transport'),
-      ]);
-      setLineDetailData(detail);
-      setBanners(bannersRes.banners);
-    } catch (err) {
-      console.error('[LineDetail] Error fetching line:', err);
-      setError(t('transport.lineDetail.error'));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [lineId, transportType, userContext, t, language]);
 
   // Fetch departures for selected date and direction
   const fetchDepartures = useCallback(async () => {
@@ -147,19 +132,10 @@ export function LineDetailScreen({
   }, [lineId, transportType, selectedDate, selectedDirection, language]);
 
   useEffect(() => {
-    void fetchLineDetail();
-  }, [fetchLineDetail]);
-
-  useEffect(() => {
     if (lineDetailData) {
       void fetchDepartures();
     }
   }, [lineDetailData, fetchDepartures]);
-
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    void fetchLineDetail();
-  }, [fetchLineDetail]);
 
   // Get routes for direction toggle
   const routes: RouteInfo[] = lineDetailData?.routes || [];
@@ -194,8 +170,8 @@ export function LineDetailScreen({
       <SafeAreaView style={styles.container} edges={['top']}>
         <GlobalHeader type="child" />
         <ErrorState
-          message={error || t('transport.lineDetail.notFound')}
-          onRetry={handleRefresh}
+          message={error ? t('transport.lineDetail.error') : t('transport.lineDetail.notFound')}
+          onRetry={refresh}
           retryLabel={t('common.retry')}
         />
       </SafeAreaView>
@@ -210,7 +186,7 @@ export function LineDetailScreen({
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={refresh} />
         }
       >
         {/* Full-bleed Banners */}
