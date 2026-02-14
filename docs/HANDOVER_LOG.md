@@ -18,6 +18,27 @@
 
 ## Kronologija
 
+### 2026-02-15 (Nedjelja)
+
+#### Sto je odradeno danas
+- LineDetailScreen refaktoring - Faza 1 (trivijalne ekstrakcije):
+  - `formatDuration()` → `utils/transportFormat.ts` (+5 testova)
+  - `getTodayString()` zamijenjen s `formatDateISO(new Date())`
+  - Carrier konstante → `constants/carriers.ts`
+  - Smanjeno: 909 → 872 linija (-37)
+- LineDetailScreen refaktoring - Faza 2a:
+  - Kreiran `useDatePicker` hook
+  - Izvučeni: selectedDate, isDatePickerOpen, openDatePicker, closeDatePicker, handleDateChange, adjustDate
+  - Smanjeno: 872 → 854 linija (-18)
+
+#### Odluke donesene
+- Refaktoring LineDetailScreen u fazama - jedan commit po koraku za lako revertanje
+
+#### Problemi/blockeri
+- Nema
+
+---
+
 ### 2026-02-14 (petak)
 
 #### Preuzimanje projekta

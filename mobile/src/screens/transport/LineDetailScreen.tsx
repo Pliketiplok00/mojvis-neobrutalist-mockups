@@ -38,6 +38,7 @@ import { LoadingState, ErrorState } from '../../ui/States';
 import { Badge } from '../../ui/Badge';
 import { skin } from '../../ui/skin';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useDatePicker } from '../../hooks/useDatePicker';
 import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
 import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
@@ -83,13 +84,21 @@ export function LineDetailScreen({
   const [banners, setBanners] = useState<InboxMessage[]>([]);
   const [lineDetailData, setLineDetailData] = useState<LineDetailResponse | null>(null);
   const [departures, setDepartures] = useState<DeparturesListResponse | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>(formatDateISO(new Date()));
   const [selectedDirection, setSelectedDirection] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [departuresLoading, setDeparturesLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  // Date picker hook
+  const {
+    selectedDate,
+    isDatePickerOpen,
+    openDatePicker,
+    closeDatePicker,
+    handleDateChange,
+    adjustDate,
+  } = useDatePicker();
 
   // Get transport-type-specific colors
   const headerBackground = transportType === 'sea'
@@ -157,33 +166,6 @@ export function LineDetailScreen({
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
   // Direction 0 route for canonical header title (matches list view)
   const dir0Route = routes.find((r) => r.direction === 0);
-
-  // Date navigation
-  const adjustDate = (days: number) => {
-    const date = new Date(selectedDate);
-    date.setDate(date.getDate() + days);
-    setSelectedDate(formatDateISO(date));
-  };
-
-  // Date picker handlers
-  const openDatePicker = () => {
-    setIsDatePickerOpen(true);
-  };
-
-  const handleDateChange = (event: { type: string }, date?: Date) => {
-    // On Android, dismiss events also call this handler
-    if (Platform.OS === 'android') {
-      setIsDatePickerOpen(false);
-    }
-    if (event.type === 'set' && date) {
-      const newDateString = formatDateISO(date);
-      setSelectedDate(newDateString);
-    }
-  };
-
-  const closeDatePicker = () => {
-    setIsDatePickerOpen(false);
-  };
 
   const handlePhonePress = (phone: string) => {
     Linking.openURL(`tel:${phone}`);
