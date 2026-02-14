@@ -173,7 +173,7 @@ export function MenuOverlay({
           {/* Header */}
           <View style={styles.header}>
             <H1 style={styles.headerTitle}>MOJ VIS</H1>
-            <Meta style={styles.headerSubtitle}>Izbornik / Menu</Meta>
+            <Meta style={styles.headerSubtitle}>{language === 'en' ? 'Menu' : 'Izbornik'}</Meta>
           </View>
 
           {/* Menu Items - Scrollable */}
@@ -195,7 +195,7 @@ export function MenuOverlay({
                   </View>
                   <View style={styles.menuTextContainer}>
                     <Label style={[styles.menuLabel, isActive && styles.menuLabelActive]}>
-                      {item.label}
+                      {language === 'en' ? item.labelEn : item.label}
                     </Label>
                   </View>
                 </TouchableOpacity>
