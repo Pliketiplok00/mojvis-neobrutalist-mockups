@@ -22,7 +22,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   RefreshControl,
-  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
@@ -32,6 +31,7 @@ import { DatePickerModal } from './components/DatePickerModal';
 import { DateSelector } from './components/DateSelector';
 import { DeparturesSection } from './components/DeparturesSection';
 import { DirectionTabs } from './components/DirectionTabs';
+import { TicketInfoBox } from './components/TicketInfoBox';
 import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
@@ -48,7 +48,6 @@ import type {
   RouteInfo,
   DayType,
 } from '../../types/transport';
-import { CARRIER_TICKET_URLS, SEA_LINE_CARRIERS } from '../../constants/carriers';
 
 interface LineDetailScreenProps {
   lineId: string;
@@ -58,7 +57,6 @@ interface LineDetailScreenProps {
 const { colors, spacing, components } = skin;
 const lineDetail = components.transport.lineDetail;
 const listTokens = components.transport.list;
-const { note } = components.transport;
 
 export function LineDetailScreen({
   lineId,
@@ -124,11 +122,6 @@ export function LineDetailScreen({
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
   // Direction 0 route for canonical header title (matches list view)
   const dir0Route = routes.find((r) => r.direction === 0);
-
-  const handleWebsitePress = (website: string) => {
-    const url = website.startsWith('http') ? website : `https://${website}`;
-    Linking.openURL(url);
-  };
 
   if (loading) {
     return (
@@ -267,57 +260,15 @@ export function LineDetailScreen({
           emptyText={t('transport.lineDetail.noDeparturesForDate')}
         />
 
-        {/* Carrier Ticket Info Box - Always shown */}
-        {(() => {
-          // Determine carrier info: prefer sea line mapping, fall back to contacts
-          const seaCarrier = lineDetailData.line_number
-            ? SEA_LINE_CARRIERS[lineDetailData.line_number]
-            : undefined;
-          const contactOperator = lineDetailData.contacts[0]?.operator;
-          const contactTicketUrl = contactOperator
-            ? CARRIER_TICKET_URLS[contactOperator]
-            : undefined;
-
-          // Resolve carrier name and ticket URL
-          const carrierName = seaCarrier?.name ?? contactOperator ?? null;
-          const ticketUrl = seaCarrier?.ticketUrl ?? contactTicketUrl ?? null;
-          const isBoardingOnly = seaCarrier && seaCarrier.ticketUrl === null;
-
-          // Determine body text
-          let bodyText: string;
-          if (isBoardingOnly) {
-            bodyText = t('transport.lineDetail.tickets.boardingOnlyBody');
-          } else if (ticketUrl) {
-            bodyText = t('transport.lineDetail.tickets.body');
-          } else {
-            bodyText = t('transport.lineDetail.tickets.fallbackBody');
-          }
-
-          return (
-            <View style={styles.ticketBoxContainer}>
-              <View style={styles.ticketBox}>
-                <Meta style={styles.ticketBoxTitle}>
-                  {t('transport.lineDetail.tickets.title')}
-                </Meta>
-                <Body style={styles.ticketBoxBody}>{bodyText}</Body>
-                {carrierName && ticketUrl && (
-                  <TouchableOpacity
-                    style={styles.ticketBoxLink}
-                    onPress={() => handleWebsitePress(ticketUrl)}
-                  >
-                    <Icon name="globe" size="sm" colorToken="link" />
-                    <Label style={styles.ticketBoxLinkText}>{carrierName}</Label>
-                  </TouchableOpacity>
-                )}
-                {carrierName && !ticketUrl && (
-                  <View style={styles.ticketBoxCarrierPlain}>
-                    <Label style={styles.ticketBoxCarrierText}>{carrierName}</Label>
-                  </View>
-                )}
-              </View>
-            </View>
-          );
-        })()}
+        {/* Carrier Ticket Info Box */}
+        <TicketInfoBox
+          lineNumber={lineDetailData.line_number}
+          contacts={lineDetailData.contacts}
+          titleText={t('transport.lineDetail.tickets.title')}
+          bodyText={t('transport.lineDetail.tickets.body')}
+          boardingOnlyText={t('transport.lineDetail.tickets.boardingOnlyBody')}
+          fallbackText={t('transport.lineDetail.tickets.fallbackBody')}
+        />
 
         {/* Section Divider */}
         {lineDetailData.contacts.length > 0 && <View style={styles.sectionDivider} />}
@@ -419,43 +370,6 @@ const styles = StyleSheet.create({
     backgroundColor: lineDetail.sectionDividerColor,
     marginHorizontal: spacing.lg,
     marginTop: spacing.xl,
-  },
-
-  // Carrier Ticket Info Box
-  ticketBoxContainer: {
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.xl,
-  },
-  ticketBox: {
-    borderWidth: note.noteBorderWidth,
-    borderColor: note.noteBorderColor,
-    backgroundColor: note.noteBackground,
-    borderRadius: note.noteRadius,
-    padding: note.notePadding,
-  },
-  ticketBoxTitle: {
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    marginBottom: spacing.xs,
-  },
-  ticketBoxBody: {
-    color: note.noteTextColor,
-    marginBottom: spacing.md,
-  },
-  ticketBoxLink: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  ticketBoxLinkText: {
-    color: colors.link,
-  },
-  ticketBoxCarrierPlain: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  ticketBoxCarrierText: {
-    color: colors.textSecondary,
   },
 });
 
