@@ -46,6 +46,10 @@
   - Kreirana `DirectionTabs` komponenta
   - Tabovi za odabir smjera s offset shadow efektom
   - Smanjeno: 740 → 664 linija (-76)
+- LineDetailScreen refaktoring - Faza 3c:
+  - Kreirana `DateSelector` komponenta
+  - Strelice za navigaciju i prikaz datuma
+  - Smanjeno: 664 → 606 linija (-58)
 
 #### Odluke donesene
 - Refaktoring LineDetailScreen u fazama - jedan commit po koraku za lako revertanje

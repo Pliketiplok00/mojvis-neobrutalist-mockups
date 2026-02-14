@@ -30,6 +30,7 @@ import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { DepartureItem } from '../../components/DepartureItem';
 import { DatePickerModal } from './components/DatePickerModal';
+import { DateSelector } from './components/DateSelector';
 import { DirectionTabs } from './components/DirectionTabs';
 import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
@@ -40,7 +41,6 @@ import { useDatePicker } from '../../hooks/useDatePicker';
 import { useDepartures } from '../../hooks/useDepartures';
 import { useLineDetail } from '../../hooks/useLineDetail';
 import { useTranslations } from '../../i18n';
-import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
 import { formatLineTitle, formatDuration } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
 import type {
@@ -231,36 +231,16 @@ export function LineDetailScreen({
           </View>
         </View>
 
-        {/* Date Selector Card with Offset Shadow */}
-        <View style={styles.dateSelectorContainer}>
-          <View style={styles.dateSelectorShadow} />
-          <View style={styles.dateSelector}>
-            <TouchableOpacity
-              style={styles.dateArrow}
-              onPress={() => adjustDate(-1)}
-              accessibilityLabel={t('common.back')}
-            >
-              <Icon name="chevron-left" size="md" colorToken="textPrimary" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.dateInfo}
-              onPress={openDatePicker}
-              accessibilityLabel={t('transport.lineDetail.selectDate')}
-              accessibilityRole="button"
-            >
-              <Label style={styles.dateText}>
-                {formatDayWithDate(new Date(selectedDate), language)}
-              </Label>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.dateArrow}
-              onPress={() => adjustDate(1)}
-              accessibilityLabel="Next day"
-            >
-              <Icon name="chevron-right" size="md" colorToken="textPrimary" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/* Date Selector Card */}
+        <DateSelector
+          selectedDate={selectedDate}
+          onPrevDay={() => adjustDate(-1)}
+          onNextDay={() => adjustDate(1)}
+          onOpenPicker={openDatePicker}
+          language={language}
+          prevDayLabel={t('common.back')}
+          selectDateLabel={t('transport.lineDetail.selectDate')}
+        />
 
         {/* Direction Toggle Tabs */}
         <DirectionTabs
@@ -487,44 +467,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     gap: spacing.xs,
     marginLeft: spacing.md,
-  },
-
-  // Date Selector with Offset Shadow
-  dateSelectorContainer: {
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.lg,
-    position: 'relative',
-  },
-  dateSelectorShadow: {
-    position: 'absolute',
-    top: lineDetail.shadowOffsetY,
-    left: lineDetail.shadowOffsetX,
-    right: -lineDetail.shadowOffsetX,
-    bottom: -lineDetail.shadowOffsetY,
-    backgroundColor: lineDetail.shadowColor,
-  },
-  dateSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: lineDetail.dateSelectorBackground,
-    borderWidth: lineDetail.dateSelectorBorderWidth,
-    borderColor: lineDetail.dateSelectorBorderColor,
-    borderRadius: lineDetail.dateSelectorRadius,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-  },
-  dateArrow: {
-    width: 36,
-    height: 36,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dateInfo: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  dateText: {
-    color: colors.textPrimary,
   },
 
   // Route Info
