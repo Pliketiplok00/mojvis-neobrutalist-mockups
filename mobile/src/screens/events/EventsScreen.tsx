@@ -219,7 +219,7 @@ function EventItem({ event, allDayText }: { event: Event; allDayText: string }):
 
 export function EventsScreen(): React.JSX.Element {
   const { openMenu } = useMenu();
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [eventDates, setEventDates] = useState<Set<string>>(new Set());
@@ -284,7 +284,7 @@ export function EventsScreen(): React.JSX.Element {
     setError(null);
     try {
       const dateStr = formatDateISO(date);
-      const response = await eventsApi.getEvents(1, 50, dateStr);
+      const response = await eventsApi.getEvents(1, 50, dateStr, language);
       setEvents(response.events);
     } catch (err) {
       console.error('[Events] Error fetching events:', err);
@@ -292,7 +292,7 @@ export function EventsScreen(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [language, t]);
 
   // Initial load
   useEffect(() => {

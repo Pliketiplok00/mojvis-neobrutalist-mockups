@@ -45,7 +45,7 @@ type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
 
 export function EventDetailScreen({ route }: Props): React.JSX.Element {
   const { eventId } = route.params;
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
 
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     setLoading(true);
     setError(null);
     try {
-      const eventData = await eventsApi.getEvent(eventId);
+      const eventData = await eventsApi.getEvent(eventId, language);
       setEvent(eventData);
     } catch (err) {
       console.error('[EventDetail] Error fetching event:', err);
@@ -66,7 +66,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [eventId]);
+  }, [eventId, language, t]);
 
   // Fetch subscription status
   const fetchSubscriptionStatus = useCallback(async () => {

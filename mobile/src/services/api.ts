@@ -92,20 +92,12 @@ function getDeviceId(): string {
 }
 
 /**
- * Get current language preference
- * TODO: Get from app settings/context
- */
-function getLanguage(): 'hr' | 'en' {
-  // Default to Croatian
-  return 'hr';
-}
-
-/**
  * User context for API requests
  */
 interface UserContext {
   userMode: UserMode;
   municipality: Municipality;
+  language: 'hr' | 'en';
 }
 
 /**
@@ -122,7 +114,7 @@ async function apiRequest<T>(
     'Content-Type': 'application/json',
     'X-Device-ID': getDeviceId(),
     'X-User-Mode': context.userMode,
-    'Accept-Language': getLanguage(),
+    'Accept-Language': context.language ?? 'hr',
   };
 
   if (context.municipality) {
@@ -221,7 +213,8 @@ export const eventsApi = {
   async getEvents(
     page: number = 1,
     pageSize: number = 20,
-    date?: string
+    date?: string,
+    language: 'hr' | 'en' = 'hr'
   ): Promise<EventListResponse> {
     const params = new URLSearchParams({
       page: String(page),
@@ -234,7 +227,7 @@ export const eventsApi = {
     const url = `${API_BASE_URL}/events?${params.toString()}`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -248,11 +241,11 @@ export const eventsApi = {
   /**
    * Get single event by ID
    */
-  async getEvent(id: string): Promise<Event> {
+  async getEvent(id: string, language: 'hr' | 'en' = 'hr'): Promise<Event> {
     const url = `${API_BASE_URL}/events/${id}`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -341,11 +334,11 @@ export const staticPagesApi = {
   /**
    * Get list of published pages (for menu)
    */
-  async getPages(): Promise<PageListResponse> {
+  async getPages(language: 'hr' | 'en' = 'hr'): Promise<PageListResponse> {
     const url = `${API_BASE_URL}/pages`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -366,7 +359,7 @@ export const staticPagesApi = {
     const url = `${API_BASE_URL}/pages/${slug}`;
 
     const headers: Record<string, string> = {
-      'Accept-Language': getLanguage(),
+      'Accept-Language': context.language ?? 'hr',
       'X-Device-ID': getDeviceId(),
       'X-User-Mode': context.userMode,
     };
@@ -395,11 +388,11 @@ export const transportApi = {
   /**
    * Get lines for a transport type
    */
-  async getLines(type: TransportType): Promise<LinesListResponse> {
+  async getLines(type: TransportType, language: 'hr' | 'en' = 'hr'): Promise<LinesListResponse> {
     const url = `${API_BASE_URL}/transport/${type}/lines`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -413,11 +406,11 @@ export const transportApi = {
   /**
    * Get line detail with routes and contacts
    */
-  async getLine(type: TransportType, id: string): Promise<LineDetailResponse> {
+  async getLine(type: TransportType, id: string, language: 'hr' | 'en' = 'hr'): Promise<LineDetailResponse> {
     const url = `${API_BASE_URL}/transport/${type}/lines/${id}`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -436,7 +429,8 @@ export const transportApi = {
     type: TransportType,
     lineId: string,
     date: string,
-    direction: number
+    direction: number,
+    language: 'hr' | 'en' = 'hr'
   ): Promise<DeparturesListResponse> {
     const params = new URLSearchParams({
       date,
@@ -445,7 +439,7 @@ export const transportApi = {
     const url = `${API_BASE_URL}/transport/${type}/lines/${lineId}/departures?${params.toString()}`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -461,13 +455,14 @@ export const transportApi = {
    */
   async getTodaysDepartures(
     type: TransportType,
-    date?: string
+    date?: string,
+    language: 'hr' | 'en' = 'hr'
   ): Promise<TodaysDeparturesResponse> {
     const params = date ? `?date=${date}` : '';
     const url = `${API_BASE_URL}/transport/${type}/today${params}`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -483,12 +478,13 @@ export const transportApi = {
    */
   async getLineContacts(
     type: TransportType,
-    lineId: string
+    lineId: string,
+    language: 'hr' | 'en' = 'hr'
   ): Promise<LineContactsResponse> {
     const url = `${API_BASE_URL}/transport/${type}/lines/${lineId}/contacts`;
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 
@@ -520,7 +516,7 @@ export const feedbackApi = {
       'Content-Type': 'application/json',
       'X-Device-ID': getDeviceId(),
       'X-User-Mode': context.userMode,
-      'Accept-Language': getLanguage(),
+      'Accept-Language': context.language ?? 'hr',
     };
 
     if (context.municipality) {
@@ -550,12 +546,12 @@ export const feedbackApi = {
   /**
    * Get feedback detail by ID
    */
-  async getDetail(id: string): Promise<FeedbackDetailResponse> {
+  async getDetail(id: string, language: 'hr' | 'en' = 'hr'): Promise<FeedbackDetailResponse> {
     const url = `${API_BASE_URL}/feedback/${id}`;
 
     const headers: Record<string, string> = {
       'X-Device-ID': getDeviceId(),
-      'Accept-Language': getLanguage(),
+      'Accept-Language': language,
     };
 
     const response = await fetch(url, { headers });
@@ -572,13 +568,14 @@ export const feedbackApi = {
    */
   async getSentItems(
     page: number = 1,
-    pageSize: number = 20
+    pageSize: number = 20,
+    language: 'hr' | 'en' = 'hr'
   ): Promise<SentItemsListResponse> {
     const url = `${API_BASE_URL}/feedback/sent?page=${page}&page_size=${pageSize}`;
 
     const headers: Record<string, string> = {
       'X-Device-ID': getDeviceId(),
-      'Accept-Language': getLanguage(),
+      'Accept-Language': language,
     };
 
     const response = await fetch(url, { headers });
@@ -625,7 +622,7 @@ export const clickFixApi = {
     const headers: Record<string, string> = {
       'X-Device-ID': getDeviceId(),
       'X-User-Mode': context.userMode,
-      'Accept-Language': getLanguage(),
+      'Accept-Language': context.language ?? 'hr',
     };
 
     if (context.municipality) {
@@ -655,12 +652,12 @@ export const clickFixApi = {
   /**
    * Get Click & Fix detail by ID
    */
-  async getDetail(id: string): Promise<ClickFixDetailResponse> {
+  async getDetail(id: string, language: 'hr' | 'en' = 'hr'): Promise<ClickFixDetailResponse> {
     const url = `${API_BASE_URL}/click-fix/${id}`;
 
     const headers: Record<string, string> = {
       'X-Device-ID': getDeviceId(),
-      'Accept-Language': getLanguage(),
+      'Accept-Language': language,
     };
 
     const response = await fetch(url, { headers });
@@ -677,13 +674,14 @@ export const clickFixApi = {
    */
   async getSentItems(
     page: number = 1,
-    pageSize: number = 20
+    pageSize: number = 20,
+    language: 'hr' | 'en' = 'hr'
   ): Promise<ClickFixSentListResponse> {
     const url = `${API_BASE_URL}/click-fix/sent?page=${page}&page_size=${pageSize}`;
 
     const headers: Record<string, string> = {
       'X-Device-ID': getDeviceId(),
-      'Accept-Language': getLanguage(),
+      'Accept-Language': language,
     };
 
     const response = await fetch(url, { headers });
@@ -793,12 +791,12 @@ export const menuExtrasApi = {
    * Get enabled menu extras
    * Returns extras ordered by display_order ASC, created_at ASC
    */
-  async getExtras(): Promise<MenuExtrasResponse> {
+  async getExtras(language: 'hr' | 'en' = 'hr'): Promise<MenuExtrasResponse> {
     const url = `${API_BASE_URL}/menu/extras`;
 
     const response = await fetch(url, {
       headers: {
-        'Accept-Language': getLanguage(),
+        'Accept-Language': language,
       },
     });
 

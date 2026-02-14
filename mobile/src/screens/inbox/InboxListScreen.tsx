@@ -237,8 +237,8 @@ export function InboxListScreen(): React.JSX.Element {
     try {
       // Fetch both feedback and click_fix items in parallel
       const [feedbackResponse, clickFixResponse] = await Promise.all([
-        feedbackApi.getSentItems(),
-        clickFixApi.getSentItems(),
+        feedbackApi.getSentItems(1, 20, userContext.language),
+        clickFixApi.getSentItems(1, 20, userContext.language),
       ]);
 
       // Combine and sort by date (newest first)
@@ -270,7 +270,7 @@ export function InboxListScreen(): React.JSX.Element {
       setSentLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [t, userContext.language]);
 
   useEffect(() => {
     void fetchMessages();

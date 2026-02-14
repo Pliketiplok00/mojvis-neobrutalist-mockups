@@ -128,7 +128,7 @@ export function LineDetailScreen({
     setError(null);
     try {
       const [detail, bannersRes] = await Promise.all([
-        transportApi.getLine(transportType, lineId),
+        transportApi.getLine(transportType, lineId, language),
         inboxApi.getActiveBanners(userContext, 'transport'),
       ]);
       setLineDetailData(detail);
@@ -140,7 +140,7 @@ export function LineDetailScreen({
       setLoading(false);
       setRefreshing(false);
     }
-  }, [lineId, transportType, userContext, t]);
+  }, [lineId, transportType, userContext, t, language]);
 
   // Fetch departures for selected date and direction
   const fetchDepartures = useCallback(async () => {
@@ -150,7 +150,8 @@ export function LineDetailScreen({
         transportType,
         lineId,
         selectedDate,
-        selectedDirection
+        selectedDirection,
+        language
       );
       setDepartures(deps);
     } catch (err) {
@@ -158,7 +159,7 @@ export function LineDetailScreen({
     } finally {
       setDeparturesLoading(false);
     }
-  }, [lineId, transportType, selectedDate, selectedDirection]);
+  }, [lineId, transportType, selectedDate, selectedDirection, language]);
 
   useEffect(() => {
     void fetchLineDetail();

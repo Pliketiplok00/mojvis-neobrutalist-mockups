@@ -104,7 +104,7 @@ export function HomeScreen(): React.JSX.Element {
   const fetchUpcomingEvents = useCallback(async () => {
     try {
       // Fetch events (backend returns all events sorted by date)
-      const response = await eventsApi.getEvents(1, 20);
+      const response = await eventsApi.getEvents(1, 20, undefined, userContext.language);
       // Filter to only show events from today onwards
       const now = new Date();
       now.setHours(0, 0, 0, 0); // Start of today
@@ -118,7 +118,7 @@ export function HomeScreen(): React.JSX.Element {
       console.error('[Home] Error fetching upcoming events:', err);
       // Silently fail - events are optional
     }
-  }, []);
+  }, [userContext.language]);
 
   useEffect(() => {
     void fetchBanners();

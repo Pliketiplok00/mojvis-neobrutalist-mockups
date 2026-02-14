@@ -37,7 +37,7 @@ type DetailRouteProp = RouteProp<MainStackParamList, 'FeedbackDetail'>;
 export function FeedbackDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
   const { feedbackId } = route.params;
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
 
   const [feedback, setFeedback] = useState<FeedbackDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -47,7 +47,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
   const fetchFeedback = useCallback(async () => {
     setError(null);
     try {
-      const data = await feedbackApi.getDetail(feedbackId);
+      const data = await feedbackApi.getDetail(feedbackId, language);
       setFeedback(data);
     } catch (err) {
       console.error('[FeedbackDetail] Error fetching:', err);
@@ -56,7 +56,7 @@ export function FeedbackDetailScreen(): React.JSX.Element {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [feedbackId]);
+  }, [feedbackId, language, t]);
 
   useEffect(() => {
     void fetchFeedback();

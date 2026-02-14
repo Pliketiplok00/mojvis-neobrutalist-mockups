@@ -96,8 +96,8 @@ export function RoadTransportScreen(): React.JSX.Element {
     try {
       const [bannersRes, linesRes, todayRes] = await Promise.all([
         inboxApi.getActiveBanners(userContext, 'transport'),
-        transportApi.getLines('road'),
-        transportApi.getTodaysDepartures('road'),
+        transportApi.getLines('road', userContext.language),
+        transportApi.getTodaysDepartures('road', undefined, userContext.language),
       ]);
 
       setBanners(bannersRes.banners);

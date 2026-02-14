@@ -12,11 +12,13 @@
 
 import { useMemo } from 'react';
 import { useOnboarding } from '../contexts/OnboardingContext';
+import { useTranslations } from '../i18n/LanguageContext';
 import type { UserMode, Municipality } from '../types/inbox';
 
 export interface UserContext {
   userMode: UserMode;
   municipality: Municipality;
+  language: 'hr' | 'en';
 }
 
 /**
@@ -27,14 +29,16 @@ export interface UserContext {
  */
 export function useUserContext(): UserContext {
   const { data } = useOnboarding();
+  const { language: langFromContext } = useTranslations();
 
   const userMode = data?.userMode ?? 'visitor';
   const municipality = data?.municipality ?? null;
+  const language = langFromContext ?? 'hr';
 
   // Memoize to ensure stable reference for useCallback/useEffect dependencies
   return useMemo(
-    () => ({ userMode, municipality }),
-    [userMode, municipality]
+    () => ({ userMode, municipality, language }),
+    [userMode, municipality, language]
   );
 }
 

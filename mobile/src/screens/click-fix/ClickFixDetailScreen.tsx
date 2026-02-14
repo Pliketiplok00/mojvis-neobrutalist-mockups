@@ -46,7 +46,7 @@ const { width: screenWidth } = Dimensions.get('window');
 
 export function ClickFixDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
-  const { t } = useTranslations();
+  const { t, language } = useTranslations();
   const { clickFixId } = route.params;
 
   const [clickFix, setClickFix] = useState<ClickFixDetailResponse | null>(null);
@@ -58,7 +58,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
   const fetchClickFix = useCallback(async () => {
     setError(null);
     try {
-      const data = await clickFixApi.getDetail(clickFixId);
+      const data = await clickFixApi.getDetail(clickFixId, language);
       setClickFix(data);
     } catch (err) {
       console.error('[ClickFixDetail] Error fetching:', err);
@@ -67,7 +67,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [clickFixId]);
+  }, [clickFixId, language, t]);
 
   useEffect(() => {
     void fetchClickFix();

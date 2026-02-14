@@ -112,8 +112,8 @@ export function SeaTransportScreen(): React.JSX.Element {
     try {
       const [bannersRes, linesRes, todayRes] = await Promise.all([
         inboxApi.getActiveBanners(userContext, 'transport'),
-        transportApi.getLines('sea'),
-        transportApi.getTodaysDepartures('sea'),
+        transportApi.getLines('sea', userContext.language),
+        transportApi.getTodaysDepartures('sea', undefined, userContext.language),
       ]);
 
       setBanners(bannersRes.banners);

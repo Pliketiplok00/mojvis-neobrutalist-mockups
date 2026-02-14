@@ -26,6 +26,7 @@ import {
 } from 'react-native';
 import { menuExtrasApi } from '../services/api';
 import type { MenuExtra } from '../types/menu-extras';
+import { useTranslations } from '../i18n/LanguageContext';
 import { Icon, type IconName } from '../ui/Icon';
 import { skin } from '../ui/skin';
 import { H1, Label, Meta } from '../ui/Text';
@@ -71,6 +72,7 @@ export function MenuOverlay({
 }: MenuOverlayProps): React.JSX.Element | null {
   const slideAnim = useRef(new Animated.Value(-MENU_WIDTH)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { language } = useTranslations();
 
   // Server-driven menu extras (appended after core items)
   const [extras, setExtras] = useState<MenuExtra[]>([]);
@@ -81,7 +83,7 @@ export function MenuOverlay({
     if (extrasFetched) return;
 
     try {
-      const response = await menuExtrasApi.getExtras();
+      const response = await menuExtrasApi.getExtras(language);
       setExtras(response.extras);
     } catch (error) {
       // Silently fail - core menu items will still work
@@ -89,7 +91,7 @@ export function MenuOverlay({
     } finally {
       setExtrasFetched(true);
     }
-  }, [extrasFetched]);
+  }, [extrasFetched, language]);
 
   // Fetch extras when menu becomes visible for the first time
   useEffect(() => {
