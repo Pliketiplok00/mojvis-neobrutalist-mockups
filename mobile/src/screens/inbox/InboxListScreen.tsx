@@ -59,33 +59,79 @@ import type { InboxTag } from '../../types/inbox';
 const { inbox: inboxTokens } = skin.components;
 
 /**
- * Get icon and background color for message based on tags
+ * Icon config for a single tag
+ */
+interface TagIconConfig {
+  icon: IconName;
+  background: string;
+  colorToken: 'primaryText' | 'textPrimary';
+}
+
+/**
+ * Get icon configs for ALL tags on a message
  *
  * Icon mapping (canonical):
- * - hitno (urgent) → shield-alert
- * - promet → traffic-cone
- * - kultura → calendar-heart
- * - opcenito → newspaper
- * - municipal (vis/komiza) → megaphone
- * - default → mail
+ * - hitno (urgent) → shield-alert (red background, white icon)
+ * - promet → traffic-cone (blue background, dark icon)
+ * - kultura → calendar-heart (lavender background, dark icon)
+ * - opcenito → newspaper (green background, dark icon)
+ * - municipal (vis/komiza) → megaphone (default background, dark icon)
+ * - default (no tags) → mail
+ *
+ * Returns array of configs - one for each tag the message has.
  */
-function getMessageIconConfig(tags: InboxTag[], isUrgent: boolean): { icon: IconName; background: string } {
+function getAllMessageIconConfigs(tags: InboxTag[], isUrgent: boolean): TagIconConfig[] {
+  const configs: TagIconConfig[] = [];
+
+  // Urgent gets its own icon (separate from hitno tag)
   if (isUrgent) {
-    return { icon: 'shield-alert', background: inboxTokens.listItem.iconSlabBackgroundUrgent };
+    configs.push({
+      icon: 'shield-alert',
+      background: inboxTokens.listItem.iconSlabBackgroundUrgent,
+      colorToken: 'primaryText',
+    });
   }
+
+  // Add icons for each tag (excluding 'hitno' since it's handled by isUrgent)
   if (tags.includes('promet')) {
-    return { icon: 'traffic-cone', background: inboxTokens.listItem.iconSlabBackgroundTransport };
+    configs.push({
+      icon: 'traffic-cone',
+      background: inboxTokens.listItem.iconSlabBackgroundTransport,
+      colorToken: 'textPrimary',
+    });
   }
   if (tags.includes('kultura')) {
-    return { icon: 'calendar-heart', background: inboxTokens.listItem.iconSlabBackgroundCulture };
+    configs.push({
+      icon: 'calendar-heart',
+      background: inboxTokens.listItem.iconSlabBackgroundCulture,
+      colorToken: 'textPrimary',
+    });
   }
   if (tags.includes('opcenito')) {
-    return { icon: 'newspaper', background: inboxTokens.listItem.iconSlabBackgroundGeneral };
+    configs.push({
+      icon: 'newspaper',
+      background: inboxTokens.listItem.iconSlabBackgroundGeneral,
+      colorToken: 'textPrimary',
+    });
   }
   if (tags.includes('vis') || tags.includes('komiza')) {
-    return { icon: 'megaphone', background: inboxTokens.listItem.iconSlabBackgroundDefault };
+    configs.push({
+      icon: 'megaphone',
+      background: inboxTokens.listItem.iconSlabBackgroundDefault,
+      colorToken: 'textPrimary',
+    });
   }
-  return { icon: 'mail', background: inboxTokens.listItem.iconSlabBackgroundDefault };
+
+  // Default if no icons at all
+  if (configs.length === 0) {
+    configs.push({
+      icon: 'mail',
+      background: inboxTokens.listItem.iconSlabBackgroundDefault,
+      colorToken: 'textPrimary',
+    });
+  }
+
+  return configs;
 }
 
 // Combined sent item type
@@ -267,7 +313,7 @@ export function InboxListScreen(): React.JSX.Element {
 
   const renderMessage = ({ item }: { item: InboxMessage }): React.JSX.Element => {
     const unread = isUnread(item.id);
-    const { icon, background } = getMessageIconConfig(item.tags, item.is_urgent);
+    const iconConfigs = getAllMessageIconConfigs(item.tags, item.is_urgent);
 
     return (
       <View style={styles.messageItemWrapper}>
@@ -277,13 +323,20 @@ export function InboxListScreen(): React.JSX.Element {
               {/* Dual-layer shadow - hidden when pressed */}
               {!pressed && <View style={styles.messageItemShadow} />}
               <View style={styles.messageItem}>
-                {/* Left icon slab */}
-                <View style={[styles.iconSlab, { backgroundColor: background }]}>
-                  <Icon
-                    name={icon}
-                    size="md"
-                    colorToken={item.is_urgent ? 'primaryText' : 'textPrimary'}
-                  />
+                {/* Left icon slabs - one for each tag */}
+                <View style={styles.iconSlabRow}>
+                  {iconConfigs.map((config, index) => (
+                    <View
+                      key={index}
+                      style={[styles.iconSlab, { backgroundColor: config.background }]}
+                    >
+                      <Icon
+                        name={config.icon}
+                        size={iconConfigs.length > 1 ? 'sm' : 'md'}
+                        colorToken={config.colorToken}
+                      />
+                    </View>
+                  ))}
                 </View>
 
                 {/* Content block */}
@@ -677,7 +730,14 @@ const styles = StyleSheet.create({
     padding: inboxTokens.listItem.padding,
   },
 
-  // Left icon slab
+  // Icon slab row (container for multiple tag icons)
+  iconSlabRow: {
+    flexDirection: 'row',
+    gap: skin.spacing.xs,
+    marginRight: inboxTokens.listItem.iconSlabGap,
+  },
+
+  // Single icon slab
   iconSlab: {
     width: inboxTokens.listItem.iconSlabSize,
     height: inboxTokens.listItem.iconSlabSize,
@@ -685,7 +745,6 @@ const styles = StyleSheet.create({
     borderColor: inboxTokens.listItem.iconSlabBorderColor,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: inboxTokens.listItem.iconSlabGap,
   },
 
   // Content block
