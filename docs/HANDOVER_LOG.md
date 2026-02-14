@@ -42,6 +42,10 @@
   - Kreirana `DatePickerModal` komponenta
   - Platform-specific rendering (iOS modal / Android native)
   - Smanjeno: 813 → 740 linija (-73)
+- LineDetailScreen refaktoring - Faza 3b:
+  - Kreirana `DirectionTabs` komponenta
+  - Tabovi za odabir smjera s offset shadow efektom
+  - Smanjeno: 740 → 664 linija (-76)
 
 #### Odluke donesene
 - Refaktoring LineDetailScreen u fazama - jedan commit po koraku za lako revertanje

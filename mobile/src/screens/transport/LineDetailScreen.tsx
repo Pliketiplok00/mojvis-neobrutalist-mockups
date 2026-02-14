@@ -30,6 +30,7 @@ import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { DepartureItem } from '../../components/DepartureItem';
 import { DatePickerModal } from './components/DatePickerModal';
+import { DirectionTabs } from './components/DirectionTabs';
 import { H1, H2, Label, Meta, Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
@@ -262,43 +263,13 @@ export function LineDetailScreen({
         </View>
 
         {/* Direction Toggle Tabs */}
-        {routes.length > 1 && (
-          <View style={styles.directionContainer}>
-            <Label style={styles.sectionLabel}>{t('transport.lineDetail.direction')}</Label>
-            <View style={styles.directionTabsWrapper}>
-              <View style={styles.directionTabsShadow} />
-              <View style={styles.directionTabs}>
-                {routes.map((route) => {
-                  const isActive = selectedDirection === route.direction;
-                  return (
-                    <TouchableOpacity
-                      key={route.id}
-                      style={[
-                        styles.directionTab,
-                        isActive && [
-                          styles.directionTabActive,
-                          { backgroundColor: headerBackground },
-                        ],
-                        route.direction === 1 && styles.directionTabRight,
-                      ]}
-                      onPress={() => setSelectedDirection(route.direction)}
-                    >
-                      <Label
-                        style={[
-                          styles.directionTabText,
-                          isActive && styles.directionTabTextActive,
-                        ]}
-                        numberOfLines={1}
-                      >
-                        {route.direction_label}
-                      </Label>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-          </View>
-        )}
+        <DirectionTabs
+          routes={routes}
+          selectedDirection={selectedDirection}
+          onSelectDirection={setSelectedDirection}
+          activeBackgroundColor={headerBackground}
+          sectionLabel={t('transport.lineDetail.direction')}
+        />
 
         {/* Route Info */}
         {currentRoute && (
@@ -554,53 +525,6 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color: colors.textPrimary,
-  },
-
-  // Direction Toggle Tabs
-  directionContainer: {
-    marginHorizontal: spacing.lg,
-    marginTop: spacing.xl,
-  },
-  directionTabsWrapper: {
-    position: 'relative',
-    marginTop: spacing.sm,
-  },
-  directionTabsShadow: {
-    position: 'absolute',
-    top: lineDetail.shadowOffsetY,
-    left: lineDetail.shadowOffsetX,
-    right: -lineDetail.shadowOffsetX,
-    bottom: -lineDetail.shadowOffsetY,
-    backgroundColor: lineDetail.shadowColor,
-  },
-  directionTabs: {
-    flexDirection: 'row',
-    borderWidth: lineDetail.directionTabBorderWidth,
-    borderColor: lineDetail.directionTabBorderColor,
-    borderRadius: lineDetail.directionTabRadius,
-    overflow: 'hidden',
-  },
-  directionTab: {
-    flex: 1,
-    paddingVertical: lineDetail.directionTabPadding,
-    paddingHorizontal: spacing.sm,
-    backgroundColor: lineDetail.directionTabInactiveBackground,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  directionTabRight: {
-    borderLeftWidth: lineDetail.directionTabBorderWidth,
-    borderLeftColor: lineDetail.directionTabBorderColor,
-  },
-  directionTabActive: {
-    // backgroundColor set dynamically
-  },
-  directionTabText: {
-    color: lineDetail.directionTabInactiveText,
-    textAlign: 'center',
-  },
-  directionTabTextActive: {
-    color: lineDetail.directionTabActiveText,
   },
 
   // Route Info
