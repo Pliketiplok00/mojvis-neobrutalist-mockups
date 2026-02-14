@@ -20,6 +20,7 @@ import { ServicePageHeader } from '../../components/services/ServicePageHeader';
 import { ServiceAccordionCard } from '../../components/services/ServiceAccordionCard';
 import { EmergencyTile } from '../../components/services/EmergencyTile';
 import { javneUslugeContent } from '../../data/javneUslugeContent';
+import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
 import { Icon } from '../../ui/Icon';
 import { H2, Body } from '../../ui/Text';
@@ -27,7 +28,9 @@ import { H2, Body } from '../../ui/Text';
 const { colors, spacing, borders } = skin;
 
 export function JavneUslugeScreen(): React.JSX.Element {
+  const { language } = useTranslations();
   const { header, services, emergency, usefulLinks } = javneUslugeContent;
+  const isEn = language === 'en';
 
   const handleLinkPress = (url: string) => {
     void Linking.openURL(url);
@@ -44,8 +47,8 @@ export function JavneUslugeScreen(): React.JSX.Element {
       >
         {/* Page Header */}
         <ServicePageHeader
-          title={header.title}
-          subtitle={header.subtitle}
+          title={isEn ? header.titleEn : header.title}
+          subtitle={isEn ? header.subtitleEn : header.subtitle}
           icon={header.icon}
         />
 
@@ -55,25 +58,29 @@ export function JavneUslugeScreen(): React.JSX.Element {
             <ServiceAccordionCard
               key={service.id}
               icon={service.icon}
-              title={service.title}
-              subtitle={service.subtitle}
+              title={isEn ? service.titleEn : service.title}
+              subtitle={isEn ? service.subtitleEn : service.subtitle}
               badge={service.badge}
               iconBackgroundColor={colors[service.iconBackgroundColor]}
-              infoRows={service.infoRows}
-              note={service.note}
+              infoRows={service.infoRows.map(row => ({
+                icon: row.icon,
+                label: isEn ? row.labelEn : row.label,
+                value: isEn ? row.valueEn : row.value,
+              }))}
+              note={isEn ? service.noteEn : service.note}
             />
           ))}
         </View>
 
         {/* Emergency Numbers Section */}
         <View style={styles.emergencySection}>
-          <H2 style={styles.emergencyTitle}>{emergency.title}</H2>
+          <H2 style={styles.emergencyTitle}>{isEn ? emergency.titleEn : emergency.title}</H2>
           <View style={styles.emergencyTiles}>
             {emergency.numbers.map((num) => (
               <EmergencyTile
                 key={num.id}
                 icon={num.icon}
-                name={num.name}
+                name={isEn ? num.nameEn : num.name}
                 phoneNumber={num.phoneNumber}
                 backgroundColor={colors[num.backgroundColor]}
                 textColor={num.textColor ? colors[num.textColor] : undefined}
@@ -84,7 +91,7 @@ export function JavneUslugeScreen(): React.JSX.Element {
 
         {/* Useful Links Section */}
         <View style={styles.linksSection}>
-          <H2 style={styles.linksTitle}>{usefulLinks.title}</H2>
+          <H2 style={styles.linksTitle}>{isEn ? usefulLinks.titleEn : usefulLinks.title}</H2>
           <View style={styles.linksList}>
             {usefulLinks.links.map((link) => (
               <Pressable
@@ -92,10 +99,10 @@ export function JavneUslugeScreen(): React.JSX.Element {
                 style={styles.linkItem}
                 onPress={() => handleLinkPress(link.url)}
                 accessibilityRole="link"
-                accessibilityLabel={link.title}
+                accessibilityLabel={isEn ? link.titleEn : link.title}
               >
                 <Icon name={link.icon} size="sm" colorToken="textMuted" />
-                <Body style={styles.linkText}>{link.title}</Body>
+                <Body style={styles.linkText}>{isEn ? link.titleEn : link.title}</Body>
                 <Icon name="globe" size="sm" colorToken="chevron" />
               </Pressable>
             ))}
