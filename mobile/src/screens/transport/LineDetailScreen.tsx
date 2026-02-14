@@ -29,6 +29,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { DepartureItem } from '../../components/DepartureItem';
+import { ContactsSection } from './components/ContactsSection';
 import { DatePickerModal } from './components/DatePickerModal';
 import { DateSelector } from './components/DateSelector';
 import { DirectionTabs } from './components/DirectionTabs';
@@ -124,14 +125,6 @@ export function LineDetailScreen({
   const currentRoute = routes.find((r) => r.direction === selectedDirection);
   // Direction 0 route for canonical header title (matches list view)
   const dir0Route = routes.find((r) => r.direction === 0);
-
-  const handlePhonePress = (phone: string) => {
-    Linking.openURL(`tel:${phone}`);
-  };
-
-  const handleEmailPress = (email: string) => {
-    Linking.openURL(`mailto:${email}`);
-  };
 
   const handleWebsitePress = (website: string) => {
     const url = website.startsWith('http') ? website : `https://${website}`;
@@ -351,52 +344,10 @@ export function LineDetailScreen({
         {lineDetailData.contacts.length > 0 && <View style={styles.sectionDivider} />}
 
         {/* Contacts Section */}
-        {lineDetailData.contacts.length > 0 && (
-          <View style={styles.section}>
-            <Label style={styles.sectionLabel}>{t('transport.lineDetail.contacts')}</Label>
-            {lineDetailData.contacts.map((contact, index) => (
-              <View key={`${contact.operator}-${index}`} style={styles.contactCardWrapper}>
-                <View style={styles.contactCardShadow} />
-                <View style={styles.contactCard}>
-                  <Label style={styles.contactOperator}>{contact.operator}</Label>
-                  {contact.phone && (
-                    <TouchableOpacity
-                      style={styles.contactRow}
-                      onPress={() => handlePhonePress(contact.phone!)}
-                    >
-                      <View style={styles.contactIconBox}>
-                        <Icon name="phone" size="sm" colorToken="textPrimary" />
-                      </View>
-                      <Label style={styles.contactLink}>{contact.phone}</Label>
-                    </TouchableOpacity>
-                  )}
-                  {contact.email && (
-                    <TouchableOpacity
-                      style={styles.contactRow}
-                      onPress={() => handleEmailPress(contact.email!)}
-                    >
-                      <View style={styles.contactIconBox}>
-                        <Icon name="mail" size="sm" colorToken="textPrimary" />
-                      </View>
-                      <Label style={styles.contactLink}>{contact.email}</Label>
-                    </TouchableOpacity>
-                  )}
-                  {contact.website && (
-                    <TouchableOpacity
-                      style={styles.contactRow}
-                      onPress={() => handleWebsitePress(contact.website!)}
-                    >
-                      <View style={styles.contactIconBox}>
-                        <Icon name="globe" size="sm" colorToken="textPrimary" />
-                      </View>
-                      <Label style={styles.contactLink}>{contact.website}</Label>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
+        <ContactsSection
+          contacts={lineDetailData.contacts}
+          sectionLabel={t('transport.lineDetail.contacts')}
+        />
       </ScrollView>
 
       {/* Date Picker Modal */}
@@ -559,47 +510,6 @@ const styles = StyleSheet.create({
   },
   ticketBoxCarrierText: {
     color: colors.textSecondary,
-  },
-
-  // Contact Card with Offset Shadow
-  contactCardWrapper: {
-    position: 'relative',
-    marginBottom: spacing.md,
-  },
-  contactCardShadow: {
-    position: 'absolute',
-    top: lineDetail.shadowOffsetY,
-    left: lineDetail.shadowOffsetX,
-    right: -lineDetail.shadowOffsetX,
-    bottom: -lineDetail.shadowOffsetY,
-    backgroundColor: lineDetail.shadowColor,
-  },
-  contactCard: {
-    backgroundColor: lineDetail.contactCardBackground,
-    borderWidth: lineDetail.contactCardBorderWidth,
-    borderColor: lineDetail.contactCardBorderColor,
-    borderRadius: lineDetail.contactCardRadius,
-    padding: lineDetail.contactCardPadding,
-  },
-  contactOperator: {
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
-  },
-  contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  contactIconBox: {
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  contactLink: {
-    flex: 1,
-    color: colors.link,
   },
 });
 
