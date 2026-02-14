@@ -41,7 +41,7 @@ import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi, transportApi } from '../../services/api';
 import { formatDateISO, formatDisplayDate, formatDayWithDate } from '../../utils/dateFormat';
-import { formatLineTitle } from '../../utils/transportFormat';
+import { formatLineTitle, formatDuration } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
@@ -588,12 +588,6 @@ function getTodayString(): string {
   return formatDateISO(today);
 }
 
-function formatDuration(minutes: number): string {
-  if (minutes < 60) return `${minutes} min`;
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
-}
 
 const styles = StyleSheet.create({
   container: {

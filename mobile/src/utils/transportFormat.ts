@@ -22,3 +22,16 @@ export function formatLineTitle(
   const prefix = lineNumber ?? '';
   return `${prefix}: ${origin}-${destination}`;
 }
+
+/**
+ * Format duration in minutes to human readable string
+ * E.g., 90 → "1h 30min", 45 → "45 min", 120 → "2h"
+ *
+ * @param minutes - Duration in minutes
+ */
+export function formatDuration(minutes: number): string {
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
+}
