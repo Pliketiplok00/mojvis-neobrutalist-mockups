@@ -20,7 +20,40 @@
 
 ### 2026-02-15
 
-*Nastavak epic sessiona od 2026-02-14*
+#### Bisevo filter fix
+- **Problem**: Polasci IZ Biševa se prikazivali u "današnji polasci s Visa"
+- **Fix**: Pojednostavljen filter - `origin IN ('Vis', 'Komiža')`
+- **Deploy**: Na produkciju (Hetzner)
+- **Commits**: 8e2a8d5, b3334de
+
+#### InboxListScreen refaktoring
+- **Početno**: 818 linija → **Završno**: 270 linija (**-67%**)
+
+**Hookovi kreirani:**
+| Hook | Linija | Funkcionalnost |
+|------|--------|----------------|
+| `useInboxMessages` | 118 | Messages fetch, filter, tags |
+| `useSentItems` | 117 | Sent items (feedback + click-fix) |
+
+**Komponente kreirane:**
+| Komponenta | Linija | Funkcionalnost |
+|------------|--------|----------------|
+| `MessageListItem` | 244 | Inbox message card |
+| `SentListItem` | 164 | Sent item card |
+| `TagFilterBar` | 118 | Horizontal tag filter chips |
+| `InboxTabs` | 108 | Received/Sent tab bar |
+
+**Commits**: 4511f3a → 508b4dd (6 commitova)
+
+#### Verifikacija
+| Test | Status |
+|------|--------|
+| Backend testovi | 402 PASS |
+| Mobile testovi | 57 PASS |
+| TypeScript | Čist |
+| App na produkciji | Radi |
+
+---
 
 ### 2026-02-14/15 (Petak/Nedjelja) - EPIC SESSION
 
@@ -175,9 +208,16 @@
 ### Poznati problemi
 - Click & Fix mozda ima network issue (cekamo potvrdu)
 
-### Tech debt
-- `LineDetailScreen.tsx` - RIJESENO (909 → 292, -68%)
-- `InboxListScreen.tsx` (759 linija) - treba refaktorirati
+### Tech debt - RIJEŠENO
+- `LineDetailScreen.tsx` - RIJEŠENO (909 → 292, -68%)
+- `InboxListScreen.tsx` - RIJEŠENO (818 → 270, -67%)
+
+### Ukupno refaktorirano (oba dana)
+| Screen | Prije | Poslije | Smanjenje |
+|--------|-------|---------|-----------|
+| LineDetailScreen | 909 | 292 | -68% |
+| InboxListScreen | 818 | 270 | -67% |
+| **UKUPNO** | **1,727** | **562** | **-1,165 linija!** |
 
 ---
 
@@ -197,15 +237,15 @@
 
 ### Sto treba tvoju paznju
 - BUG 4 (Click & Fix) - ako se ponovi, treba logging
-- InboxListScreen - sljedeci kandidat za refaktoring
 
-### Statistika sesije
-- **Bugova popravljeno**: 4
+### Statistika sesije (2026-02-14 + 2026-02-15)
+- **Bugova popravljeno**: 5 (uključujući Bisevo filter)
 - **Testova dodano**: 57
-- **Linija uklonjeno**: ~12,500 (design-mirror + refaktoring)
-- **Hookova kreirano**: 3
-- **Komponenti kreirano**: 7
+- **Linija uklonjeno**: ~12,500 (design-mirror) + 1,165 (refaktoring) = **~13,665**
+- **Hookova kreirano**: 5 (3 + 2)
+- **Komponenti kreirano**: 11 (7 + 4)
 - **PR-ova zatvoreno**: 7
+- **Deploy na produkciju**: 1 (Bisevo fix)
 
 ### Pitanja?
 Kontaktiraj Project Managera
