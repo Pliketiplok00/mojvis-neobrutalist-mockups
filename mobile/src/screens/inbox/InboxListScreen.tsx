@@ -39,21 +39,15 @@ import {
   skin,
   Header,
   Button,
-  Badge,
   Label,
-  Body,
-  Meta,
-  ButtonText,
   Icon,
   LoadingState,
   EmptyState,
   ErrorState,
 } from '../../ui';
-import type { IconName } from '../../ui/Icon';
-import { STATUS_COLORS } from '../../ui/utils/statusColors';
-import { formatDateShort } from '../../utils/dateFormat';
 import type { InboxTag } from '../../types/inbox';
 import { MessageListItem } from './components/MessageListItem';
+import { SentListItem } from './components/SentListItem';
 
 // Inbox component tokens
 const { inbox: inboxTokens } = skin.components;
@@ -152,70 +146,13 @@ export function InboxListScreen(): React.JSX.Element {
     />
   );
 
-  const renderSentItem = ({ item }: { item: CombinedSentItem }): React.JSX.Element => {
-    const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.zaprimljeno;
-    const isClickFix = item.type === 'click_fix';
-    const iconName: IconName = isClickFix ? 'camera' : 'send';
-    const iconBackground = isClickFix
-      ? skin.colors.orange
-      : skin.colors.lavender;
-
-    return (
-      <View style={styles.messageItemWrapper}>
-        <Pressable onPress={() => handleSentItemPress(item)}>
-          {({ pressed }) => (
-            <>
-              {/* Dual-layer shadow - hidden when pressed */}
-              {!pressed && <View style={styles.messageItemShadow} />}
-              <View style={styles.messageItem}>
-                {/* Left icon slab */}
-                <View style={[styles.iconSlab, { backgroundColor: iconBackground }]}>
-                  <Icon name={iconName} size="md" colorToken="textPrimary" />
-                </View>
-
-                {/* Content block */}
-                <View style={styles.messageContent}>
-                  {/* Subject - ALL CAPS */}
-                  <ButtonText style={styles.messageTitle} numberOfLines={1}>
-                    {item.subject}
-                  </ButtonText>
-
-                  {/* Status badge row */}
-                  <View style={styles.badgeRow}>
-                    {isClickFix && (
-                      <Badge variant="type" style={styles.badgeMargin}>
-                        {t('inbox.badges.report')}
-                      </Badge>
-                    )}
-                    <Badge backgroundColor={statusColor.bg} textColor={statusColor.text}>
-                      {item.status_label}
-                    </Badge>
-                  </View>
-
-                  {/* Photo count for Click & Fix */}
-                  {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
-                    <Meta style={styles.photoCount}>
-                      {item.photo_count} {t('inbox.photoCount')}
-                    </Meta>
-                  )}
-
-                  {/* Date */}
-                  <Meta>{formatDateShort(item.created_at)}</Meta>
-                </View>
-
-                {/* Right section: chevron */}
-                <View style={styles.messageRight}>
-                  <View style={styles.chevronBox}>
-                    <Icon name="chevron-right" size="sm" colorToken="chevron" />
-                  </View>
-                </View>
-              </View>
-            </>
-          )}
-        </Pressable>
-      </View>
-    );
-  };
+  const renderSentItem = ({ item }: { item: CombinedSentItem }): React.JSX.Element => (
+    <SentListItem
+      item={item}
+      onPress={() => handleSentItemPress(item)}
+      t={t}
+    />
+  );
 
   const renderSentEmptyState = (): React.JSX.Element => (
     <EmptyState
@@ -463,80 +400,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
 
-  // Message item poster card
-  messageItemWrapper: {
-    position: 'relative',
-    marginBottom: inboxTokens.listItem.marginBottom,
-    marginHorizontal: inboxTokens.listItem.marginHorizontal,
-  },
-  messageItemShadow: {
-    position: 'absolute',
-    top: inboxTokens.listItem.shadowOffsetY,
-    left: inboxTokens.listItem.shadowOffsetX,
-    right: -inboxTokens.listItem.shadowOffsetX,
-    bottom: -inboxTokens.listItem.shadowOffsetY,
-    backgroundColor: inboxTokens.listItem.shadowColor,
-    borderRadius: inboxTokens.listItem.borderRadius,
-  },
-  messageItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: inboxTokens.listItem.background,
-    borderWidth: inboxTokens.listItem.borderWidth,
-    borderColor: inboxTokens.listItem.borderColor,
-    borderRadius: inboxTokens.listItem.borderRadius,
-    padding: inboxTokens.listItem.padding,
-  },
-
-  // Single icon slab
-  iconSlab: {
-    width: inboxTokens.listItem.iconSlabSize,
-    height: inboxTokens.listItem.iconSlabSize,
-    borderWidth: inboxTokens.listItem.iconSlabBorderWidth,
-    borderColor: inboxTokens.listItem.iconSlabBorderColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  // Content block
-  messageContent: {
-    flex: 1,
-  },
-  messageTitle: {
-    marginBottom: inboxTokens.listItem.titleMarginBottom,
-    textTransform: 'uppercase',
-  },
-
-  // Right section
-  messageRight: {
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    marginLeft: skin.spacing.sm,
-  },
-
-  // Chevron box (unboxed per design guardrails)
-  chevronBox: {
-    width: inboxTokens.listItem.chevronBoxSize,
-    height: inboxTokens.listItem.chevronBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  // Badge row for sent items
-  badgeRow: {
-    flexDirection: 'row',
-    gap: skin.spacing.sm,
-    marginBottom: skin.spacing.xs,
-  },
-  badgeMargin: {
-    marginRight: skin.spacing.xs,
-  },
-
   sentContainer: {
     flex: 1,
-  },
-  photoCount: {
-    marginBottom: skin.spacing.xs,
   },
   newFeedbackContainer: {
     padding: skin.spacing.lg,
