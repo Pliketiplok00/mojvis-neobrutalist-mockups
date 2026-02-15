@@ -53,85 +53,10 @@ import type { IconName } from '../../ui/Icon';
 import { STATUS_COLORS } from '../../ui/utils/statusColors';
 import { formatDateShort } from '../../utils/dateFormat';
 import type { InboxTag } from '../../types/inbox';
+import { MessageListItem } from './components/MessageListItem';
 
 // Inbox component tokens
 const { inbox: inboxTokens } = skin.components;
-
-/**
- * Icon config for a single tag
- */
-interface TagIconConfig {
-  icon: IconName;
-  background: string;
-  colorToken: 'primaryText' | 'textPrimary';
-}
-
-/**
- * Get icon configs for ALL tags on a message
- *
- * Icon mapping (canonical):
- * - hitno (urgent) → shield-alert (red background, white icon)
- * - promet → traffic-cone (blue background, dark icon)
- * - kultura → calendar-heart (lavender background, dark icon)
- * - opcenito → newspaper (green background, dark icon)
- * - municipal (vis/komiza) → megaphone (default background, dark icon)
- * - default (no tags) → mail
- *
- * Returns array of configs - one for each tag the message has.
- */
-function getAllMessageIconConfigs(tags: InboxTag[], isUrgent: boolean): TagIconConfig[] {
-  const configs: TagIconConfig[] = [];
-
-  // Urgent gets its own icon (separate from hitno tag)
-  if (isUrgent) {
-    configs.push({
-      icon: 'shield-alert',
-      background: inboxTokens.listItem.iconSlabBackgroundUrgent,
-      colorToken: 'primaryText',
-    });
-  }
-
-  // Add icons for each tag (excluding 'hitno' since it's handled by isUrgent)
-  if (tags.includes('promet')) {
-    configs.push({
-      icon: 'traffic-cone',
-      background: inboxTokens.listItem.iconSlabBackgroundTransport,
-      colorToken: 'textPrimary',
-    });
-  }
-  if (tags.includes('kultura')) {
-    configs.push({
-      icon: 'calendar-heart',
-      background: inboxTokens.listItem.iconSlabBackgroundCulture,
-      colorToken: 'textPrimary',
-    });
-  }
-  if (tags.includes('opcenito')) {
-    configs.push({
-      icon: 'newspaper',
-      background: inboxTokens.listItem.iconSlabBackgroundGeneral,
-      colorToken: 'textPrimary',
-    });
-  }
-  if (tags.includes('vis') || tags.includes('komiza')) {
-    configs.push({
-      icon: 'megaphone',
-      background: inboxTokens.listItem.iconSlabBackgroundDefault,
-      colorToken: 'textPrimary',
-    });
-  }
-
-  // Default if no icons at all
-  if (configs.length === 0) {
-    configs.push({
-      icon: 'mail',
-      background: inboxTokens.listItem.iconSlabBackgroundDefault,
-      colorToken: 'textPrimary',
-    });
-  }
-
-  return configs;
-}
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -203,72 +128,13 @@ export function InboxListScreen(): React.JSX.Element {
     }
   };
 
-  const renderMessage = ({ item }: { item: InboxMessage }): React.JSX.Element => {
-    const unread = isUnread(item.id);
-    const iconConfigs = getAllMessageIconConfigs(item.tags, item.is_urgent);
-
-    return (
-      <View style={styles.messageItemWrapper}>
-        <Pressable onPress={() => handleMessagePress(item)}>
-          {({ pressed }) => (
-            <>
-              {/* Dual-layer shadow - hidden when pressed */}
-              {!pressed && <View style={styles.messageItemShadow} />}
-              <View style={styles.messageItem}>
-                {/* Left icon slabs - one for each tag */}
-                <View style={styles.iconSlabRow}>
-                  {iconConfigs.map((config, index) => (
-                    <View
-                      key={index}
-                      style={[styles.iconSlab, { backgroundColor: config.background }]}
-                    >
-                      <Icon
-                        name={config.icon}
-                        size={iconConfigs.length > 1 ? 'sm' : 'md'}
-                        colorToken={config.colorToken}
-                      />
-                    </View>
-                  ))}
-                </View>
-
-                {/* Content block */}
-                <View style={styles.messageContent}>
-                  {/* Title - ALL CAPS */}
-                  <ButtonText style={styles.messageTitle} numberOfLines={1}>
-                    {item.title}
-                  </ButtonText>
-
-                  {/* Preview snippet */}
-                  <Body
-                    color={skin.colors.textMuted}
-                    numberOfLines={2}
-                    style={styles.messagePreview}
-                  >
-                    {item.body}
-                  </Body>
-
-                  {/* Date */}
-                  <Meta>{formatDateShort(item.created_at)}</Meta>
-                </View>
-
-                {/* Right section: NEW badge + chevron */}
-                <View style={styles.messageRight}>
-                  {unread && (
-                    <View style={styles.newBadge}>
-                      <Label style={styles.newBadgeText}>NEW</Label>
-                    </View>
-                  )}
-                  <View style={styles.chevronBox}>
-                    <Icon name="chevron-right" size="sm" colorToken="chevron" />
-                  </View>
-                </View>
-              </View>
-            </>
-          )}
-        </Pressable>
-      </View>
-    );
-  };
+  const renderMessage = ({ item }: { item: InboxMessage }): React.JSX.Element => (
+    <MessageListItem
+      message={item}
+      isUnread={isUnread(item.id)}
+      onPress={() => handleMessagePress(item)}
+    />
+  );
 
   const renderEmptyState = (): React.JSX.Element => (
     <EmptyState
@@ -622,13 +488,6 @@ const styles = StyleSheet.create({
     padding: inboxTokens.listItem.padding,
   },
 
-  // Icon slab row (container for multiple tag icons)
-  iconSlabRow: {
-    flexDirection: 'row',
-    gap: skin.spacing.xs,
-    marginRight: inboxTokens.listItem.iconSlabGap,
-  },
-
   // Single icon slab
   iconSlab: {
     width: inboxTokens.listItem.iconSlabSize,
@@ -647,29 +506,12 @@ const styles = StyleSheet.create({
     marginBottom: inboxTokens.listItem.titleMarginBottom,
     textTransform: 'uppercase',
   },
-  messagePreview: {
-    marginBottom: inboxTokens.listItem.snippetMarginBottom,
-  },
 
   // Right section
   messageRight: {
     alignItems: 'flex-end',
     justifyContent: 'space-between',
     marginLeft: skin.spacing.sm,
-  },
-
-  // NEW badge
-  newBadge: {
-    backgroundColor: inboxTokens.listItem.newBadgeBackground,
-    paddingHorizontal: inboxTokens.listItem.newBadgePadding,
-    paddingVertical: inboxTokens.listItem.newBadgePadding,
-    borderWidth: inboxTokens.listItem.newBadgeBorderWidth,
-    borderColor: inboxTokens.listItem.newBadgeBorderColor,
-    marginBottom: skin.spacing.sm,
-  },
-  newBadgeText: {
-    color: inboxTokens.listItem.newBadgeTextColor,
-    fontSize: skin.typography.fontSize.xs,
   },
 
   // Chevron box (unboxed per design guardrails)
