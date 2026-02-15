@@ -22,7 +22,6 @@ import {
   StyleSheet,
   SafeAreaView,
   RefreshControl,
-  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -48,6 +47,7 @@ import {
 import type { InboxTag } from '../../types/inbox';
 import { MessageListItem } from './components/MessageListItem';
 import { SentListItem } from './components/SentListItem';
+import { TagFilterBar } from './components/TagFilterBar';
 
 // Inbox component tokens
 const { inbox: inboxTokens } = skin.components;
@@ -216,40 +216,12 @@ export function InboxListScreen(): React.JSX.Element {
 
       {/* Tag Filter Bar - only visible on received tab */}
       {activeTab === 'received' && (
-        <View style={styles.tagFilterContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tagFilterScrollContent}
-          >
-            {availableTags.map((tag) => {
-              const isActive = selectedTags.includes(tag);
-              // Per-tag background and text colors (always applied)
-              const tagBackground = inboxTokens.tagFilter.chipBackgrounds[tag];
-              const tagTextColor = inboxTokens.tagFilter.chipTextColors[tag];
-              return (
-                <View key={tag} style={styles.tagChipWrapper}>
-                  {/* Neobrut shadow layer - only visible when selected */}
-                  {isActive && <View style={styles.tagChipShadow} />}
-                  <Pressable
-                    style={[
-                      styles.tagChip,
-                      { backgroundColor: tagBackground },
-                      isActive && styles.tagChipSelected,
-                    ]}
-                    onPress={() => toggleTag(tag)}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: isActive }}
-                  >
-                    <Label style={[styles.tagChipText, { color: tagTextColor }]}>
-                      {t(`inbox.tags.${tag}`)}
-                    </Label>
-                  </Pressable>
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
+        <TagFilterBar
+          availableTags={availableTags}
+          selectedTags={selectedTags}
+          onToggleTag={toggleTag}
+          t={t}
+        />
       )}
 
       {/* Content */}
@@ -345,55 +317,9 @@ const styles = StyleSheet.create({
     color: inboxTokens.tabs.activeTextColor,
   },
 
-  // Tag filter bar
-  tagFilterContainer: {
-    backgroundColor: inboxTokens.tagFilter.containerBackground,
-    paddingVertical: inboxTokens.tagFilter.containerPadding,
-    borderBottomWidth: skin.borders.widthThin,
-    borderBottomColor: skin.colors.border,
-  },
-  tagFilterScrollContent: {
-    paddingLeft: inboxTokens.tagFilter.containerPadding,
-    // Right padding: container padding + shadow offset to prevent clipping
-    paddingRight: inboxTokens.tagFilter.containerPadding + inboxTokens.tagFilter.chipShadowOffset,
-    // Bottom padding for shadow visibility (derived from shadow offset)
-    paddingBottom: inboxTokens.tagFilter.chipShadowOffset,
-    gap: inboxTokens.tagFilter.chipGap,
-  },
-  // Chip wrapper for shadow positioning
-  tagChipWrapper: {
-    position: 'relative',
-  },
-  // Neobrut shadow layer (visible only when selected)
-  tagChipShadow: {
-    position: 'absolute',
-    top: inboxTokens.tagFilter.chipShadowOffset,
-    left: inboxTokens.tagFilter.chipShadowOffset,
-    right: -inboxTokens.tagFilter.chipShadowOffset,
-    bottom: -inboxTokens.tagFilter.chipShadowOffset,
-    backgroundColor: inboxTokens.tagFilter.chipShadowColor,
-    borderRadius: inboxTokens.tagFilter.chipBorderRadius,
-  },
-  // Chip base style (category background applied via inline style)
-  tagChip: {
-    paddingHorizontal: inboxTokens.tagFilter.chipPaddingHorizontal,
-    paddingVertical: inboxTokens.tagFilter.chipPaddingVertical,
-    borderWidth: inboxTokens.tagFilter.chipBorderWidthDefault,
-    borderColor: inboxTokens.tagFilter.chipBorderColor,
-    borderRadius: inboxTokens.tagFilter.chipBorderRadius,
-  },
-  // Selected chip: thicker outline
-  tagChipSelected: {
-    borderWidth: inboxTokens.tagFilter.chipBorderWidthSelected,
-  },
-  // Chip text (color applied via inline style for per-tag legibility)
-  tagChipText: {
-    textTransform: 'uppercase',
-  },
-
   // List content container (spacing from filter bar)
   listContentContainer: {
-    paddingTop: inboxTokens.tagFilter.listTopPadding,
+    paddingTop: skin.spacing.sm,
   },
 
   listEmpty: {
