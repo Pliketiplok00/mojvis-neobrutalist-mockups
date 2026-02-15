@@ -31,17 +31,16 @@ import { DatePickerModal } from './components/DatePickerModal';
 import { DateSelector } from './components/DateSelector';
 import { DeparturesSection } from './components/DeparturesSection';
 import { DirectionTabs } from './components/DirectionTabs';
+import { HeaderSlab } from './components/HeaderSlab';
 import { TicketInfoBox } from './components/TicketInfoBox';
-import { H1, H2, Label, Meta, Body } from '../../ui/Text';
+import { Body } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import { LoadingState, ErrorState } from '../../ui/States';
-import { Badge } from '../../ui/Badge';
 import { skin } from '../../ui/skin';
 import { useDatePicker } from '../../hooks/useDatePicker';
 import { useDepartures } from '../../hooks/useDepartures';
 import { useLineDetail } from '../../hooks/useLineDetail';
 import { useTranslations } from '../../i18n';
-import { formatLineTitle, formatDuration } from '../../utils/transportFormat';
 import type { InboxMessage } from '../../types/inbox';
 import type {
   TransportType,
@@ -56,7 +55,6 @@ interface LineDetailScreenProps {
 
 const { colors, spacing, components } = skin;
 const lineDetail = components.transport.lineDetail;
-const listTokens = components.transport.list;
 
 export function LineDetailScreen({
   lineId,
@@ -113,9 +111,6 @@ export function LineDetailScreen({
   const headerBackground = transportType === 'sea'
     ? lineDetail.headerBackgroundSea
     : lineDetail.headerBackgroundRoad;
-  const timeBlockBackground = transportType === 'sea'
-    ? lineDetail.timeBlockBackgroundSea
-    : lineDetail.timeBlockBackgroundRoad;
 
   // Get routes for direction toggle
   const routes: RouteInfo[] = lineDetailData?.routes || [];
@@ -164,57 +159,16 @@ export function LineDetailScreen({
         )}
 
         {/* Poster Header Slab */}
-        <View style={[styles.headerSlab, { backgroundColor: headerBackground }]}>
-          <View style={styles.headerContent}>
-            <View style={styles.headerIconBox}>
-              <Icon
-                name={transportType === 'sea' ? 'ship' : 'bus'}
-                size="lg"
-                colorToken="primaryText"
-              />
-            </View>
-            <View style={styles.headerTextContainer}>
-              <H1 style={styles.headerTitle}>
-                {formatLineTitle(
-                  lineDetailData.line_number,
-                  dir0Route?.origin ?? '',
-                  dir0Route?.destination ?? ''
-                )}
-              </H1>
-              <View style={styles.headerMetaRow}>
-                {/* Subtype as meta only for road transport (sea shows it as badge) */}
-                {transportType !== 'sea' && lineDetailData.subtype && (
-                  <Meta style={styles.headerMeta}>{lineDetailData.subtype}</Meta>
-                )}
-                {currentRoute?.typical_duration_minutes && (
-                  <Meta style={styles.headerMeta}>
-                    {formatDuration(currentRoute.typical_duration_minutes)}
-                  </Meta>
-                )}
-              </View>
-            </View>
-            {/* Badge stack: subtype + seasonal (right-aligned, sea only) */}
-            {transportType === 'sea' && (lineDetailData.subtype || lineDetailData.line_number === '659') && (
-              <View style={styles.headerBadgeStack}>
-                {lineDetailData.subtype && (
-                  <Badge variant="transport" size="large">
-                    {lineDetailData.subtype}
-                  </Badge>
-                )}
-                {lineDetailData.line_number === '659' && (
-                  <Badge
-                    variant="transport"
-                    size="large"
-                    backgroundColor={listTokens.lineCardHeaderBackgroundHighlight}
-                    textColor={colors.textPrimary}
-                  >
-                    {t('transport.seasonal')}
-                  </Badge>
-                )}
-              </View>
-            )}
-          </View>
-        </View>
+        <HeaderSlab
+          transportType={transportType}
+          lineNumber={lineDetailData.line_number}
+          origin={dir0Route?.origin ?? ''}
+          destination={dir0Route?.destination ?? ''}
+          subtype={lineDetailData.subtype}
+          durationMinutes={currentRoute?.typical_duration_minutes ?? null}
+          backgroundColor={headerBackground}
+          seasonalLabel={t('transport.seasonal')}
+        />
 
         {/* Date Selector Card */}
         <DateSelector
@@ -310,44 +264,6 @@ const styles = StyleSheet.create({
   bannerSection: {
     paddingHorizontal: 0,
     paddingTop: 0,
-  },
-
-  // Poster Header Slab
-  headerSlab: {
-    padding: lineDetail.headerPadding,
-    borderBottomWidth: lineDetail.headerBorderWidth,
-    borderBottomColor: lineDetail.headerBorderColor,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  headerIconBox: {
-    width: lineDetail.headerIconBoxSize,
-    height: lineDetail.headerIconBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  headerTextContainer: {
-    flex: 1,
-  },
-  headerTitle: {
-    color: lineDetail.headerTitleColor,
-  },
-  headerMetaRow: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.xs,
-  },
-  headerMeta: {
-    color: lineDetail.headerMetaColor,
-  },
-  // Badge stack (right side of header, sea only)
-  headerBadgeStack: {
-    alignItems: 'flex-end',
-    gap: spacing.xs,
-    marginLeft: spacing.md,
   },
 
   // Route Info
