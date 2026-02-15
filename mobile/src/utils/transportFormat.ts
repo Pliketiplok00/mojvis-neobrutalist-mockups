@@ -27,9 +27,10 @@ export function formatLineTitle(
  * Format duration in minutes to human readable string
  * E.g., 90 → "1h 30min", 45 → "45 min", 120 → "2h"
  *
- * @param minutes - Duration in minutes
+ * @param minutes - Duration in minutes (null returns empty string)
  */
-export function formatDuration(minutes: number): string {
+export function formatDuration(minutes: number | null): string {
+  if (minutes === null) return '';
   if (minutes < 60) return `${minutes} min`;
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;

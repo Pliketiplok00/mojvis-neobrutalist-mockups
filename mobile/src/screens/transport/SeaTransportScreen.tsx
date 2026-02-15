@@ -44,7 +44,7 @@ import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
 import { formatDayWithDate } from '../../utils/dateFormat';
-import { formatLineTitle } from '../../utils/transportFormat';
+import { formatDuration, formatLineTitle } from '../../utils/transportFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -141,14 +141,6 @@ export function SeaTransportScreen(): React.JSX.Element {
 
   const handleLinePress = (lineId: string) => {
     navigation.navigate('SeaLineDetail', { lineId });
-  };
-
-  const formatDuration = (minutes: number | null): string => {
-    if (!minutes) return '';
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
   };
 
   if (loading) {

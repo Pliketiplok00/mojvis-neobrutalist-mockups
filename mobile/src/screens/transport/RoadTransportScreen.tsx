@@ -43,6 +43,7 @@ import { inboxApi, transportApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
+import { formatDuration } from '../../utils/transportFormat';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -125,14 +126,6 @@ export function RoadTransportScreen(): React.JSX.Element {
 
   const handleLinePress = (lineId: string) => {
     navigation.navigate('RoadLineDetail', { lineId });
-  };
-
-  const formatDuration = (minutes: number | null): string => {
-    if (!minutes) return '';
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return mins > 0 ? `${hours}h ${mins}min` : `${hours}h`;
   };
 
   if (loading) {
