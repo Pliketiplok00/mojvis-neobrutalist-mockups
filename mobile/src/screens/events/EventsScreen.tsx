@@ -19,7 +19,7 @@
  * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   ScrollView,
@@ -30,15 +30,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
-import { useUserContext } from '../../hooks/useUserContext';
+import { useEvents } from '../../hooks/useEvents';
 import { useTranslations } from '../../i18n';
-import { eventsApi, inboxApi } from '../../services/api';
-import type { Event } from '../../types/event';
-import type { InboxMessage } from '../../types/inbox';
-import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { H1, Label } from '../../ui/Text';
-import { formatDateISO, formatDateLocaleFull } from '../../utils/dateFormat';
+import { formatDateLocaleFull } from '../../utils/dateFormat';
 import { Calendar } from './components/Calendar';
 import { EventItem } from './components/EventItem';
 
@@ -46,12 +42,17 @@ export function EventsScreen(): React.JSX.Element {
   const { openMenu } = useMenu();
   const { t, language } = useTranslations();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [events, setEvents] = useState<Event[]>([]);
-  const [eventDates, setEventDates] = useState<Set<string>>(new Set());
-  const [banners, setBanners] = useState<InboxMessage[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const userContext = useUserContext();
+
+  // Events data hook
+  const {
+    events,
+    eventDates,
+    banners,
+    loading,
+    error,
+    fetchEventsForDate,
+    fetchEventDatesForMonth,
+  } = useEvents({ selectedDate });
 
   // Get translated month and day names
   const monthNames = [
@@ -83,60 +84,16 @@ export function EventsScreen(): React.JSX.Element {
     openMenu();
   };
 
-  // Fetch banners for events (Phase 2: hitno + kultura)
-  const fetchBanners = useCallback(async () => {
-    try {
-      const response = await inboxApi.getActiveBanners(userContext, 'events');
-      setBanners(response.banners);
-    } catch (err) {
-      console.error('[Events] Error fetching banners:', err);
-    }
-  }, [userContext]);
-
-  // Fetch event dates for calendar
-  const fetchEventDates = useCallback(async (year: number, month: number) => {
-    try {
-      const response = await eventsApi.getEventDates(year, month);
-      setEventDates(new Set(response.dates));
-    } catch (err) {
-      console.error('[Events] Error fetching event dates:', err);
-    }
-  }, []);
-
-  // Fetch events for selected date
-  const fetchEvents = useCallback(async (date: Date) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const dateStr = formatDateISO(date);
-      const response = await eventsApi.getEvents(1, 50, dateStr, language);
-      setEvents(response.events);
-    } catch (err) {
-      console.error('[Events] Error fetching events:', err);
-      setError(t('events.error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [language, t]);
-
-  // Initial load
-  useEffect(() => {
-    const now = new Date();
-    void fetchEventDates(now.getFullYear(), now.getMonth() + 1);
-    void fetchEvents(now);
-    void fetchBanners();
-  }, [fetchEventDates, fetchEvents, fetchBanners]);
-
   // Handle date selection
   const handleSelectDate = (date: Date) => {
     setSelectedDate(date);
-    void fetchEvents(date);
+    void fetchEventsForDate(date);
     // Fetch event dates if month changed
     if (
       date.getMonth() !== selectedDate.getMonth() ||
       date.getFullYear() !== selectedDate.getFullYear()
     ) {
-      void fetchEventDates(date.getFullYear(), date.getMonth() + 1);
+      void fetchEventDatesForMonth(date.getFullYear(), date.getMonth() + 1);
     }
   };
 
