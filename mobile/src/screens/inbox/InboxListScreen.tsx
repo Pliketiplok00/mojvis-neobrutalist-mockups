@@ -18,7 +18,6 @@ import React, { useState } from 'react';
 import {
   View,
   FlatList,
-  Pressable,
   StyleSheet,
   SafeAreaView,
   RefreshControl,
@@ -38,8 +37,6 @@ import {
   skin,
   Header,
   Button,
-  Label,
-  Icon,
   LoadingState,
   EmptyState,
   ErrorState,
@@ -48,14 +45,9 @@ import type { InboxTag } from '../../types/inbox';
 import { MessageListItem } from './components/MessageListItem';
 import { SentListItem } from './components/SentListItem';
 import { TagFilterBar } from './components/TagFilterBar';
-
-// Inbox component tokens
-const { inbox: inboxTokens } = skin.components;
+import { InboxTabs, TabType } from './components/InboxTabs';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
-
-// Tab options
-type TabType = 'received' | 'sent';
 
 export function InboxListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -175,44 +167,11 @@ export function InboxListScreen(): React.JSX.Element {
       <Header type="inbox" />
 
       {/* Poster-style Tabs */}
-      <View style={styles.tabBar}>
-        <Pressable
-          style={[styles.tab, activeTab === 'received' && styles.tabActive]}
-          onPress={() => handleTabChange('received')}
-        >
-          <Icon
-            name="inbox"
-            size="sm"
-            colorToken={activeTab === 'received' ? 'primaryText' : 'textPrimary'}
-          />
-          <Label
-            style={[
-              styles.tabText,
-              activeTab === 'received' && styles.tabTextActive,
-            ]}
-          >
-            {t('inbox.tabs.received')}
-          </Label>
-        </Pressable>
-        <Pressable
-          style={[styles.tab, activeTab === 'sent' && styles.tabActive]}
-          onPress={() => handleTabChange('sent')}
-        >
-          <Icon
-            name="send"
-            size="sm"
-            colorToken={activeTab === 'sent' ? 'primaryText' : 'textPrimary'}
-          />
-          <Label
-            style={[
-              styles.tabText,
-              activeTab === 'sent' && styles.tabTextActive,
-            ]}
-          >
-            {t('inbox.tabs.sent')}
-          </Label>
-        </Pressable>
-      </View>
+      <InboxTabs
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        t={t}
+      />
 
       {/* Tag Filter Bar - only visible on received tab */}
       {activeTab === 'received' && (
@@ -283,38 +242,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: skin.colors.background,
-  },
-
-  // Poster-style tabs
-  tabBar: {
-    flexDirection: 'row',
-    borderBottomWidth: inboxTokens.tabs.borderBottomWidth,
-    borderBottomColor: inboxTokens.tabs.borderBottomColor,
-  },
-  tab: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: inboxTokens.tabs.iconGap,
-    paddingVertical: inboxTokens.tabs.tabPadding,
-    backgroundColor: inboxTokens.tabs.inactiveBackground,
-    borderWidth: inboxTokens.tabs.inactiveBorderWidth,
-    borderColor: inboxTokens.tabs.inactiveBorderColor,
-    borderBottomWidth: 0,
-  },
-  tabActive: {
-    backgroundColor: inboxTokens.tabs.activeBackground,
-    borderWidth: inboxTokens.tabs.activeBorderWidth,
-    borderColor: inboxTokens.tabs.activeBorderColor,
-    borderBottomWidth: 0,
-  },
-  tabText: {
-    color: inboxTokens.tabs.inactiveTextColor,
-    textTransform: 'uppercase',
-  },
-  tabTextActive: {
-    color: inboxTokens.tabs.activeTextColor,
   },
 
   // List content container (spacing from filter bar)
