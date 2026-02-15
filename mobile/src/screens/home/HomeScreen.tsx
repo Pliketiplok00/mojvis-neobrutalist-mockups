@@ -23,6 +23,8 @@ import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
 import { useHomeData } from '../../hooks/useHomeData';
 import { useTranslations } from '../../i18n';
+import { CategoryGrid } from './components/CategoryGrid';
+import type { CategoryItem } from './components/CategoryGrid';
 import type { MainStackParamList } from '../../navigation/types';
 
 // UI Primitives
@@ -37,18 +39,11 @@ import {
   Icon,
   IconBox,
 } from '../../ui';
-import type { IconName } from '../../ui/Icon';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 // Category configuration with icons and colors per V1 design system
-const CATEGORIES: Array<{
-  key: string;
-  icon: IconName;
-  backgroundColor: string;
-  textColor: string;
-  route: keyof MainStackParamList;
-}> = [
+const CATEGORIES: CategoryItem[] = [
   {
     key: 'events',
     icon: 'calendar',
@@ -89,7 +84,7 @@ export function HomeScreen(): React.JSX.Element {
     openMenu();
   };
 
-  const handleCategoryPress = (category: typeof CATEGORIES[0]): void => {
+  const handleCategoryPress = (category: CategoryItem): void => {
     if (category.route === 'StaticPage') {
       // Navigate to static page with slug
       navigation.navigate('StaticPage', { slug: category.key });
@@ -140,41 +135,12 @@ export function HomeScreen(): React.JSX.Element {
         </View>
 
         {/* Section 3: Quick Access Grid (2x2) */}
-        <View style={styles.gridSection}>
-          <H2 style={styles.sectionLabel}>{t('home.categories').toUpperCase()}</H2>
-          <View style={styles.categoryGrid}>
-            {CATEGORIES.map((category) => (
-              <TouchableOpacity
-                key={category.key}
-                style={styles.categoryTileWrapper}
-                onPress={() => handleCategoryPress(category)}
-                activeOpacity={0.8}
-              >
-                {/* Shadow layer for neobrut offset effect */}
-                <View style={styles.categoryTileShadow} />
-                {/* Main tile */}
-                <View
-                  style={[
-                    styles.categoryTile,
-                    { backgroundColor: category.backgroundColor },
-                  ]}
-                >
-                  <View style={styles.categoryIconBox}>
-                    <Icon
-                      name={category.icon}
-                      size="lg"
-                      color={category.textColor}
-                      stroke="strong"
-                    />
-                  </View>
-                  <Label style={[styles.categoryLabel, { color: category.textColor }]}>
-                    {t(`home.categoryLabels.${category.key}`).toUpperCase()}
-                  </Label>
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
+        <CategoryGrid
+          categories={CATEGORIES}
+          sectionTitle={t('home.categories').toUpperCase()}
+          onCategoryPress={handleCategoryPress}
+          t={t}
+        />
 
         {/* Section 4: Upcoming Events (ticket-style) */}
         <View style={styles.eventsSection}>
@@ -307,54 +273,11 @@ const styles = StyleSheet.create({
     color: skin.colors.primaryTextMuted,
   },
 
-  // Grid Section
-  gridSection: {
-    paddingHorizontal: skin.spacing.lg,
-    paddingTop: skin.spacing.xl,
-  },
+  // Section label (reused by events)
   sectionLabel: {
     color: skin.colors.textMuted,
     marginBottom: skin.spacing.md,
     letterSpacing: 1,
-  },
-  categoryGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  categoryTileWrapper: {
-    width: '48%',
-    height: 110, // Explicit height for stable layout
-    marginBottom: skin.spacing.md,
-  },
-  categoryTileShadow: {
-    position: 'absolute',
-    top: 4,
-    left: 4,
-    width: '100%',
-    height: '100%',
-    backgroundColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    zIndex: 0,
-  },
-  categoryTile: {
-    width: '100%',
-    height: '100%',
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: skin.spacing.sm,
-    zIndex: 1,
-  },
-  categoryIconBox: {
-    // IconBox handles sizing
-  },
-  categoryLabel: {
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    textAlign: 'center',
   },
 
   // Events Section

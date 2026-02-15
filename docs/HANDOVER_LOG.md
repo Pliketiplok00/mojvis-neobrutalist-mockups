@@ -29,6 +29,9 @@
 - **HomeScreen refaktoring Phase 1**: Izvucen useHomeData hook
   - HomeScreen: 516 → 476 linija (-40)
   - useHomeData: 81 linija (novi hook)
+- **HomeScreen refaktoring Phase 2**: Izvucena CategoryGrid komponenta
+  - HomeScreen: 476 → 399 linija (-77)
+  - CategoryGrid: 134 linija (nova komponenta)
 
 #### Odluke donesene
 - Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
