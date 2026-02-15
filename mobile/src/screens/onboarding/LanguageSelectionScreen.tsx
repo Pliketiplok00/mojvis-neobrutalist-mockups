@@ -37,7 +37,7 @@ export function LanguageSelectionScreen({ navigation }: Props): React.JSX.Elemen
   const logoSize = Math.round(screenWidth * 0.4);
 
   const handleLanguageSelect = (language: 'hr' | 'en'): void => {
-    // TODO: Apply language to app UI
+    // Language is applied via OnboardingContext → LanguageProvider
     console.info(`Selected language: ${language}`);
     navigation.navigate('UserModeSelection', { language });
   };
