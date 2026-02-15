@@ -14,7 +14,7 @@
  * REFACTORED: Now uses UI primitives from src/ui/
  */
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   FlatList,
@@ -28,8 +28,9 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useUnread } from '../../contexts/UnreadContext';
 import { useUserContext } from '../../hooks/useUserContext';
+import { useInboxMessages } from '../../hooks/useInboxMessages';
 import { useTranslations } from '../../i18n';
-import { inboxApi, feedbackApi, clickFixApi } from '../../services/api';
+import { feedbackApi, clickFixApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { SentItemResponse } from '../../types/feedback';
 import type { ClickFixSentItemResponse } from '../../types/click-fix';
@@ -153,82 +154,37 @@ type TabType = 'received' | 'sent';
 export function InboxListScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslations();
-  const { isUnread, markAsRead, registerMessages } = useUnread();
-
-  const [activeTab, setActiveTab] = useState<TabType>('received');
-  const [messages, setMessages] = useState<InboxMessage[]>([]);
-  const [sentItems, setSentItems] = useState<CombinedSentItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sentLoading, setSentLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [sentError, setSentError] = useState<string | null>(null);
-  const [selectedTags, setSelectedTags] = useState<InboxTag[]>([]);
+  const { isUnread, markAsRead } = useUnread();
   const userContext = useUserContext();
 
-  // Define available filter tags based on user's municipality
-  // Municipal tags are shown ONLY to users whose municipality matches
-  const availableTags = useMemo((): InboxTag[] => {
-    const baseTags: InboxTag[] = ['promet', 'kultura', 'opcenito', 'hitno'];
-    if (userContext.municipality === 'vis') {
-      return [...baseTags, 'vis'];
-    }
-    if (userContext.municipality === 'komiza') {
-      return [...baseTags, 'komiza'];
-    }
-    return baseTags;
-  }, [userContext.municipality]);
+  // Inbox messages hook (handles fetch, filter, tags)
+  const {
+    filteredMessages,
+    loading,
+    error,
+    refreshing,
+    selectedTags,
+    availableTags,
+    refresh: refreshMessages,
+    toggleTag,
+    clearTags,
+  } = useInboxMessages();
 
-  // Filter messages based on selected tags (client-side)
-  const filteredMessages = useMemo(() => {
-    if (selectedTags.length === 0) {
-      return messages;
-    }
-    return messages.filter((msg) =>
-      msg.tags.some((tag) => selectedTags.includes(tag)) ||
-      (selectedTags.includes('hitno') && msg.is_urgent)
-    );
-  }, [messages, selectedTags]);
+  const [activeTab, setActiveTab] = useState<TabType>('received');
+  const [sentItems, setSentItems] = useState<CombinedSentItem[]>([]);
+  const [sentLoading, setSentLoading] = useState(false);
+  const [sentRefreshing, setSentRefreshing] = useState(false);
+  const [sentError, setSentError] = useState<string | null>(null);
 
   // Reset filter when switching tabs
   const handleTabChange = (tab: TabType): void => {
     setActiveTab(tab);
-    setSelectedTags([]);
+    clearTags();
   };
-
-  // Toggle tag selection
-  const handleTagToggle = (tag: InboxTag): void => {
-    setSelectedTags((prev) =>
-      prev.includes(tag)
-        ? prev.filter((t) => t !== tag)
-        : [...prev, tag]
-    );
-  };
-
-  const fetchMessages = useCallback(async (showRefresh = false) => {
-    if (showRefresh) {
-      setRefreshing(true);
-    } else {
-      setLoading(true);
-    }
-    setError(null);
-
-    try {
-      const response = await inboxApi.getMessages(userContext);
-      setMessages(response.messages);
-      registerMessages(response.messages.map((m) => m.id));
-    } catch (err) {
-      console.error('[Inbox] Error fetching messages:', err);
-      setError(t('inbox.error.loading'));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [registerMessages, userContext]);
 
   const fetchSentItems = useCallback(async (showRefresh = false) => {
     if (showRefresh) {
-      setRefreshing(true);
+      setSentRefreshing(true);
     } else {
       setSentLoading(true);
     }
@@ -268,13 +224,9 @@ export function InboxListScreen(): React.JSX.Element {
       setSentError(t('inbox.error.loadingSent'));
     } finally {
       setSentLoading(false);
-      setRefreshing(false);
+      setSentRefreshing(false);
     }
   }, [t, userContext.language]);
-
-  useEffect(() => {
-    void fetchMessages();
-  }, [fetchMessages]);
 
   useEffect(() => {
     if (activeTab === 'sent') {
@@ -305,7 +257,7 @@ export function InboxListScreen(): React.JSX.Element {
 
   const handleRefresh = (): void => {
     if (activeTab === 'received') {
-      void fetchMessages(true);
+      refreshMessages();
     } else {
       void fetchSentItems(true);
     }
@@ -542,7 +494,7 @@ export function InboxListScreen(): React.JSX.Element {
                       { backgroundColor: tagBackground },
                       isActive && styles.tagChipSelected,
                     ]}
-                    onPress={() => handleTagToggle(tag)}
+                    onPress={() => toggleTag(tag)}
                     accessibilityRole="button"
                     accessibilityState={{ selected: isActive }}
                   >
@@ -591,7 +543,7 @@ export function InboxListScreen(): React.JSX.Element {
               renderItem={renderSentItem}
               ListEmptyComponent={renderSentEmptyState}
               refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+                <RefreshControl refreshing={sentRefreshing} onRefresh={handleRefresh} />
               }
               contentContainerStyle={sentItems.length === 0 ? styles.listEmpty : undefined}
             />
