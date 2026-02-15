@@ -22,7 +22,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Pressable,
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
@@ -31,33 +30,23 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { BannerList } from '../../components/Banner';
-import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
-import { H1, H2, Label, Meta } from '../../ui/Text';
+import { H1, Label, Meta } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import type { IconName } from '../../ui/Icon';
 import { skin } from '../../ui/skin';
 import { useTransportOverview } from '../../hooks/useTransportOverview';
 import { useTranslations } from '../../i18n';
-import type { InboxMessage } from '../../types/inbox';
-import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
+import type { DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
 import { LineListCard } from './components/LineListCard';
+import { TodayDeparturesSection } from './components/TodayDeparturesSection';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 const { colors, spacing, borders, components } = skin;
 const overviewHeader = components.transport.overviewHeader;
 const listTokens = components.transport.list;
-
-/**
- * Format time string (HH:MM or HH:MM:SS) to HH:MM display format
- * Fixes the bug where time breaks into two lines
- */
-function formatTime(time: string): string {
-  const parts = time.split(':');
-  return `${parts[0]}:${parts[1]}`;
-}
 
 /**
  * Map road transport subtype to icon name
@@ -109,8 +98,6 @@ export function RoadTransportScreen(): React.JSX.Element {
       </SafeAreaView>
     );
   }
-
-  const visibleDepartures = todaysDepartures.slice(0, 10);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -181,52 +168,13 @@ export function RoadTransportScreen(): React.JSX.Element {
         </View>
 
         {/* Section B: Today's Departures */}
-        <View style={styles.section}>
-          <Label style={styles.sectionLabel}>{t('transport.todaysDepartures')}</Label>
-          {todaysDepartures.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Label>{t('transport.noDepartures')}</Label>
-            </View>
-          ) : (
-            <View style={styles.todaySetWrapper}>
-              {/* Shadow layer */}
-              <View style={styles.todaySetShadow} />
-              {/* Main container */}
-              <View style={styles.todaySet}>
-                {visibleDepartures.map((dep, index) => (
-                  <Pressable
-                    key={`${dep.line_id}-${dep.departure_time}-${index}`}
-                    style={({ pressed }) => [
-                      styles.todayRow,
-                      index > 0 && styles.todayRowWithDivider,
-                      pressed && styles.todayRowPressed,
-                    ]}
-                    onPress={() => handleLinePress(dep.line_id)}
-                  >
-                    {/* Time block - green like LineDetail */}
-                    <View style={styles.todayTimeBlock}>
-                      <H2 style={styles.todayTime}>
-                        {formatTime(dep.departure_time)}
-                      </H2>
-                    </View>
-                    {/* Info - direction only, line name hidden per spec */}
-                    <View style={styles.todayInfo}>
-                      <Label style={styles.todayLineName} numberOfLines={1}>
-                        {dep.direction_label}
-                      </Label>
-                    </View>
-                    {/* Subtype badge - cast needed until TodayDepartureItem type updated */}
-                    {(dep as unknown as { subtype?: string }).subtype && (
-                      <Badge variant="transport" size="compact" style={styles.todaySubtypeBadge}>
-                        {(dep as unknown as { subtype: string }).subtype}
-                      </Badge>
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          )}
-        </View>
+        <TodayDeparturesSection
+          departures={todaysDepartures}
+          sectionLabel={t('transport.todaysDepartures')}
+          emptyText={t('transport.noDepartures')}
+          timeBlockBackground={listTokens.todayTimeBlockBackgroundRoad}
+          onDeparturePress={handleLinePress}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -317,71 +265,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: borders.widthThin,
     borderColor: colors.border,
-  },
-
-  // Today's departures (stacked set with dividers)
-  todaySetWrapper: {
-    position: 'relative',
-  },
-  todaySetShadow: {
-    position: 'absolute',
-    top: listTokens.todaySetShadowOffsetY,
-    left: listTokens.todaySetShadowOffsetX,
-    right: -listTokens.todaySetShadowOffsetX,
-    bottom: -listTokens.todaySetShadowOffsetY,
-    backgroundColor: listTokens.todaySetShadowColor,
-  },
-  todaySet: {
-    backgroundColor: listTokens.todaySetBackground,
-    borderWidth: listTokens.todaySetBorderWidth,
-    borderColor: listTokens.todaySetBorderColor,
-    borderRadius: listTokens.todaySetRadius,
-    overflow: 'hidden',
-  },
-  todayRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: listTokens.todayRowBackground,
-  },
-  todayRowWithDivider: {
-    borderTopWidth: listTokens.todayRowDividerWidth,
-    borderTopColor: listTokens.todayRowDividerColor,
-  },
-  todayRowPressed: {
-    transform: [
-      { translateX: listTokens.todayRowPressedOffsetX },
-      { translateY: listTokens.todayRowPressedOffsetY },
-    ],
-  },
-  todayTimeBlock: {
-    width: listTokens.todayTimeBlockWidth,
-    backgroundColor: listTokens.todayTimeBlockBackgroundRoad, // Green like LineDetail
-    borderRightWidth: listTokens.todayTimeBlockBorderWidth,
-    borderRightColor: listTokens.todayTimeBlockBorderColor,
-    paddingVertical: listTokens.todayTimeBlockPadding,
-    paddingHorizontal: listTokens.todayTimeBlockPadding,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  todayTime: {
-    color: listTokens.todayTimeBlockTextColor, // White text on green
-  },
-  todayInfo: {
-    flex: 1,
-    paddingVertical: listTokens.todayRowPadding,
-    paddingHorizontal: spacing.md,
-  },
-  todayLineName: {
-    color: colors.textPrimary,
-    fontWeight: '600',
-  },
-  todayDirection: {
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-  todaySubtypeBadge: {
-    alignSelf: 'center',
-    marginRight: spacing.md,
   },
 });
 

@@ -18,6 +18,23 @@
 
 ## Kronologija
 
+### 2026-02-16 (Ponedjeljak)
+
+#### Sto je odradeno danas
+- **Transport refaktoring Phase 4**: Izvucena TodayDeparturesSection komponenta
+  - SeaTransportScreen: 405 → 274 linija (-131)
+  - RoadTransportScreen: 388 → 271 linija (-117)
+  - TodayDeparturesSection: 181 linija (nova shared komponenta)
+- Ukupno faza 1-4: uklonjena duplikacija formata, hook, LineListCard, TodayDeparturesSection
+
+#### Odluke donesene
+- Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
+
+#### Problemi/blockeri
+- Nema
+
+---
+
 ### 2026-02-15
 
 #### Bisevo filter fix
