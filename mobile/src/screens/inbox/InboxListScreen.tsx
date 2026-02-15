@@ -14,7 +14,7 @@
  * REFACTORED: Now uses UI primitives from src/ui/
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   FlatList,
@@ -29,11 +29,9 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useUnread } from '../../contexts/UnreadContext';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useInboxMessages } from '../../hooks/useInboxMessages';
+import { useSentItems, CombinedSentItem } from '../../hooks/useSentItems';
 import { useTranslations } from '../../i18n';
-import { feedbackApi, clickFixApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
-import type { SentItemResponse } from '../../types/feedback';
-import type { ClickFixSentItemResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
 
 // UI Primitives
@@ -135,17 +133,6 @@ function getAllMessageIconConfigs(tags: InboxTag[], isUrgent: boolean): TagIconC
   return configs;
 }
 
-// Combined sent item type
-interface CombinedSentItem {
-  id: string;
-  type: 'feedback' | 'click_fix';
-  subject: string;
-  status: string;
-  status_label: string;
-  photo_count?: number;
-  created_at: string;
-}
-
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 // Tab options
@@ -171,68 +158,21 @@ export function InboxListScreen(): React.JSX.Element {
   } = useInboxMessages();
 
   const [activeTab, setActiveTab] = useState<TabType>('received');
-  const [sentItems, setSentItems] = useState<CombinedSentItem[]>([]);
-  const [sentLoading, setSentLoading] = useState(false);
-  const [sentRefreshing, setSentRefreshing] = useState(false);
-  const [sentError, setSentError] = useState<string | null>(null);
+
+  // Sent items hook (only fetches when on sent tab)
+  const {
+    sentItems,
+    loading: sentLoading,
+    error: sentError,
+    refreshing: sentRefreshing,
+    refresh: refreshSent,
+  } = useSentItems({ enabled: activeTab === 'sent' });
 
   // Reset filter when switching tabs
   const handleTabChange = (tab: TabType): void => {
     setActiveTab(tab);
     clearTags();
   };
-
-  const fetchSentItems = useCallback(async (showRefresh = false) => {
-    if (showRefresh) {
-      setSentRefreshing(true);
-    } else {
-      setSentLoading(true);
-    }
-    setSentError(null);
-
-    try {
-      // Fetch both feedback and click_fix items in parallel
-      const [feedbackResponse, clickFixResponse] = await Promise.all([
-        feedbackApi.getSentItems(1, 20, userContext.language),
-        clickFixApi.getSentItems(1, 20, userContext.language),
-      ]);
-
-      // Combine and sort by date (newest first)
-      const combinedItems: CombinedSentItem[] = [
-        ...feedbackResponse.items.map((item: SentItemResponse): CombinedSentItem => ({
-          id: item.id,
-          type: 'feedback',
-          subject: item.subject,
-          status: item.status,
-          status_label: item.status_label,
-          created_at: item.created_at,
-        })),
-        ...clickFixResponse.items.map((item: ClickFixSentItemResponse): CombinedSentItem => ({
-          id: item.id,
-          type: 'click_fix',
-          subject: item.subject,
-          status: item.status,
-          status_label: item.status_label,
-          photo_count: item.photo_count,
-          created_at: item.created_at,
-        })),
-      ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-      setSentItems(combinedItems);
-    } catch (err) {
-      console.error('[Inbox] Error fetching sent items:', err);
-      setSentError(t('inbox.error.loadingSent'));
-    } finally {
-      setSentLoading(false);
-      setSentRefreshing(false);
-    }
-  }, [t, userContext.language]);
-
-  useEffect(() => {
-    if (activeTab === 'sent') {
-      void fetchSentItems();
-    }
-  }, [activeTab, fetchSentItems]);
 
   const handleMessagePress = (message: InboxMessage): void => {
     markAsRead(message.id);
@@ -259,7 +199,7 @@ export function InboxListScreen(): React.JSX.Element {
     if (activeTab === 'received') {
       refreshMessages();
     } else {
-      void fetchSentItems(true);
+      refreshSent();
     }
   };
 
