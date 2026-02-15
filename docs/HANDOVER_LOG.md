@@ -45,6 +45,22 @@
 
 **Commits**: 4511f3a → 508b4dd (6 commitova)
 
+#### EventsScreen refaktoring
+- **Početno**: 609 linija → **Završno**: 229 linija (**-62%**)
+
+**Hook kreiran:**
+| Hook | Linija | Funkcionalnost |
+|------|--------|----------------|
+| `useEvents` | 101 | Events, dates, banners fetch |
+
+**Komponente kreirane:**
+| Komponenta | Linija | Funkcionalnost |
+|------------|--------|----------------|
+| `Calendar` | 259 | Monthly calendar with event markers |
+| `EventItem` | 121 | Event list card |
+
+**Commits**: 20a76f1, 47328ac, cee7614
+
 #### Verifikacija
 | Test | Status |
 |------|--------|
@@ -211,13 +227,19 @@
 ### Tech debt - RIJEŠENO
 - `LineDetailScreen.tsx` - RIJEŠENO (909 → 292, -68%)
 - `InboxListScreen.tsx` - RIJEŠENO (818 → 270, -67%)
+- `EventsScreen.tsx` - RIJEŠENO (609 → 229, -62%)
 
-### Ukupno refaktorirano (oba dana)
+### Ukupno refaktorirano (sva 3 screena)
 | Screen | Prije | Poslije | Smanjenje |
 |--------|-------|---------|-----------|
 | LineDetailScreen | 909 | 292 | -68% |
 | InboxListScreen | 818 | 270 | -67% |
-| **UKUPNO** | **1,727** | **562** | **-1,165 linija!** |
+| EventsScreen | 609 | 229 | -62% |
+| **UKUPNO** | **2,336** | **791** | **-1,545 linija (-66%)** |
+
+**Kreirano:**
+- 6 hookova
+- 13 komponenti
 
 ---
 
@@ -232,7 +254,7 @@
 - Svi bugfixevi slijede postojece patterne
 - Nema novih arhitekturnih odluka
 - Security ranjivosti popravljene
-- LineDetailScreen refaktoriran na 292 linija
+- 3 velika screena refaktorirana (66% smanjenje)
 - 57 mobile testova dodano
 
 ### Sto treba tvoju paznju
@@ -241,9 +263,9 @@
 ### Statistika sesije (2026-02-14 + 2026-02-15)
 - **Bugova popravljeno**: 5 (uključujući Bisevo filter)
 - **Testova dodano**: 57
-- **Linija uklonjeno**: ~12,500 (design-mirror) + 1,165 (refaktoring) = **~13,665**
-- **Hookova kreirano**: 5 (3 + 2)
-- **Komponenti kreirano**: 11 (7 + 4)
+- **Linija uklonjeno**: ~12,500 (design-mirror) + 1,545 (refaktoring) = **~14,045**
+- **Hookova kreirano**: 6 (3 + 2 + 1)
+- **Komponenti kreirano**: 13 (7 + 4 + 2)
 - **PR-ova zatvoreno**: 7
 - **Deploy na produkciju**: 1 (Bisevo fix)
 
