@@ -17,7 +17,7 @@
  *           2-part line cards with header slab + icon.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import {
   View,
   ScrollView,
@@ -37,9 +37,8 @@ import { H1, H2, Label, Meta } from '../../ui/Text';
 import { Icon } from '../../ui/Icon';
 import type { IconName } from '../../ui/Icon';
 import { skin } from '../../ui/skin';
-import { useUserContext } from '../../hooks/useUserContext';
+import { useTransportOverview } from '../../hooks/useTransportOverview';
 import { useTranslations } from '../../i18n';
-import { inboxApi, transportApi } from '../../services/api';
 import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
@@ -86,15 +85,18 @@ function getSeaHeaderBackground(): string {
 export function SeaTransportScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { t, language } = useTranslations();
-  const [banners, setBanners] = useState<InboxMessage[]>([]);
-  const [lines, setLines] = useState<LineListItem[]>([]);
-  const [todaysDepartures, setTodaysDepartures] = useState<TodayDepartureItem[]>([]);
-  const [dayType, setDayType] = useState<DayType | null>(null);
-  const [isHoliday, setIsHoliday] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const userContext = useUserContext();
+
+  const {
+    banners,
+    lines,
+    todaysDepartures,
+    dayType,
+    isHoliday,
+    loading,
+    refreshing,
+    error,
+    handleRefresh,
+  } = useTransportOverview({ transportType: 'sea' });
 
   const DAY_TYPE_LABELS: Record<DayType, string> = {
     MON: t('transport.dayTypes.MON'),
@@ -106,38 +108,6 @@ export function SeaTransportScreen(): React.JSX.Element {
     SUN: t('transport.dayTypes.SUN'),
     PRAZNIK: t('transport.dayTypes.PRAZNIK'),
   };
-
-  const fetchData = useCallback(async () => {
-    setError(null);
-    try {
-      const [bannersRes, linesRes, todayRes] = await Promise.all([
-        inboxApi.getActiveBanners(userContext, 'transport'),
-        transportApi.getLines('sea', userContext.language),
-        transportApi.getTodaysDepartures('sea', undefined, userContext.language),
-      ]);
-
-      setBanners(bannersRes.banners);
-      setLines(linesRes.lines);
-      setTodaysDepartures(todayRes.departures);
-      setDayType(todayRes.day_type);
-      setIsHoliday(todayRes.is_holiday);
-    } catch (err) {
-      console.error('[SeaTransport] Error fetching data:', err);
-      setError(t('transport.error'));
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [userContext, t]);
-
-  useEffect(() => {
-    void fetchData();
-  }, [fetchData]);
-
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true);
-    void fetchData();
-  }, [fetchData]);
 
   const handleLinePress = (lineId: string) => {
     navigation.navigate('SeaLineDetail', { lineId });
@@ -193,7 +163,7 @@ export function SeaTransportScreen(): React.JSX.Element {
 
         {error && (
           <View style={styles.errorContainer}>
-            <Label style={styles.errorText}>{error}</Label>
+            <Label style={styles.errorText}>{error ? t(error) : ''}</Label>
             <Button onPress={handleRefresh} style={styles.retryButton}>
               {t('common.retry')}
             </Button>
