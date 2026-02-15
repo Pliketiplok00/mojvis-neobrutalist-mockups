@@ -34,9 +34,9 @@ import { useEventDetail } from '../../hooks/useEventDetail';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
-import { H1, Label, Body, Meta, ButtonText } from '../../ui/Text';
-import { Icon } from '../../ui/Icon';
+import { H1, Body, Meta, ButtonText } from '../../ui/Text';
 import { LoadingState, ErrorState } from '../../ui/States';
+import { InfoTile } from './components/InfoTile';
 import { formatDateLocaleFull, formatTime } from '../../utils/dateFormat';
 
 type Props = NativeStackScreenProps<MainStackParamList, 'EventDetail'>;
@@ -110,44 +110,31 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
         {/* Info Tiles */}
         <View style={styles.infoTilesContainer}>
           {/* Date & Time Tile */}
-          <View style={styles.infoTile}>
-            <View style={styles.infoTileIconBox}>
-              <Icon name="clock" size="md" colorToken="textPrimary" />
-            </View>
-            <View style={styles.infoTileContent}>
-              <Body style={styles.infoTileValue}>{formatDateLocaleFull(event.start_datetime, language)}</Body>
-              {event.is_all_day ? (
-                <Label style={styles.infoTileSecondary}>{t('events.allDay')}</Label>
-              ) : (
-                <Label style={styles.infoTileSecondary}>
-                  {formatTime(event.start_datetime, language)}
-                  {event.end_datetime && ` - ${formatTime(event.end_datetime, language)}`}
-                </Label>
-              )}
-            </View>
-          </View>
+          <InfoTile
+            icon="clock"
+            value={formatDateLocaleFull(event.start_datetime, language)}
+            secondaryValue={
+              event.is_all_day
+                ? t('events.allDay')
+                : `${formatTime(event.start_datetime, language)}${
+                    event.end_datetime ? ` - ${formatTime(event.end_datetime, language)}` : ''
+                  }`
+            }
+          />
 
           {/* Location Tile */}
           {event.location && (
-            <View style={styles.infoTile}>
-              <View style={styles.infoTileIconBox}>
-                <Icon name="map-pin" size="md" colorToken="textPrimary" />
-              </View>
-              <View style={styles.infoTileContent}>
-                <Body style={styles.infoTileValue}>{event.location}</Body>
-              </View>
-            </View>
+            <InfoTile
+              icon="map-pin"
+              value={event.location}
+            />
           )}
 
           {/* Organizer Tile */}
-          <View style={styles.infoTile}>
-            <View style={styles.infoTileIconBox}>
-              <Icon name="user" size="md" colorToken="textPrimary" />
-            </View>
-            <View style={styles.infoTileContent}>
-              <Body style={styles.infoTileValue}>{event.organizer}</Body>
-            </View>
-          </View>
+          <InfoTile
+            icon="user"
+            value={event.organizer}
+          />
         </View>
 
         {/* Description */}
@@ -226,32 +213,6 @@ const styles = StyleSheet.create({
   infoTilesContainer: {
     borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
     borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
-  },
-
-  // Info Tile Row (icon box + content)
-  infoTile: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: skin.components.events.detail.infoTilePadding,
-    borderBottomWidth: skin.components.events.detail.infoSectionDividerWidth,
-    borderBottomColor: skin.components.events.detail.infoSectionDividerColor,
-    gap: skin.components.events.detail.infoTileGap,
-  },
-  infoTileIconBox: {
-    width: skin.components.events.detail.infoTileIconBoxSize,
-    height: skin.components.events.detail.infoTileIconBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  infoTileContent: {
-    flex: 1,
-  },
-  infoTileValue: {
-    color: skin.colors.textPrimary,
-  },
-  infoTileSecondary: {
-    marginTop: skin.components.events.detail.secondaryValueMarginTop,
-    color: skin.colors.textSecondary,
   },
 
   // Description Section

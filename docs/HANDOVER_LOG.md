@@ -38,6 +38,9 @@
 - **EventDetailScreen refaktoring Phase 1**: Izvucen useEventDetail hook
   - EventDetailScreen: 372 → 324 linija (-48)
   - useEventDetail: 107 linija (novi hook)
+- **EventDetailScreen refaktoring Phase 2**: Izvucena InfoTile komponenta
+  - EventDetailScreen: 324 → 285 linija (-39)
+  - InfoTile: 77 linija (nova komponenta)
 
 #### Odluke donesene
 - Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
