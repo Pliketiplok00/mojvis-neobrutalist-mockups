@@ -14,18 +14,15 @@
  * REFACTORED: Now uses UI primitives from src/ui/
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BannerList } from '../../components/Banner';
 import { useMenu } from '../../contexts/MenuContext';
-import { useUserContext } from '../../hooks/useUserContext';
+import { useHomeData } from '../../hooks/useHomeData';
 import { useTranslations } from '../../i18n';
-import { inboxApi, eventsApi } from '../../services/api';
-import type { InboxMessage } from '../../types/inbox';
-import type { Event } from '../../types/event';
 import type { MainStackParamList } from '../../navigation/types';
 
 // UI Primitives
@@ -86,44 +83,7 @@ export function HomeScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { openMenu } = useMenu();
   const { t } = useTranslations();
-  const [banners, setBanners] = useState<InboxMessage[]>([]);
-  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
-  const userContext = useUserContext();
-
-  const fetchBanners = useCallback(async () => {
-    try {
-      // Pass 'home' screen context for banner filtering
-      const response = await inboxApi.getActiveBanners(userContext, 'home');
-      setBanners(response.banners);
-    } catch (err) {
-      console.error('[Home] Error fetching banners:', err);
-      // Silently fail - banners are optional
-    }
-  }, [userContext]);
-
-  const fetchUpcomingEvents = useCallback(async () => {
-    try {
-      // Fetch events (backend returns all events sorted by date)
-      const response = await eventsApi.getEvents(1, 20, undefined, userContext.language);
-      // Filter to only show events from today onwards
-      const now = new Date();
-      now.setHours(0, 0, 0, 0); // Start of today
-      const upcoming = response.events.filter(event => {
-        const eventDate = new Date(event.start_datetime);
-        return eventDate >= now;
-      });
-      // Limit to first 3 upcoming events
-      setUpcomingEvents(upcoming.slice(0, 3));
-    } catch (err) {
-      console.error('[Home] Error fetching upcoming events:', err);
-      // Silently fail - events are optional
-    }
-  }, [userContext.language]);
-
-  useEffect(() => {
-    void fetchBanners();
-    void fetchUpcomingEvents();
-  }, [fetchBanners, fetchUpcomingEvents]);
+  const { banners, upcomingEvents } = useHomeData();
 
   const handleMenuPress = (): void => {
     openMenu();

@@ -26,6 +26,9 @@
   - RoadTransportScreen: 388 → 271 linija (-117)
   - TodayDeparturesSection: 181 linija (nova shared komponenta)
 - Ukupno faza 1-4: uklonjena duplikacija formata, hook, LineListCard, TodayDeparturesSection
+- **HomeScreen refaktoring Phase 1**: Izvucen useHomeData hook
+  - HomeScreen: 516 → 476 linija (-40)
+  - useHomeData: 81 linija (novi hook)
 
 #### Odluke donesene
 - Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
