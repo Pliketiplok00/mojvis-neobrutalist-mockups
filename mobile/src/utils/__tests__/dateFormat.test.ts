@@ -4,6 +4,9 @@
  * Tests for all date formatting functions used across the app.
  */
 
+// Unmock dateFormat since we're testing the actual implementation
+jest.unmock('../dateFormat');
+
 import {
   formatDateISO,
   formatDateLocaleFull,
