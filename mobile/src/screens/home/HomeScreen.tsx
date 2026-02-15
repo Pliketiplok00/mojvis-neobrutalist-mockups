@@ -25,6 +25,7 @@ import { useHomeData } from '../../hooks/useHomeData';
 import { useTranslations } from '../../i18n';
 import { CategoryGrid } from './components/CategoryGrid';
 import type { CategoryItem } from './components/CategoryGrid';
+import { UpcomingEventsSection } from './components/UpcomingEventsSection';
 import type { MainStackParamList } from '../../navigation/types';
 
 // UI Primitives
@@ -32,12 +33,10 @@ import {
   skin,
   Header,
   H1,
-  H2,
   Body,
   Label,
   Meta,
   Icon,
-  IconBox,
 } from '../../ui';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
@@ -107,15 +106,6 @@ export function HomeScreen(): React.JSX.Element {
     navigation.navigate('EventDetail', { eventId });
   };
 
-  // Format event date for display (day + month abbreviation)
-  const formatEventDate = (isoString: string): { day: string; month: string } => {
-    const date = new Date(isoString);
-    const day = date.getDate().toString();
-    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const month = monthNames[date.getMonth()];
-    return { day, month };
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <Header type="root" onMenuPress={handleMenuPress} />
@@ -143,68 +133,14 @@ export function HomeScreen(): React.JSX.Element {
         />
 
         {/* Section 4: Upcoming Events (ticket-style) */}
-        <View style={styles.eventsSection}>
-          <H2 style={styles.sectionLabel}>{t('home.upcomingEvents').toUpperCase()}</H2>
-          {upcomingEvents.length > 0 ? (
-            // Show actual upcoming events
-            upcomingEvents.map((event, index) => {
-              const { day, month } = formatEventDate(event.start_datetime);
-              const isFirst = index === 0;
-              return (
-                <TouchableOpacity
-                  key={event.id}
-                  style={styles.eventCardWrapper}
-                  onPress={() => handleEventPress(event.id)}
-                  activeOpacity={0.8}
-                >
-                  {/* Shadow layer */}
-                  <View style={[styles.eventCardShadow, isFirst && styles.eventCardShadowFirst]} />
-                  {/* Event card */}
-                  <View style={[styles.eventCard, isFirst && styles.eventCardFirst]}>
-                    {/* Date badge */}
-                    <View style={styles.dateBadge}>
-                      <Label style={styles.dateBadgeDay}>{day}</Label>
-                      <Meta style={styles.dateBadgeMonth}>{month}</Meta>
-                    </View>
-                    {/* Event content */}
-                    <View style={styles.eventContent}>
-                      <Label style={styles.eventTitle} numberOfLines={1}>{event.title}</Label>
-                      <Meta style={styles.eventLocation} numberOfLines={1}>
-                        {event.location ?? t('home.viewAllEvents')}
-                      </Meta>
-                    </View>
-                    {/* Arrow */}
-                    <View style={styles.eventArrow}>
-                      <Icon name="chevron-right" size="md" colorToken="textPrimary" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              );
-            })
-          ) : (
-            // Fallback placeholder when no events
-            <TouchableOpacity
-              style={styles.eventCardWrapper}
-              onPress={handleEventsPress}
-              activeOpacity={0.8}
-            >
-              <View style={[styles.eventCardShadow, styles.eventCardShadowFirst]} />
-              <View style={[styles.eventCard, styles.eventCardFirst]}>
-                <View style={styles.dateBadge}>
-                  <Label style={styles.dateBadgeDay}>--</Label>
-                  <Meta style={styles.dateBadgeMonth}>---</Meta>
-                </View>
-                <View style={styles.eventContent}>
-                  <Label style={styles.eventTitle}>{t('home.eventsPlaceholder')}</Label>
-                  <Meta style={styles.eventLocation}>{t('home.viewAllEvents')}</Meta>
-                </View>
-                <View style={styles.eventArrow}>
-                  <Icon name="chevron-right" size="md" colorToken="textPrimary" />
-                </View>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
+        <UpcomingEventsSection
+          events={upcomingEvents}
+          sectionTitle={t('home.upcomingEvents').toUpperCase()}
+          placeholderText={t('home.eventsPlaceholder')}
+          viewAllText={t('home.viewAllEvents')}
+          onEventPress={handleEventPress}
+          onSeeAllPress={handleEventsPress}
+        />
 
         {/* Section 5: Feedback CTA Panel */}
         <TouchableOpacity
@@ -271,80 +207,6 @@ const styles = StyleSheet.create({
   },
   heroSubtitle: {
     color: skin.colors.primaryTextMuted,
-  },
-
-  // Section label (reused by events)
-  sectionLabel: {
-    color: skin.colors.textMuted,
-    marginBottom: skin.spacing.md,
-    letterSpacing: 1,
-  },
-
-  // Events Section
-  eventsSection: {
-    paddingHorizontal: skin.spacing.lg,
-    paddingTop: skin.spacing.xl,
-  },
-  eventCardWrapper: {
-    position: 'relative',
-    marginBottom: skin.spacing.md,
-  },
-  eventCardShadow: {
-    position: 'absolute',
-    top: 4,
-    left: 4,
-    right: -4,
-    bottom: -4,
-    backgroundColor: skin.colors.border,
-  },
-  eventCardShadowFirst: {
-    backgroundColor: skin.colors.primary,
-  },
-  eventCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    padding: skin.spacing.md,
-    gap: skin.spacing.md,
-  },
-  eventCardFirst: {
-    backgroundColor: skin.colors.warningAccent,
-  },
-  dateBadge: {
-    width: 48,
-    height: 48,
-    backgroundColor: skin.colors.primary,
-    borderWidth: skin.borders.widthThin,
-    borderColor: skin.colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dateBadgeDay: {
-    color: skin.colors.primaryText,
-    fontWeight: '700',
-    fontSize: skin.typography.fontSize.xl,
-    lineHeight: skin.typography.fontSize.xl,
-  },
-  dateBadgeMonth: {
-    color: skin.colors.primaryTextMuted,
-    textTransform: 'uppercase',
-    fontSize: skin.typography.fontSize.xs,
-  },
-  eventContent: {
-    flex: 1,
-  },
-  eventTitle: {
-    color: skin.colors.textPrimary,
-    fontWeight: '700',
-  },
-  eventLocation: {
-    color: skin.colors.textMuted,
-    marginTop: skin.spacing.xs,
-  },
-  eventArrow: {
-    // Icon handles sizing
   },
 
   // CTA Panel

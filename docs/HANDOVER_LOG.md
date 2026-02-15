@@ -32,6 +32,9 @@
 - **HomeScreen refaktoring Phase 2**: Izvucena CategoryGrid komponenta
   - HomeScreen: 476 → 399 linija (-77)
   - CategoryGrid: 134 linija (nova komponenta)
+- **HomeScreen refaktoring Phase 3**: Izvucena UpcomingEventsSection komponenta
+  - HomeScreen: 399 → 261 linija (-138)
+  - UpcomingEventsSection: 197 linija (nova komponenta)
 
 #### Odluke donesene
 - Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
