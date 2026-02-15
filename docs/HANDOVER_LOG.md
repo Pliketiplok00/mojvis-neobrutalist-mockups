@@ -61,11 +61,47 @@
 
 **Commits**: 20a76f1, 47328ac, cee7614
 
-#### Verifikacija
+#### Git branch cleanup
+- **Lokalni branchevi**: 142 → 98 (44 obrisano)
+- **Remote branchevi**: 73 → 43 (30 obrisano)
+- **Ukupno obrisano**: 74 mergana brancha
+- **Backup**: `docs/BRANCH_BACKUP_20260215_135438.md` (96 ne-merganih brancheva sa SHA)
+
+#### Hook testovi
+- **Dodano**: 59 novih testova za 6 hookova
+- **Ukupno**: 57 → 116 testova (+104%)
+
+| Hook | Testova | Pokrivenost |
+|------|---------|-------------|
+| useDatePicker | 14 | Potpuna |
+| useInboxMessages | 12 | Potpuna |
+| useSentItems | 8 | Potpuna |
+| useEvents | 9 | Potpuna |
+| useLineDetail | 8 | Potpuna |
+| useDepartures | 10 | Potpuna |
+
+- **Instalirano**: @testing-library/react-native, react-test-renderer
+
+#### TODO cleanup
+- **Obrisano**: 1 zastarjeli TODO (LanguageSelectionScreen - jezik već implementiran)
+- **Preostalo**: 15 validnih TODOs (MVP+ features)
+- **Kategorije**: AsyncStorage persistence, security enhancements, push targeting, DevOps
+
+#### Smoke test
+| Provjera | Status |
+|----------|--------|
+| TypeScript | ✅ Čist |
+| Unit testovi | ✅ 116/116 PASS |
+| Expo server | ✅ Radi |
+| iOS Simulator | ✅ Booted |
+| Komponente postoje | ✅ 13/13 |
+| Hookovi postoje | ✅ 6/6 |
+
+#### Finalna verifikacija
 | Test | Status |
 |------|--------|
 | Backend testovi | 402 PASS |
-| Mobile testovi | 57 PASS |
+| Mobile testovi | 116 PASS |
 | TypeScript | Čist |
 | App na produkciji | Radi |
 
@@ -212,7 +248,7 @@
 
 ### Sto radi
 - Backend API (409 testova prolazi)
-- Mobile app (Expo) - 57 testova
+- Mobile app (Expo) - 116 testova
 - Admin panel
 - Transport (cestovni + pomorski)
 - Events kalendar
@@ -238,7 +274,7 @@
 | **UKUPNO** | **2,336** | **791** | **-1,545 linija (-66%)** |
 
 **Kreirano:**
-- 6 hookova
+- 6 hookova (svi testirani)
 - 13 komponenti
 
 ---
@@ -261,13 +297,26 @@
 - BUG 4 (Click & Fix) - ako se ponovi, treba logging
 
 ### Statistika sesije (2026-02-14 + 2026-02-15)
-- **Bugova popravljeno**: 5 (uključujući Bisevo filter)
-- **Testova dodano**: 57
-- **Linija uklonjeno**: ~12,500 (design-mirror) + 1,545 (refaktoring) = **~14,045**
-- **Hookova kreirano**: 6 (3 + 2 + 1)
-- **Komponenti kreirano**: 13 (7 + 4 + 2)
-- **PR-ova zatvoreno**: 7
-- **Deploy na produkciju**: 1 (Bisevo fix)
+
+| Metrika | Vrijednost |
+|---------|------------|
+| Bugova popravljeno | 5 |
+| Testova dodano | 116 (57 util + 59 hook) |
+| Linija uklonjeno | ~14,045 |
+| Hookova kreirano | 6 (svi testirani) |
+| Komponenti kreirano | 13 |
+| Git brancheva obrisano | 74 |
+| PR-ova zatvoreno | 7 |
+| TODOs očišćeno | 1 (15 preostalo) |
+| Deploy na produkciju | 1 (Bisevo fix) |
+| Security ranjivosti | 0 |
+
+### Test pokrivenost
+| Kategorija | Testova |
+|------------|---------|
+| Utility funkcije | 57 |
+| Hookovi | 59 |
+| **UKUPNO** | **116** |
 
 ### Pitanja?
 Kontaktiraj Project Managera
