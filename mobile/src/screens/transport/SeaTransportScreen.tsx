@@ -43,7 +43,8 @@ import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
 import { formatDayWithDate } from '../../utils/dateFormat';
-import { formatDuration, formatLineTitle } from '../../utils/transportFormat';
+import { formatLineTitle } from '../../utils/transportFormat';
+import { LineListCard } from './components/LineListCard';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -179,80 +180,18 @@ export function SeaTransportScreen(): React.JSX.Element {
             </View>
           ) : (
             lines.map((line) => (
-              <Pressable
+              <LineListCard
                 key={line.id}
+                line={line}
+                transportType="sea"
+                headerBackground={getSeaHeaderBackground()}
+                iconName={getSeaTypeIcon(line.subtype)}
+                title={formatLineTitle(line.line_number, line.origin, line.destination)}
+                t={t}
                 onPress={() => handleLinePress(line.id)}
-                style={({ pressed }) => [
-                  styles.lineCardWrapper,
-                  pressed && styles.lineCardPressed,
-                ]}
-              >
-                {/* Shadow layer */}
-                <View style={styles.lineCardShadow} />
-                {/* Main card - 2-part structure */}
-                <View style={styles.lineCard}>
-                  {/* TOP: Colored header slab with icon + title + badge */}
-                  <View style={[
-                    styles.lineCardHeader,
-                    { backgroundColor: getSeaHeaderBackground() }
-                  ]}>
-                    <View style={styles.lineCardHeaderIconBox}>
-                      <Icon
-                        name={getSeaTypeIcon(line.subtype)}
-                        size="md"
-                        colorToken="primaryText"
-                      />
-                    </View>
-                    <View style={styles.lineCardHeaderTextContainer}>
-                      <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
-                        {formatLineTitle(line.line_number, line.origin, line.destination)}
-                      </H2>
-                      {line.line_number === '659' && (
-                        <Meta style={styles.lineCardHeaderSubtitle}>
-                          {t('transport.line659Seasonal')}
-                        </Meta>
-                      )}
-                    </View>
-                    {/* Badge stack: subtype + seasonal (for 659) */}
-                    {(line.subtype || line.line_number === '659') && (
-                      <View style={styles.lineCardBadgeStack}>
-                        {line.subtype && (
-                          <Badge variant="transport" size="large">
-                            {line.subtype}
-                          </Badge>
-                        )}
-                        {line.line_number === '659' && (
-                          <Badge
-                            variant="transport"
-                            size="large"
-                            backgroundColor={listTokens.lineCardHeaderBackgroundHighlight}
-                            textColor={colors.textPrimary}
-                          >
-                            {t('transport.seasonal')}
-                          </Badge>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                  {/* BOTTOM: White body with meta + chevron */}
-                  <View style={styles.lineCardBody}>
-                    <View style={styles.lineCardContent}>
-                      <Meta numberOfLines={1} style={styles.lineStops}>
-                        {line.stops_summary}
-                      </Meta>
-                      <Meta style={styles.lineMeta} numberOfLines={1}>
-                        {line.stops_count} {t('transport.stations')}
-                        {line.typical_duration_minutes
-                          ? ` • ${formatDuration(line.typical_duration_minutes)}`
-                          : ''}
-                      </Meta>
-                    </View>
-                    <View style={styles.lineCardChevronBox}>
-                      <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
-                    </View>
-                  </View>
-                </View>
-              </Pressable>
+                showSeasonalBadge={line.line_number === '659'}
+                seasonalText={t('transport.seasonal')}
+              />
             ))
           )}
         </View>
@@ -394,89 +333,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: borders.widthThin,
     borderColor: colors.border,
-  },
-
-  // Line card (2-part poster card: colored header + white body)
-  lineCardWrapper: {
-    position: 'relative',
-    marginBottom: listTokens.lineCardGap,
-  },
-  lineCardShadow: {
-    position: 'absolute',
-    top: listTokens.lineCardShadowOffsetY,
-    left: listTokens.lineCardShadowOffsetX,
-    right: -listTokens.lineCardShadowOffsetX,
-    bottom: -listTokens.lineCardShadowOffsetY,
-    backgroundColor: listTokens.lineCardShadowColor,
-  },
-  lineCard: {
-    borderWidth: listTokens.lineCardBorderWidth,
-    borderColor: listTokens.lineCardBorderColor,
-    borderRadius: listTokens.lineCardRadius,
-    overflow: 'hidden',
-  },
-  lineCardPressed: {
-    transform: [
-      { translateX: listTokens.lineCardPressedOffsetX },
-      { translateY: listTokens.lineCardPressedOffsetY },
-    ],
-  },
-  // TOP: Colored header slab with icon + title
-  lineCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: listTokens.lineCardHeaderPadding,
-  },
-  lineCardHeaderIconBox: {
-    width: listTokens.lineCardHeaderIconBoxSize,
-    height: listTokens.lineCardHeaderIconBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: listTokens.lineCardHeaderIconGap,
-  },
-  lineCardHeaderTextContainer: {
-    flex: 1,
-  },
-  lineCardHeaderTitle: {
-    color: listTokens.lineCardHeaderTitleColor,
-  },
-  lineCardHeaderSubtitle: {
-    color: listTokens.lineCardHeaderTitleColor, // White text on teal background
-    marginTop: spacing.xs,
-  },
-  // Badge stack: vertical column for subtype + seasonal badges
-  lineCardBadgeStack: {
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    gap: spacing.xs,
-    flexShrink: 0,
-    marginLeft: spacing.sm,
-  },
-  // BOTTOM: White body with meta + chevron
-  lineCardBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: listTokens.lineCardBodyBackground,
-    padding: listTokens.lineCardBodyPadding,
-    borderTopWidth: listTokens.lineCardBodyBorderTopWidth,
-    borderTopColor: listTokens.lineCardBodyBorderColor,
-  },
-  lineCardContent: {
-    flex: 1,
-  },
-  lineStops: {
-    color: colors.textSecondary,
-  },
-  lineMeta: {
-    color: colors.textSecondary,
-    marginTop: listTokens.lineCardMetaGap,
-  },
-  lineCardChevronBox: {
-    width: listTokens.lineCardChevronBoxSize,
-    height: listTokens.lineCardChevronBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: listTokens.lineCardChevronGap,
   },
 
   // Today's departures (stacked set with dividers)

@@ -42,7 +42,7 @@ import { useTranslations } from '../../i18n';
 import type { InboxMessage } from '../../types/inbox';
 import type { LineListItem, TodayDepartureItem, DayType } from '../../types/transport';
 import type { MainStackParamList } from '../../navigation/types';
-import { formatDuration } from '../../utils/transportFormat';
+import { LineListCard } from './components/LineListCard';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
@@ -166,55 +166,16 @@ export function RoadTransportScreen(): React.JSX.Element {
             </View>
           ) : (
             lines.map((line) => (
-              <Pressable
+              <LineListCard
                 key={line.id}
+                line={line}
+                transportType="road"
+                headerBackground={listTokens.lineCardHeaderBackgroundRoad}
+                iconName={getRoadTypeIcon(line.subtype)}
+                title={line.name}
+                t={t}
                 onPress={() => handleLinePress(line.id)}
-                style={({ pressed }) => [
-                  styles.lineCardWrapper,
-                  pressed && styles.lineCardPressed,
-                ]}
-              >
-                {/* Shadow layer */}
-                <View style={styles.lineCardShadow} />
-                {/* Main card - 2-part structure */}
-                <View style={styles.lineCard}>
-                  {/* TOP: Colored header slab with icon + title */}
-                  <View style={styles.lineCardHeader}>
-                    <View style={styles.lineCardHeaderIconBox}>
-                      <Icon
-                        name={getRoadTypeIcon(line.subtype)}
-                        size="md"
-                        colorToken="primaryText"
-                      />
-                    </View>
-                    <H2 style={styles.lineCardHeaderTitle} numberOfLines={2}>
-                      {line.name}
-                    </H2>
-                    {line.subtype && (
-                      <Badge variant="transport" size="compact" style={styles.lineSubtypeBadge}>
-                        {line.subtype}
-                      </Badge>
-                    )}
-                  </View>
-                  {/* BOTTOM: White body with meta + chevron */}
-                  <View style={styles.lineCardBody}>
-                    <View style={styles.lineCardContent}>
-                      <Meta numberOfLines={1} style={styles.lineStops}>
-                        {line.stops_summary}
-                      </Meta>
-                      <Meta style={styles.lineMeta} numberOfLines={1}>
-                        {line.stops_count} {t('transport.stations')}
-                        {line.typical_duration_minutes
-                          ? ` • ${formatDuration(line.typical_duration_minutes)}`
-                          : ''}
-                      </Meta>
-                    </View>
-                    <View style={styles.lineCardChevronBox}>
-                      <Icon name="chevron-right" size="sm" colorToken="textPrimary" />
-                    </View>
-                  </View>
-                </View>
-              </Pressable>
+              />
             ))
           )}
         </View>
@@ -356,79 +317,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: borders.widthThin,
     borderColor: colors.border,
-  },
-
-  // Line card (2-part poster card: colored header + white body)
-  lineCardWrapper: {
-    position: 'relative',
-    marginBottom: listTokens.lineCardGap,
-  },
-  lineCardShadow: {
-    position: 'absolute',
-    top: listTokens.lineCardShadowOffsetY,
-    left: listTokens.lineCardShadowOffsetX,
-    right: -listTokens.lineCardShadowOffsetX,
-    bottom: -listTokens.lineCardShadowOffsetY,
-    backgroundColor: listTokens.lineCardShadowColor,
-  },
-  lineCard: {
-    borderWidth: listTokens.lineCardBorderWidth,
-    borderColor: listTokens.lineCardBorderColor,
-    borderRadius: listTokens.lineCardRadius,
-    overflow: 'hidden',
-  },
-  lineCardPressed: {
-    transform: [
-      { translateX: listTokens.lineCardPressedOffsetX },
-      { translateY: listTokens.lineCardPressedOffsetY },
-    ],
-  },
-  // TOP: Colored header slab with icon + title (GREEN for road)
-  lineCardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: listTokens.lineCardHeaderPadding,
-    backgroundColor: listTokens.lineCardHeaderBackgroundRoad,
-  },
-  lineCardHeaderIconBox: {
-    width: listTokens.lineCardHeaderIconBoxSize,
-    height: listTokens.lineCardHeaderIconBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: listTokens.lineCardHeaderIconGap,
-  },
-  lineCardHeaderTitle: {
-    flex: 1,
-    color: listTokens.lineCardHeaderTitleColor,
-  },
-  lineSubtypeBadge: {
-    marginLeft: spacing.sm,
-  },
-  // BOTTOM: White body with meta + chevron
-  lineCardBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: listTokens.lineCardBodyBackground,
-    padding: listTokens.lineCardBodyPadding,
-    borderTopWidth: listTokens.lineCardBodyBorderTopWidth,
-    borderTopColor: listTokens.lineCardBodyBorderColor,
-  },
-  lineCardContent: {
-    flex: 1,
-  },
-  lineStops: {
-    color: colors.textSecondary,
-  },
-  lineMeta: {
-    color: colors.textSecondary,
-    marginTop: listTokens.lineCardMetaGap,
-  },
-  lineCardChevronBox: {
-    width: listTokens.lineCardChevronBoxSize,
-    height: listTokens.lineCardChevronBoxSize,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: listTokens.lineCardChevronGap,
   },
 
   // Today's departures (stacked set with dividers)
