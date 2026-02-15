@@ -420,14 +420,10 @@ export async function getDeparturesForRouteAndDate(
 }
 
 /**
- * Origins excluded from "today" departures view.
- * The "Polasci danas" feature shows only departures that START ON VIS ISLAND.
- *
- * Excluded:
- * - Split (mainland)
- * - Porat, Porat (Biševo) (Biševo island - separate from Vis)
+ * Origins allowed in "today" departures view.
+ * Simple rule: only Vis and Komiža.
  */
-const MAINLAND_STOP_NAMES = ['Split', 'Porat', 'Porat (Biševo)'];
+const VIS_ISLAND_ORIGINS = ['Vis', 'Komiža'];
 
 /**
  * Get today's departures for a transport type (aggregated across all lines)
@@ -521,9 +517,9 @@ export async function getTodaysDepartures(
          (d.date_from IS NULL AND d.date_to IS NULL
           AND (d.include_dates IS NULL OR d.include_dates = '[]'::jsonb))
        )
-       AND origin.name_hr NOT IN (${MAINLAND_STOP_NAMES.map((_, i) => `$${i + 4}`).join(', ')})
+       AND origin.name_hr IN ($4, $5)
      ORDER BY d.departure_time`,
-    [transportType, dayType, dateStr, ...MAINLAND_STOP_NAMES]
+    [transportType, dayType, dateStr, ...VIS_ISLAND_ORIGINS]
   );
 
   // Apply date exception filtering
