@@ -17,22 +17,20 @@
  * Skin-pure: Uses skin tokens, Text primitives, and Icon (no hardcoded hex, no text glyphs).
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import {
   View,
   ScrollView,
   StyleSheet,
   Switch,
   Share,
-  Alert,
   Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useTranslations } from '../../i18n';
-import { eventsApi } from '../../services/api';
-import type { Event } from '../../types/event';
+import { useEventDetail } from '../../hooks/useEventDetail';
 import type { MainStackParamList } from '../../navigation/types';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
@@ -47,60 +45,14 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
   const { eventId } = route.params;
   const { t, language } = useTranslations();
 
-  const [event, setEvent] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [subscribed, setSubscribed] = useState(false);
-  const [subscribing, setSubscribing] = useState(false);
-
-  // Fetch event details
-  const fetchEvent = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const eventData = await eventsApi.getEvent(eventId, language);
-      setEvent(eventData);
-    } catch (err) {
-      console.error('[EventDetail] Error fetching event:', err);
-      setError(t('eventDetail.error'));
-    } finally {
-      setLoading(false);
-    }
-  }, [eventId, language, t]);
-
-  // Fetch subscription status
-  const fetchSubscriptionStatus = useCallback(async () => {
-    try {
-      const status = await eventsApi.getSubscriptionStatus(eventId);
-      setSubscribed(status.subscribed);
-    } catch (err) {
-      console.error('[EventDetail] Error fetching subscription status:', err);
-    }
-  }, [eventId]);
-
-  useEffect(() => {
-    void fetchEvent();
-    void fetchSubscriptionStatus();
-  }, [fetchEvent, fetchSubscriptionStatus]);
-
-  // Handle reminder toggle
-  const handleToggleReminder = async (value: boolean) => {
-    setSubscribing(true);
-    try {
-      if (value) {
-        await eventsApi.subscribe(eventId);
-        setSubscribed(true);
-      } else {
-        await eventsApi.unsubscribe(eventId);
-        setSubscribed(false);
-      }
-    } catch (err) {
-      console.error('[EventDetail] Error toggling reminder:', err);
-      Alert.alert(t('common.error'), t('eventDetail.error'));
-    } finally {
-      setSubscribing(false);
-    }
-  };
+  const {
+    event,
+    loading,
+    error,
+    subscribed,
+    subscribing,
+    toggleReminder,
+  } = useEventDetail({ eventId });
 
   // Handle share
   const handleShare = async () => {
@@ -220,7 +172,7 @@ export function EventDetailScreen({ route }: Props): React.JSX.Element {
             </View>
             <Switch
               value={subscribed}
-              onValueChange={handleToggleReminder}
+              onValueChange={toggleReminder}
               disabled={subscribing}
               trackColor={{ false: skin.colors.borderLight, true: skin.colors.textPrimary }}
               thumbColor={skin.colors.background}

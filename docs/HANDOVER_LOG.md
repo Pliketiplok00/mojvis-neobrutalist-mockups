@@ -35,6 +35,9 @@
 - **HomeScreen refaktoring Phase 3**: Izvucena UpcomingEventsSection komponenta
   - HomeScreen: 399 → 261 linija (-138)
   - UpcomingEventsSection: 197 linija (nova komponenta)
+- **EventDetailScreen refaktoring Phase 1**: Izvucen useEventDetail hook
+  - EventDetailScreen: 372 → 324 linija (-48)
+  - useEventDetail: 107 linija (novi hook)
 
 #### Odluke donesene
 - Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
