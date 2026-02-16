@@ -18,6 +18,24 @@
 
 ## Kronologija
 
+### 2026-02-17 (Utorak)
+
+#### Sto je odradeno danas
+- Flora/Fauna Species Card tests (40 tests, 2 komponente)
+- Admin TODO/FIXME placeholder cleanup (DashboardPage)
+- Bundle size analiza - lucide tree-shaking radi ispravno
+- EAS Update setup za mobile (expo-updates, kanali preview/production)
+- Fix admin API URL (api.mojvis-test.pliketiplok.com umjesto api.mojvis.hr)
+
+#### Odluke donesene
+- Lucide optimizacija nije potrebna - tree-shaking već radi (38/1669 ikona = 2.27%)
+- EAS Update konfiguriran s appVersion runtime policy
+
+#### Problemi/blockeri
+- Admin panel koristio nepostojeću domenu api.mojvis.hr - RIJEŠENO
+
+---
+
 ### 2026-02-16 (Ponedjeljak) - MASSIVE REFACTOR SESSION
 
 #### Transport refaktoring (Sea + Road) - KOMPLETNO
