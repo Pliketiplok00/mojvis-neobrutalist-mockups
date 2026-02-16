@@ -12,18 +12,24 @@ import type { RouteInfo } from '../../../../types/transport';
 describe('DirectionTabs', () => {
   const mockRoutes: RouteInfo[] = [
     {
-      id: 1,
+      id: 'route-1',
       direction: 0,
       direction_label: 'Vis → Split',
-      origin_name: 'Vis',
-      destination_name: 'Split',
+      origin: 'Vis',
+      destination: 'Split',
+      stops: [],
+      typical_duration_minutes: 90,
+      marker_note: null,
     },
     {
-      id: 2,
+      id: 'route-2',
       direction: 1,
       direction_label: 'Split → Vis',
-      origin_name: 'Split',
-      destination_name: 'Vis',
+      origin: 'Split',
+      destination: 'Vis',
+      stops: [],
+      typical_duration_minutes: 90,
+      marker_note: null,
     },
   ];
 

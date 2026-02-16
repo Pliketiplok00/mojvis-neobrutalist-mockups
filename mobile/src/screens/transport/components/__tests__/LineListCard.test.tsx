@@ -13,6 +13,7 @@ describe('LineListCard', () => {
   const mockLine: LineListItem = {
     id: 'line-612',
     line_number: '612',
+    name: 'Linija 612',
     origin: 'Split',
     destination: 'Vis',
     stops_count: 3,
@@ -93,7 +94,7 @@ describe('LineListCard', () => {
     });
 
     it('should not render subtype badge when line has no subtype', () => {
-      const lineWithoutSubtype = { ...mockLine, subtype: undefined };
+      const lineWithoutSubtype: LineListItem = { ...mockLine, subtype: null };
       const { queryByText } = render(
         <LineListCard {...defaultProps} line={lineWithoutSubtype} />
       );
@@ -167,8 +168,8 @@ describe('LineListCard', () => {
       expect(queryByText(/2h/)).toBeNull();
     });
 
-    it('should not show duration when typical_duration_minutes is undefined', () => {
-      const lineNoDuration = { ...mockLine, typical_duration_minutes: undefined };
+    it('should not show duration when typical_duration_minutes is null', () => {
+      const lineNoDuration = { ...mockLine, typical_duration_minutes: null };
       const { queryByText } = render(
         <LineListCard {...defaultProps} line={lineNoDuration} />
       );

@@ -17,7 +17,7 @@ jest.mock('../../../../components/DepartureItem', () => ({
     return React.createElement(
       Text,
       { testID: `departure-${departure.id}` },
-      `${departure.departure_time} - ${departure.arrival_time}`
+      `${departure.departure_time} - ${departure.destination}`
     );
   },
 }));
@@ -25,22 +25,22 @@ jest.mock('../../../../components/DepartureItem', () => ({
 describe('DeparturesSection', () => {
   const mockDepartures: DepartureResponse[] = [
     {
-      id: 1,
+      id: 'dep-1',
       departure_time: '07:30',
-      arrival_time: '09:00',
+      destination: 'Split',
       duration_minutes: 90,
-      operator: 'Jadrolinija',
-      vessel_name: 'Petar Hektorović',
       notes: null,
+      marker: null,
+      stop_times: [],
     },
     {
-      id: 2,
+      id: 'dep-2',
       departure_time: '15:00',
-      arrival_time: '16:30',
+      destination: 'Split',
       duration_minutes: 90,
-      operator: 'Jadrolinija',
-      vessel_name: 'Petar Hektorović',
       notes: null,
+      marker: null,
+      stop_times: [],
     },
   ];
 
@@ -62,15 +62,15 @@ describe('DeparturesSection', () => {
     it('should render departure items when departures exist', () => {
       const { getByTestId } = render(<DeparturesSection {...defaultProps} />);
 
-      expect(getByTestId('departure-1')).toBeTruthy();
-      expect(getByTestId('departure-2')).toBeTruthy();
+      expect(getByTestId('departure-dep-1')).toBeTruthy();
+      expect(getByTestId('departure-dep-2')).toBeTruthy();
     });
 
     it('should render departure times', () => {
       const { getByText } = render(<DeparturesSection {...defaultProps} />);
 
-      expect(getByText('07:30 - 09:00')).toBeTruthy();
-      expect(getByText('15:00 - 16:30')).toBeTruthy();
+      expect(getByText('07:30 - Split')).toBeTruthy();
+      expect(getByText('15:00 - Split')).toBeTruthy();
     });
   });
 
@@ -90,8 +90,8 @@ describe('DeparturesSection', () => {
         <DeparturesSection {...defaultProps} loading={true} />
       );
 
-      expect(queryByTestId('departure-1')).toBeNull();
-      expect(queryByTestId('departure-2')).toBeNull();
+      expect(queryByTestId('departure-dep-1')).toBeNull();
+      expect(queryByTestId('departure-dep-2')).toBeNull();
     });
   });
 
@@ -148,7 +148,7 @@ describe('DeparturesSection', () => {
       );
 
       // DepartureItem should render (mock verifies it receives props)
-      expect(getByTestId('departure-1')).toBeTruthy();
+      expect(getByTestId('departure-dep-1')).toBeTruthy();
     });
   });
 });

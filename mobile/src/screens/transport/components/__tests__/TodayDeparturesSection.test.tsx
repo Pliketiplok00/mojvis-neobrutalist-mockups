@@ -15,16 +15,28 @@ describe('TodayDeparturesSection', () => {
       line_id: 'line-1',
       departure_time: '08:30:00',
       direction_label: 'Vis → Split',
+      line_name: 'Linija 612',
+      route_id: 'route-1',
+      destination: 'Split',
+      marker: null,
     },
     {
       line_id: 'line-2',
       departure_time: '10:15:00',
       direction_label: 'Split → Vis',
+      line_name: 'Linija 612',
+      route_id: 'route-2',
+      destination: 'Vis',
+      marker: null,
     },
     {
       line_id: 'line-3',
       departure_time: '14:00:00',
       direction_label: 'Komiža → Vis',
+      line_name: 'Linija 659',
+      route_id: 'route-3',
+      destination: 'Vis',
+      marker: '*',
     },
   ];
 
@@ -66,11 +78,15 @@ describe('TodayDeparturesSection', () => {
     });
 
     it('should format time correctly (remove seconds)', () => {
-      const departuresWithSeconds = [
+      const departuresWithSeconds: TodayDepartureItem[] = [
         {
           line_id: 'line-1',
           departure_time: '08:30:45',
           direction_label: 'Test',
+          line_name: 'Test Line',
+          route_id: 'route-1',
+          destination: 'Test Dest',
+          marker: null,
         },
       ];
 
@@ -111,6 +127,10 @@ describe('TodayDeparturesSection', () => {
           line_id: `line-${i}`,
           departure_time: `${(8 + i).toString().padStart(2, '0')}:00:00`,
           direction_label: `Direction ${i}`,
+          line_name: `Line ${i}`,
+          route_id: `route-${i}`,
+          destination: `Dest ${i}`,
+          marker: null,
         })
       );
 

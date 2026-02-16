@@ -79,7 +79,7 @@ describe('MessageListItem', () => {
     });
 
     it('should render calendar-heart icon for kultura tag', () => {
-      const cultureMessage = { ...mockMessage, tags: ['kultura'] as const };
+      const cultureMessage: InboxMessage = { ...mockMessage, tags: ['kultura'] };
       const { getByTestId } = render(
         <MessageListItem {...defaultProps} message={cultureMessage} />
       );
@@ -88,7 +88,7 @@ describe('MessageListItem', () => {
     });
 
     it('should render newspaper icon for opcenito tag', () => {
-      const generalMessage = { ...mockMessage, tags: ['opcenito'] as const };
+      const generalMessage: InboxMessage = { ...mockMessage, tags: ['opcenito'] };
       const { getByTestId } = render(
         <MessageListItem {...defaultProps} message={generalMessage} />
       );
@@ -97,7 +97,7 @@ describe('MessageListItem', () => {
     });
 
     it('should render megaphone icon for vis tag', () => {
-      const visMessage = { ...mockMessage, tags: ['vis'] as const };
+      const visMessage: InboxMessage = { ...mockMessage, tags: ['vis'] };
       const { getByTestId } = render(
         <MessageListItem {...defaultProps} message={visMessage} />
       );
@@ -115,7 +115,7 @@ describe('MessageListItem', () => {
     });
 
     it('should render multiple icons for multiple tags', () => {
-      const multiTagMessage = { ...mockMessage, tags: ['promet', 'kultura'] as const };
+      const multiTagMessage: InboxMessage = { ...mockMessage, tags: ['promet', 'kultura'] };
       const { getByTestId } = render(
         <MessageListItem {...defaultProps} message={multiTagMessage} />
       );
