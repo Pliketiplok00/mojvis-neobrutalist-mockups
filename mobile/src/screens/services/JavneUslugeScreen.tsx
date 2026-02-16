@@ -8,29 +8,149 @@
  * - ServicePageHeader (teal background, icon, title/subtitle)
  * - ServiceAccordionCard list (expandable service info)
  * - EmergencyTile row (quick-dial emergency numbers)
+ * - API integration with fallback to hardcoded content
  *
  * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
-import React from 'react';
-import { View, ScrollView, StyleSheet, Pressable, Linking } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, StyleSheet, Pressable, Linking, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { ServicePageHeader } from '../../components/services/ServicePageHeader';
-import { ServiceAccordionCard } from '../../components/services/ServiceAccordionCard';
+import { ServiceAccordionCard, type ServiceInfoRow } from '../../components/services/ServiceAccordionCard';
 import { EmergencyTile } from '../../components/services/EmergencyTile';
 import { javneUslugeContent } from '../../data/javneUslugeContent';
 import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
-import { Icon } from '../../ui/Icon';
+import { Icon, type IconName } from '../../ui/Icon';
 import { H2, Body } from '../../ui/Text';
+import { publicServicesApi, type PublicService } from '../../services/api';
+import { getServiceBadge, getServiceWarning } from '../../utils/publicServiceHelpers';
 
 const { colors, spacing, borders } = skin;
 
+/** Map API icon_bg_color to skin color keys */
+const mapIconBgColor = (apiColor: string): string => {
+  const colorMap: Record<string, keyof typeof colors> = {
+    urgent: 'urgent',
+    secondary: 'secondary',
+    lavender: 'lavender',
+    orange: 'orange',
+    accent: 'accent',
+    primary: 'primary',
+    errorBackground: 'errorBackground',
+    warningBackground: 'warningBackground',
+    infoBackground: 'infoBackground',
+    pendingBackground: 'pendingBackground',
+  };
+  return colors[colorMap[apiColor] ?? 'backgroundSecondary'];
+};
+
+/** Transform API service to ServiceAccordionCard props */
+const transformServiceToCard = (
+  service: PublicService,
+  language: 'hr' | 'en'
+): {
+  id: string;
+  icon: IconName;
+  title: string;
+  subtitle: string;
+  badge?: string;
+  iconBackgroundColor: string;
+  infoRows: ServiceInfoRow[];
+  note?: string;
+} => {
+  const infoRows: ServiceInfoRow[] = [];
+  const isEn = language === 'en';
+
+  // Address row
+  if (service.address) {
+    infoRows.push({
+      icon: 'map-pin' as IconName,
+      label: isEn ? 'Address' : 'Adresa',
+      value: service.address,
+    });
+  }
+
+  // Contacts rows
+  service.contacts.forEach((contact) => {
+    infoRows.push({
+      icon: (contact.type === 'email' ? 'mail' : 'phone') as IconName,
+      label: contact.type === 'email' ? 'Email' : (isEn ? 'Phone' : 'Telefon'),
+      value: contact.value,
+    });
+  });
+
+  // Working hours (combine into single row)
+  if (service.working_hours.length > 0) {
+    const hoursText = service.working_hours
+      .map((wh) => `${wh.description}: ${wh.time}`)
+      .join('\n');
+    infoRows.push({
+      icon: 'clock' as IconName,
+      label: isEn ? 'Working hours' : 'Radno vrijeme',
+      value: hoursText,
+    });
+  }
+
+  // Get badge from helper
+  const badge = getServiceBadge(service) ?? undefined;
+
+  // Get note - either from API or warning helper
+  const noteText = service.note || getServiceWarning(service, language) || undefined;
+
+  return {
+    id: service.id,
+    icon: service.icon as IconName,
+    title: service.title,
+    subtitle: service.subtitle || '',
+    badge,
+    iconBackgroundColor: mapIconBgColor(service.icon_bg_color),
+    infoRows,
+    note: noteText,
+  };
+};
+
 export function JavneUslugeScreen(): React.JSX.Element {
   const { language } = useTranslations();
-  const { header, services, emergency, usefulLinks } = javneUslugeContent;
+  const { header, services: fallbackServices, emergency, usefulLinks } = javneUslugeContent;
   const isEn = language === 'en';
+
+  // API state
+  const [apiServices, setApiServices] = useState<PublicService[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch services from API
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchServices() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await publicServicesApi.getAll(language);
+        if (!cancelled) {
+          setApiServices(response.services);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.warn('Failed to fetch public services:', err);
+          setError(err instanceof Error ? err.message : 'Failed to load');
+          setApiServices(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void fetchServices();
+    return () => { cancelled = true; };
+  }, [language]);
 
   const handleLinkPress = (url: string) => {
     void Linking.openURL(url);
@@ -54,22 +174,46 @@ export function JavneUslugeScreen(): React.JSX.Element {
 
         {/* Services List */}
         <View style={styles.servicesSection}>
-          {services.map((service) => (
-            <ServiceAccordionCard
-              key={service.id}
-              icon={service.icon}
-              title={isEn ? service.titleEn : service.title}
-              subtitle={isEn ? service.subtitleEn : service.subtitle}
-              badge={service.badge}
-              iconBackgroundColor={colors[service.iconBackgroundColor]}
-              infoRows={service.infoRows.map(row => ({
-                icon: row.icon,
-                label: isEn ? row.labelEn : row.label,
-                value: isEn ? row.valueEn : row.value,
-              }))}
-              note={isEn ? service.noteEn : service.note}
-            />
-          ))}
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+          ) : apiServices ? (
+            // Render from API
+            apiServices.map((service) => {
+              const cardProps = transformServiceToCard(service, language);
+              return (
+                <ServiceAccordionCard
+                  key={cardProps.id}
+                  icon={cardProps.icon}
+                  title={cardProps.title}
+                  subtitle={cardProps.subtitle}
+                  badge={cardProps.badge}
+                  iconBackgroundColor={cardProps.iconBackgroundColor}
+                  infoRows={cardProps.infoRows}
+                  note={cardProps.note}
+                />
+              );
+            })
+          ) : (
+            // Fallback to hardcoded data
+            fallbackServices.map((service) => (
+              <ServiceAccordionCard
+                key={service.id}
+                icon={service.icon}
+                title={isEn ? service.titleEn : service.title}
+                subtitle={isEn ? service.subtitleEn : service.subtitle}
+                badge={service.badge}
+                iconBackgroundColor={colors[service.iconBackgroundColor]}
+                infoRows={service.infoRows.map(row => ({
+                  icon: row.icon,
+                  label: isEn ? row.labelEn : row.label,
+                  value: isEn ? row.valueEn : row.value,
+                }))}
+                note={isEn ? service.noteEn : service.note}
+              />
+            ))
+          )}
         </View>
 
         {/* Emergency Numbers Section */}
@@ -126,6 +270,10 @@ const styles = StyleSheet.create({
   },
   servicesSection: {
     padding: spacing.lg,
+  },
+  loadingContainer: {
+    paddingVertical: spacing.xxxl,
+    alignItems: 'center',
   },
   emergencySection: {
     paddingHorizontal: spacing.lg,
