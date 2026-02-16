@@ -13,78 +13,31 @@
  * - HR-only UI for admin panel
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminClickFixApi, API_BASE_URL } from '../../services/api';
-import type { ClickFixDetail, ClickFixStatus } from '../../types/click-fix';
+import { API_BASE_URL } from '../../services/api';
+import type { ClickFixStatus } from '../../types/click-fix';
 import { STATUS_LABELS, STATUS_COLORS } from '../../types/click-fix';
 import { styles } from './ClickFixDetailPage.styles';
+import { useClickFixDetail } from './useClickFixDetail';
 
 export function ClickFixDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [clickFix, setClickFix] = useState<ClickFixDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [replyBody, setReplyBody] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [statusUpdating, setStatusUpdating] = useState(false);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
 
-  const fetchClickFix = useCallback(async () => {
-    if (!id) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await adminClickFixApi.getClickFixDetail(id);
-      setClickFix(data);
-    } catch (err) {
-      console.error('[Admin] Error fetching click fix:', err);
-      setError('Greska pri ucitavanju prijave.');
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
-
-  useEffect(() => {
-    void fetchClickFix();
-  }, [fetchClickFix]);
-
-  const handleStatusChange = async (newStatus: ClickFixStatus) => {
-    if (!id || !clickFix) return;
-
-    setStatusUpdating(true);
-    try {
-      const updated = await adminClickFixApi.updateStatus(id, newStatus);
-      setClickFix(updated);
-    } catch (err) {
-      console.error('[Admin] Error updating status:', err);
-      alert('Greska pri promjeni statusa.');
-    } finally {
-      setStatusUpdating(false);
-    }
-  };
-
-  const handleSubmitReply = async () => {
-    if (!id || !replyBody.trim()) return;
-
-    setSubmitting(true);
-    try {
-      await adminClickFixApi.addReply(id, { body: replyBody.trim() });
-      // Refetch to get updated click-fix with new reply
-      const updated = await adminClickFixApi.getClickFixDetail(id);
-      setClickFix(updated);
-      setReplyBody('');
-    } catch (err) {
-      console.error('[Admin] Error submitting reply:', err);
-      alert('Greska pri slanju odgovora.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const {
+    clickFix,
+    loading,
+    error,
+    replyBody,
+    setReplyBody,
+    submitting,
+    statusUpdating,
+    handleStatusChange,
+    handleSubmitReply,
+  } = useClickFixDetail(id);
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
