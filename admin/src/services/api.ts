@@ -643,4 +643,116 @@ export const adminTranslateApi = {
   },
 };
 
+// ============ PUBLIC SERVICES ============
+
+export interface Contact {
+  type: 'phone' | 'email';
+  value: string;
+}
+
+export interface WorkingHours {
+  time: string;
+  description_hr: string;
+  description_en: string;
+}
+
+export interface ScheduledDate {
+  date: string;
+  time_from: string;
+  time_to: string;
+  created_at: string;
+}
+
+export interface PublicService {
+  id: string;
+  type: 'permanent' | 'periodic';
+  title_hr: string;
+  title_en: string;
+  subtitle_hr: string | null;
+  subtitle_en: string | null;
+  address: string | null;
+  contacts: Contact[];
+  icon: string;
+  icon_bg_color: string;
+  working_hours: WorkingHours[];
+  scheduled_dates: ScheduledDate[];
+  note_hr: string | null;
+  note_en: string | null;
+  order_index: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PublicServiceListResponse {
+  services: PublicService[];
+  total: number;
+}
+
+export interface PublicServiceUpdateInput {
+  type?: 'permanent' | 'periodic';
+  title_hr?: string;
+  title_en?: string;
+  subtitle_hr?: string | null;
+  subtitle_en?: string | null;
+  address?: string | null;
+  contacts?: Contact[];
+  icon?: string;
+  icon_bg_color?: string;
+  working_hours?: WorkingHours[];
+  scheduled_dates?: ScheduledDate[];
+  note_hr?: string | null;
+  note_en?: string | null;
+  order_index?: number;
+  is_active?: boolean;
+}
+
+/**
+ * Admin Public Services API
+ */
+export const adminPublicServicesApi = {
+  /**
+   * Get all public services (including inactive)
+   */
+  async getAll(): Promise<PublicService[]> {
+    const response = await apiRequest<PublicServiceListResponse>('/admin/public-services');
+    return response.services;
+  },
+
+  /**
+   * Get single public service by ID
+   */
+  async getById(id: string): Promise<PublicService> {
+    return apiRequest<PublicService>(`/admin/public-services/${id}`);
+  },
+
+  /**
+   * Update existing public service
+   */
+  async update(id: string, data: PublicServiceUpdateInput): Promise<PublicService> {
+    return apiRequest<PublicService>(`/admin/public-services/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Soft delete (deactivate) public service
+   */
+  async delete(id: string): Promise<void> {
+    await apiRequest(`/admin/public-services/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  /**
+   * Restore soft-deleted public service
+   */
+  async restore(id: string): Promise<void> {
+    await apiRequest(`/admin/public-services/${id}/restore`, {
+      method: 'POST',
+    });
+  },
+};
+
 export default adminInboxApi;
