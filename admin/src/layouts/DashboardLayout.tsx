@@ -25,6 +25,7 @@ const navItems = [
   { path: '/click-fix', label: 'Click & Fix', icon: '📍', testId: 'sidebar-link-clickfix' },
   { path: '/events', label: 'Dogadaji', icon: '📅', testId: 'sidebar-link-events' },
   { path: '/pages', label: 'Stranice', icon: '📄', testId: 'sidebar-link-pages' },
+  { path: '/services', label: 'Javne usluge', icon: '🏛️', testId: 'sidebar-link-services' },
   { path: '/menu-extras', label: 'Izbornik+', icon: '📋', testId: 'sidebar-link-menu-extras' },
   { path: '/transport', label: 'Promet', icon: '🚌', testId: 'sidebar-link-transport' },
 ];
