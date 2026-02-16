@@ -121,8 +121,8 @@ export const MessageListItem = memo(function MessageListItem({
             {/* Dual-layer shadow - hidden when pressed */}
             {!pressed && <View style={styles.shadow} />}
             <View style={styles.card}>
-              {/* Left icon slabs - one for each tag */}
-              <View style={styles.iconSlabRow}>
+              {/* Left icon slabs - one for each tag, stacked vertically */}
+              <View style={styles.iconSlabColumn}>
                 {iconConfigs.map((config, index) => (
                   <View
                     key={index}
@@ -200,8 +200,8 @@ const styles = StyleSheet.create({
     borderRadius: inboxTokens.listItem.borderRadius,
     padding: inboxTokens.listItem.padding,
   },
-  iconSlabRow: {
-    flexDirection: 'row',
+  iconSlabColumn: {
+    flexDirection: 'column',
     gap: skin.spacing.xs,
     marginRight: inboxTokens.listItem.iconSlabGap,
   },

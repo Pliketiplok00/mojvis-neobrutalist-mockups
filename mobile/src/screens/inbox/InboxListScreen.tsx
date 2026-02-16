@@ -219,7 +219,10 @@ export function InboxListScreen(): React.JSX.Element {
               refreshControl={
                 <RefreshControl refreshing={sentRefreshing} onRefresh={handleRefresh} />
               }
-              contentContainerStyle={sentItems.length === 0 ? styles.listEmpty : undefined}
+              contentContainerStyle={[
+                styles.listContentContainer,
+                sentItems.length === 0 ? styles.listEmpty : undefined,
+              ]}
             />
           )}
 

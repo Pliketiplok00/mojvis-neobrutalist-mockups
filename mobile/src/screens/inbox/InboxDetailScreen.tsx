@@ -8,6 +8,7 @@
  * - Uses back navigation (child screen)
  * - Marks message as read on open
  * - Shows urgent badge for hitno messages
+ * - Poster-style layout with bordered sections
  *
  * REFACTORED: Now uses UI primitives from src/ui/
  */
@@ -26,7 +27,7 @@ import { useUnread } from '../../contexts/UnreadContext';
 import { useUserContext } from '../../hooks/useUserContext';
 import { useTranslations } from '../../i18n';
 import { inboxApi } from '../../services/api';
-import type { InboxMessage } from '../../types/inbox';
+import type { InboxMessage, InboxTag } from '../../types/inbox';
 import type { MainStackParamList } from '../../navigation/types';
 
 // UI Primitives
@@ -34,16 +35,93 @@ import {
   skin,
   Header,
   Button,
-  Badge,
   H1,
+  H2,
   Body,
   Meta,
+  Label,
   Icon,
   LinkText,
 } from '../../ui';
-import { formatDateTimeSlash } from '../../utils/dateFormat';
+import type { IconName } from '../../ui/Icon';
+import { formatDateTimeSlash, formatDateShort } from '../../utils/dateFormat';
+
+const { inbox: inboxTokens } = skin.components;
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'InboxDetail'>;
+
+/**
+ * Get header background color and icon based on message tags
+ */
+function getHeaderConfig(tags: InboxTag[], isUrgent: boolean): {
+  backgroundColor: string;
+  icon: IconName;
+  iconColorToken: 'primaryText' | 'textPrimary';
+} {
+  // Urgent messages get red header
+  if (isUrgent) {
+    return {
+      backgroundColor: inboxTokens.listItem.iconSlabBackgroundUrgent,
+      icon: 'shield-alert',
+      iconColorToken: 'primaryText',
+    };
+  }
+
+  // Check for category tags
+  if (tags.includes('promet')) {
+    return {
+      backgroundColor: inboxTokens.listItem.iconSlabBackgroundTransport,
+      icon: 'traffic-cone',
+      iconColorToken: 'primaryText',
+    };
+  }
+  if (tags.includes('kultura')) {
+    return {
+      backgroundColor: inboxTokens.listItem.iconSlabBackgroundCulture,
+      icon: 'calendar-heart',
+      iconColorToken: 'textPrimary',
+    };
+  }
+  if (tags.includes('opcenito')) {
+    return {
+      backgroundColor: inboxTokens.listItem.iconSlabBackgroundGeneral,
+      icon: 'newspaper',
+      iconColorToken: 'textPrimary',
+    };
+  }
+
+  // Default
+  return {
+    backgroundColor: inboxTokens.listItem.iconSlabBackgroundDefault,
+    icon: 'mail',
+    iconColorToken: 'textPrimary',
+  };
+}
+
+/**
+ * Get municipality labels from tags
+ */
+function getMunicipalityLabels(tags: InboxTag[]): string[] {
+  const labels: string[] = [];
+  if (tags.includes('vis')) labels.push('Grad Vis');
+  if (tags.includes('komiza')) labels.push('Općina Komiža');
+  return labels;
+}
+
+/**
+ * Format tag for display
+ */
+function formatTag(tag: string): string {
+  const tagLabels: Record<string, string> = {
+    promet: 'Promet',
+    kultura: 'Kultura',
+    opcenito: 'Općenito',
+    komiza: 'Komiža',
+    vis: 'Vis',
+    hitno: 'Hitno',
+  };
+  return tagLabels[tag] || tag;
+}
 
 export function InboxDetailScreen(): React.JSX.Element {
   const route = useRoute<DetailRouteProp>();
@@ -70,7 +148,7 @@ export function InboxDetailScreen(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  }, [messageId, markAsRead, userContext]);
+  }, [messageId, markAsRead, userContext, t]);
 
   useEffect(() => {
     void fetchMessage();
@@ -109,64 +187,83 @@ export function InboxDetailScreen(): React.JSX.Element {
     );
   }
 
+  const headerConfig = getHeaderConfig(message.tags, message.is_urgent);
+  const municipalities = getMunicipalityLabels(message.tags);
+  const hasDateRange = message.active_from || message.active_to;
+
   return (
     <SafeAreaView style={styles.container}>
       <Header type="inbox" />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        {/* Urgent badge */}
-        {message.is_urgent && (
-          <Badge variant="urgent" style={styles.urgentBadge}>
-            {t('banner.urgent')}
-          </Badge>
-        )}
-
-        {/* Tags - defensive: ensure tags is always an array */}
-        {(() => {
-          const tags = Array.isArray(message.tags) ? message.tags : [];
-          const visibleTags = tags.filter((tag) => tag !== 'hitno');
-          if (visibleTags.length === 0) return null;
-          return (
-            <View style={styles.tagsContainer}>
-              {visibleTags.map((tag) => (
-                <Badge
-                  key={tag}
-                  backgroundColor={skin.colors.backgroundSecondary}
-                  textColor={skin.colors.textMuted}
-                >
-                  {formatTag(tag)}
-                </Badge>
-              ))}
+        {/* Colored category header with icon */}
+        <View style={[styles.categoryHeader, { backgroundColor: headerConfig.backgroundColor }]}>
+          <View style={styles.categoryIconBox}>
+            <Icon
+              name={headerConfig.icon}
+              size="lg"
+              colorToken={headerConfig.iconColorToken}
+            />
+          </View>
+          {/* Urgent badge in header */}
+          {message.is_urgent && (
+            <View style={styles.urgentBadge}>
+              <Label style={styles.urgentBadgeText}>HITNO</Label>
             </View>
-          );
-        })()}
+          )}
+        </View>
 
-        {/* Title */}
-        <H1 style={styles.title}>{message.title}</H1>
+        {/* Title - uppercase, bold */}
+        <H1 style={styles.title}>{message.title.toUpperCase()}</H1>
 
-        {/* Date */}
-        <Meta style={styles.date}>{formatDateTimeSlash(message.created_at)}</Meta>
+        {/* Meta row: date + municipality */}
+        <View style={styles.metaRow}>
+          <View style={styles.metaItem}>
+            <Icon name="calendar" size="sm" colorToken="textMuted" />
+            <Meta style={styles.metaText}>{formatDateTimeSlash(message.created_at)}</Meta>
+          </View>
+          {municipalities.map((municipality) => (
+            <View key={municipality} style={styles.metaItem}>
+              <Icon name="map-pin" size="sm" colorToken="textMuted" />
+              <Meta style={styles.metaText}>{municipality}</Meta>
+            </View>
+          ))}
+        </View>
 
-        {/* Body - with clickable links */}
-        <LinkText style={styles.body}>{message.body}</LinkText>
+        {/* Body in bordered box */}
+        <View style={styles.bodyContainer}>
+          <LinkText style={styles.bodyText}>{message.body}</LinkText>
+        </View>
+
+        {/* Date range section */}
+        {hasDateRange && (
+          <View style={styles.dateRangeSection}>
+            <H2 style={styles.dateRangeSectionTitle}>
+              OBAVIJEST SE ODNOSI NA DAN/E:
+            </H2>
+            <View style={styles.dateBoxesRow}>
+              {message.active_from && (
+                <View style={styles.dateBox}>
+                  <Label style={styles.dateLabel}>OD</Label>
+                  <Label style={styles.dateValue}>
+                    {formatDateShort(message.active_from)}
+                  </Label>
+                </View>
+              )}
+              {message.active_to && (
+                <View style={styles.dateBox}>
+                  <Label style={styles.dateLabel}>DO</Label>
+                  <Label style={styles.dateValue}>
+                    {formatDateShort(message.active_to)}
+                  </Label>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-/**
- * Format tag for display
- */
-function formatTag(tag: string): string {
-  const tagLabels: Record<string, string> = {
-    promet: 'Promet',
-    kultura: 'Kultura',
-    opcenito: 'Općenito',
-    komiza: 'Komiža',
-    vis: 'Vis',
-    hitno: 'Hitno',
-  };
-  return tagLabels[tag] || tag;
 }
 
 const styles = StyleSheet.create({
@@ -178,7 +275,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: skin.spacing.lg,
     paddingBottom: skin.spacing.xxxl,
   },
   loadingState: {
@@ -202,27 +298,108 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: skin.spacing.lg,
   },
-  urgentBadge: {
-    alignSelf: 'flex-start',
-    marginBottom: skin.spacing.md,
+
+  // Category header
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: skin.spacing.lg,
+    borderBottomWidth: skin.borders.widthCard,
+    borderBottomColor: skin.colors.border,
   },
-  tagsContainer: {
+  categoryIconBox: {
+    width: 56,
+    height: 56,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  urgentBadge: {
+    backgroundColor: skin.colors.urgent,
+    paddingHorizontal: skin.spacing.md,
+    paddingVertical: skin.spacing.sm,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+  },
+  urgentBadgeText: {
+    color: skin.colors.urgentText,
+    fontWeight: '700',
+    fontSize: skin.typography.fontSize.sm,
+    letterSpacing: 1,
+  },
+
+  // Title
+  title: {
+    paddingHorizontal: skin.spacing.lg,
+    paddingTop: skin.spacing.lg,
+    paddingBottom: skin.spacing.sm,
+  },
+
+  // Meta row
+  metaRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: skin.spacing.sm,
-    marginBottom: skin.spacing.md,
+    gap: skin.spacing.lg,
+    paddingHorizontal: skin.spacing.lg,
+    paddingBottom: skin.spacing.lg,
   },
-  title: {
-    marginBottom: skin.spacing.sm,
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.xs,
   },
-  date: {
-    marginBottom: skin.spacing.xxl,
+  metaText: {
+    color: skin.colors.textMuted,
   },
-  body: {
+
+  // Body container (bordered box)
+  bodyContainer: {
+    marginHorizontal: skin.spacing.lg,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.lg,
+    backgroundColor: skin.colors.background,
+  },
+  bodyText: {
     fontSize: skin.typography.fontSize.lg,
     fontFamily: skin.typography.fontFamily.body.regular,
     color: skin.colors.textSecondary,
     lineHeight: skin.typography.fontSize.lg * skin.typography.lineHeight.relaxed,
+  },
+
+  // Date range section
+  dateRangeSection: {
+    marginTop: skin.spacing.xl,
+    paddingHorizontal: skin.spacing.lg,
+  },
+  dateRangeSectionTitle: {
+    marginBottom: skin.spacing.md,
+    fontSize: skin.typography.fontSize.sm,
+    letterSpacing: 1,
+  },
+  dateBoxesRow: {
+    flexDirection: 'row',
+    gap: skin.spacing.md,
+  },
+  dateBox: {
+    flex: 1,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.md,
+    backgroundColor: skin.colors.background,
+  },
+  dateLabel: {
+    fontSize: skin.typography.fontSize.xs,
+    color: skin.colors.textMuted,
+    marginBottom: skin.spacing.xs,
+  },
+  dateValue: {
+    fontSize: skin.typography.fontSize.lg,
+    fontWeight: '700',
+    color: skin.colors.textPrimary,
   },
 });
 
