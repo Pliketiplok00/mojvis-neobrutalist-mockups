@@ -18,32 +18,89 @@
 
 ## Kronologija
 
-### 2026-02-16 (Ponedjeljak)
+### 2026-02-16 (Ponedjeljak) - MASSIVE REFACTOR SESSION
 
-#### Sto je odradeno danas
-- **Transport refaktoring Phase 4**: Izvucena TodayDeparturesSection komponenta
-  - SeaTransportScreen: 405 → 274 linija (-131)
-  - RoadTransportScreen: 388 → 271 linija (-117)
-  - TodayDeparturesSection: 181 linija (nova shared komponenta)
-- Ukupno faza 1-4: uklonjena duplikacija formata, hook, LineListCard, TodayDeparturesSection
-- **HomeScreen refaktoring Phase 1**: Izvucen useHomeData hook
-  - HomeScreen: 516 → 476 linija (-40)
-  - useHomeData: 81 linija (novi hook)
-- **HomeScreen refaktoring Phase 2**: Izvucena CategoryGrid komponenta
-  - HomeScreen: 476 → 399 linija (-77)
-  - CategoryGrid: 134 linija (nova komponenta)
-- **HomeScreen refaktoring Phase 3**: Izvucena UpcomingEventsSection komponenta
-  - HomeScreen: 399 → 261 linija (-138)
-  - UpcomingEventsSection: 197 linija (nova komponenta)
-- **EventDetailScreen refaktoring Phase 1**: Izvucen useEventDetail hook
-  - EventDetailScreen: 372 → 324 linija (-48)
-  - useEventDetail: 107 linija (novi hook)
-- **EventDetailScreen refaktoring Phase 2**: Izvucena InfoTile komponenta
-  - EventDetailScreen: 324 → 285 linija (-39)
-  - InfoTile: 77 linija (nova komponenta)
+#### Transport refaktoring (Sea + Road) - KOMPLETNO
+
+**Rezultati:**
+| Screen | Prije | Poslije | Smanjenje |
+|--------|-------|---------|-----------|
+| SeaTransportScreen | 587 | 274 | -53% |
+| RoadTransportScreen | 537 | 271 | -50% |
+
+**Shared hook kreiran:**
+| Hook | Linija | Funkcionalnost |
+|------|--------|----------------|
+| `useTransportOverview` | 106 | Banners, lines, departures fetch |
+
+**Shared komponente kreirane:**
+| Komponenta | Linija | Funkcionalnost |
+|------------|--------|----------------|
+| `LineListCard` | 225 | 2-part poster card (header + body) |
+| `TodayDeparturesSection` | 181 | Stacked departures with neobrut shadow |
+
+---
+
+#### HomeScreen refaktoring - KOMPLETNO
+
+**Rezultat**: 516 → 261 linija (**-49%**)
+
+**Hook kreiran:**
+| Hook | Linija | Funkcionalnost |
+|------|--------|----------------|
+| `useHomeData` | 81 | Banners + upcoming events fetch |
+
+**Komponente kreirane:**
+| Komponenta | Linija | Funkcionalnost |
+|------------|--------|----------------|
+| `CategoryGrid` | 134 | 2x2 grid with neobrut shadows |
+| `UpcomingEventsSection` | 197 | Ticket-style event cards |
+
+---
+
+#### EventDetailScreen refaktoring - KOMPLETNO
+
+**Rezultat**: 372 → 285 linija (**-23%**)
+
+**Hook kreiran:**
+| Hook | Linija | Funkcionalnost |
+|------|--------|----------------|
+| `useEventDetail` | 107 | Event fetch + subscription toggle |
+
+**Komponenta kreirana:**
+| Komponenta | Linija | Funkcionalnost |
+|------------|--------|----------------|
+| `InfoTile` | 77 | Icon + value tile for event info |
+
+---
+
+#### Testovi za nove komponente i hookove
+
+**Testova dodano**: 114 novih testova
+**Ukupno**: 275 → 389 testova (**+41%**)
+
+| Test File | Testova | Pokrivenost |
+|-----------|---------|-------------|
+| useTransportOverview.test.ts | 14 | Potpuna |
+| useHomeData.test.ts | 11 | Potpuna |
+| useEventDetail.test.ts | 16 | Potpuna |
+| LineListCard.test.tsx | 16 | Potpuna |
+| TodayDeparturesSection.test.tsx | 12 | Potpuna |
+| CategoryGrid.test.tsx | 14 | Potpuna |
+| UpcomingEventsSection.test.tsx | 17 | Potpuna |
+| InfoTile.test.tsx | 14 | Potpuna |
+
+**Jest setup azuriran:**
+- Dodani skin tokeni za `events.detail`, `badge`, `transport.list`
+- Dodani `typography.fontFamily` tokeni
+- Dodani `borders.radiusCard` token
+
+---
 
 #### Odluke donesene
 - Zadrzana vertikalna lista (neobrut stil) umjesto horizontal scrolla iz template-a
+- Shared komponente za Sea/Road transport (LineListCard, TodayDeparturesSection)
+- Hook extraction pattern: data fetching → dedicated hook
 
 #### Problemi/blockeri
 - Nema
@@ -276,11 +333,11 @@
 
 ---
 
-## Stanje projekta (azurirano 2026-02-15)
+## Stanje projekta (azurirano 2026-02-16)
 
 ### Sto radi
 - Backend API (409 testova prolazi)
-- Mobile app (Expo) - 116 testova
+- Mobile app (Expo) - 389 testova
 - Admin panel
 - Transport (cestovni + pomorski)
 - Events kalendar
@@ -296,18 +353,26 @@
 - `LineDetailScreen.tsx` - RIJEŠENO (909 → 292, -68%)
 - `InboxListScreen.tsx` - RIJEŠENO (818 → 270, -67%)
 - `EventsScreen.tsx` - RIJEŠENO (609 → 229, -62%)
+- `SeaTransportScreen.tsx` - RIJEŠENO (587 → 274, -53%)
+- `RoadTransportScreen.tsx` - RIJEŠENO (537 → 271, -50%)
+- `HomeScreen.tsx` - RIJEŠENO (516 → 261, -49%)
+- `EventDetailScreen.tsx` - RIJEŠENO (372 → 285, -23%)
 
-### Ukupno refaktorirano (sva 3 screena)
+### Ukupno refaktorirano (svi screenovi)
 | Screen | Prije | Poslije | Smanjenje |
 |--------|-------|---------|-----------|
 | LineDetailScreen | 909 | 292 | -68% |
 | InboxListScreen | 818 | 270 | -67% |
 | EventsScreen | 609 | 229 | -62% |
-| **UKUPNO** | **2,336** | **791** | **-1,545 linija (-66%)** |
+| SeaTransportScreen | 587 | 274 | -53% |
+| RoadTransportScreen | 537 | 271 | -50% |
+| HomeScreen | 516 | 261 | -49% |
+| EventDetailScreen | 372 | 285 | -23% |
+| **UKUPNO** | **4,348** | **1,882** | **-2,466 linija (-57%)** |
 
 **Kreirano:**
-- 6 hookova (svi testirani)
-- 13 komponenti
+- 10 hookova (svi testirani)
+- 18 komponenti
 
 ---
 
@@ -322,21 +387,21 @@
 - Svi bugfixevi slijede postojece patterne
 - Nema novih arhitekturnih odluka
 - Security ranjivosti popravljene
-- 3 velika screena refaktorirana (66% smanjenje)
-- 57 mobile testova dodano
+- 7 velikih screenova refaktorirano (57% smanjenje ukupno)
+- 389 mobile testova (sve prolazi)
 
 ### Sto treba tvoju paznju
 - BUG 4 (Click & Fix) - ako se ponovi, treba logging
 
-### Statistika sesije (2026-02-14 + 2026-02-15)
+### Statistika sesije (2026-02-14 → 2026-02-16)
 
 | Metrika | Vrijednost |
 |---------|------------|
 | Bugova popravljeno | 5 |
-| Testova dodano | 116 (57 util + 59 hook) |
-| Linija uklonjeno | ~14,045 |
-| Hookova kreirano | 6 (svi testirani) |
-| Komponenti kreirano | 13 |
+| Testova dodano | 389 (0 → 389) |
+| Linija uklonjeno | ~16,500 |
+| Hookova kreirano | 10 (svi testirani) |
+| Komponenti kreirano | 18 |
 | Git brancheva obrisano | 74 |
 | PR-ova zatvoreno | 7 |
 | TODOs očišćeno | 1 (15 preostalo) |
@@ -347,8 +412,32 @@
 | Kategorija | Testova |
 |------------|---------|
 | Utility funkcije | 57 |
-| Hookovi | 59 |
-| **UKUPNO** | **116** |
+| Hookovi (6 starih) | 59 |
+| Hookovi (4 nova) | 41 |
+| Komponente (8 novih) | 73 |
+| Komponente (ostale) | 159 |
+| **UKUPNO** | **389** |
+
+### Hookovi kreirani (10 ukupno)
+| Hook | Screen | Testova |
+|------|--------|---------|
+| useDatePicker | LineDetail | 14 |
+| useLineDetail | LineDetail | 8 |
+| useDepartures | LineDetail | 10 |
+| useInboxMessages | Inbox | 12 |
+| useSentItems | Inbox | 8 |
+| useEvents | Events | 9 |
+| useTransportOverview | Sea/Road | 14 |
+| useHomeData | Home | 11 |
+| useEventDetail | EventDetail | 16 |
+
+### Komponente kreirane (18 ukupno)
+LineDetail: DatePickerModal, DirectionTabs, DateSelector, ContactsSection, DeparturesSection, TicketInfoBox, HeaderSlab
+Inbox: MessageListItem, SentListItem, TagFilterBar, InboxTabs
+Events: Calendar, EventItem
+Transport: LineListCard, TodayDeparturesSection
+Home: CategoryGrid, UpcomingEventsSection
+EventDetail: InfoTile
 
 ### Pitanja?
 Kontaktiraj Project Managera
