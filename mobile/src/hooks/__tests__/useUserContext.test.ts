@@ -8,14 +8,33 @@
 import { renderHook } from '@testing-library/react-native';
 import { useUserContext } from '../useUserContext';
 
+// Types for mock data
+type UserMode = 'visitor' | 'local';
+type Municipality = 'vis' | 'komiza' | null;
+type Language = 'hr' | 'en';
+
+interface OnboardingData {
+  userMode: UserMode;
+  municipality: Municipality;
+  language: Language;
+}
+
+interface OnboardingContextValue {
+  data: OnboardingData | null;
+  isComplete: boolean;
+  isLoading: boolean;
+  completeOnboarding: jest.Mock;
+  resetOnboarding: jest.Mock;
+}
+
 // Mock OnboardingContext
-const mockOnboardingData = {
-  userMode: 'local' as const,
-  municipality: 'vis' as const,
-  language: 'hr' as const,
+const mockOnboardingData: OnboardingData = {
+  userMode: 'local',
+  municipality: 'vis',
+  language: 'hr',
 };
 
-let mockUseOnboardingReturn = {
+let mockUseOnboardingReturn: OnboardingContextValue = {
   data: mockOnboardingData,
   isComplete: true,
   isLoading: false,

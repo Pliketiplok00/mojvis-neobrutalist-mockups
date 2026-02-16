@@ -24,6 +24,7 @@ interface EventCardProps {
   event: Event;
   isFirst: boolean;
   onPress: (eventId: string) => void;
+  locationFallback: string;
 }
 
 /**
@@ -33,6 +34,7 @@ const EventCard = memo(function EventCard({
   event,
   isFirst,
   onPress,
+  locationFallback,
 }: EventCardProps): React.JSX.Element {
   const { day, month } = formatEventDate(event.start_datetime);
 
@@ -59,7 +61,7 @@ const EventCard = memo(function EventCard({
         <View style={styles.eventContent}>
           <Label style={styles.eventTitle} numberOfLines={1}>{event.title}</Label>
           <Meta style={styles.eventLocation} numberOfLines={1}>
-            {event.location ?? ''}
+            {event.location ?? locationFallback}
           </Meta>
         </View>
         {/* Arrow */}
@@ -119,6 +121,7 @@ export function UpcomingEventsSection({
             event={event}
             isFirst={index === 0}
             onPress={onEventPress}
+            locationFallback={viewAllText}
           />
         ))
       ) : (
