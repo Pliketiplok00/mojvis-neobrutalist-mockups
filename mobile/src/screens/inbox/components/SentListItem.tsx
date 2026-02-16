@@ -11,10 +11,8 @@ import React, { memo, useCallback } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { ButtonText, Meta } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
-import { Badge } from '../../../ui/Badge';
 import { skin } from '../../../ui/skin';
 import { formatDateShort } from '../../../utils/dateFormat';
-import { STATUS_COLORS } from '../../../ui/utils/statusColors';
 import type { IconName } from '../../../ui/Icon';
 import type { CombinedSentItem } from '../../../hooks/useSentItems';
 
@@ -36,7 +34,6 @@ export const SentListItem = memo(function SentListItem({
   onPress,
   t,
 }: SentListItemProps): React.JSX.Element {
-  const statusColor = STATUS_COLORS[item.status] || STATUS_COLORS.zaprimljeno;
   const isClickFix = item.type === 'click_fix';
   const iconName: IconName = isClickFix ? 'camera' : 'send';
   const iconBackground = isClickFix
@@ -66,18 +63,6 @@ export const SentListItem = memo(function SentListItem({
                 <ButtonText style={styles.title} numberOfLines={1}>
                   {item.subject}
                 </ButtonText>
-
-                {/* Status badge row */}
-                <View style={styles.badgeRow}>
-                  {isClickFix && (
-                    <Badge variant="type" style={styles.badgeMargin}>
-                      {t('inbox.badges.report')}
-                    </Badge>
-                  )}
-                  <Badge backgroundColor={statusColor.bg} textColor={statusColor.text}>
-                    {item.status_label}
-                  </Badge>
-                </View>
 
                 {/* Photo count for Click & Fix */}
                 {isClickFix && item.photo_count !== undefined && item.photo_count > 0 && (
@@ -143,14 +128,6 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: inboxTokens.listItem.titleMarginBottom,
     textTransform: 'uppercase',
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    gap: skin.spacing.sm,
-    marginBottom: skin.spacing.xs,
-  },
-  badgeMargin: {
-    marginRight: skin.spacing.xs,
   },
   photoCount: {
     marginBottom: skin.spacing.xs,

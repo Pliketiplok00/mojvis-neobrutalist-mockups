@@ -4,12 +4,13 @@
  * Phase 6: View submitted Click & Fix with status, photos, and replies.
  *
  * Shows:
- * - Subject + description (original)
- * - Location coordinates
- * - Current status label
- * - Photos (if any)
+ * - Colored category header with icon and subject
+ * - Date and location metadata
+ * - Description in bordered box
+ * - Photos gallery (if any)
  * - Replies list (chronological)
  *
+ * Design: Unified with InboxDetailScreen poster-style layout.
  * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
@@ -33,12 +34,18 @@ import { useTranslations } from '../../i18n';
 import { clickFixApi, getFullApiUrl } from '../../services/api';
 import type { ClickFixDetailResponse } from '../../types/click-fix';
 import type { MainStackParamList } from '../../navigation/types';
-import { skin } from '../../ui/skin';
-import { STATUS_COLORS } from '../../ui/utils/statusColors';
-import { Icon } from '../../ui/Icon';
-import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
-import { LoadingState, ErrorState } from '../../ui/States';
-import { formatDateTimeCroatian } from '../../utils/dateFormat';
+import {
+  skin,
+  Icon,
+  H2,
+  Body,
+  Label,
+  Meta,
+  LinkText,
+  LoadingState,
+  ErrorState,
+} from '../../ui';
+import { formatDateTimeSlash } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'ClickFixDetail'>;
 
@@ -96,8 +103,6 @@ export function ClickFixDetailScreen(): React.JSX.Element {
     );
   }
 
-  const statusColor = STATUS_COLORS[clickFix.status] || STATUS_COLORS.zaprimljeno;
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
@@ -109,34 +114,43 @@ export function ClickFixDetailScreen(): React.JSX.Element {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Status Badge */}
-        <View
-          style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}
-        >
-          <ButtonText style={[styles.statusText, { color: statusColor.text }]}>
-            {clickFix.status_label}
-          </ButtonText>
+        {/* Colored category header with icon and title */}
+        <View style={styles.categoryHeader}>
+          <View style={styles.headerContent}>
+            <View style={styles.categoryIconBox}>
+              <Icon name="camera" size="lg" colorToken="textPrimary" />
+            </View>
+            <Label style={styles.headerTitle} numberOfLines={3}>
+              {clickFix.subject.toUpperCase()}
+            </Label>
+          </View>
         </View>
 
-        {/* Original Message */}
-        <View style={styles.messageCard}>
-          <H2 style={styles.subject}>{clickFix.subject}</H2>
-          <Meta style={styles.date}>{formatDateTimeCroatian(clickFix.created_at)}</Meta>
-          <Body style={styles.description}>{clickFix.description}</Body>
-
-          {/* Location */}
-          <View style={styles.locationSection}>
-            <ButtonText style={styles.locationLabel}>{t('clickFix.detail.location')}:</ButtonText>
-            <Body style={styles.locationText}>
-              {clickFix.location.lat.toFixed(6)}, {clickFix.location.lng.toFixed(6)}
-            </Body>
+        {/* Meta row: date + location */}
+        <View style={styles.metaRow}>
+          <View style={styles.metaItem}>
+            <Icon name="calendar" size="sm" colorToken="textMuted" />
+            <Meta style={styles.metaText}>{formatDateTimeSlash(clickFix.created_at)}</Meta>
           </View>
+          <View style={styles.metaItem}>
+            <Icon name="map-pin" size="sm" colorToken="textMuted" />
+            <Meta style={styles.locationText}>
+              {clickFix.location.lat.toFixed(4)}, {clickFix.location.lng.toFixed(4)}
+            </Meta>
+          </View>
+        </View>
+
+        {/* Description in bordered box */}
+        <View style={styles.bodyContainer}>
+          <LinkText style={styles.bodyText}>{clickFix.description}</LinkText>
         </View>
 
         {/* Photos Section */}
         {clickFix.photos.length > 0 && (
           <View style={styles.photosSection}>
-            <H2 style={styles.sectionTitle}>{t('clickFix.detail.photos')} ({clickFix.photos.length})</H2>
+            <H2 style={styles.sectionTitle}>
+              {t('clickFix.detail.photos').toUpperCase()} ({clickFix.photos.length})
+            </H2>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -161,7 +175,7 @@ export function ClickFixDetailScreen(): React.JSX.Element {
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <H2 style={styles.sectionTitle}>{t('clickFix.detail.replies')}</H2>
+          <H2 style={styles.sectionTitle}>{t('clickFix.detail.replies').toUpperCase()}</H2>
 
           {clickFix.replies.length === 0 ? (
             <View style={styles.emptyState}>
@@ -173,9 +187,9 @@ export function ClickFixDetailScreen(): React.JSX.Element {
             clickFix.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Label style={styles.replyLabel}>{t('clickFix.detail.reply')}</Label>
+                  <Label style={styles.replyLabel}>{t('clickFix.detail.reply').toUpperCase()}</Label>
                   <Meta style={styles.replyDate}>
-                    {formatDateTimeCroatian(reply.created_at)}
+                    {formatDateTimeSlash(reply.created_at)}
                   </Meta>
                 </View>
                 <Body style={styles.replyBody}>{reply.body}</Body>
@@ -221,55 +235,85 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: skin.spacing.lg,
     paddingBottom: skin.spacing.xxxl,
   },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: skin.spacing.lg,
-    paddingVertical: skin.spacing.sm,
-    borderRadius: skin.borders.radiusSharp,
-    marginBottom: skin.spacing.lg,
-  },
-  statusText: {
-  },
-  messageCard: {
-    backgroundColor: skin.colors.backgroundSecondary,
-    borderRadius: skin.borders.radiusCard,
+
+  // Category header with title (orange for click-fix)
+  categoryHeader: {
     padding: skin.spacing.lg,
-    marginBottom: skin.spacing.xxl,
+    backgroundColor: skin.colors.orange,
+    borderBottomWidth: skin.borders.widthCard,
+    borderBottomColor: skin.colors.border,
   },
-  subject: {
-    marginBottom: skin.spacing.xs,
-  },
-  date: {
-    marginBottom: skin.spacing.lg,
-  },
-  description: {
-    color: skin.colors.textSecondary,
-    lineHeight: 24,
-    marginBottom: skin.spacing.lg,
-  },
-  locationSection: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: skin.spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: skin.colors.borderLight,
+    gap: skin.spacing.md,
   },
-  locationLabel: {
+  categoryIconBox: {
+    width: 56,
+    height: 56,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: '700',
+    color: skin.colors.textPrimary,
+    fontFamily: skin.typography.fontFamily.display.bold,
+  },
+
+  // Meta row
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: skin.spacing.lg,
+    paddingHorizontal: skin.spacing.lg,
+    paddingTop: skin.spacing.lg,
+    paddingBottom: skin.spacing.lg,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.xs,
+  },
+  metaText: {
     color: skin.colors.textMuted,
-    marginRight: skin.spacing.sm,
   },
   locationText: {
-    color: skin.colors.successText,
+    color: skin.colors.textMuted,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    fontSize: skin.typography.fontSize.xs,
   },
+
+  // Body container (bordered box)
+  bodyContainer: {
+    marginHorizontal: skin.spacing.lg,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.lg,
+    backgroundColor: skin.colors.background,
+  },
+  bodyText: {
+    fontSize: skin.typography.fontSize.lg,
+    fontFamily: skin.typography.fontFamily.body.regular,
+    color: skin.colors.textSecondary,
+    lineHeight: skin.typography.fontSize.lg * skin.typography.lineHeight.relaxed,
+  },
+
+  // Photos section
   photosSection: {
-    marginBottom: skin.spacing.xxl,
+    marginTop: skin.spacing.xl,
+    paddingHorizontal: skin.spacing.lg,
   },
   sectionTitle: {
     marginBottom: skin.spacing.md,
+    fontSize: skin.typography.fontSize.sm,
+    letterSpacing: 1,
   },
   photosScroll: {
     gap: skin.spacing.md,
@@ -277,30 +321,32 @@ const styles = StyleSheet.create({
   photoThumbnail: {
     width: 120,
     height: 120,
-    borderRadius: skin.borders.radiusCard,
-    borderWidth: skin.borders.widthThin,
+    borderWidth: skin.borders.widthCard,
     borderColor: skin.colors.border,
   },
+
+  // Replies section
   repliesSection: {
-    flex: 1,
+    marginTop: skin.spacing.xl,
+    paddingHorizontal: skin.spacing.lg,
   },
   emptyState: {
     padding: skin.spacing.xxl,
-    backgroundColor: skin.colors.backgroundSecondary,
-    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
     alignItems: 'center',
+    backgroundColor: skin.colors.background,
   },
   emptyText: {
     color: skin.colors.textMuted,
     textAlign: 'center',
   },
   replyCard: {
-    backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthThin,
+    borderWidth: skin.borders.widthCard,
     borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
     padding: skin.spacing.lg,
     marginBottom: skin.spacing.md,
+    backgroundColor: skin.colors.background,
   },
   replyHeader: {
     flexDirection: 'row',
@@ -309,14 +355,17 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    textTransform: 'uppercase',
+    fontWeight: '700',
   },
   replyDate: {
+    color: skin.colors.textMuted,
   },
   replyBody: {
     color: skin.colors.textSecondary,
     lineHeight: 22,
   },
+
+  // Photo modal
   modalContainer: {
     flex: 1,
     backgroundColor: skin.colors.overlay,
@@ -327,9 +376,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 60,
     right: 20,
-    width: 40,
-    height: 40,
-    borderRadius: skin.borders.radiusSharp,
+    width: 44,
+    height: 44,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
     backgroundColor: skin.colors.background,
     justifyContent: 'center',
     alignItems: 'center',

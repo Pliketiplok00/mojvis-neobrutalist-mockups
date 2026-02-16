@@ -6,7 +6,7 @@
  * ALL SCREENS:
  * - Left: Hamburger menu (ALWAYS - back navigation is via iOS swipe gesture only)
  * - Center: App name "MOJ VIS"
- * - Right: Inbox icon (hidden on inbox screens)
+ * - Right: Inbox icon (ALWAYS visible)
  *
  * IMPORTANT: No screen should ever show a back arrow.
  * Back navigation relies on iOS swipe gesture.
@@ -32,12 +32,13 @@ export type HeaderType = 'root' | 'child' | 'inbox';
 
 interface GlobalHeaderProps {
   /**
-   * Type of screen determines inbox icon visibility:
-   * - 'root': Shows inbox icon
-   * - 'child': Shows inbox icon
-   * - 'inbox': Hides inbox icon (we're already on inbox)
+   * Type of screen (kept for API compatibility):
+   * - 'root': Root-level screen
+   * - 'child': Child screen
+   * - 'inbox': Inbox screen
    *
-   * NOTE: Left side ALWAYS shows hamburger menu.
+   * NOTE: Inbox icon is now ALWAYS visible on all screens.
+   * Left side ALWAYS shows hamburger menu.
    * Back navigation is via iOS swipe gesture only.
    */
   type: HeaderType;
@@ -72,8 +73,6 @@ export function GlobalHeader({
     navigation.navigate('Inbox');
   };
 
-  const showInboxIcon = type !== 'inbox';
-
   return (
     <View style={styles.container}>
       {/* Left: Hamburger Menu in yellow box (V1 poster style) */}
@@ -92,25 +91,22 @@ export function GlobalHeader({
         <H2 style={styles.title}>MOJ VIS</H2>
       </View>
 
-      {/* Right: Inbox in blue box (hidden on inbox screens) */}
+      {/* Right: Inbox in blue box (always visible) */}
       <TouchableOpacity
-        style={[styles.rightButton, !showInboxIcon && styles.hidden]}
+        style={styles.rightButton}
         onPress={handleInboxPress}
         accessibilityLabel={`Inbox${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
-        disabled={!showInboxIcon}
       >
-        {showInboxIcon && (
-          <View style={styles.inboxIconBox}>
-            <Icon name="inbox" size="md" colorToken="primaryText" />
-            {unreadCount > 0 && (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </Text>
-              </View>
-            )}
-          </View>
-        )}
+        <View style={styles.inboxIconBox}>
+          <Icon name="inbox" size="md" colorToken="primaryText" />
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </Text>
+            </View>
+          )}
+        </View>
       </TouchableOpacity>
     </View>
   );
@@ -161,9 +157,6 @@ const styles = StyleSheet.create({
     borderColor: skin.colors.border,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  hidden: {
-    opacity: skin.opacity.hidden,
   },
   // Badge - square style for poster look (skin tokens)
   badge: {

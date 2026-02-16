@@ -4,10 +4,12 @@
  * Phase 5: View submitted feedback with status and replies.
  *
  * Shows:
- * - Subject + body (original)
- * - Current status label
+ * - Colored category header with icon and subject
+ * - Date and status metadata
+ * - Body in bordered box
  * - Replies list (chronological)
  *
+ * Design: Unified with InboxDetailScreen poster-style layout.
  * Skin-pure: Uses skin tokens only (no hardcoded hex, no magic numbers).
  */
 
@@ -26,11 +28,18 @@ import { useTranslations } from '../../i18n';
 import { feedbackApi } from '../../services/api';
 import type { FeedbackDetailResponse } from '../../types/feedback';
 import type { MainStackParamList } from '../../navigation/types';
-import { skin } from '../../ui/skin';
-import { STATUS_COLORS } from '../../ui/utils/statusColors';
-import { H2, Body, Label, Meta, ButtonText } from '../../ui/Text';
-import { LoadingState, ErrorState } from '../../ui/States';
-import { formatDateTimeCroatian } from '../../utils/dateFormat';
+import {
+  skin,
+  Icon,
+  H2,
+  Body,
+  Label,
+  Meta,
+  LinkText,
+  LoadingState,
+  ErrorState,
+} from '../../ui';
+import { formatDateTimeSlash } from '../../utils/dateFormat';
 
 type DetailRouteProp = RouteProp<MainStackParamList, 'FeedbackDetail'>;
 
@@ -85,8 +94,6 @@ export function FeedbackDetailScreen(): React.JSX.Element {
     );
   }
 
-  const statusColor = STATUS_COLORS[feedback.status] || STATUS_COLORS.zaprimljeno;
-
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <GlobalHeader type="child" />
@@ -98,25 +105,34 @@ export function FeedbackDetailScreen(): React.JSX.Element {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
       >
-        {/* Status Badge */}
-        <View
-          style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}
-        >
-          <ButtonText style={[styles.statusText, { color: statusColor.text }]}>
-            {feedback.status_label}
-          </ButtonText>
+        {/* Colored category header with icon and title */}
+        <View style={styles.categoryHeader}>
+          <View style={styles.headerContent}>
+            <View style={styles.categoryIconBox}>
+              <Icon name="send" size="lg" colorToken="textPrimary" />
+            </View>
+            <Label style={styles.headerTitle} numberOfLines={3}>
+              {feedback.subject.toUpperCase()}
+            </Label>
+          </View>
         </View>
 
-        {/* Original Message */}
-        <View style={styles.messageCard}>
-          <H2 style={styles.subject}>{feedback.subject}</H2>
-          <Meta style={styles.date}>{formatDateTimeCroatian(feedback.created_at)}</Meta>
-          <Body style={styles.body}>{feedback.body}</Body>
+        {/* Meta row: date */}
+        <View style={styles.metaRow}>
+          <View style={styles.metaItem}>
+            <Icon name="calendar" size="sm" colorToken="textMuted" />
+            <Meta style={styles.metaText}>{formatDateTimeSlash(feedback.created_at)}</Meta>
+          </View>
+        </View>
+
+        {/* Body in bordered box */}
+        <View style={styles.bodyContainer}>
+          <LinkText style={styles.bodyText}>{feedback.body}</LinkText>
         </View>
 
         {/* Replies Section */}
         <View style={styles.repliesSection}>
-          <H2 style={styles.sectionTitle}>{t('feedback.detail.replies')}</H2>
+          <H2 style={styles.sectionTitle}>{t('feedback.detail.replies').toUpperCase()}</H2>
 
           {feedback.replies.length === 0 ? (
             <View style={styles.emptyState}>
@@ -128,9 +144,9 @@ export function FeedbackDetailScreen(): React.JSX.Element {
             feedback.replies.map((reply) => (
               <View key={reply.id} style={styles.replyCard}>
                 <View style={styles.replyHeader}>
-                  <Label style={styles.replyLabel}>Odgovor</Label>
+                  <Label style={styles.replyLabel}>ODGOVOR</Label>
                   <Meta style={styles.replyDate}>
-                    {formatDateTimeCroatian(reply.created_at)}
+                    {formatDateTimeSlash(reply.created_at)}
                   </Meta>
                 </View>
                 <Body style={styles.replyBody}>{reply.body}</Body>
@@ -152,57 +168,98 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: skin.spacing.lg,
     paddingBottom: skin.spacing.xxxl,
   },
-  statusBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: skin.spacing.lg,
-    paddingVertical: skin.spacing.sm,
-    borderRadius: skin.borders.radiusSharp,
-    marginBottom: skin.spacing.lg,
-  },
-  statusText: {
-  },
-  messageCard: {
-    backgroundColor: skin.colors.backgroundSecondary,
-    borderRadius: skin.borders.radiusCard,
+
+  // Category header with title (lavender for feedback)
+  categoryHeader: {
     padding: skin.spacing.lg,
-    marginBottom: skin.spacing.xxl,
+    backgroundColor: skin.colors.lavender,
+    borderBottomWidth: skin.borders.widthCard,
+    borderBottomColor: skin.colors.border,
   },
-  subject: {
-    marginBottom: skin.spacing.xs,
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.md,
   },
-  date: {
-    marginBottom: skin.spacing.lg,
+  categoryIconBox: {
+    width: 56,
+    height: 56,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  body: {
-    color: skin.colors.textSecondary,
-    lineHeight: 24,
-  },
-  repliesSection: {
+  headerTitle: {
     flex: 1,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: '700',
+    color: skin.colors.textPrimary,
+    fontFamily: skin.typography.fontFamily.display.bold,
+  },
+
+  // Meta row
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: skin.spacing.lg,
+    paddingHorizontal: skin.spacing.lg,
+    paddingTop: skin.spacing.lg,
+    paddingBottom: skin.spacing.lg,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.xs,
+  },
+  metaText: {
+    color: skin.colors.textMuted,
+  },
+
+  // Body container (bordered box)
+  bodyContainer: {
+    marginHorizontal: skin.spacing.lg,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
+    padding: skin.spacing.lg,
+    backgroundColor: skin.colors.background,
+  },
+  bodyText: {
+    fontSize: skin.typography.fontSize.lg,
+    fontFamily: skin.typography.fontFamily.body.regular,
+    color: skin.colors.textSecondary,
+    lineHeight: skin.typography.fontSize.lg * skin.typography.lineHeight.relaxed,
+  },
+
+  // Replies section
+  repliesSection: {
+    marginTop: skin.spacing.xl,
+    paddingHorizontal: skin.spacing.lg,
   },
   sectionTitle: {
     marginBottom: skin.spacing.md,
+    fontSize: skin.typography.fontSize.sm,
+    letterSpacing: 1,
   },
   emptyState: {
     padding: skin.spacing.xxl,
-    backgroundColor: skin.colors.backgroundSecondary,
-    borderRadius: skin.borders.radiusCard,
+    borderWidth: skin.borders.widthCard,
+    borderColor: skin.colors.border,
     alignItems: 'center',
+    backgroundColor: skin.colors.background,
   },
   emptyText: {
     color: skin.colors.textMuted,
     textAlign: 'center',
   },
   replyCard: {
-    backgroundColor: skin.colors.background,
-    borderWidth: skin.borders.widthThin,
+    borderWidth: skin.borders.widthCard,
     borderColor: skin.colors.border,
-    borderRadius: skin.borders.radiusCard,
     padding: skin.spacing.lg,
     marginBottom: skin.spacing.md,
+    backgroundColor: skin.colors.background,
   },
   replyHeader: {
     flexDirection: 'row',
@@ -211,9 +268,10 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.sm,
   },
   replyLabel: {
-    textTransform: 'uppercase',
+    fontWeight: '700',
   },
   replyDate: {
+    color: skin.colors.textMuted,
   },
   replyBody: {
     color: skin.colors.textSecondary,
