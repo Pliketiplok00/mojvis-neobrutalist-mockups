@@ -26,6 +26,8 @@ import { FeedbackDetailPage } from './pages/feedback/FeedbackDetailPage';
 import { ClickFixListPage } from './pages/click-fix/ClickFixListPage';
 import { ClickFixDetailPage } from './pages/click-fix/ClickFixDetailPage';
 import { MenuExtrasPage } from './pages/menu-extras/MenuExtrasPage';
+import { ServiceListPage } from './pages/services/ServiceListPage';
+import { ServiceEditPage } from './pages/services/ServiceEditPage';
 
 function App() {
   return (
@@ -52,6 +54,8 @@ function App() {
           <Route path="/click-fix/:id" element={<AuthGuard><ClickFixDetailPage /></AuthGuard>} />
           <Route path="/transport" element={<AuthGuard><PlaceholderPage title="Promet" /></AuthGuard>} />
           <Route path="/menu-extras" element={<AuthGuard><MenuExtrasPage /></AuthGuard>} />
+          <Route path="/services" element={<AuthGuard><ServiceListPage /></AuthGuard>} />
+          <Route path="/services/:id" element={<AuthGuard><ServiceEditPage /></AuthGuard>} />
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
