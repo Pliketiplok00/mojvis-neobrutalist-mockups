@@ -808,4 +808,68 @@ export const menuExtrasApi = {
   },
 };
 
+// ============ PUBLIC SERVICES ============
+
+export interface PublicServiceContact {
+  type: 'phone' | 'email';
+  value: string;
+}
+
+export interface PublicServiceWorkingHours {
+  time: string;
+  description: string; // Localized by API
+}
+
+export interface PublicServiceScheduledDate {
+  date: string;
+  time_from: string;
+  time_to: string;
+  created_at: string;
+}
+
+export interface PublicService {
+  id: string;
+  type: 'permanent' | 'periodic';
+  title: string; // Localized by API
+  subtitle: string | null;
+  address: string | null;
+  contacts: PublicServiceContact[];
+  icon: string;
+  icon_bg_color: string;
+  working_hours: PublicServiceWorkingHours[];
+  scheduled_dates: PublicServiceScheduledDate[];
+  note: string | null;
+  has_new_dates: boolean;
+}
+
+export interface PublicServicesResponse {
+  services: PublicService[];
+  total: number;
+}
+
+/**
+ * Public Services API
+ *
+ * Phase 9: Public services (Javne usluge) data.
+ */
+export const publicServicesApi = {
+  /**
+   * Get all active public services (localized)
+   */
+  async getAll(language: 'hr' | 'en' = 'hr'): Promise<PublicServicesResponse> {
+    const url = `${API_BASE_URL}/public-services`;
+    const response = await fetch(url, {
+      headers: {
+        'Accept-Language': language,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json() as Promise<PublicServicesResponse>;
+  },
+};
+
 export default inboxApi;
