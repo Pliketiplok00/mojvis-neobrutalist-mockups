@@ -15,54 +15,32 @@
  * - HR-only UI for admin panel
  */
 
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminInboxApi } from '../../services/api';
 import type { InboxMessage, InboxTag } from '../../types/inbox';
-import { TAG_LABELS, isMunicipalNotice, getMunicipalityFromTags } from '../../types/inbox';
-import { useAuth } from '../../services/AuthContext';
+import { TAG_LABELS } from '../../types/inbox';
 import { styles } from './InboxListPage.styles';
-
-type ViewMode = 'active' | 'archived';
+import { useInboxList } from './useInboxList';
 
 export function InboxListPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [messages, setMessages] = useState<InboxMessage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [total, setTotal] = useState(0);
-  const [viewMode, setViewMode] = useState<ViewMode>('active');
 
-  const fetchMessages = async (pageNum: number, archived: boolean) => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await adminInboxApi.getMessages(pageNum, 20, archived);
-      setMessages(response.messages);
-      setHasMore(response.has_more);
-      setTotal(response.total);
-    } catch (err) {
-      console.error('[Admin] Error fetching messages:', err);
-      setError('Greška pri učitavanju poruka. Pokušajte ponovo.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    void fetchMessages(page, viewMode === 'archived');
-  }, [page, viewMode]);
-
-  // Reset to page 1 when switching tabs
-  const handleViewModeChange = (mode: ViewMode) => {
-    setPage(1);
-    setViewMode(mode);
-  };
+  const {
+    messages,
+    loading,
+    error,
+    page,
+    hasMore,
+    total,
+    viewMode,
+    handleViewModeChange,
+    goToPreviousPage,
+    goToNextPage,
+    handleDelete,
+    handleRestore,
+    refresh,
+    canEditMessage,
+  } = useInboxList();
 
   const handleCreate = () => {
     navigate('/messages/new');
@@ -70,51 +48,6 @@ export function InboxListPage() {
 
   const handleEdit = (id: string) => {
     navigate(`/messages/${id}`);
-  };
-
-  /**
-   * Check if admin can edit/delete/restore a message based on municipal scope
-   */
-  const canEditMessage = (message: InboxMessage): boolean => {
-    if (!user) return false;
-
-    // Breakglass admin can edit any message
-    if (user.is_breakglass) return true;
-
-    // Non-municipal messages are always editable
-    if (!isMunicipalNotice(message.tags)) return true;
-
-    // Check municipal scope
-    const messageMunicipality = getMunicipalityFromTags(message.tags);
-    return user.notice_municipality_scope === messageMunicipality;
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Jeste li sigurni da želite arhivirati ovu poruku?')) {
-      return;
-    }
-
-    try {
-      await adminInboxApi.deleteMessage(id);
-      void fetchMessages(page, viewMode === 'archived');
-    } catch (err) {
-      console.error('[Admin] Error archiving message:', err);
-      alert('Greška pri arhiviranju poruke.');
-    }
-  };
-
-  const handleRestore = async (id: string) => {
-    if (!window.confirm('Jeste li sigurni da želite vratiti ovu poruku?')) {
-      return;
-    }
-
-    try {
-      await adminInboxApi.restoreMessage(id);
-      void fetchMessages(page, viewMode === 'archived');
-    } catch (err) {
-      console.error('[Admin] Error restoring message:', err);
-      alert('Greška pri vraćanju poruke.');
-    }
   };
 
   const formatDate = (isoString: string) => {
@@ -185,7 +118,7 @@ export function InboxListPage() {
             {error}
             <button
               style={styles.retryButton}
-              onClick={() => void fetchMessages(page, viewMode === 'archived')}
+              onClick={refresh}
             >
               Pokušaj ponovo
             </button>
@@ -332,7 +265,7 @@ export function InboxListPage() {
             <button
               style={styles.pageButton}
               disabled={page === 1}
-              onClick={() => setPage(page - 1)}
+              onClick={goToPreviousPage}
             >
               ← Prethodna
             </button>
@@ -340,7 +273,7 @@ export function InboxListPage() {
             <button
               style={styles.pageButton}
               disabled={!hasMore}
-              onClick={() => setPage(page + 1)}
+              onClick={goToNextPage}
             >
               Sljedeća →
             </button>
