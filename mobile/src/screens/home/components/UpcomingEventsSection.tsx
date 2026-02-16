@@ -13,12 +13,63 @@
  * Extracted from HomeScreen.
  */
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { H2, Label, Meta } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
 import { skin } from '../../../ui/skin';
 import type { Event } from '../../../types/event';
+
+interface EventCardProps {
+  event: Event;
+  isFirst: boolean;
+  onPress: (eventId: string) => void;
+}
+
+/**
+ * Single event card - memoized to prevent re-renders
+ */
+const EventCard = memo(function EventCard({
+  event,
+  isFirst,
+  onPress,
+}: EventCardProps): React.JSX.Element {
+  const { day, month } = formatEventDate(event.start_datetime);
+
+  const handlePress = useCallback(() => {
+    onPress(event.id);
+  }, [onPress, event.id]);
+
+  return (
+    <TouchableOpacity
+      style={styles.eventCardWrapper}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
+      {/* Shadow layer */}
+      <View style={[styles.eventCardShadow, isFirst && styles.eventCardShadowFirst]} />
+      {/* Event card */}
+      <View style={[styles.eventCard, isFirst && styles.eventCardFirst]}>
+        {/* Date badge */}
+        <View style={styles.dateBadge}>
+          <Label style={styles.dateBadgeDay}>{day}</Label>
+          <Meta style={styles.dateBadgeMonth}>{month}</Meta>
+        </View>
+        {/* Event content */}
+        <View style={styles.eventContent}>
+          <Label style={styles.eventTitle} numberOfLines={1}>{event.title}</Label>
+          <Meta style={styles.eventLocation} numberOfLines={1}>
+            {event.location ?? ''}
+          </Meta>
+        </View>
+        {/* Arrow */}
+        <View style={styles.eventArrow}>
+          <Icon name="chevron-right" size="md" colorToken="textPrimary" />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+});
 
 interface UpcomingEventsSectionProps {
   /** Upcoming events to display */
@@ -62,40 +113,14 @@ export function UpcomingEventsSection({
       <H2 style={styles.sectionLabel}>{sectionTitle}</H2>
       {events.length > 0 ? (
         // Show actual upcoming events
-        events.map((event, index) => {
-          const { day, month } = formatEventDate(event.start_datetime);
-          const isFirst = index === 0;
-          return (
-            <TouchableOpacity
-              key={event.id}
-              style={styles.eventCardWrapper}
-              onPress={() => onEventPress(event.id)}
-              activeOpacity={0.8}
-            >
-              {/* Shadow layer */}
-              <View style={[styles.eventCardShadow, isFirst && styles.eventCardShadowFirst]} />
-              {/* Event card */}
-              <View style={[styles.eventCard, isFirst && styles.eventCardFirst]}>
-                {/* Date badge */}
-                <View style={styles.dateBadge}>
-                  <Label style={styles.dateBadgeDay}>{day}</Label>
-                  <Meta style={styles.dateBadgeMonth}>{month}</Meta>
-                </View>
-                {/* Event content */}
-                <View style={styles.eventContent}>
-                  <Label style={styles.eventTitle} numberOfLines={1}>{event.title}</Label>
-                  <Meta style={styles.eventLocation} numberOfLines={1}>
-                    {event.location ?? viewAllText}
-                  </Meta>
-                </View>
-                {/* Arrow */}
-                <View style={styles.eventArrow}>
-                  <Icon name="chevron-right" size="md" colorToken="textPrimary" />
-                </View>
-              </View>
-            </TouchableOpacity>
-          );
-        })
+        events.map((event, index) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            isFirst={index === 0}
+            onPress={onEventPress}
+          />
+        ))
       ) : (
         // Fallback placeholder when no events
         <TouchableOpacity

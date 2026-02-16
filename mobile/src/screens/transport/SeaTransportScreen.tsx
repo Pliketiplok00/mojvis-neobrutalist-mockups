@@ -17,7 +17,7 @@
  *           2-part line cards with header slab + icon.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   ScrollView,
@@ -86,9 +86,9 @@ export function SeaTransportScreen(): React.JSX.Element {
     handleRefresh,
   } = useTransportOverview({ transportType: 'sea' });
 
-  const handleLinePress = (lineId: string) => {
+  const handleLinePress = useCallback((lineId: string) => {
     navigation.navigate('SeaLineDetail', { lineId });
-  };
+  }, [navigation]);
 
   if (loading) {
     return (
@@ -162,7 +162,7 @@ export function SeaTransportScreen(): React.JSX.Element {
                 iconName={getSeaTypeIcon(line.subtype)}
                 title={formatLineTitle(line.line_number, line.origin, line.destination)}
                 t={t}
-                onPress={() => handleLinePress(line.id)}
+                onPress={handleLinePress}
                 showSeasonalBadge={line.line_number === '659'}
                 seasonalText={t('transport.seasonal')}
               />

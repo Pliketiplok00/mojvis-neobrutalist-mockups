@@ -7,7 +7,7 @@
  * Extracted from EventsScreen for reusability.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -34,11 +34,13 @@ export const EventItem = memo(function EventItem({ event, allDayText }: EventIte
   const navigation = useNavigation<NavigationProp>();
   const { language } = useTranslations();
 
+  const handlePress = useCallback(() => {
+    navigation.navigate('EventDetail', { eventId: event.id });
+  }, [navigation, event.id]);
+
   return (
     <View style={styles.wrapper}>
-      <Pressable
-        onPress={() => navigation.navigate('EventDetail', { eventId: event.id })}
-      >
+      <Pressable onPress={handlePress}>
         {({ pressed }) => (
           <>
             {/* V1 Poster: Offset shadow layer - hidden when pressed */}

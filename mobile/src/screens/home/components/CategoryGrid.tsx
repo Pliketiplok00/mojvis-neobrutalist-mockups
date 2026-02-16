@@ -7,7 +7,7 @@
  * Extracted from HomeScreen.
  */
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { H2, Label } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -22,6 +22,55 @@ export interface CategoryItem {
   textColor: string;
   route: keyof MainStackParamList;
 }
+
+interface CategoryTileProps {
+  category: CategoryItem;
+  onPress: (category: CategoryItem) => void;
+  label: string;
+}
+
+/**
+ * Single category tile - memoized to prevent re-renders
+ */
+const CategoryTile = memo(function CategoryTile({
+  category,
+  onPress,
+  label,
+}: CategoryTileProps): React.JSX.Element {
+  const handlePress = useCallback(() => {
+    onPress(category);
+  }, [onPress, category]);
+
+  return (
+    <TouchableOpacity
+      style={styles.categoryTileWrapper}
+      onPress={handlePress}
+      activeOpacity={0.8}
+    >
+      {/* Shadow layer for neobrut offset effect */}
+      <View style={styles.categoryTileShadow} />
+      {/* Main tile */}
+      <View
+        style={[
+          styles.categoryTile,
+          { backgroundColor: category.backgroundColor },
+        ]}
+      >
+        <View style={styles.categoryIconBox}>
+          <Icon
+            name={category.icon}
+            size="lg"
+            color={category.textColor}
+            stroke="strong"
+          />
+        </View>
+        <Label style={[styles.categoryLabel, { color: category.textColor }]}>
+          {label}
+        </Label>
+      </View>
+    </TouchableOpacity>
+  );
+});
 
 interface CategoryGridProps {
   /** Category items to display */
@@ -48,34 +97,12 @@ export function CategoryGrid({
       <H2 style={styles.sectionLabel}>{sectionTitle}</H2>
       <View style={styles.categoryGrid}>
         {categories.map((category) => (
-          <TouchableOpacity
+          <CategoryTile
             key={category.key}
-            style={styles.categoryTileWrapper}
-            onPress={() => onCategoryPress(category)}
-            activeOpacity={0.8}
-          >
-            {/* Shadow layer for neobrut offset effect */}
-            <View style={styles.categoryTileShadow} />
-            {/* Main tile */}
-            <View
-              style={[
-                styles.categoryTile,
-                { backgroundColor: category.backgroundColor },
-              ]}
-            >
-              <View style={styles.categoryIconBox}>
-                <Icon
-                  name={category.icon}
-                  size="lg"
-                  color={category.textColor}
-                  stroke="strong"
-                />
-              </View>
-              <Label style={[styles.categoryLabel, { color: category.textColor }]}>
-                {t(`home.categoryLabels.${category.key}`).toUpperCase()}
-              </Label>
-            </View>
-          </TouchableOpacity>
+            category={category}
+            onPress={onCategoryPress}
+            label={t(`home.categoryLabels.${category.key}`).toUpperCase()}
+          />
         ))}
       </View>
     </View>

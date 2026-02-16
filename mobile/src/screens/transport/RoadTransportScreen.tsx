@@ -17,7 +17,7 @@
  *           2-part line cards with header slab + icon.
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   ScrollView,
@@ -83,9 +83,9 @@ export function RoadTransportScreen(): React.JSX.Element {
     PRAZNIK: t('transport.dayTypes.PRAZNIK'),
   };
 
-  const handleLinePress = (lineId: string) => {
+  const handleLinePress = useCallback((lineId: string) => {
     navigation.navigate('RoadLineDetail', { lineId });
-  };
+  }, [navigation]);
 
   if (loading) {
     return (
@@ -161,7 +161,7 @@ export function RoadTransportScreen(): React.JSX.Element {
                 iconName={getRoadTypeIcon(line.subtype)}
                 title={line.name}
                 t={t}
-                onPress={() => handleLinePress(line.id)}
+                onPress={handleLinePress}
               />
             ))
           )}

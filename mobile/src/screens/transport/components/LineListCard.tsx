@@ -9,7 +9,7 @@
  * - BOTTOM: White body with meta info + chevron
  */
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { H2, Meta } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -35,8 +35,8 @@ interface LineListCardProps {
   title: string;
   /** Translation function */
   t: (key: string) => string;
-  /** Press handler */
-  onPress: () => void;
+  /** Press handler - receives line ID */
+  onPress: (lineId: string) => void;
   /** Show seasonal badge (for line 659) */
   showSeasonalBadge?: boolean;
   /** Seasonal badge text */
@@ -59,9 +59,13 @@ export const LineListCard = memo(function LineListCard({
 }: LineListCardProps): React.JSX.Element {
   const isSea = transportType === 'sea';
 
+  const handlePress = useCallback(() => {
+    onPress(line.id);
+  }, [onPress, line.id]);
+
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       style={({ pressed }) => [
         styles.wrapper,
         pressed && styles.pressed,

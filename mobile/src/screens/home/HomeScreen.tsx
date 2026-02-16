@@ -14,7 +14,7 @@
  * REFACTORED: Now uses UI primitives from src/ui/
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -79,11 +79,11 @@ export function HomeScreen(): React.JSX.Element {
   const { t } = useTranslations();
   const { banners, upcomingEvents } = useHomeData();
 
-  const handleMenuPress = (): void => {
+  const handleMenuPress = useCallback((): void => {
     openMenu();
-  };
+  }, [openMenu]);
 
-  const handleCategoryPress = (category: CategoryItem): void => {
+  const handleCategoryPress = useCallback((category: CategoryItem): void => {
     if (category.route === 'StaticPage') {
       // Navigate to static page with slug
       navigation.navigate('StaticPage', { slug: category.key });
@@ -92,19 +92,19 @@ export function HomeScreen(): React.JSX.Element {
     } else if (category.route === 'TransportHub') {
       navigation.navigate('TransportHub');
     }
-  };
+  }, [navigation]);
 
-  const handleFeedbackPress = (): void => {
+  const handleFeedbackPress = useCallback((): void => {
     navigation.navigate('FeedbackForm');
-  };
+  }, [navigation]);
 
-  const handleEventsPress = (): void => {
+  const handleEventsPress = useCallback((): void => {
     navigation.navigate('Events');
-  };
+  }, [navigation]);
 
-  const handleEventPress = (eventId: string): void => {
+  const handleEventPress = useCallback((eventId: string): void => {
     navigation.navigate('EventDetail', { eventId });
-  };
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -7,13 +7,59 @@
  * Extracted from InboxListScreen for reusability.
  */
 
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { Label } from '../../../ui/Text';
 import { skin } from '../../../ui/skin';
 import type { InboxTag } from '../../../types/inbox';
 
 const { inbox: inboxTokens } = skin.components;
+
+interface TagChipProps {
+  tag: InboxTag;
+  isActive: boolean;
+  onToggleTag: (tag: InboxTag) => void;
+  label: string;
+  backgroundColor: string;
+  textColor: string;
+}
+
+/**
+ * Single tag chip - memoized to prevent re-renders
+ */
+const TagChip = memo(function TagChip({
+  tag,
+  isActive,
+  onToggleTag,
+  label,
+  backgroundColor,
+  textColor,
+}: TagChipProps): React.JSX.Element {
+  const handlePress = useCallback(() => {
+    onToggleTag(tag);
+  }, [onToggleTag, tag]);
+
+  return (
+    <View style={styles.chipWrapper}>
+      {/* Neobrut shadow layer - only visible when selected */}
+      {isActive && <View style={styles.chipShadow} />}
+      <Pressable
+        style={[
+          styles.chip,
+          { backgroundColor },
+          isActive && styles.chipSelected,
+        ]}
+        onPress={handlePress}
+        accessibilityRole="button"
+        accessibilityState={{ selected: isActive }}
+      >
+        <Label style={[styles.chipText, { color: textColor }]}>
+          {label}
+        </Label>
+      </Pressable>
+    </View>
+  );
+});
 
 interface TagFilterBarProps {
   availableTags: InboxTag[];
@@ -39,32 +85,17 @@ export function TagFilterBar({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {availableTags.map((tag) => {
-          const isActive = selectedTags.includes(tag);
-          // Per-tag background and text colors (always applied)
-          const tagBackground = inboxTokens.tagFilter.chipBackgrounds[tag];
-          const tagTextColor = inboxTokens.tagFilter.chipTextColors[tag];
-          return (
-            <View key={tag} style={styles.chipWrapper}>
-              {/* Neobrut shadow layer - only visible when selected */}
-              {isActive && <View style={styles.chipShadow} />}
-              <Pressable
-                style={[
-                  styles.chip,
-                  { backgroundColor: tagBackground },
-                  isActive && styles.chipSelected,
-                ]}
-                onPress={() => onToggleTag(tag)}
-                accessibilityRole="button"
-                accessibilityState={{ selected: isActive }}
-              >
-                <Label style={[styles.chipText, { color: tagTextColor }]}>
-                  {t(`inbox.tags.${tag}`)}
-                </Label>
-              </Pressable>
-            </View>
-          );
-        })}
+        {availableTags.map((tag) => (
+          <TagChip
+            key={tag}
+            tag={tag}
+            isActive={selectedTags.includes(tag)}
+            onToggleTag={onToggleTag}
+            label={t(`inbox.tags.${tag}`)}
+            backgroundColor={inboxTokens.tagFilter.chipBackgrounds[tag]}
+            textColor={inboxTokens.tagFilter.chipTextColors[tag]}
+          />
+        ))}
       </ScrollView>
     </View>
   );
