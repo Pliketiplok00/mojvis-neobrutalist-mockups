@@ -37,6 +37,7 @@ import { adminMenuExtrasRoutes } from './routes/admin-menu-extras.js';
 import { adminAuthRoutes } from './routes/admin-auth.js';
 import { adminTranslateRoutes } from './routes/admin-translate.js';
 import { adminPublicServicesRoutes } from './routes/admin-public-services.js';
+import { publicServicesRoutes } from './routes/public-services.js';
 import { adminAuthHook } from './middleware/auth.js';
 
 // Create Fastify instance with logging
@@ -136,6 +137,9 @@ async function registerPlugins(): Promise<void> {
 
   // Admin public services routes
   await fastify.register(adminPublicServicesRoutes);
+
+  // Public services routes (for mobile)
+  await fastify.register(publicServicesRoutes);
 }
 
 /**
