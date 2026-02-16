@@ -12,7 +12,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { adminPublicServicesApi, PublicService } from '../../services/api';
+import { adminPublicServicesApi } from '../../services/api';
+import type { PublicService } from '../../services/api';
 
 export function ServiceListPage() {
   const navigate = useNavigate();

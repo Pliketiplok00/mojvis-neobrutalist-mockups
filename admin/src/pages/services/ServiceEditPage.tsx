@@ -14,8 +14,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import {
-  adminPublicServicesApi,
+import { adminPublicServicesApi } from '../../services/api';
+import type {
   PublicService,
   Contact,
   WorkingHours,
