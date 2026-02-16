@@ -7,7 +7,7 @@
  * Extracted from InboxListScreen for reusability.
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { ButtonText, Meta } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -30,7 +30,7 @@ interface SentListItemProps {
 /**
  * Single sent item (feedback or click-fix) list item
  */
-export function SentListItem({
+export const SentListItem = memo(function SentListItem({
   item,
   onPress,
   t,
@@ -97,7 +97,7 @@ export function SentListItem({
       </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {

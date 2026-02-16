@@ -13,7 +13,7 @@
  * Skin-pure: Uses skin tokens only.
  */
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import {
   View,
   StyleSheet,
@@ -89,7 +89,7 @@ const filterFutureDates = (dates: ScheduledDateItem[]): ScheduledDateItem[] => {
   return dates.filter((d) => new Date(d.date) >= today);
 };
 
-export function ServiceAccordionCard({
+export const ServiceAccordionCard = memo(function ServiceAccordionCard({
   icon,
   title,
   subtitle,
@@ -200,7 +200,7 @@ export function ServiceAccordionCard({
       </View>
     </View>
   );
-}
+});
 
 const ICON_BOX_SIZE = 44;
 const SHADOW_OFFSET = 4;

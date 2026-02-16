@@ -7,7 +7,7 @@
  * Extracted from InboxListScreen for reusability.
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Body, Meta, ButtonText, Label } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -101,7 +101,7 @@ interface MessageListItemProps {
 /**
  * Single inbox message list item
  */
-export function MessageListItem({
+export const MessageListItem = memo(function MessageListItem({
   message,
   isUnread,
   onPress,
@@ -169,7 +169,7 @@ export function MessageListItem({
       </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {

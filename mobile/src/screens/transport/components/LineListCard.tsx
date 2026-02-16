@@ -9,7 +9,7 @@
  * - BOTTOM: White body with meta info + chevron
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { H2, Meta } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -46,7 +46,7 @@ interface LineListCardProps {
 /**
  * Line card with colored header slab and white body
  */
-export function LineListCard({
+export const LineListCard = memo(function LineListCard({
   line,
   transportType,
   headerBackground,
@@ -137,7 +137,7 @@ export function LineListCard({
       </View>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {

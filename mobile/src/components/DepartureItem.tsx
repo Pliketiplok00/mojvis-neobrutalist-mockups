@@ -15,7 +15,7 @@
  * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex).
  */
 
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import {
   View,
   Pressable,
@@ -71,7 +71,7 @@ function formatTime(time: string): string {
   return `${parts[0]}:${parts[1]}`;
 }
 
-export function DepartureItem({ departure, transportType }: DepartureItemProps): React.JSX.Element {
+export const DepartureItem = memo(function DepartureItem({ departure, transportType }: DepartureItemProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
 
   const toggleExpanded = () => {
@@ -190,7 +190,7 @@ export function DepartureItem({ departure, transportType }: DepartureItemProps):
       </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -7,7 +7,7 @@
  * Extracted from EventsScreen for reusability.
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -30,7 +30,7 @@ interface EventItemProps {
  * Event list item - V1 Poster style with icons and dual-layer shadow
  * Uses Pressable to avoid opacity dimming; shadow hides on press.
  */
-export function EventItem({ event, allDayText }: EventItemProps): React.JSX.Element {
+export const EventItem = memo(function EventItem({ event, allDayText }: EventItemProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { language } = useTranslations();
 
@@ -72,7 +72,7 @@ export function EventItem({ event, allDayText }: EventItemProps): React.JSX.Elem
       </Pressable>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   // V1 Poster: Event cards with thick borders and dual-layer shadow
