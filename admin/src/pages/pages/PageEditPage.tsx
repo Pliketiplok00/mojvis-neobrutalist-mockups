@@ -14,7 +14,7 @@
  * - Supervisor can modify structure, lock/unlock, publish
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
@@ -29,6 +29,7 @@ import { isValidSlug, canAddMapBlock } from '../../types/static-page';
 import { styles } from './PageEditPage.styles';
 import { BlockTypeSelector } from './blocks/BlockTypeSelector';
 import { BlockEditor } from './blocks/BlockEditor';
+import { getDefaultBlockContent, formatDate } from './utils/blockDefaults';
 
 export function PageEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -202,35 +203,35 @@ export function PageEditPage() {
     }
   };
 
-  const handleBlockContentChange = (blockId: string, newContent: ContentBlock['content']) => {
+  const handleBlockContentChange = useCallback((blockId: string, newContent: ContentBlock['content']) => {
     setBlocks((prev) =>
       prev.map((b) =>
         b.id === blockId ? { ...b, content: newContent } : b
       )
     );
-  };
+  }, []);
 
-  const handleToggleStructureLock = (blockId: string) => {
+  const handleToggleStructureLock = useCallback((blockId: string) => {
     setBlocks((prev) =>
       prev.map((b) =>
         b.id === blockId ? { ...b, structure_locked: !b.structure_locked } : b
       )
     );
-  };
+  }, []);
 
-  const handleToggleContentLock = (blockId: string) => {
+  const handleToggleContentLock = useCallback((blockId: string) => {
     setBlocks((prev) =>
       prev.map((b) =>
         b.id === blockId ? { ...b, content_locked: !b.content_locked } : b
       )
     );
-  };
+  }, []);
 
   /**
    * Move a block up or down in the order.
    * Re-normalizes order values to sequential integers (0, 1, 2, ...).
    */
-  const handleMoveBlock = (blockId: string, direction: 'up' | 'down') => {
+  const handleMoveBlock = useCallback((blockId: string, direction: 'up' | 'down') => {
     setBlocks((prev) => {
       // Sort by current order first
       const sorted = [...prev].sort((a, b) =>
@@ -255,12 +256,15 @@ export function PageEditPage() {
         order: index,
       }));
     });
-  };
+  }, []);
 
   // Sort blocks by order for rendering
-  const sortedBlocks = [...blocks].sort((a, b) =>
-    (Number.isFinite(a.order) ? a.order : 1e9) -
-    (Number.isFinite(b.order) ? b.order : 1e9)
+  const sortedBlocks = useMemo(
+    () => [...blocks].sort((a, b) =>
+      (Number.isFinite(a.order) ? a.order : 1e9) -
+      (Number.isFinite(b.order) ? b.order : 1e9)
+    ),
+    [blocks]
   );
 
   if (loading) {
@@ -458,74 +462,5 @@ export function PageEditPage() {
     </DashboardLayout>
   );
 }
-
-/**
- * Get default content for new block
- */
-function getDefaultBlockContent(type: BlockType): ContentBlock['content'] {
-  switch (type) {
-    case 'text':
-      return {
-        title_hr: null,
-        title_en: null,
-        body_hr: '',
-        body_en: '',
-      };
-    case 'highlight':
-      return {
-        title_hr: null,
-        title_en: null,
-        body_hr: '',
-        body_en: '',
-        icon: null,
-        variant: 'info',
-      };
-    case 'card_list':
-      return { cards: [] };
-    case 'media':
-      return {
-        url: '',
-        caption_hr: null,
-        caption_en: null,
-        alt_hr: null,
-        alt_en: null,
-        credit_hr: null,
-        credit_en: null,
-      };
-    case 'map':
-      return {
-        lat: 0,
-        lng: 0,
-        zoom: 14,
-        title_hr: null,
-        title_en: null,
-        address_hr: null,
-        address_en: null,
-        note_hr: null,
-        note_en: null,
-      };
-    case 'contact':
-      return { contacts: [] };
-    case 'link_list':
-      return { links: [] };
-    default:
-      return {};
-  }
-}
-
-/**
- * Format date for display
- */
-function formatDate(isoString: string): string {
-  const date = new Date(isoString);
-  return date.toLocaleDateString('hr-HR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
-
 
 export default PageEditPage;
