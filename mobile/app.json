@@ -33,6 +33,18 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/44e98e41-1128-4283-8fe9-ff12c60e68c4"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "44e98e41-1128-4283-8fe9-ff12c60e68c4"
+      }
+    },
+    "owner": "pliketiplok"
   }
 }
