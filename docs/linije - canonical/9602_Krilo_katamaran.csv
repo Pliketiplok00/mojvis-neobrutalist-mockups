@@ -1,0 +1,43 @@
+﻿"LINIJA 9602 — VIS ↔ HVAR ↔ MILNA(Brač) ↔ SPLIT  (katamaran, Krilo)",,,,,,
+"Samo putnici (bez auta)  |  Split–Vis: izvansezonski 7,20€ / sezonski 10,00€  |  Vis–Hvar: 5,00–8,50€  |  Split–Hvar: 6,40–10,00€  |  Otočni Vis–Split: 3,90€",,,,,,
+,,,,,,
+IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.,,,,,,
+Smjer,Dani,VIS,HVAR,MILNA (Brač),SPLIT,Napomene
+VIS → SPLIT,"PON, ČET, PET, SUB",07:00,—,—,08:10,Direktno Vis→Split
+VIS → SPLIT,UTORAK,07:00,07:45,08:00,08:35,Sve stanice (Hvar + Milna)
+VIS → SPLIT,SRIJEDA,07:00,—,08:00,08:30,Preskače Hvar! Staje na Milni.
+VIS → SPLIT,NED / BLAGDAN,18:00,—,—,19:10,Direktno Vis→Split
+SPLIT → VIS,"PON, ČET, SUB",16:10,15:55,15:35,15:00,Sve stanice
+SPLIT → VIS,UTORAK,16:35,15:55,—,15:00,Preskače Milnu! Staje na Hvaru.
+SPLIT → VIS,SRIJEDA,16:30,—,15:35,15:00,Preskače Hvar! Staje na Milni.
+SPLIT → VIS,PETAK,21:40,—,—,20:30,Direktno Split→Vis (večernji)
+SPLIT → VIS,NED/BLAG (01.01–22.02 & 06.12–31.12),21:40,—,—,20:30,Direktno Split→Vis
+SPLIT → VIS,NED/BLAG (01.03–28.05 & 28.09–29.11),20:40,—,—,19:30,Direktno Split→Vis
+,,,,,,
+NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.,,,,,,
+Smjer,Dani,VIS,HVAR,MILNA (Brač),SPLIT,Napomene
+VIS → SPLIT,"PON, ČET, PET, SUB",07:00,—,—,08:10,Direktno Vis→Split
+VIS → SPLIT,UTORAK,07:05,07:55,08:00,08:45,Sve stanice (Hvar + Milna)
+VIS → SPLIT,SRIJEDA,07:00,—,08:00,08:30,Preskače Hvar! Staje na Milni.
+VIS → SPLIT,NED / BLAGDAN,19:00,—,—,20:10,Direktno Vis→Split
+SPLIT → VIS,"PON, ČET, SUB",17:10,16:55,16:35,16:00,Sve stanice
+SPLIT → VIS,UTORAK,17:35,16:55,—,16:00,Preskače Milnu! Staje na Hvaru.
+SPLIT → VIS,SRIJEDA,17:30,—,16:35,16:00,Preskače Hvar! Staje na Milni.
+SPLIT → VIS,PETAK,21:40,—,—,20:30,Direktno Split→Vis (večernji)
+SPLIT → VIS,NED / BLAGDAN,21:40,—,—,20:30,Direktno Split→Vis
+,,,,,,
+VISOKA SEZONA  03.07.–20.09.,,,,,,
+Smjer,Dani,VIS,HVAR,MILNA (Brač),SPLIT,Napomene
+VIS → SPLIT,"PON, ČET, PET, SUB, NED",07:00,—,—,08:10,Direktno Vis→Split
+VIS → SPLIT,UTORAK,07:05,07:55,08:00,08:45,Sve stanice (Hvar + Milna)
+VIS → SPLIT,SRIJEDA,07:00,—,08:00,08:30,Preskače Hvar! Staje na Milni.
+SPLIT → VIS,"PON, ČET, PET, SUB, NED",19:10,—,—,18:00,Direktno Split→Vis
+SPLIT → VIS,UTORAK,21:40,21:00,—,20:00,Preskače Milnu! Staje na Hvaru.
+SPLIT → VIS,SRIJEDA,19:30,—,18:35,18:00,Preskače Hvar! Staje na Milni.
+,,,,,,
+NAPOMENE:,,,,,,
+"• Izvansezonski cjenik: Vis–Split 7,20€ | Vis–Hvar 5,00€ | Vis–Milna 6,40€ | Split–Hvar 6,40€ | Split–Milna 5,00€",,,,,,
+"• Sezonski cjenik (29.05–27.09): Vis–Split 10,00€ | Vis–Hvar 8,50€ | Vis–Milna 10,00€ | Split–Hvar 10,00€ | Split–Milna 7,70€",,,,,,
+"• Otočni (cijela god.): Vis–Split 3,90€ | Vis–Hvar 3,30€ | Djeca 3–12: po 3,20–4,40€ | Kućni ljubimci = 50% cijene karte",,,,,,
+"• Kupovina karata: online krilo.hr ili prodajna mjesta (Split, Hvar, Vis, Korčula, Dubrovnik...)",,,,,,
+,,,,,,

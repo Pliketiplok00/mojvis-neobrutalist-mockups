@@ -1,0 +1,705 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 2000" width="1800" height="2000">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap');
+      
+      .title { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; fill: #151820; }
+      .subtitle { font-family: 'Space Mono', monospace; font-size: 12px; fill: #5C606B; }
+      .screen-name { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; fill: white; }
+      .screen-path { font-family: 'Space Mono', monospace; font-size: 7px; fill: rgba(255,255,255,0.7); }
+      .component { font-family: 'Space Mono', monospace; font-size: 9px; fill: #151820; }
+      .component-small { font-family: 'Space Mono', monospace; font-size: 7px; fill: #5C606B; }
+      .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; fill: #151820; }
+      .shared { fill: #FCE4EC; stroke: #E91E63; stroke-width: 1.5; }
+      .primitive { fill: #E3F2FD; stroke: #1976D2; stroke-width: 1; }
+      .composite { fill: #FFF3E0; stroke: #FF9800; stroke-width: 1; }
+      .screen-box { stroke: #151820; stroke-width: 2; }
+      .connector { stroke: #999; stroke-width: 1; fill: none; }
+      .connector-branch { stroke: #CCC; stroke-width: 1; fill: none; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1800" height="2000" fill="#F7F4EE"/>
+  
+  <!-- Title -->
+  <text x="900" y="40" text-anchor="middle" class="title">MOJ VIS — Screen Composition Trees</text>
+  <text x="900" y="60" text-anchor="middle" class="subtitle">Hijerarhija komponenti za svih 21 ekrana • Svaki screen prikazan kao stablo komponenti</text>
+  
+  <!-- Legend -->
+  <g transform="translate(50, 80)">
+    <rect x="0" y="0" width="16" height="16" class="shared"/>
+    <text x="22" y="12" class="component">Shared</text>
+    <rect x="80" y="0" width="16" height="16" class="composite"/>
+    <text x="102" y="12" class="component">Composite</text>
+    <rect x="180" y="0" width="16" height="16" class="primitive"/>
+    <text x="202" y="12" class="component">Primitive</text>
+    <line x1="280" y1="8" x2="320" y2="8" class="connector"/>
+    <text x="330" y="12" class="component">Parent→Child</text>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- ROW 1: CORE NAVIGATION (4 screens) -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 120)">
+    <text x="0" y="0" class="section-title">1. CORE NAVIGATION</text>
+    
+    <!-- HomeScreen -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#2788C9" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">HomeScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/home/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="55" height="18" rx="2" class="shared"/>
+        <text x="27" y="34" text-anchor="middle" class="component">BannerList</text>
+        <text x="60" y="34" class="component-small">(opt)</text>
+        
+        <rect x="0" y="44" width="50" height="18" rx="2" class="composite"/>
+        <text x="25" y="56" text-anchor="middle" class="component">HeroSlab</text>
+        <rect x="55" y="44" width="25" height="18" rx="2" class="primitive"/>
+        <text x="67" y="56" text-anchor="middle" class="component">H1</text>
+        
+        <rect x="0" y="66" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="78" text-anchor="middle" class="component">CategoryGrid</text>
+        <rect x="75" y="66" width="35" height="18" rx="2" class="primitive"/>
+        <text x="92" y="78" text-anchor="middle" class="component">Card</text>
+        <text x="115" y="78" class="component-small">×4</text>
+        
+        <rect x="0" y="88" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="100" text-anchor="middle" class="component">EventCard[]</text>
+        
+        <rect x="0" y="110" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="122" text-anchor="middle" class="component">FeedbackCTA</text>
+        <rect x="75" y="110" width="40" height="18" rx="2" class="primitive"/>
+        <text x="95" y="122" text-anchor="middle" class="component">Button</text>
+      </g>
+    </g>
+    
+    <!-- TransportHubScreen -->
+    <g transform="translate(420, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#2788C9" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">TransportHubScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/transport/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="55" height="18" rx="2" class="shared"/>
+        <text x="27" y="34" text-anchor="middle" class="component">BannerList</text>
+        
+        <rect x="0" y="44" width="55" height="18" rx="2" fill="#15AF50" stroke="#151820"/>
+        <text x="27" y="56" text-anchor="middle" class="component" fill="white">RoadTile</text>
+        
+        <rect x="0" y="66" width="50" height="18" rx="2" fill="#2788C9" stroke="#151820"/>
+        <text x="25" y="78" text-anchor="middle" class="component" fill="white">SeaTile</text>
+        
+        <rect x="0" y="88" width="50" height="18" rx="2" class="composite"/>
+        <text x="25" y="100" text-anchor="middle" class="component">InfoNote</text>
+      </g>
+    </g>
+    
+    <!-- InboxListScreen -->
+    <g transform="translate(840, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#B796C6" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">InboxListScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/inbox/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        <text x="75" y="12" class="component-small">(inbox)</text>
+        
+        <rect x="0" y="22" width="75" height="18" rx="2" class="composite"/>
+        <text x="37" y="34" text-anchor="middle" class="component">TabNavigation</text>
+        <rect x="80" y="22" width="30" height="18" rx="2" class="primitive"/>
+        <text x="95" y="34" text-anchor="middle" class="component">Tab</text>
+        <text x="115" y="34" class="component-small">×2</text>
+        
+        <rect x="0" y="44" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="56" text-anchor="middle" class="component">TagFilterBar</text>
+        <rect x="75" y="44" width="40" height="18" rx="2" class="primitive"/>
+        <text x="95" y="56" text-anchor="middle" class="component">Badge</text>
+        <text x="120" y="56" class="component-small">×6</text>
+        
+        <rect x="0" y="66" width="75" height="18" rx="2" class="composite"/>
+        <text x="37" y="78" text-anchor="middle" class="component">MessageItem[]</text>
+      </g>
+    </g>
+    
+    <!-- EventsScreen -->
+    <g transform="translate(1260, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#B796C6" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">EventsScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/events/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="50" height="18" rx="2" class="composite"/>
+        <text x="25" y="34" text-anchor="middle" class="component">HeroSlab</text>
+        
+        <rect x="0" y="44" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="56" text-anchor="middle" class="component">CalendarGrid</text>
+        <rect x="75" y="44" width="45" height="18" rx="2" class="primitive"/>
+        <text x="97" y="56" text-anchor="middle" class="component">DayCell</text>
+        <text x="125" y="56" class="component-small">×21</text>
+        
+        <rect x="0" y="66" width="90" height="18" rx="2" class="composite"/>
+        <text x="45" y="78" text-anchor="middle" class="component">SelectedDayEvents</text>
+        <rect x="95" y="66" width="60" height="18" rx="2" class="composite"/>
+        <text x="125" y="78" text-anchor="middle" class="component">EventCard</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- ROW 2: TRANSPORT DETAIL (3 screens) -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 290)">
+    <text x="0" y="0" class="section-title">2. TRANSPORT DETAIL</text>
+    
+    <!-- RoadTransportScreen -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#15AF50" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">RoadTransportScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/transport/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="55" height="18" rx="2" class="shared"/>
+        <text x="27" y="34" text-anchor="middle" class="component">BannerList</text>
+        
+        <rect x="0" y="44" width="65" height="18" rx="2" fill="#15AF50" stroke="#151820"/>
+        <text x="32" y="56" text-anchor="middle" class="component" fill="white">HeaderSlab</text>
+        
+        <rect x="0" y="66" width="60" height="18" rx="2" class="composite"/>
+        <text x="30" y="78" text-anchor="middle" class="component">LineCard[]</text>
+        <rect x="65" y="66" width="55" height="18" rx="2" fill="#15AF50" stroke="#151820"/>
+        <text x="92" y="78" text-anchor="middle" class="component" fill="white">GreenHdr</text>
+        <rect x="125" y="66" width="55" height="18" rx="2" class="primitive"/>
+        <text x="152" y="78" text-anchor="middle" class="component">TimeBlock</text>
+      </g>
+    </g>
+    
+    <!-- SeaTransportScreen -->
+    <g transform="translate(420, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#2788C9" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">SeaTransportScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/transport/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="55" height="18" rx="2" class="shared"/>
+        <text x="27" y="34" text-anchor="middle" class="component">BannerList</text>
+        
+        <rect x="0" y="44" width="65" height="18" rx="2" fill="#2788C9" stroke="#151820"/>
+        <text x="32" y="56" text-anchor="middle" class="component" fill="white">HeaderSlab</text>
+        
+        <rect x="0" y="66" width="60" height="18" rx="2" class="composite"/>
+        <text x="30" y="78" text-anchor="middle" class="component">LineCard[]</text>
+        <rect x="65" y="66" width="40" height="18" rx="2" fill="#2788C9" stroke="#151820"/>
+        <text x="85" y="78" text-anchor="middle" class="component" fill="white">Blue</text>
+        <rect x="110" y="66" width="35" height="18" rx="2" fill="#3D9E9E" stroke="#151820"/>
+        <text x="127" y="78" text-anchor="middle" class="component" fill="white">Teal</text>
+        <rect x="150" y="66" width="35" height="18" rx="2" fill="#FDC010" stroke="#151820"/>
+        <text x="167" y="78" text-anchor="middle" class="component">659</text>
+      </g>
+    </g>
+    
+    <!-- LineDetailScreen -->
+    <g transform="translate(840, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#2788C9" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">LineDetailScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/transport/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="34" text-anchor="middle" class="component">ColoredSlab</text>
+        
+        <rect x="0" y="44" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="56" text-anchor="middle" class="component">DateSelector</text>
+        <text x="75" y="56" class="component-small">(platform)</text>
+        
+        <rect x="0" y="66" width="75" height="18" rx="2" class="composite"/>
+        <text x="37" y="78" text-anchor="middle" class="component">DirectionTabs</text>
+        <rect x="80" y="66" width="30" height="18" rx="2" class="primitive"/>
+        <text x="95" y="78" text-anchor="middle" class="component">Tab</text>
+        <text x="115" y="78" class="component-small">×2</text>
+        
+        <rect x="0" y="88" width="85" height="18" rx="2" class="composite"/>
+        <text x="42" y="100" text-anchor="middle" class="component">DepartureItem[]</text>
+        <rect x="90" y="88" width="50" height="18" rx="2" class="primitive"/>
+        <text x="115" y="100" text-anchor="middle" class="component">TimeBlk</text>
+        <rect x="145" y="88" width="50" height="18" rx="2" class="composite"/>
+        <text x="170" y="100" text-anchor="middle" class="component">Timeline</text>
+        
+        <rect x="0" y="110" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="122" text-anchor="middle" class="component">TicketInfoBox</text>
+        <text x="75" y="122" class="component-small">(4 var)</text>
+        
+        <rect x="0" y="132" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="144" text-anchor="middle" class="component">ContactCard</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- ROW 3: CONTENT DETAIL (4 screens) -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 480)">
+    <text x="0" y="0" class="section-title">3. CONTENT DETAIL</text>
+    
+    <!-- InboxDetailScreen -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#B796C6" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">InboxDetailScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/inbox/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="34" text-anchor="middle" class="component">UrgentBadge</text>
+        <text x="70" y="34" class="component-small">(cond)</text>
+        
+        <rect x="0" y="44" width="45" height="18" rx="2" class="composite"/>
+        <text x="22" y="56" text-anchor="middle" class="component">Tags[]</text>
+        <rect x="50" y="44" width="40" height="18" rx="2" class="primitive"/>
+        <text x="70" y="56" text-anchor="middle" class="component">Badge</text>
+        
+        <rect x="0" y="66" width="25" height="18" rx="2" class="primitive"/>
+        <text x="12" y="78" text-anchor="middle" class="component">H1</text>
+        
+        <rect x="0" y="88" width="50" height="18" rx="2" class="primitive"/>
+        <text x="25" y="100" text-anchor="middle" class="component">LinkText</text>
+      </g>
+    </g>
+    
+    <!-- EventDetailScreen -->
+    <g transform="translate(420, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#B796C6" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">EventDetailScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/events/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="90" height="18" rx="2" class="composite"/>
+        <text x="45" y="34" text-anchor="middle" class="component">HeroMediaHeader</text>
+        <rect x="95" y="22" width="50" height="18" rx="2" class="primitive"/>
+        <text x="120" y="34" text-anchor="middle" class="component">Carousel</text>
+        
+        <rect x="0" y="44" width="50" height="18" rx="2" fill="#FDC010" stroke="#151820"/>
+        <text x="25" y="56" text-anchor="middle" class="component">TitleSlab</text>
+        
+        <rect x="0" y="66" width="50" height="18" rx="2" class="composite"/>
+        <text x="25" y="78" text-anchor="middle" class="component">InfoTiles</text>
+        <rect x="55" y="66" width="35" height="18" rx="2" class="primitive"/>
+        <text x="72" y="78" text-anchor="middle" class="component">Icon</text>
+        <text x="95" y="78" class="component-small">×3</text>
+        
+        <rect x="0" y="88" width="80" height="18" rx="2" class="composite"/>
+        <text x="40" y="100" text-anchor="middle" class="component">ReminderToggle</text>
+        <rect x="85" y="88" width="45" height="18" rx="2" class="primitive"/>
+        <text x="107" y="100" text-anchor="middle" class="component">Switch</text>
+        
+        <rect x="0" y="110" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="122" text-anchor="middle" class="component">ShareButton</text>
+      </g>
+    </g>
+    
+    <!-- FaunaScreen -->
+    <g transform="translate(840, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#3D9E9E" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">FaunaScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/nature/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="90" height="18" rx="2" class="composite"/>
+        <text x="45" y="34" text-anchor="middle" class="component">HeroMediaHeader</text>
+        
+        <rect x="0" y="44" width="50" height="18" rx="2" fill="#FDC010" stroke="#151820"/>
+        <text x="25" y="56" text-anchor="middle" class="component">TitleSlab</text>
+        
+        <rect x="0" y="66" width="70" height="18" rx="2" fill="#D64E2D" stroke="#151820"/>
+        <text x="35" y="78" text-anchor="middle" class="component" fill="white">WarningCard</text>
+        <text x="75" y="78" class="component-small">"Don't Disturb"</text>
+        
+        <rect x="0" y="88" width="75" height="18" rx="2" class="composite"/>
+        <text x="37" y="100" text-anchor="middle" class="component">SpeciesCard[]</text>
+        <rect x="80" y="88" width="40" height="18" rx="2" class="primitive"/>
+        <text x="100" y="100" text-anchor="middle" class="component">Image</text>
+        <rect x="125" y="88" width="25" height="18" rx="2" class="primitive"/>
+        <text x="137" y="100" text-anchor="middle" class="component">H2</text>
+      </g>
+    </g>
+    
+    <!-- FloraScreen (DUPLICATE) -->
+    <g transform="translate(1260, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#15AF50" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">FloraScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/nature/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="160" height="60" rx="2" fill="#FCE4EC" stroke="#E91E63" stroke-width="2"/>
+        <text x="80" y="20" text-anchor="middle" class="component" fill="#E91E63">⚠️ 95% IDENTICAL</text>
+        <text x="80" y="35" text-anchor="middle" class="component" fill="#E91E63">to FaunaScreen</text>
+        <text x="80" y="52" text-anchor="middle" class="component-small" fill="#E91E63">Only warning text differs</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- ROW 4: FORMS (3 screens) -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 660)">
+    <text x="0" y="0" class="section-title">4. FORMS</text>
+    
+    <!-- FeedbackFormScreen -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#B796C6" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">FeedbackFormScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/feedback/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="55" height="18" rx="2" class="composite"/>
+        <text x="27" y="34" text-anchor="middle" class="component">ErrorAlert</text>
+        <text x="60" y="34" class="component-small">(cond)</text>
+        
+        <rect x="0" y="44" width="65" height="18" rx="2" class="primitive"/>
+        <text x="32" y="56" text-anchor="middle" class="component">Input (subj)</text>
+        <text x="70" y="56" class="component-small">120</text>
+        
+        <rect x="0" y="66" width="65" height="18" rx="2" class="primitive"/>
+        <text x="32" y="78" text-anchor="middle" class="component">Input (body)</text>
+        <text x="70" y="78" class="component-small">multi</text>
+        
+        <rect x="0" y="88" width="45" height="18" rx="2" class="primitive"/>
+        <text x="22" y="100" text-anchor="middle" class="component">Button</text>
+      </g>
+    </g>
+    
+    <!-- ClickFixFormScreen -->
+    <g transform="translate(420, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#F8961D" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">ClickFixFormScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/click-fix/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="95" height="18" rx="2" fill="#F8961D" stroke="#151820"/>
+        <text x="47" y="34" text-anchor="middle" class="component">ServicePageHeader</text>
+        
+        <rect x="0" y="44" width="100" height="18" rx="2" class="composite"/>
+        <text x="50" y="56" text-anchor="middle" class="component">FormSectionHeader</text>
+        <text x="105" y="56" class="component-small">×4</text>
+        
+        <rect x="0" y="66" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="78" text-anchor="middle" class="component">LocationCard</text>
+        <rect x="75" y="66" width="35" height="18" rx="2" class="primitive"/>
+        <text x="92" y="78" text-anchor="middle" class="component">Icon</text>
+        <text x="115" y="78" class="component-small">GPS</text>
+        
+        <rect x="0" y="88" width="75" height="18" rx="2" class="composite"/>
+        <text x="37" y="100" text-anchor="middle" class="component">PhotoSlotTile[]</text>
+        <text x="80" y="100" class="component-small">×3</text>
+        
+        <rect x="0" y="110" width="40" height="18" rx="2" class="primitive"/>
+        <text x="20" y="122" text-anchor="middle" class="component">Input</text>
+        <text x="45" y="122" class="component-small">×2</text>
+        
+        <rect x="0" y="132" width="45" height="18" rx="2" class="primitive"/>
+        <text x="22" y="144" text-anchor="middle" class="component">Button</text>
+      </g>
+    </g>
+    
+    <!-- JavneUslugeScreen -->
+    <g transform="translate(840, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#3D9E9E" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">JavneUslugeScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/services/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="95" height="18" rx="2" fill="#3D9E9E" stroke="#151820"/>
+        <text x="47" y="34" text-anchor="middle" class="component" fill="white">ServicePageHeader</text>
+        
+        <rect x="0" y="44" width="110" height="18" rx="2" class="composite"/>
+        <text x="55" y="56" text-anchor="middle" class="component">ServiceAccordionCard[]</text>
+        <rect x="115" y="44" width="45" height="18" rx="2" class="composite"/>
+        <text x="137" y="56" text-anchor="middle" class="component">InfoRow</text>
+        
+        <rect x="0" y="66" width="80" height="18" rx="2" class="composite"/>
+        <text x="40" y="78" text-anchor="middle" class="component">EmergencyTile[]</text>
+        <text x="85" y="78" class="component-small">3 cols</text>
+        
+        <rect x="0" y="88" width="60" height="18" rx="2" class="composite"/>
+        <text x="30" y="100" text-anchor="middle" class="component">UsefulLinks</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- ROW 5: CONFIRMATIONS & RESULTS (4 screens) -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 870)">
+    <text x="0" y="0" class="section-title">5. CONFIRMATIONS &amp; RESULTS</text>
+    
+    <!-- FeedbackConfirmationScreen -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="180" height="32" fill="#15AF50" class="screen-box"/>
+      <text x="90" y="15" text-anchor="middle" class="screen-name">FeedbackConfirmationScreen</text>
+      <text x="90" y="26" text-anchor="middle" class="screen-path">screens/feedback/</text>
+      
+      <g transform="translate(190, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="65" height="18" rx="2" fill="#15AF50" stroke="#151820"/>
+        <text x="32" y="34" text-anchor="middle" class="component" fill="white">SuccessIcon</text>
+        <text x="70" y="34" class="component-small">80×80</text>
+        
+        <rect x="0" y="44" width="25" height="18" rx="2" class="primitive"/>
+        <text x="12" y="56" text-anchor="middle" class="component">H1</text>
+        
+        <rect x="0" y="66" width="35" height="18" rx="2" class="primitive"/>
+        <text x="17" y="78" text-anchor="middle" class="component">Body</text>
+        
+        <rect x="0" y="88" width="45" height="18" rx="2" class="primitive"/>
+        <text x="22" y="100" text-anchor="middle" class="component">Button</text>
+        <text x="50" y="100" class="component-small">×2</text>
+      </g>
+    </g>
+    
+    <!-- ClickFixConfirmationScreen (DUPLICATE!) -->
+    <g transform="translate(420, 25)">
+      <rect x="0" y="0" width="180" height="32" fill="#15AF50" class="screen-box"/>
+      <text x="90" y="15" text-anchor="middle" class="screen-name">ClickFixConfirmationScreen</text>
+      <text x="90" y="26" text-anchor="middle" class="screen-path">screens/click-fix/</text>
+      
+      <g transform="translate(190, 0)">
+        <rect x="0" y="0" width="140" height="50" rx="2" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2"/>
+        <text x="70" y="18" text-anchor="middle" class="component" fill="#D32F2F">⚠️ P0: 90% DUPLICATE</text>
+        <text x="70" y="35" text-anchor="middle" class="component-small" fill="#D32F2F">Identical to FeedbackConfirmation</text>
+        <text x="70" y="48" text-anchor="middle" class="component-small" fill="#D32F2F">→ Extract ConfirmationScreen</text>
+      </g>
+    </g>
+    
+    <!-- FeedbackDetailScreen -->
+    <g transform="translate(840, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#B796C6" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">FeedbackDetailScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/feedback/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="34" text-anchor="middle" class="component">StatusBadge</text>
+        
+        <rect x="0" y="44" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="56" text-anchor="middle" class="component">MessageCard</text>
+        
+        <rect x="0" y="66" width="60" height="18" rx="2" fill="#E3F2FD" stroke="#1976D2"/>
+        <text x="30" y="78" text-anchor="middle" class="component">ReplyCard[]</text>
+      </g>
+    </g>
+    
+    <!-- ClickFixDetailScreen -->
+    <g transform="translate(1180, 25)">
+      <rect x="0" y="0" width="160" height="32" fill="#F8961D" class="screen-box"/>
+      <text x="80" y="15" text-anchor="middle" class="screen-name">ClickFixDetailScreen</text>
+      <text x="80" y="26" text-anchor="middle" class="screen-path">screens/click-fix/</text>
+      
+      <g transform="translate(170, 0)">
+        <rect x="0" y="0" width="70" height="18" rx="2" class="shared"/>
+        <text x="35" y="12" text-anchor="middle" class="component">GlobalHeader</text>
+        
+        <rect x="0" y="22" width="65" height="18" rx="2" class="composite"/>
+        <text x="32" y="34" text-anchor="middle" class="component">StatusBadge</text>
+        
+        <rect x="0" y="44" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="56" text-anchor="middle" class="component">MessageCard</text>
+        <rect x="75" y="44" width="60" height="18" rx="2" class="primitive"/>
+        <text x="105" y="56" text-anchor="middle" class="component">LocationInfo</text>
+        
+        <rect x="0" y="66" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="78" text-anchor="middle" class="component">PhotosScroll</text>
+        
+        <rect x="0" y="88" width="60" height="18" rx="2" fill="#E3F2FD" stroke="#1976D2"/>
+        <text x="30" y="100" text-anchor="middle" class="component">ReplyCard[]</text>
+        
+        <rect x="75" y="88" width="75" height="18" rx="2" fill="#FCE4EC" stroke="#E91E63"/>
+        <text x="112" y="100" text-anchor="middle" class="component-small" fill="#E91E63">~70% like Feedback</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- ROW 6: ONBOARDING (3 screens) -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 1060)">
+    <text x="0" y="0" class="section-title">6. ONBOARDING (No GlobalHeader)</text>
+    
+    <!-- LanguageSelectionScreen -->
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="180" height="32" fill="#FDC010" class="screen-box"/>
+      <text x="90" y="15" text-anchor="middle" class="screen-name" fill="#151820">LanguageSelectionScreen</text>
+      <text x="90" y="26" text-anchor="middle" class="screen-path" fill="rgba(0,0,0,0.5)">screens/onboarding/</text>
+      
+      <g transform="translate(190, 0)">
+        <rect x="0" y="0" width="50" height="18" rx="2" fill="#FDC010" stroke="#151820"/>
+        <text x="25" y="12" text-anchor="middle" class="component">HeroSlab</text>
+        <rect x="55" y="0" width="25" height="18" rx="2" class="primitive"/>
+        <text x="67" y="12" text-anchor="middle" class="component">H1</text>
+        
+        <rect x="0" y="22" width="80" height="18" rx="2" class="composite"/>
+        <text x="40" y="34" text-anchor="middle" class="component">LanguageCard[]</text>
+        <text x="85" y="34" class="component-small">×4</text>
+        <rect x="95" y="22" width="30" height="18" rx="2" class="primitive"/>
+        <text x="110" y="34" text-anchor="middle" class="component">Flag</text>
+        <rect x="130" y="22" width="40" height="18" rx="2" class="primitive"/>
+        <text x="150" y="34" text-anchor="middle" class="component">Radio</text>
+        
+        <rect x="0" y="44" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="56" text-anchor="middle" class="component">ProgressDots</text>
+        <text x="75" y="56" class="component-small">1/3</text>
+      </g>
+    </g>
+    
+    <!-- UserModeSelectionScreen -->
+    <g transform="translate(500, 25)">
+      <rect x="0" y="0" width="180" height="32" fill="#FDC010" class="screen-box"/>
+      <text x="90" y="15" text-anchor="middle" class="screen-name" fill="#151820">UserModeSelectionScreen</text>
+      <text x="90" y="26" text-anchor="middle" class="screen-path" fill="rgba(0,0,0,0.5)">screens/onboarding/</text>
+      
+      <g transform="translate(190, 0)">
+        <rect x="0" y="0" width="60" height="18" rx="2" class="composite"/>
+        <text x="30" y="12" text-anchor="middle" class="component">BackButton</text>
+        
+        <rect x="0" y="22" width="50" height="18" rx="2" fill="#FDC010" stroke="#151820"/>
+        <text x="25" y="34" text-anchor="middle" class="component">HeroSlab</text>
+        
+        <rect x="0" y="44" width="65" height="18" rx="2" fill="#2788C9" stroke="#151820"/>
+        <text x="32" y="56" text-anchor="middle" class="component" fill="white">TouristCard</text>
+        <rect x="70" y="44" width="50" height="18" rx="2" class="composite"/>
+        <text x="95" y="56" text-anchor="middle" class="component">Features</text>
+        
+        <rect x="0" y="66" width="70" height="18" rx="2" fill="#15AF50" stroke="#151820"/>
+        <text x="35" y="78" text-anchor="middle" class="component" fill="white">ResidentCard</text>
+        <rect x="75" y="66" width="50" height="18" rx="2" class="composite"/>
+        <text x="100" y="78" text-anchor="middle" class="component">Features</text>
+        
+        <rect x="0" y="88" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="100" text-anchor="middle" class="component">ProgressDots</text>
+        <text x="75" y="100" class="component-small">2/3</text>
+      </g>
+    </g>
+    
+    <!-- MunicipalitySelectionScreen -->
+    <g transform="translate(1000, 25)">
+      <rect x="0" y="0" width="200" height="32" fill="#FDC010" class="screen-box"/>
+      <text x="100" y="15" text-anchor="middle" class="screen-name" fill="#151820">MunicipalitySelectionScreen</text>
+      <text x="100" y="26" text-anchor="middle" class="screen-path" fill="rgba(0,0,0,0.5)">screens/onboarding/</text>
+      
+      <g transform="translate(210, 0)">
+        <rect x="0" y="0" width="60" height="18" rx="2" class="composite"/>
+        <text x="30" y="12" text-anchor="middle" class="component">BackButton</text>
+        
+        <rect x="0" y="22" width="50" height="18" rx="2" fill="#FDC010" stroke="#151820"/>
+        <text x="25" y="34" text-anchor="middle" class="component">HeroSlab</text>
+        
+        <rect x="0" y="44" width="100" height="18" rx="2" class="composite"/>
+        <text x="50" y="56" text-anchor="middle" class="component">MunicipalityCard[]</text>
+        <text x="105" y="56" class="component-small">×2</text>
+        <rect x="115" y="44" width="50" height="18" rx="2" class="primitive"/>
+        <text x="140" y="56" text-anchor="middle" class="component">CrestIcon</text>
+        
+        <rect x="0" y="66" width="70" height="18" rx="2" class="composite"/>
+        <text x="35" y="78" text-anchor="middle" class="component">ProgressDots</text>
+        <text x="75" y="78" class="component-small">3/3</text>
+        
+        <rect x="0" y="88" width="70" height="18" rx="2" class="primitive"/>
+        <text x="35" y="100" text-anchor="middle" class="component">Button (CTA)</text>
+        <text x="75" y="100" class="component-small">"Start"</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SUMMARY -->
+  <!-- ============================================ -->
+  <g transform="translate(30, 1240)">
+    <rect x="0" y="0" width="1740" height="140" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+    
+    <text x="870" y="25" text-anchor="middle" class="section-title" font-size="16">SUMMARY: Component Reuse Analysis</text>
+    
+    <g transform="translate(30, 45)">
+      <rect x="0" y="0" width="280" height="80" fill="#FCE4EC" stroke="#E91E63" stroke-width="2"/>
+      <text x="140" y="20" text-anchor="middle" class="component" fill="#E91E63" font-weight="700">SHARED (High Impact)</text>
+      <text x="15" y="40" class="component">GlobalHeader → 18 screens</text>
+      <text x="15" y="55" class="component">BannerList → 8 screens</text>
+      <text x="15" y="70" class="component">HeroSlab/TitleSlab → 9 screens</text>
+    </g>
+    
+    <g transform="translate(340, 45)">
+      <rect x="0" y="0" width="280" height="80" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+      <text x="140" y="20" text-anchor="middle" class="component" fill="#E65100" font-weight="700">COMPOSITE (Medium)</text>
+      <text x="15" y="40" class="component">ServicePageHeader → 2 screens</text>
+      <text x="15" y="55" class="component">HeroMediaHeader → 4 screens</text>
+      <text x="15" y="70" class="component">DepartureItem → 3 screens</text>
+    </g>
+    
+    <g transform="translate(650, 45)">
+      <rect x="0" y="0" width="280" height="80" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2"/>
+      <text x="140" y="20" text-anchor="middle" class="component" fill="#D32F2F" font-weight="700">⚠️ DUPLICATES (Fix!)</text>
+      <text x="15" y="40" class="component">P0: Confirmation screens (90%)</text>
+      <text x="15" y="55" class="component">P1: Detail screens (70%)</text>
+      <text x="15" y="70" class="component">P2: Flora/Fauna (95%)</text>
+    </g>
+    
+    <g transform="translate(960, 45)">
+      <rect x="0" y="0" width="280" height="80" fill="#E3F2FD" stroke="#1976D2" stroke-width="2"/>
+      <text x="140" y="20" text-anchor="middle" class="component" fill="#1565C0" font-weight="700">PRIMITIVES (Foundation)</text>
+      <text x="15" y="40" class="component">Card, Button, Input → everywhere</text>
+      <text x="15" y="55" class="component">Badge → 6 screens</text>
+      <text x="15" y="70" class="component">Tab → 2 screens</text>
+    </g>
+    
+    <g transform="translate(1270, 45)">
+      <rect x="0" y="0" width="200" height="80" fill="#E8F5E9" stroke="#4CAF50" stroke-width="2"/>
+      <text x="100" y="20" text-anchor="middle" class="component" fill="#2E7D32" font-weight="700">TOKEN COVERAGE</text>
+      <text x="15" y="45" class="component" fill="#2E7D32" font-size="24" font-weight="700">~95%</text>
+      <text x="15" y="65" class="component">skin.neobrut2.ts</text>
+    </g>
+  </g>
+  
+  <!-- Footer -->
+  <text x="900" y="1420" text-anchor="middle" class="subtitle">MOJ VIS Screen Composition Trees • 21 ekrana u 6 sekcija • February 2026</text>
+</svg>

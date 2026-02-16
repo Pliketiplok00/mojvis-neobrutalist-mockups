@@ -1,0 +1,1014 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 3200" width="1800" height="3200">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap');
+      
+      .title { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; fill: #151820; }
+      .subtitle { font-family: 'Space Mono', monospace; font-size: 11px; fill: #5C606B; }
+      .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; fill: #151820; }
+      .label { font-family: 'Space Mono', monospace; font-size: 9px; fill: #151820; }
+      .label-bold { font-family: 'Space Mono', monospace; font-size: 9px; font-weight: 700; fill: #151820; }
+      .label-small { font-family: 'Space Mono', monospace; font-size: 7px; fill: #5C606B; }
+      .label-tiny { font-family: 'Space Mono', monospace; font-size: 6px; fill: #5C606B; }
+      .count { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; }
+      .screen-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600; fill: #151820; }
+      .icon-label { font-family: 'Space Mono', monospace; font-size: 6px; fill: #1976D2; }
+      .boxed { fill: #E3F2FD; stroke: #1976D2; stroke-width: 1.5; }
+      .unboxed { fill: #FFF3E0; stroke: #FF9800; stroke-width: 1.5; }
+      .tokenized { fill: #E8F5E9; stroke: #4CAF50; stroke-width: 1.5; }
+      .hardcoded { fill: #FFEBEE; stroke: #D32F2F; stroke-width: 1.5; }
+      .screen-frame { fill: #FDFBF8; stroke: #151820; stroke-width: 2; }
+      .screen-header { fill: #F7F4EE; }
+      .icon-marker-boxed { fill: #1976D2; }
+      .icon-marker-unboxed { fill: #FF9800; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1800" height="3200" fill="#F7F4EE"/>
+  
+  <!-- Title -->
+  <text x="900" y="35" text-anchor="middle" class="title">MOJ VIS — Icon Inventory &amp; Screen Locations</text>
+  <text x="900" y="55" text-anchor="middle" class="subtitle">CORRECTED: 90 ikona • 25 boxed • 65 unboxed • 36 datoteka • 7 boxed veličina</text>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 1: STATS OVERVIEW -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 80)">
+    <text x="0" y="0" class="section-title">📊 AŽURIRANA STATISTIKA</text>
+    
+    <g transform="translate(0, 20)">
+      <rect x="0" y="0" width="100" height="55" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+      <text x="50" y="25" text-anchor="middle" class="count" fill="#151820">90</text>
+      <text x="50" y="42" text-anchor="middle" class="label">Ukupno</text>
+      
+      <rect x="115" y="0" width="100" height="55" class="boxed"/>
+      <text x="165" y="25" text-anchor="middle" class="count" fill="#1976D2">25</text>
+      <text x="165" y="42" text-anchor="middle" class="label">Boxed</text>
+      
+      <rect x="230" y="0" width="100" height="55" class="unboxed"/>
+      <text x="280" y="25" text-anchor="middle" class="count" fill="#FF9800">65</text>
+      <text x="280" y="42" text-anchor="middle" class="label">Unboxed</text>
+      
+      <rect x="345" y="0" width="100" height="55" class="tokenized"/>
+      <text x="395" y="25" text-anchor="middle" class="count" fill="#4CAF50">19</text>
+      <text x="395" y="42" text-anchor="middle" class="label">Tokenizirano</text>
+      
+      <rect x="460" y="0" width="100" height="55" class="hardcoded"/>
+      <text x="510" y="25" text-anchor="middle" class="count" fill="#D32F2F">6</text>
+      <text x="510" y="42" text-anchor="middle" class="label">Hardkodirano</text>
+      
+      <rect x="575" y="0" width="100" height="55" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+      <text x="625" y="25" text-anchor="middle" class="count" fill="#151820">36</text>
+      <text x="625" y="42" text-anchor="middle" class="label">Datoteka</text>
+    </g>
+  </g>
+  
+  <!-- BOXED SIZES VISUAL -->
+  <g transform="translate(720, 80)">
+    <text x="0" y="0" class="section-title">📐 BOXED VELIČINE</text>
+    
+    <g transform="translate(0, 20)">
+      <rect x="0" y="16" width="32" height="32" class="screen-frame" stroke-width="1"/>
+      <text x="16" y="36" text-anchor="middle" font-size="12">📞</text>
+      <text x="16" y="60" text-anchor="middle" class="label-small">32px (3)</text>
+      
+      <rect x="55" y="12" width="40" height="40" class="screen-frame" stroke-width="1"/>
+      <text x="75" y="36" text-anchor="middle" font-size="16">🚌</text>
+      <text x="75" y="64" text-anchor="middle" class="label-small">40px (2)</text>
+      
+      <rect x="120" y="8" width="44" height="44" class="screen-frame" stroke-width="2"/>
+      <text x="142" y="36" text-anchor="middle" font-size="18">☰</text>
+      <text x="142" y="64" text-anchor="middle" class="label-bold" fill="#1976D2">44px (13)</text>
+      
+      <rect x="190" y="6" width="48" height="48" class="screen-frame" stroke-width="1"/>
+      <text x="214" y="36" text-anchor="middle" font-size="20">⛴</text>
+      <text x="214" y="66" text-anchor="middle" class="label-small">48px (4)</text>
+      
+      <rect x="265" y="4" width="52" height="52" class="screen-frame" stroke-width="1"/>
+      <text x="291" y="36" text-anchor="middle" font-size="22">🚢</text>
+      <text x="291" y="68" text-anchor="middle" class="label-small">52px (1)</text>
+      
+      <rect x="345" y="0" width="64" height="56" class="screen-frame" stroke-width="1"/>
+      <text x="377" y="34" text-anchor="middle" font-size="26">🏛️</text>
+      <text x="377" y="70" text-anchor="middle" class="label-small">64px (2)</text>
+      
+      <rect x="435" y="0" width="70" height="56" class="screen-frame" stroke-width="1"/>
+      <text x="470" y="36" text-anchor="middle" font-size="28">✓</text>
+      <text x="470" y="70" text-anchor="middle" class="label-small">80px (2)</text>
+    </g>
+  </g>
+  
+  <!-- Legend -->
+  <g transform="translate(1280, 80)">
+    <text x="0" y="0" class="section-title">LEGENDA</text>
+    <g transform="translate(0, 20)">
+      <circle cx="8" cy="8" r="6" class="icon-marker-boxed"/>
+      <text x="20" y="12" class="label">= Boxed ikona</text>
+      <circle cx="8" cy="28" r="6" class="icon-marker-unboxed"/>
+      <text x="20" y="32" class="label">= Unboxed ikona</text>
+      <rect x="2" y="42" width="12" height="12" fill="none" stroke="#D32F2F" stroke-width="2" stroke-dasharray="2,1"/>
+      <text x="20" y="52" class="label">= Hardcoded</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 2: SCREEN SKETCHES -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 180)">
+    <text x="0" y="0" class="section-title">📱 SCREEN-BY-SCREEN ICON LOCATIONS</text>
+    
+    <!-- Row 1: Core Navigation Screens -->
+    <g transform="translate(0, 30)">
+      
+      <!-- GlobalHeader (shown as component) -->
+      <g transform="translate(0, 0)">
+        <text x="60" y="-5" text-anchor="middle" class="screen-title">GlobalHeader.tsx</text>
+        <text x="60" y="5" text-anchor="middle" class="label-small">(2 boxed, 0 unboxed)</text>
+        
+        <rect x="0" y="15" width="120" height="40" class="screen-header" stroke="#151820" stroke-width="2"/>
+        
+        <!-- Menu icon box -->
+        <rect x="8" y="20" width="30" height="30" fill="#FDC010" stroke="#151820" stroke-width="2"/>
+        <circle cx="23" cy="35" r="5" class="icon-marker-boxed"/>
+        <text x="23" y="60" text-anchor="middle" class="icon-label">menu</text>
+        <text x="23" y="68" text-anchor="middle" class="label-tiny">44px ✓</text>
+        
+        <!-- Title -->
+        <text x="60" y="40" text-anchor="middle" class="label-bold">MOJ VIS</text>
+        
+        <!-- Inbox icon box -->
+        <rect x="82" y="20" width="30" height="30" fill="#2788C9" stroke="#151820" stroke-width="2"/>
+        <circle cx="97" cy="35" r="5" class="icon-marker-boxed"/>
+        <text x="97" y="60" text-anchor="middle" class="icon-label">inbox</text>
+        <text x="97" y="68" text-anchor="middle" class="label-tiny">44px ✓</text>
+      </g>
+      
+      <!-- HomeScreen -->
+      <g transform="translate(150, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">HomeScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(3 boxed, 2 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="35" text-anchor="middle" class="label-tiny">GlobalHeader →</text>
+        
+        <!-- Hero slab -->
+        <rect x="5" y="50" width="130" height="30" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="70" text-anchor="middle" class="label-tiny">Hero Slab</text>
+        
+        <!-- Category grid (4 cards with icons) -->
+        <rect x="5" y="85" width="62" height="45" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <circle cx="36" cy="102" r="4" class="icon-marker-boxed"/>
+        <text x="36" y="122" text-anchor="middle" class="label-tiny">44px</text>
+        
+        <rect x="73" y="85" width="62" height="45" fill="#B796C6" stroke="#151820" stroke-width="1"/>
+        <circle cx="104" cy="102" r="4" class="icon-marker-boxed"/>
+        <text x="104" y="122" text-anchor="middle" class="label-tiny">44px</text>
+        
+        <!-- Event cards with chevrons -->
+        <rect x="5" y="135" width="130" height="35" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        <circle cx="125" cy="152" r="3" class="icon-marker-unboxed"/>
+        <text x="70" y="160" text-anchor="middle" class="label-tiny">chevron-right</text>
+        
+        <!-- CTA Button -->
+        <rect x="5" y="175" width="130" height="35" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="183" width="20" height="20" fill="rgba(255,255,255,0.2)" stroke="#151820" stroke-width="1"/>
+        <circle cx="20" cy="193" r="4" class="icon-marker-boxed"/>
+        <text x="20" y="218" text-anchor="middle" class="icon-label">msg-circle</text>
+        <text x="20" y="226" text-anchor="middle" class="label-tiny" fill="#D32F2F">48px ⚠</text>
+      </g>
+      
+      <!-- TransportHubScreen -->
+      <g transform="translate(320, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">TransportHubScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 4 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Road tile -->
+        <rect x="5" y="50" width="130" height="50" fill="#15AF50" stroke="#151820" stroke-width="1"/>
+        <text x="30" y="70" class="label-tiny" fill="white">🚌 Cestovni</text>
+        <circle cx="125" cy="75" r="3" class="icon-marker-unboxed"/>
+        <text x="110" y="95" class="icon-label">chevron</text>
+        
+        <!-- Sea tile -->
+        <rect x="5" y="105" width="130" height="50" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <text x="30" y="125" class="label-tiny" fill="white">⛴ Pomorski</text>
+        <circle cx="125" cy="130" r="3" class="icon-marker-unboxed"/>
+        <text x="110" y="150" class="icon-label">chevron</text>
+        
+        <!-- Info note -->
+        <rect x="5" y="160" width="130" height="40" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="185" text-anchor="middle" class="label-tiny">Info Note</text>
+      </g>
+      
+      <!-- InboxListScreen -->
+      <g transform="translate(490, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">InboxListScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 6 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Tabs -->
+        <rect x="5" y="50" width="65" height="25" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <rect x="70" y="50" width="65" height="25" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Tag filter -->
+        <rect x="5" y="80" width="130" height="20" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Message items -->
+        <rect x="5" y="105" width="130" height="40" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="20" cy="125" r="3" class="icon-marker-unboxed"/>
+        <text x="20" y="140" text-anchor="middle" class="icon-label">type icon</text>
+        <circle cx="125" cy="125" r="3" class="icon-marker-unboxed"/>
+        
+        <rect x="5" y="150" width="130" height="40" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="20" cy="170" r="3" class="icon-marker-unboxed"/>
+        <circle cx="125" cy="170" r="3" class="icon-marker-unboxed"/>
+        
+        <!-- Empty state icon -->
+        <text x="70" y="210" text-anchor="middle" class="label-tiny">(empty state: xl icon)</text>
+      </g>
+      
+      <!-- EventsScreen -->
+      <g transform="translate(660, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">EventsScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 5 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Hero slab -->
+        <rect x="5" y="50" width="130" height="25" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Calendar with nav chevrons -->
+        <rect x="5" y="80" width="130" height="70" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="15" cy="95" r="3" class="icon-marker-unboxed"/>
+        <text x="15" y="108" text-anchor="middle" class="icon-label">‹</text>
+        <circle cx="125" cy="95" r="3" class="icon-marker-unboxed"/>
+        <text x="125" y="108" text-anchor="middle" class="icon-label">›</text>
+        <text x="70" y="120" text-anchor="middle" class="label-tiny">Calendar Grid</text>
+        
+        <!-- Event card with meta icons -->
+        <rect x="5" y="155" width="130" height="50" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="20" cy="175" r="2" class="icon-marker-unboxed"/>
+        <text x="20" y="185" text-anchor="middle" class="icon-label">clock xs</text>
+        <circle cx="60" cy="175" r="2" class="icon-marker-unboxed"/>
+        <text x="60" y="185" text-anchor="middle" class="icon-label">pin xs</text>
+        <circle cx="125" cy="180" r="3" class="icon-marker-unboxed"/>
+      </g>
+      
+      <!-- EventDetailScreen -->
+      <g transform="translate(830, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">EventDetailScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(3 boxed, 0 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Hero image -->
+        <rect x="0" y="45" width="140" height="60" fill="#CCC" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="80" text-anchor="middle" class="label-tiny">HeroMediaHeader</text>
+        
+        <!-- Title slab -->
+        <rect x="0" y="105" width="140" height="25" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Info tiles with boxed icons -->
+        <g transform="translate(10, 135)">
+          <rect x="0" y="0" width="35" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+          <circle cx="17" cy="17" r="5" class="icon-marker-boxed"/>
+          <text x="17" y="45" text-anchor="middle" class="icon-label">clock</text>
+          <text x="17" y="52" text-anchor="middle" class="label-tiny">44px ✓</text>
+          
+          <rect x="42" y="0" width="35" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+          <circle cx="59" cy="17" r="5" class="icon-marker-boxed"/>
+          <text x="59" y="45" text-anchor="middle" class="icon-label">map-pin</text>
+          <text x="59" y="52" text-anchor="middle" class="label-tiny">44px ✓</text>
+          
+          <rect x="84" y="0" width="35" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+          <circle cx="101" cy="17" r="5" class="icon-marker-boxed"/>
+          <text x="101" y="45" text-anchor="middle" class="icon-label">user</text>
+          <text x="101" y="52" text-anchor="middle" class="label-tiny">44px ✓</text>
+        </g>
+      </g>
+      
+      <!-- SettingsScreen -->
+      <g transform="translate(1000, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">SettingsScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Settings rows -->
+        <rect x="5" y="50" width="130" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <text x="15" y="72" class="label-tiny">Jezik</text>
+        <circle cx="125" cy="67" r="3" class="icon-marker-unboxed"/>
+        <text x="115" y="85" class="icon-label">chevron</text>
+        
+        <rect x="5" y="90" width="130" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <text x="15" y="112" class="label-tiny">Obavijesti</text>
+      </g>
+    </g>
+    
+    <!-- Row 2: Transport Screens -->
+    <g transform="translate(0, 290)">
+      
+      <!-- RoadTransportScreen -->
+      <g transform="translate(0, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">RoadTransportScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(2 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Header slab with icon -->
+        <rect x="0" y="45" width="140" height="50" fill="#15AF50" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="53" width="35" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="27" cy="70" r="5" class="icon-marker-boxed"/>
+        <text x="27" y="98" text-anchor="middle" class="icon-label">bus</text>
+        <text x="27" y="106" text-anchor="middle" class="label-tiny">48px ✓</text>
+        <text x="90" y="75" text-anchor="middle" class="label-tiny" fill="white">Cestovni</text>
+        
+        <!-- Line card with icon -->
+        <rect x="5" y="100" width="130" height="60" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <rect x="5" y="100" width="130" height="25" fill="#15AF50" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="105" width="22" height="15" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="21" cy="112" r="4" class="icon-marker-boxed"/>
+        <text x="21" y="128" text-anchor="middle" class="icon-label">bus</text>
+        <text x="21" y="136" text-anchor="middle" class="label-tiny">40px ✓</text>
+        <circle cx="125" cy="140" r="3" class="icon-marker-unboxed"/>
+        <text x="115" y="155" class="icon-label">chevron</text>
+      </g>
+      
+      <!-- SeaTransportScreen -->
+      <g transform="translate(170, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">SeaTransportScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(2 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Header slab with icon -->
+        <rect x="0" y="45" width="140" height="50" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="53" width="35" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="27" cy="70" r="5" class="icon-marker-boxed"/>
+        <text x="27" y="98" text-anchor="middle" class="icon-label">ship</text>
+        <text x="27" y="106" text-anchor="middle" class="label-tiny">48px ✓</text>
+        <text x="90" y="75" text-anchor="middle" class="label-tiny" fill="white">Pomorski</text>
+        
+        <!-- Line card with icon -->
+        <rect x="5" y="100" width="130" height="60" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <rect x="5" y="100" width="130" height="25" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="105" width="22" height="15" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="21" cy="112" r="4" class="icon-marker-boxed"/>
+        <text x="21" y="128" text-anchor="middle" class="icon-label">ship</text>
+        <text x="21" y="136" text-anchor="middle" class="label-tiny">40px ✓</text>
+        <circle cx="125" cy="140" r="3" class="icon-marker-unboxed"/>
+      </g>
+      
+      <!-- LineDetailScreen -->
+      <g transform="translate(340, 0)">
+        <text x="85" y="-5" text-anchor="middle" class="screen-title">LineDetailScreen.tsx</text>
+        <text x="85" y="5" text-anchor="middle" class="label-small">(4 boxed, 6 unboxed)</text>
+        
+        <rect x="0" y="15" width="170" height="220" class="screen-frame"/>
+        <rect x="0" y="15" width="170" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Header slab with hero icon -->
+        <rect x="0" y="45" width="170" height="50" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="50" width="40" height="40" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="30" cy="70" r="6" class="icon-marker-boxed"/>
+        <text x="30" y="100" text-anchor="middle" class="icon-label">bus/ship</text>
+        <text x="30" y="108" text-anchor="middle" class="label-tiny">52px ✓</text>
+        
+        <!-- Direction tabs with chevrons -->
+        <rect x="5" y="100" width="160" height="25" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="15" cy="112" r="3" class="icon-marker-unboxed"/>
+        <circle cx="155" cy="112" r="3" class="icon-marker-unboxed"/>
+        <text x="85" y="117" text-anchor="middle" class="label-tiny">chevron ‹ ›</text>
+        
+        <!-- Departure item -->
+        <rect x="5" y="130" width="160" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="150" cy="147" r="3" class="icon-marker-unboxed"/>
+        <text x="140" y="160" class="icon-label">expand</text>
+        
+        <!-- Contact links (32px boxed) -->
+        <rect x="5" y="170" width="160" height="50" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <text x="85" y="185" text-anchor="middle" class="label-tiny">Contact Links</text>
+        <g transform="translate(15, 192)">
+          <rect x="0" y="0" width="18" height="18" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+          <circle cx="9" cy="9" r="4" class="icon-marker-boxed"/>
+          <text x="9" y="28" text-anchor="middle" class="icon-label">phone</text>
+          
+          <rect x="50" y="0" width="18" height="18" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+          <circle cx="59" cy="9" r="4" class="icon-marker-boxed"/>
+          <text x="59" y="28" text-anchor="middle" class="icon-label">mail</text>
+          
+          <rect x="100" y="0" width="18" height="18" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+          <circle cx="109" cy="9" r="4" class="icon-marker-boxed"/>
+          <text x="109" y="28" text-anchor="middle" class="icon-label">globe</text>
+        </g>
+        <text x="85" y="235" text-anchor="middle" class="label-tiny" fill="#D32F2F">32px ⚠ hardcoded</text>
+      </g>
+      
+      <!-- DepartureItem (component) -->
+      <g transform="translate(540, 0)">
+        <text x="60" y="-5" text-anchor="middle" class="screen-title">DepartureItem.tsx</text>
+        <text x="60" y="5" text-anchor="middle" class="label-small">(0 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="120" height="60" class="screen-frame"/>
+        <rect x="5" y="20" width="40" height="25" fill="#2788C9" stroke="#151820" stroke-width="1"/>
+        <text x="25" y="38" text-anchor="middle" class="label-tiny" fill="white">05:30</text>
+        <text x="80" y="35" text-anchor="middle" class="label-tiny">Jadrolinija</text>
+        <circle cx="105" cy="45" r="3" class="icon-marker-unboxed"/>
+        <text x="95" y="70" class="icon-label">expand md</text>
+      </g>
+      
+      <!-- Banner (component) -->
+      <g transform="translate(690, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">Banner.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(1 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="50" fill="#F8961D" stroke="#151820" stroke-width="2"/>
+        
+        <!-- Icon box -->
+        <rect x="8" y="23" width="30" height="30" fill="#D64E2D" stroke="#151820" stroke-width="1"/>
+        <circle cx="23" cy="38" r="5" class="icon-marker-boxed"/>
+        <text x="23" y="60" text-anchor="middle" class="icon-label">shield-alert</text>
+        <text x="23" y="68" text-anchor="middle" class="label-tiny" fill="#D32F2F">44px ⚠</text>
+        
+        <text x="75" y="38" class="label-tiny">Obavijest...</text>
+        
+        <!-- Chevron -->
+        <circle cx="125" cy="40" r="3" class="icon-marker-unboxed"/>
+        <text x="115" y="60" class="icon-label">chevron</text>
+      </g>
+      
+      <!-- HeroMediaHeader (component) -->
+      <g transform="translate(860, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">HeroMediaHeader.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 3 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="80" fill="#CCC" stroke="#151820" stroke-width="2"/>
+        
+        <!-- Gallery nav chevrons -->
+        <circle cx="15" cy="55" r="4" class="icon-marker-unboxed"/>
+        <text x="15" y="75" text-anchor="middle" class="icon-label">‹ md</text>
+        
+        <circle cx="125" cy="55" r="4" class="icon-marker-unboxed"/>
+        <text x="125" y="75" text-anchor="middle" class="icon-label">› md</text>
+        
+        <!-- Placeholder -->
+        <circle cx="70" cy="55" r="6" class="icon-marker-unboxed"/>
+        <text x="70" y="75" text-anchor="middle" class="icon-label">leaf xl</text>
+        
+        <!-- Pagination dots -->
+        <circle cx="60" cy="85" r="3" fill="#151820"/>
+        <circle cx="70" cy="85" r="3" fill="#999"/>
+        <circle cx="80" cy="85" r="3" fill="#999"/>
+      </g>
+    </g>
+    
+    <!-- Row 3: Nature & Services -->
+    <g transform="translate(0, 560)">
+      
+      <!-- FaunaScreen -->
+      <g transform="translate(0, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">FaunaScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(1 boxed, 0 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="180" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Hero -->
+        <rect x="0" y="45" width="140" height="50" fill="#CCC" stroke="#151820" stroke-width="1"/>
+        <rect x="0" y="95" width="140" height="20" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Warning card with boxed icon -->
+        <rect x="5" y="120" width="130" height="40" fill="#D64E2D" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="125" width="30" height="30" fill="#D64E2D" stroke="#151820" stroke-width="1"/>
+        <circle cx="25" cy="140" r="5" class="icon-marker-boxed"/>
+        <text x="25" y="168" text-anchor="middle" class="icon-label">alert-triangle</text>
+        <text x="25" y="176" text-anchor="middle" class="label-tiny" fill="#D32F2F">44px ⚠</text>
+        <text x="90" y="145" text-anchor="middle" class="label-tiny" fill="white">Ne uznemiravaj</text>
+      </g>
+      
+      <!-- FloraScreen -->
+      <g transform="translate(160, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">FloraScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(1 boxed, 0 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="180" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <rect x="0" y="45" width="140" height="50" fill="#CCC" stroke="#151820" stroke-width="1"/>
+        <rect x="0" y="95" width="140" height="20" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        
+        <rect x="5" y="120" width="130" height="40" fill="#D64E2D" stroke="#151820" stroke-width="1"/>
+        <rect x="10" y="125" width="30" height="30" fill="#D64E2D" stroke="#151820" stroke-width="1"/>
+        <circle cx="25" cy="140" r="5" class="icon-marker-boxed"/>
+        <text x="25" y="168" text-anchor="middle" class="icon-label">alert-triangle</text>
+        <text x="25" y="176" text-anchor="middle" class="label-tiny" fill="#D32F2F">44px ⚠</text>
+        <text x="90" y="145" text-anchor="middle" class="label-tiny" fill="white">Ne diraj</text>
+      </g>
+      
+      <!-- FaunaSpeciesCard / FloraSpeciesCard -->
+      <g transform="translate(320, 0)">
+        <text x="80" y="-5" text-anchor="middle" class="screen-title">Species Card (7 unboxed each)</text>
+        <text x="80" y="5" text-anchor="middle" class="label-small">FaunaSpeciesCard / FloraSpeciesCard</text>
+        
+        <rect x="0" y="15" width="160" height="150" class="screen-frame"/>
+        
+        <!-- Thumbnail -->
+        <rect x="5" y="20" width="50" height="40" fill="#CCC" stroke="#151820" stroke-width="1"/>
+        <circle cx="30" cy="40" r="4" class="icon-marker-unboxed"/>
+        <text x="30" y="65" text-anchor="middle" class="icon-label">leaf md</text>
+        
+        <!-- Expand toggle -->
+        <circle cx="145" cy="40" r="3" class="icon-marker-unboxed"/>
+        <text x="135" y="52" class="icon-label">expand</text>
+        
+        <!-- Gallery nav -->
+        <rect x="5" y="70" width="150" height="40" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="15" cy="90" r="3" class="icon-marker-unboxed"/>
+        <circle cx="140" cy="90" r="3" class="icon-marker-unboxed"/>
+        <text x="77" y="95" text-anchor="middle" class="label-tiny">Gallery: ‹ › sm</text>
+        <circle cx="77" cy="90" r="4" class="icon-marker-unboxed"/>
+        <text x="77" y="105" text-anchor="middle" class="icon-label">camera xl</text>
+        
+        <!-- Info section -->
+        <rect x="5" y="115" width="150" height="30" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="15" cy="130" r="2" class="icon-marker-unboxed"/>
+        <text x="15" y="142" text-anchor="middle" class="icon-label">info</text>
+        <circle cx="85" cy="130" r="2" class="icon-marker-unboxed"/>
+        <text x="85" y="142" text-anchor="middle" class="icon-label">map-pin</text>
+      </g>
+      
+      <!-- JavneUslugeScreen -->
+      <g transform="translate(510, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">JavneUslugeScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 2 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="180" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Service header -->
+        <rect x="0" y="45" width="140" height="35" fill="#3D9E9E" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="68" text-anchor="middle" class="label-tiny" fill="white">Javne usluge</text>
+        
+        <!-- Service accordion -->
+        <rect x="5" y="85" width="130" height="40" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="110" text-anchor="middle" class="label-tiny">ServiceAccordionCard →</text>
+        
+        <!-- Links -->
+        <rect x="5" y="130" width="130" height="30" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="20" cy="145" r="3" class="icon-marker-unboxed"/>
+        <text x="20" y="165" text-anchor="middle" class="icon-label">icon sm</text>
+        <circle cx="100" cy="145" r="3" class="icon-marker-unboxed"/>
+        <text x="100" y="165" text-anchor="middle" class="icon-label">globe sm</text>
+      </g>
+      
+      <!-- ServiceAccordionCard -->
+      <g transform="translate(680, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">ServiceAccordionCard.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(1 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="80" class="screen-frame"/>
+        
+        <!-- Icon box -->
+        <rect x="8" y="25" width="30" height="30" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="23" cy="40" r="5" class="icon-marker-boxed"/>
+        <text x="23" y="65" text-anchor="middle" class="icon-label">varies</text>
+        <text x="23" y="73" text-anchor="middle" class="label-tiny">44px const</text>
+        
+        <text x="70" y="40" class="label-tiny">Service name</text>
+        <text x="70" y="52" class="label-tiny" fill="#5C606B">Subtitle</text>
+        
+        <!-- Expand chevron -->
+        <circle cx="125" cy="40" r="3" class="icon-marker-unboxed"/>
+        <text x="115" y="60" class="icon-label">expand sm</text>
+      </g>
+      
+      <!-- EmergencyTile -->
+      <g transform="translate(850, 0)">
+        <text x="50" y="-5" text-anchor="middle" class="screen-title">EmergencyTile.tsx</text>
+        <text x="50" y="5" text-anchor="middle" class="label-small">(0 boxed, 1 unboxed)</text>
+        
+        <rect x="0" y="15" width="100" height="70" fill="#D64E2D" stroke="#151820" stroke-width="2"/>
+        <circle cx="50" cy="40" r="5" class="icon-marker-unboxed"/>
+        <text x="50" y="60" text-anchor="middle" class="label-tiny" fill="white">md icon</text>
+        <text x="50" y="75" text-anchor="middle" class="label-tiny" fill="white">Hitna 194</text>
+      </g>
+    </g>
+    
+    <!-- Row 4: Forms & Confirmations -->
+    <g transform="translate(0, 800)">
+      
+      <!-- ClickFixFormScreen -->
+      <g transform="translate(0, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">ClickFixFormScreen.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 2 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="180" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Service header -->
+        <rect x="0" y="45" width="140" height="35" fill="#F8961D" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="68" text-anchor="middle" class="label-tiny">Prijavi problem</text>
+        
+        <!-- Form sections -->
+        <rect x="5" y="85" width="130" height="30" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <text x="70" y="105" text-anchor="middle" class="label-tiny">Location...</text>
+        
+        <!-- Validation icons -->
+        <rect x="5" y="120" width="130" height="35" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="120" cy="137" r="3" fill="#4CAF50"/>
+        <text x="110" y="155" class="icon-label" fill="#4CAF50">check sm</text>
+        
+        <rect x="5" y="160" width="130" height="35" fill="#FDFBF8" stroke="#D32F2F" stroke-width="1"/>
+        <circle cx="120" cy="177" r="3" fill="#D32F2F"/>
+        <text x="110" y="195" class="icon-label" fill="#D32F2F">close sm</text>
+      </g>
+      
+      <!-- PhotoSlotTile -->
+      <g transform="translate(160, 0)">
+        <text x="50" y="-5" text-anchor="middle" class="screen-title">PhotoSlotTile.tsx</text>
+        <text x="50" y="5" text-anchor="middle" class="label-small">(0 boxed, 2 unboxed)</text>
+        
+        <!-- Empty state -->
+        <rect x="0" y="15" width="100" height="80" fill="#FDFBF8" stroke="#5C606B" stroke-width="1" stroke-dasharray="4,2"/>
+        <circle cx="50" cy="45" r="6" class="icon-marker-unboxed"/>
+        <text x="50" y="70" text-anchor="middle" class="icon-label">camera lg</text>
+        <text x="50" y="80" text-anchor="middle" class="label-tiny">Dodaj foto</text>
+        
+        <!-- Filled state -->
+        <rect x="0" y="105" width="100" height="80" fill="#C4E5F7" stroke="#151820" stroke-width="1"/>
+        <circle cx="85" cy="115" r="8" fill="#D32F2F" stroke="#151820" stroke-width="1"/>
+        <circle cx="85" cy="115" r="3" class="icon-marker-unboxed"/>
+        <text x="85" y="100" text-anchor="middle" class="icon-label">close sm</text>
+        <text x="50" y="150" text-anchor="middle" class="label-tiny">📷 Slika</text>
+      </g>
+      
+      <!-- Confirmation Screens -->
+      <g transform="translate(290, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">Confirmation Screens</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(1 boxed each, 0 unboxed)</text>
+        
+        <rect x="0" y="15" width="140" height="180" class="screen-frame"/>
+        <rect x="0" y="15" width="140" height="30" class="screen-header" stroke="#151820" stroke-width="1"/>
+        
+        <!-- Centered success icon -->
+        <rect x="30" y="60" width="80" height="80" fill="#15AF50" stroke="#151820" stroke-width="2"/>
+        <circle cx="70" cy="100" r="15" class="icon-marker-boxed"/>
+        <text x="70" y="105" text-anchor="middle" font-size="24" fill="white">✓</text>
+        <text x="70" y="155" text-anchor="middle" class="icon-label">check xl</text>
+        <text x="70" y="165" text-anchor="middle" class="label-tiny">80px container</text>
+        <text x="70" y="175" text-anchor="middle" class="label-tiny" fill="#D32F2F">hardcoded ⚠</text>
+      </g>
+      
+      <!-- Onboarding Screens -->
+      <g transform="translate(460, 0)">
+        <text x="85" y="-5" text-anchor="middle" class="screen-title">Onboarding Screens</text>
+        <text x="85" y="5" text-anchor="middle" class="label-small">Role + Municipality (4 boxed total)</text>
+        
+        <rect x="0" y="15" width="170" height="180" class="screen-frame"/>
+        
+        <!-- Hero -->
+        <rect x="0" y="15" width="170" height="40" fill="#FDC010" stroke="#151820" stroke-width="1"/>
+        <text x="85" y="40" text-anchor="middle" class="label-tiny">Dobrodošli!</text>
+        
+        <!-- Role cards (48px icons) -->
+        <rect x="10" y="60" width="70" height="55" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <rect x="20" y="65" width="30" height="30" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="35" cy="80" r="5" class="icon-marker-boxed"/>
+        <text x="35" y="100" text-anchor="middle" class="icon-label">user</text>
+        <text x="45" y="112" text-anchor="middle" class="label-tiny">48px ✓</text>
+        
+        <rect x="90" y="60" width="70" height="55" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <rect x="100" y="65" width="30" height="30" fill="#E9E6E0" stroke="#151820" stroke-width="1"/>
+        <circle cx="115" cy="80" r="5" class="icon-marker-boxed"/>
+        <text x="115" y="100" text-anchor="middle" class="icon-label">home</text>
+        <text x="125" y="112" text-anchor="middle" class="label-tiny">48px ✓</text>
+        
+        <!-- Municipality cards (64px icons) -->
+        <rect x="10" y="125" width="70" height="60" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <rect x="15" y="130" width="40" height="40" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+        <circle cx="35" cy="150" r="6" class="icon-marker-boxed"/>
+        <text x="35" y="175" text-anchor="middle" class="icon-label">file-text</text>
+        <text x="35" y="183" text-anchor="middle" class="label-tiny">64px ✓</text>
+        
+        <rect x="90" y="125" width="70" height="60" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <rect x="95" y="130" width="40" height="40" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+        <circle cx="115" cy="150" r="6" class="icon-marker-boxed"/>
+        <text x="115" y="175" text-anchor="middle" class="icon-label">file-text</text>
+        <text x="115" y="183" text-anchor="middle" class="label-tiny">64px ✓</text>
+      </g>
+      
+      <!-- States (Empty/Error) -->
+      <g transform="translate(660, 0)">
+        <text x="60" y="-5" text-anchor="middle" class="screen-title">States.tsx</text>
+        <text x="60" y="5" text-anchor="middle" class="label-small">(0 boxed, 2 unboxed)</text>
+        
+        <!-- Empty state -->
+        <rect x="0" y="15" width="120" height="70" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="60" cy="40" r="8" class="icon-marker-unboxed"/>
+        <text x="60" y="60" text-anchor="middle" class="icon-label">varies xl</text>
+        <text x="60" y="75" text-anchor="middle" class="label-tiny">Empty state</text>
+        
+        <!-- Error state -->
+        <rect x="0" y="95" width="120" height="70" fill="#FFEBEE" stroke="#D32F2F" stroke-width="1"/>
+        <circle cx="60" cy="120" r="8" class="icon-marker-unboxed"/>
+        <text x="60" y="140" text-anchor="middle" class="icon-label">alert-triangle xl</text>
+        <text x="60" y="155" text-anchor="middle" class="label-tiny">Error state</text>
+      </g>
+      
+      <!-- MenuOverlay -->
+      <g transform="translate(810, 0)">
+        <text x="70" y="-5" text-anchor="middle" class="screen-title">MenuOverlay.tsx</text>
+        <text x="70" y="5" text-anchor="middle" class="label-small">(0 boxed, 1 unboxed per item)</text>
+        
+        <rect x="0" y="15" width="140" height="150" fill="rgba(0,0,0,0.8)" stroke="#151820" stroke-width="2"/>
+        
+        <!-- Menu items -->
+        <rect x="10" y="25" width="120" height="30" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="25" cy="40" r="4" class="icon-marker-unboxed"/>
+        <text x="70" y="45" text-anchor="middle" class="label-tiny">Početna</text>
+        
+        <rect x="10" y="60" width="120" height="30" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="25" cy="75" r="4" class="icon-marker-unboxed"/>
+        <text x="70" y="80" text-anchor="middle" class="label-tiny">Promet</text>
+        
+        <rect x="10" y="95" width="120" height="30" fill="#FDFBF8" stroke="#151820" stroke-width="1"/>
+        <circle cx="25" cy="110" r="4" class="icon-marker-unboxed"/>
+        <text x="70" y="115" text-anchor="middle" class="label-tiny">Događanja</text>
+        
+        <text x="70" y="145" text-anchor="middle" class="label-tiny" fill="white">md icons</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 3: COMPLETE FILE INDEX -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 1250)">
+    <text x="0" y="0" class="section-title">📁 KOMPLETAN POPIS PO DATOTEKAMA</text>
+    
+    <g transform="translate(0, 25)">
+      <!-- Column headers -->
+      <rect x="0" y="0" width="200" height="20" fill="#151820"/>
+      <text x="100" y="14" text-anchor="middle" class="label-bold" fill="white">Datoteka</text>
+      <rect x="200" y="0" width="60" height="20" fill="#151820"/>
+      <text x="230" y="14" text-anchor="middle" class="label-bold" fill="white">Ukupno</text>
+      <rect x="260" y="0" width="60" height="20" fill="#1976D2"/>
+      <text x="290" y="14" text-anchor="middle" class="label-bold" fill="white">Boxed</text>
+      <rect x="320" y="0" width="60" height="20" fill="#FF9800"/>
+      <text x="350" y="14" text-anchor="middle" class="label-bold" fill="white">Unboxed</text>
+      
+      <!-- Rows (top files by icon count) -->
+      <g transform="translate(0, 22)">
+        <text x="5" y="14" class="label">LineDetailScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">10</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">4</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">6</text>
+      </g>
+      <g transform="translate(0, 38)">
+        <text x="5" y="14" class="label">FaunaSpeciesCard.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">7</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">7</text>
+      </g>
+      <g transform="translate(0, 54)">
+        <text x="5" y="14" class="label">FloraSpeciesCard.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">7</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">7</text>
+      </g>
+      <g transform="translate(0, 70)">
+        <text x="5" y="14" class="label">InboxListScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">6</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">6</text>
+      </g>
+      <g transform="translate(0, 86)">
+        <text x="5" y="14" class="label">HomeScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">5</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">3</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">2</text>
+      </g>
+      <g transform="translate(0, 102)">
+        <text x="5" y="14" class="label">EventsScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">5</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">5</text>
+      </g>
+      <g transform="translate(0, 118)">
+        <text x="5" y="14" class="label">TransportHubScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">4</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">4</text>
+      </g>
+      <g transform="translate(0, 134)">
+        <text x="5" y="14" class="label">EventDetailScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">3</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">3</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">0</text>
+      </g>
+      <g transform="translate(0, 150)">
+        <text x="5" y="14" class="label">HeroMediaHeader.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">3</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">3</text>
+      </g>
+      <g transform="translate(0, 166)">
+        <text x="5" y="14" class="label">RoadTransportScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">3</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">2</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">1</text>
+      </g>
+      <g transform="translate(0, 182)">
+        <text x="5" y="14" class="label">SeaTransportScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">3</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">2</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">1</text>
+      </g>
+      <g transform="translate(0, 198)">
+        <text x="5" y="14" class="label">StaticPageScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">3</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">3</text>
+      </g>
+    </g>
+    
+    <!-- Second column -->
+    <g transform="translate(420, 25)">
+      <rect x="0" y="0" width="200" height="20" fill="#151820"/>
+      <text x="100" y="14" text-anchor="middle" class="label-bold" fill="white">Datoteka</text>
+      <rect x="200" y="0" width="60" height="20" fill="#151820"/>
+      <text x="230" y="14" text-anchor="middle" class="label-bold" fill="white">Ukupno</text>
+      <rect x="260" y="0" width="60" height="20" fill="#1976D2"/>
+      <text x="290" y="14" text-anchor="middle" class="label-bold" fill="white">Boxed</text>
+      <rect x="320" y="0" width="60" height="20" fill="#FF9800"/>
+      <text x="350" y="14" text-anchor="middle" class="label-bold" fill="white">Unboxed</text>
+      
+      <g transform="translate(0, 22)">
+        <text x="5" y="14" class="label">GlobalHeader.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">2</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">0</text>
+      </g>
+      <g transform="translate(0, 38)">
+        <text x="5" y="14" class="label">Banner.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">1</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">1</text>
+      </g>
+      <g transform="translate(0, 54)">
+        <text x="5" y="14" class="label">ServiceAccordionCard.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">1</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">1</text>
+      </g>
+      <g transform="translate(0, 70)">
+        <text x="5" y="14" class="label">MunicipalitySelectionScreen</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">2</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">0</text>
+      </g>
+      <g transform="translate(0, 86)">
+        <text x="5" y="14" class="label">PhotoSlotTile.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">2</text>
+      </g>
+      <g transform="translate(0, 102)">
+        <text x="5" y="14" class="label">ClickFixFormScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">2</text>
+      </g>
+      <g transform="translate(0, 118)">
+        <text x="5" y="14" class="label">JavneUslugeScreen.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">2</text>
+      </g>
+      <g transform="translate(0, 134)">
+        <text x="5" y="14" class="label">States.tsx</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">2</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">0</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">2</text>
+      </g>
+      <g transform="translate(0, 150)">
+        <text x="5" y="14" class="label">Ostali (18 datoteka)</text>
+        <text x="230" y="14" text-anchor="middle" class="label-bold">18</text>
+        <text x="290" y="14" text-anchor="middle" class="label" fill="#1976D2">5</text>
+        <text x="350" y="14" text-anchor="middle" class="label" fill="#FF9800">13</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 4: HARDCODED VALUES -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 1520)">
+    <text x="0" y="0" class="section-title">⚠️ HARDKODIRANE VRIJEDNOSTI (za tokenizirati)</text>
+    
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="800" height="130" class="hardcoded"/>
+      
+      <rect x="0" y="0" width="200" height="20" fill="#D32F2F"/>
+      <text x="100" y="14" text-anchor="middle" class="label-bold" fill="white">Datoteka</text>
+      <rect x="200" y="0" width="80" height="20" fill="#D32F2F"/>
+      <text x="240" y="14" text-anchor="middle" class="label-bold" fill="white">Linija</text>
+      <rect x="280" y="0" width="80" height="20" fill="#D32F2F"/>
+      <text x="320" y="14" text-anchor="middle" class="label-bold" fill="white">Veličina</text>
+      <rect x="360" y="0" width="440" height="20" fill="#D32F2F"/>
+      <text x="580" y="14" text-anchor="middle" class="label-bold" fill="white">Predloženi token</text>
+      
+      <text x="10" y="38" class="label">Banner.tsx</text>
+      <text x="240" y="38" text-anchor="middle" class="label">154-155</text>
+      <text x="320" y="38" text-anchor="middle" class="label-bold">44×44</text>
+      <text x="370" y="38" class="label" fill="#4CAF50">components.banner.iconBoxSize: 44</text>
+      
+      <text x="10" y="56" class="label">FaunaScreen.tsx</text>
+      <text x="240" y="56" text-anchor="middle" class="label">236-237</text>
+      <text x="320" y="56" text-anchor="middle" class="label-bold">44×44</text>
+      <text x="370" y="56" class="label" fill="#4CAF50">components.nature.warningIconBoxSize: 44</text>
+      
+      <text x="10" y="74" class="label">FloraScreen.tsx</text>
+      <text x="240" y="74" text-anchor="middle" class="label">236-237</text>
+      <text x="320" y="74" text-anchor="middle" class="label-bold">44×44</text>
+      <text x="370" y="74" class="label" fill="#4CAF50">(shared with Fauna)</text>
+      
+      <text x="10" y="92" class="label">HomeScreen.tsx</text>
+      <text x="240" y="92" text-anchor="middle" class="label">491-492</text>
+      <text x="320" y="92" text-anchor="middle" class="label-bold">48×48</text>
+      <text x="370" y="92" class="label" fill="#4CAF50">components.home.ctaIconBoxSize: 48</text>
+      
+      <text x="10" y="110" class="label">LineDetailScreen.tsx</text>
+      <text x="240" y="110" text-anchor="middle" class="label">863-864</text>
+      <text x="320" y="110" text-anchor="middle" class="label-bold">32×32</text>
+      <text x="370" y="110" class="label" fill="#FF9800">❓ Razmotriti: pretvoriti u unboxed md?</text>
+      
+      <text x="10" y="128" class="label">ServiceAccordionCard.tsx</text>
+      <text x="240" y="128" text-anchor="middle" class="label">149</text>
+      <text x="320" y="128" text-anchor="middle" class="label-bold">44</text>
+      <text x="370" y="128" class="label" fill="#4CAF50">components.services.accordionIconBoxSize: 44</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 5: SUMMARY & RECOMMENDATIONS -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 1710)">
+    <rect x="0" y="0" width="1720" height="200" fill="#E8F5E9" stroke="#4CAF50" stroke-width="3"/>
+    <text x="860" y="25" text-anchor="middle" class="section-title" fill="#2E7D32">💡 SAŽETAK I PREPORUKE</text>
+    
+    <g transform="translate(30, 50)">
+      <rect x="0" y="0" width="400" height="130" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="200" y="20" text-anchor="middle" class="label-bold" fill="#2E7D32">NAJČEŠĆE KORIŠTENO</text>
+      <text x="15" y="45" class="label">• 44px boxed: 13 ikona (52% boxed)</text>
+      <text x="15" y="63" class="label">• sm unboxed: ~30 ikona (46% unboxed)</text>
+      <text x="15" y="81" class="label">• md unboxed: ~20 ikona (31% unboxed)</text>
+      <text x="15" y="99" class="label">• Chevrons: najčešći tip ikone</text>
+      <text x="15" y="117" class="label">• GlobalHeader: prisutan na svakom ekranu</text>
+    </g>
+    
+    <g transform="translate(460, 50)">
+      <rect x="0" y="0" width="400" height="130" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="200" y="20" text-anchor="middle" class="label-bold" fill="#2E7D32">PREPORUČENE STANDARDNE VELIČINE</text>
+      <text x="15" y="45" class="label">• 44px = standard (nav, list, alerts)</text>
+      <text x="15" y="63" class="label">• 48px = hero (transport, onboarding)</text>
+      <text x="15" y="81" class="label">• 64px = emphasis (municipality only)</text>
+      <text x="15" y="99" class="label">• 80px = confirmation (special)</text>
+      <text x="15" y="117" class="label" fill="#D32F2F">• 32px, 40px, 52px = razmotriti konsolidaciju</text>
+    </g>
+    
+    <g transform="translate(890, 50)">
+      <rect x="0" y="0" width="400" height="130" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="200" y="20" text-anchor="middle" class="label-bold" fill="#2E7D32">PRIORITETI ZA ČIŠĆENJE</text>
+      <text x="15" y="45" class="label" fill="#D32F2F">P0: Tokenizirati 6 hardkodiranih vrijednosti</text>
+      <text x="15" y="63" class="label" fill="#FF9800">P1: Odlučiti o 32px contact links</text>
+      <text x="15" y="81" class="label" fill="#FF9800">P1: Konsolidirati 40px i 44px u listama</text>
+      <text x="15" y="99" class="label">P2: Razmotriti 52px → 48px</text>
+      <text x="15" y="117" class="label">P2: Dokumentirati boxed vs unboxed pravila</text>
+    </g>
+    
+    <g transform="translate(1320, 50)">
+      <rect x="0" y="0" width="370" height="130" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="185" y="20" text-anchor="middle" class="label-bold" fill="#2E7D32">KLJUČNI BROJEVI</text>
+      <text x="15" y="45" class="label-bold">90 ukupno ikona</text>
+      <text x="15" y="63" class="label">28% boxed (25 ikona)</text>
+      <text x="15" y="81" class="label">72% unboxed (65 ikona)</text>
+      <text x="15" y="99" class="label">36 datoteka sa ikonama</text>
+      <text x="15" y="117" class="label">6 hardkodiranih za popraviti</text>
+    </g>
+  </g>
+  
+  <!-- Footer -->
+  <text x="900" y="1950" text-anchor="middle" class="subtitle">MOJ VIS Icon Inventory &amp; Screen Locations • CORRECTED: 90 ikona • February 2026</text>
+</svg>

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" width="400" height="860">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .yellow-header { fill: #fff3cd; stroke: #333; stroke-width: 2; }
+      .mode-card { fill: white; stroke: #666; stroke-width: 2; }
+      .mode-card-selected { fill: #e8f5e9; stroke: #4caf50; stroke-width: 3; }
+      .icon-circle { fill: #f5f5f5; stroke: #999; stroke-width: 2; }
+      .icon-circle-selected { fill: #c8e6c9; stroke: #4caf50; stroke-width: 2; }
+      .progress-dot { fill: #333; }
+      .progress-dot-inactive { fill: #ccc; }
+      .back-button { fill: white; stroke: #333; stroke-width: 2; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">UserModeSelectionScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/onboarding/UserModeSelectionScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="780" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- Back button -->
+  <g transform="translate(32, 106)">
+    <rect x="0" y="0" width="44" height="44" class="back-button"/>
+    <text x="22" y="28" text-anchor="middle" class="label-bold">←</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">Back Button</text>
+  <text x="390" y="142" text-anchor="end" class="label-small">onboarding-specific</text>
+  
+  <!-- Hero/Title Section -->
+  <g transform="translate(20, 166)">
+    <rect x="0" y="0" width="360" height="80" class="yellow-header"/>
+    <rect x="0" y="76" width="360" height="4" fill="#333"/>
+    
+    <text x="180" y="35" text-anchor="middle" class="label-bold" style="font-size: 18px;">How will you use MOJ VIS?</text>
+    <text x="180" y="58" text-anchor="middle" class="label">This helps us personalize your experience</text>
+  </g>
+  <text x="390" y="210" text-anchor="end" class="label">Hero Section</text>
+  <text x="390" y="222" text-anchor="end" class="label-small">accent (yellow)</text>
+  
+  <!-- User Mode Options -->
+  <g transform="translate(32, 270)">
+    <text x="0" y="0" class="section-label">I am a...</text>
+    
+    <!-- Tourist Card (large, selected) -->
+    <g transform="translate(0, 20)">
+      <rect x="4" y="4" width="336" height="140" fill="#333"/>
+      <rect x="0" y="0" width="336" height="140" class="mode-card-selected"/>
+      
+      <circle cx="56" cy="50" r="32" class="icon-circle-selected"/>
+      <text x="56" y="58" text-anchor="middle" style="font-size: 24px;">🧳</text>
+      
+      <text x="108" y="40" class="label-bold" style="font-size: 16px;">Tourist / Visitor</text>
+      <text x="108" y="60" class="label">I'm visiting Vis island</text>
+      <text x="108" y="80" class="label-small" fill="#666">Get travel info, events, transport</text>
+      
+      <circle cx="304" cy="70" r="14" fill="#4caf50" stroke="#333" stroke-width="2"/>
+      <text x="304" y="76" text-anchor="middle" class="label-bold" fill="white">✓</text>
+      
+      <!-- Feature highlights -->
+      <g transform="translate(16, 100)">
+        <text x="0" y="12" class="label-small">✓ Transport schedules</text>
+        <text x="120" y="12" class="label-small">✓ Events calendar</text>
+        <text x="240" y="12" class="label-small">✓ Flora &amp; Fauna</text>
+      </g>
+    </g>
+  </g>
+  <text x="390" y="360" text-anchor="end" class="label">Mode Card (large)</text>
+  <text x="390" y="372" text-anchor="end" class="label-small">selected state</text>
+  <text x="390" y="384" text-anchor="end" class="label-small">with feature list</text>
+  
+  <!-- Resident Card -->
+  <g transform="translate(32, 450)">
+    <rect x="0" y="0" width="336" height="140" class="mode-card"/>
+    <rect x="0" y="136" width="336" height="4" fill="#333"/>
+    
+    <circle cx="56" cy="50" r="32" class="icon-circle"/>
+    <text x="56" y="58" text-anchor="middle" style="font-size: 24px;">🏠</text>
+    
+    <text x="108" y="40" class="label-bold" style="font-size: 16px;">Local Resident</text>
+    <text x="108" y="60" class="label">I live on Vis island</text>
+    <text x="108" y="80" class="label-small" fill="#666">Get local services, reports, news</text>
+    
+    <circle cx="304" cy="70" r="14" fill="none" stroke="#999" stroke-width="2"/>
+    
+    <!-- Feature highlights -->
+    <g transform="translate(16, 100)">
+      <text x="0" y="12" class="label-small">✓ Report problems</text>
+      <text x="120" y="12" class="label-small">✓ Public services</text>
+      <text x="240" y="12" class="label-small">✓ Local inbox</text>
+    </g>
+  </g>
+  <text x="390" y="520" text-anchor="end" class="label">Mode Card (large)</text>
+  <text x="390" y="532" text-anchor="end" class="label-small">unselected state</text>
+  
+  <!-- Progress Dots -->
+  <g transform="translate(170, 620)">
+    <circle cx="0" cy="0" r="6" class="progress-dot-inactive"/>
+    <circle cx="20" cy="0" r="6" class="progress-dot"/>
+    <circle cx="40" cy="0" r="6" class="progress-dot-inactive"/>
+  </g>
+  <text x="390" y="622" text-anchor="end" class="label">Progress Dots</text>
+  <text x="390" y="634" text-anchor="end" class="label-small">Step 2 of 3</text>
+  
+  <!-- Note about feature impact -->
+  <g transform="translate(32, 660)">
+    <rect x="0" y="0" width="336" height="48" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="168" y="18" text-anchor="middle" class="label-small" fill="#1565c0">ℹ️ Selection affects navigation visibility</text>
+    <text x="168" y="34" text-anchor="middle" class="label-small" fill="#1565c0">Residents see ClickFix, Tourists see Flora/Fauna</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="770" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="805" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="850" class="label-small">Layout: Back → Hero Title → Mode Cards (Tourist/Resident) → Progress Dots (2/3) — Auto-nav</text>
+</svg>

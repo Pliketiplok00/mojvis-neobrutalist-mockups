@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" width="400" height="860">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .header { fill: #e8e8e8; stroke: #333; stroke-width: 2; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .success-circle { fill: #e8f5e9; stroke: #4caf50; stroke-width: 3; }
+      .button-primary { fill: #2788c9; stroke: #333; stroke-width: 2; }
+      .button-secondary { fill: white; stroke: #333; stroke-width: 2; }
+      .debt-marker { fill: #fff3e0; stroke: #ff9800; stroke-width: 2; stroke-dasharray: 4,2; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">FeedbackConfirmationScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/feedback/FeedbackConfirmationScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="780" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- GlobalHeader -->
+  <g transform="translate(20, 94)">
+    <rect x="0" y="0" width="360" height="64" class="header"/>
+    <rect x="0" y="60" width="360" height="4" fill="#333"/>
+    <rect x="12" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="34" y="36" text-anchor="middle" class="label-small">←</text>
+    <text x="180" y="38" text-anchor="middle" class="label-bold">MOJ VIS</text>
+    <rect x="304" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="326" y="36" text-anchor="middle" class="label-small">✉</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">GlobalHeader</text>
+  
+  <!-- Centered Success Content -->
+  <g transform="translate(20, 260)">
+    <!-- Success Icon Circle -->
+    <circle cx="180" cy="50" r="50" class="success-circle"/>
+    <text x="180" y="60" text-anchor="middle" style="font-size: 36px;">✓</text>
+  </g>
+  <text x="390" y="310" text-anchor="end" class="label">Success Icon</text>
+  <text x="390" y="322" text-anchor="end" class="label-small">⚠️ HARDCODED</text>
+  <text x="390" y="334" text-anchor="end" class="label-small">80×80, radius: 40</text>
+  
+  <!-- Hardcoded size debt marker -->
+  <g transform="translate(100, 280)">
+    <rect x="0" y="0" width="80" height="24" class="debt-marker"/>
+    <text x="40" y="16" text-anchor="middle" class="label-small" fill="#e65100">80×80 hardcoded</text>
+  </g>
+  
+  <!-- Title -->
+  <g transform="translate(32, 380)">
+    <text x="168" y="0" text-anchor="middle" class="section-label" style="font-size: 18px;">Thank You!</text>
+  </g>
+  
+  <!-- Message -->
+  <g transform="translate(32, 410)">
+    <text x="168" y="0" text-anchor="middle" class="label">Your feedback has been sent successfully.</text>
+    <text x="168" y="20" text-anchor="middle" class="label">We appreciate you taking the time to</text>
+    <text x="168" y="40" text-anchor="middle" class="label">share your thoughts with us.</text>
+  </g>
+  
+  <!-- Action Buttons -->
+  <g transform="translate(32, 500)">
+    <!-- Primary Action -->
+    <rect x="4" y="4" width="336" height="52" fill="#333"/>
+    <rect x="0" y="0" width="336" height="52" class="button-primary"/>
+    <text x="168" y="32" text-anchor="middle" class="label-bold" fill="white">Back to Home</text>
+  </g>
+  <text x="390" y="530" text-anchor="end" class="label">Button (primary)</text>
+  <text x="390" y="542" text-anchor="end" class="label-small">primaryAction</text>
+  
+  <!-- Secondary Action -->
+  <g transform="translate(32, 570)">
+    <rect x="4" y="4" width="336" height="52" fill="#333"/>
+    <rect x="0" y="0" width="336" height="52" class="button-secondary"/>
+    <text x="168" y="32" text-anchor="middle" class="label-bold">Send Another</text>
+  </g>
+  <text x="390" y="600" text-anchor="end" class="label">Button (secondary)</text>
+  <text x="390" y="612" text-anchor="end" class="label-small">secondaryAction</text>
+  
+  <!-- Debt indicator -->
+  <g transform="translate(32, 660)">
+    <rect x="0" y="0" width="336" height="60" class="debt-marker"/>
+    <text x="168" y="20" text-anchor="middle" class="label-bold" fill="#e65100">⚠️ P0 DESIGN DEBT</text>
+    <text x="168" y="36" text-anchor="middle" class="label-small" fill="#e65100">~90% duplicate with ClickFixConfirmationScreen</text>
+    <text x="168" y="50" text-anchor="middle" class="label-small" fill="#e65100">Extract to shared ConfirmationScreen component</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="770" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="805" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="850" class="label-small">Layout: Success Icon (80×80 circle) → Title → Message → Primary Button → Secondary Button</text>
+</svg>

@@ -1,0 +1,783 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 2200" width="1700" height="2200">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap');
+      
+      .title { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; fill: #151820; }
+      .subtitle { font-family: 'Space Mono', monospace; font-size: 11px; fill: #5C606B; }
+      .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; fill: #151820; }
+      .label { font-family: 'Space Mono', monospace; font-size: 10px; fill: #151820; }
+      .label-bold { font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700; fill: #151820; }
+      .label-small { font-family: 'Space Mono', monospace; font-size: 8px; fill: #5C606B; }
+      .label-tiny { font-family: 'Space Mono', monospace; font-size: 7px; fill: #5C606B; }
+      .count { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; }
+      .code { font-family: 'Space Mono', monospace; font-size: 8px; fill: #4CAF50; }
+      .boxed { fill: #E3F2FD; stroke: #1976D2; stroke-width: 2; }
+      .unboxed { fill: #FFF3E0; stroke: #FF9800; stroke-width: 2; }
+      .tokenized { fill: #E8F5E9; stroke: #4CAF50; stroke-width: 2; }
+      .hardcoded { fill: #FFEBEE; stroke: #D32F2F; stroke-width: 2; }
+      .icon-box { fill: #FDFBF8; stroke: #151820; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1700" height="2200" fill="#F7F4EE"/>
+  
+  <!-- Title -->
+  <text x="850" y="40" text-anchor="middle" class="title">MOJ VIS — Icon Inventory Visualization</text>
+  <text x="850" y="60" text-anchor="middle" class="subtitle">Bazirano na ICON_INVENTORY_REAL_APP.md • 77 ikona • 7 boxed veličina • 6 hardkodiranih vrijednosti</text>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 1: OVERVIEW STATS -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 90)">
+    <text x="0" y="0" class="section-title">📊 PREGLED STATISTIKE</text>
+    
+    <g transform="translate(0, 25)">
+      <!-- Total icons -->
+      <rect x="0" y="0" width="120" height="65" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+      <text x="60" y="30" text-anchor="middle" class="count" fill="#151820">77</text>
+      <text x="60" y="50" text-anchor="middle" class="label">Ukupno</text>
+      
+      <!-- Boxed -->
+      <rect x="140" y="0" width="120" height="65" class="boxed"/>
+      <text x="200" y="30" text-anchor="middle" class="count" fill="#1976D2">23</text>
+      <text x="200" y="50" text-anchor="middle" class="label">Boxed (30%)</text>
+      
+      <!-- Unboxed -->
+      <rect x="280" y="0" width="120" height="65" class="unboxed"/>
+      <text x="340" y="30" text-anchor="middle" class="count" fill="#FF9800">54</text>
+      <text x="340" y="50" text-anchor="middle" class="label">Unboxed (70%)</text>
+      
+      <!-- Tokenized -->
+      <rect x="420" y="0" width="120" height="65" class="tokenized"/>
+      <text x="480" y="30" text-anchor="middle" class="count" fill="#4CAF50">17</text>
+      <text x="480" y="50" text-anchor="middle" class="label">Tokenizirano</text>
+      
+      <!-- Hardcoded -->
+      <rect x="560" y="0" width="120" height="65" class="hardcoded"/>
+      <text x="620" y="30" text-anchor="middle" class="count" fill="#D32F2F">6</text>
+      <text x="620" y="50" text-anchor="middle" class="label">Hardkodirano</text>
+      
+      <!-- Unique sizes -->
+      <rect x="700" y="0" width="120" height="65" fill="#E9E6E0" stroke="#151820" stroke-width="2"/>
+      <text x="760" y="30" text-anchor="middle" class="count" fill="#151820">7</text>
+      <text x="760" y="50" text-anchor="middle" class="label">Boxed veličina</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 2: BOXED SIZES VISUAL COMPARISON -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 200)">
+    <text x="0" y="0" class="section-title">📐 BOXED VELIČINE — Vizualna usporedba (u razmjeru)</text>
+    
+    <g transform="translate(0, 30)">
+      <!-- 32px -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="24" width="32" height="32" class="icon-box" stroke-width="2"/>
+        <text x="16" y="44" text-anchor="middle" font-size="14">📞</text>
+        <text x="16" y="75" text-anchor="middle" class="label-bold">32px</text>
+        <text x="16" y="88" text-anchor="middle" class="label-small">3 ikone</text>
+        
+        <rect x="-10" y="95" width="52" height="50" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="16" y="108" text-anchor="middle" class="label-tiny">LineDetailScreen</text>
+        <text x="16" y="118" text-anchor="middle" class="label-tiny">contact links:</text>
+        <text x="16" y="128" text-anchor="middle" class="label-tiny">phone, mail, globe</text>
+        
+        <rect x="-10" y="150" width="52" height="16" class="hardcoded" rx="2"/>
+        <text x="16" y="161" text-anchor="middle" class="label-tiny" fill="#D32F2F">HARDCODED</text>
+      </g>
+      
+      <!-- 40px -->
+      <g transform="translate(100, 0)">
+        <rect x="0" y="20" width="40" height="40" class="icon-box" stroke-width="2"/>
+        <text x="20" y="46" text-anchor="middle" font-size="18">🚌</text>
+        <text x="20" y="78" text-anchor="middle" class="label-bold">40px</text>
+        <text x="20" y="91" text-anchor="middle" class="label-small">2 ikone</text>
+        
+        <rect x="-10" y="98" width="60" height="45" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="20" y="111" text-anchor="middle" class="label-tiny">RoadTransport</text>
+        <text x="20" y="121" text-anchor="middle" class="label-tiny">SeaTransport</text>
+        <text x="20" y="131" text-anchor="middle" class="label-tiny">line card headers</text>
+        
+        <rect x="-10" y="150" width="60" height="16" class="tokenized" rx="2"/>
+        <text x="20" y="161" text-anchor="middle" class="label-tiny" fill="#4CAF50">✓ TOKEN</text>
+      </g>
+      
+      <!-- 44px (MOST COMMON) -->
+      <g transform="translate(220, 0)">
+        <rect x="-15" y="-10" width="74" height="185" fill="rgba(25, 118, 210, 0.1)" stroke="#1976D2" stroke-width="2" stroke-dasharray="4,2" rx="4"/>
+        <text x="22" y="5" text-anchor="middle" class="label-bold" fill="#1976D2">⭐ NAJČEŠĆA</text>
+        
+        <rect x="0" y="16" width="44" height="44" class="icon-box" stroke-width="3"/>
+        <text x="22" y="44" text-anchor="middle" font-size="22">☰</text>
+        <text x="22" y="78" text-anchor="middle" class="label-bold" fill="#1976D2">44px</text>
+        <text x="22" y="91" text-anchor="middle" class="label-small">11 ikona</text>
+        
+        <rect x="-10" y="98" width="64" height="60" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="22" y="110" text-anchor="middle" class="label-tiny">GlobalHeader (2)</text>
+        <text x="22" y="120" text-anchor="middle" class="label-tiny">EventDetail (3)</text>
+        <text x="22" y="130" text-anchor="middle" class="label-tiny">Banner, Fauna</text>
+        <text x="22" y="140" text-anchor="middle" class="label-tiny">Flora, Service</text>
+        <text x="22" y="150" text-anchor="middle" class="label-tiny">HomeScreen cat.</text>
+        
+        <rect x="-10" y="162" width="64" height="16" fill="#FFF3E0" stroke="#FF9800" rx="2"/>
+        <text x="22" y="173" text-anchor="middle" class="label-tiny" fill="#E65100">MIXED (5 hard)</text>
+      </g>
+      
+      <!-- 48px -->
+      <g transform="translate(360, 0)">
+        <rect x="0" y="16" width="48" height="48" class="icon-box" stroke-width="2"/>
+        <text x="24" y="46" text-anchor="middle" font-size="24">⛴</text>
+        <text x="24" y="82" text-anchor="middle" class="label-bold">48px</text>
+        <text x="24" y="95" text-anchor="middle" class="label-small">4 ikone</text>
+        
+        <rect x="-10" y="102" width="68" height="50" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="24" y="115" text-anchor="middle" class="label-tiny">RoadTransport hdr</text>
+        <text x="24" y="125" text-anchor="middle" class="label-tiny">SeaTransport hdr</text>
+        <text x="24" y="135" text-anchor="middle" class="label-tiny">HomeScreen CTA</text>
+        <text x="24" y="145" text-anchor="middle" class="label-tiny">OnboardingRole</text>
+        
+        <rect x="-10" y="158" width="68" height="16" fill="#FFF3E0" stroke="#FF9800" rx="2"/>
+        <text x="24" y="169" text-anchor="middle" class="label-tiny" fill="#E65100">MIXED (1 hard)</text>
+      </g>
+      
+      <!-- 52px -->
+      <g transform="translate(490, 0)">
+        <rect x="0" y="14" width="52" height="52" class="icon-box" stroke-width="2"/>
+        <text x="26" y="46" text-anchor="middle" font-size="26">🚢</text>
+        <text x="26" y="84" text-anchor="middle" class="label-bold">52px</text>
+        <text x="26" y="97" text-anchor="middle" class="label-small">1 ikona</text>
+        
+        <rect x="-5" y="104" width="62" height="35" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="26" y="117" text-anchor="middle" class="label-tiny">LineDetailScreen</text>
+        <text x="26" y="127" text-anchor="middle" class="label-tiny">header hero</text>
+        
+        <rect x="-5" y="145" width="62" height="16" class="tokenized" rx="2"/>
+        <text x="26" y="156" text-anchor="middle" class="label-tiny" fill="#4CAF50">✓ TOKEN</text>
+      </g>
+      
+      <!-- 64px -->
+      <g transform="translate(620, 0)">
+        <rect x="0" y="8" width="64" height="64" class="icon-box" stroke-width="2"/>
+        <text x="32" y="48" text-anchor="middle" font-size="32">🏛️</text>
+        <text x="32" y="90" text-anchor="middle" class="label-bold">64px</text>
+        <text x="32" y="103" text-anchor="middle" class="label-small">2 ikone</text>
+        
+        <rect x="-2" y="110" width="68" height="35" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="32" y="123" text-anchor="middle" class="label-tiny">Municipality</text>
+        <text x="32" y="133" text-anchor="middle" class="label-tiny">SelectionScreen</text>
+        
+        <rect x="-2" y="151" width="68" height="16" class="tokenized" rx="2"/>
+        <text x="32" y="162" text-anchor="middle" class="label-tiny" fill="#4CAF50">✓ TOKEN</text>
+      </g>
+      
+      <!-- 80px -->
+      <g transform="translate(760, 0)">
+        <rect x="0" y="0" width="80" height="80" class="icon-box" stroke-width="2"/>
+        <text x="40" y="52" text-anchor="middle" font-size="40">✓</text>
+        <text x="40" y="98" text-anchor="middle" class="label-bold">80px</text>
+        <text x="40" y="111" text-anchor="middle" class="label-small">2 ikone</text>
+        
+        <rect x="0" y="118" width="80" height="35" fill="#FDFBF8" stroke="#CCC" stroke-width="1"/>
+        <text x="40" y="131" text-anchor="middle" class="label-tiny">Confirmation</text>
+        <text x="40" y="141" text-anchor="middle" class="label-tiny">screens (special)</text>
+        
+        <rect x="0" y="159" width="80" height="16" class="hardcoded" rx="2"/>
+        <text x="40" y="170" text-anchor="middle" class="label-tiny" fill="#D32F2F">HARDCODED</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 3: UNBOXED SIZES -->
+  <!-- ============================================ -->
+  <g transform="translate(920, 90)">
+    <text x="0" y="0" class="section-title">📍 UNBOXED VELIČINE (54 ikone)</text>
+    
+    <g transform="translate(0, 25)">
+      <!-- xs (14px) -->
+      <g transform="translate(0, 0)">
+        <circle cx="18" cy="30" r="7" fill="none" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="18" y="34" text-anchor="middle" font-size="8">🕐</text>
+        <text x="18" y="55" text-anchor="middle" class="label-bold">xs</text>
+        <text x="18" y="68" text-anchor="middle" class="label-small">14px</text>
+        <text x="18" y="81" text-anchor="middle" class="label-tiny">2 ikone</text>
+        <text x="18" y="94" text-anchor="middle" class="label-tiny">Event meta</text>
+      </g>
+      
+      <!-- sm (18px) -->
+      <g transform="translate(70, 0)">
+        <circle cx="20" cy="30" r="9" fill="none" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="20" y="35" text-anchor="middle" font-size="10">›</text>
+        <text x="20" y="58" text-anchor="middle" class="label-bold">sm</text>
+        <text x="20" y="71" text-anchor="middle" class="label-small">18px</text>
+        <text x="20" y="84" text-anchor="middle" class="label-tiny">~25 ikona</text>
+        <text x="20" y="97" text-anchor="middle" class="label-tiny">Chevrons</text>
+        <text x="20" y="108" text-anchor="middle" class="label-tiny">Meta, Form</text>
+      </g>
+      
+      <!-- md (24px) -->
+      <g transform="translate(145, 0)">
+        <circle cx="22" cy="30" r="12" fill="none" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="22" y="36" text-anchor="middle" font-size="14">📍</text>
+        <text x="22" y="60" text-anchor="middle" class="label-bold">md</text>
+        <text x="22" y="73" text-anchor="middle" class="label-small">24px</text>
+        <text x="22" y="86" text-anchor="middle" class="label-tiny">~15 ikona</text>
+        <text x="22" y="99" text-anchor="middle" class="label-tiny">Menu, List</text>
+        <text x="22" y="110" text-anchor="middle" class="label-tiny">Close btns</text>
+      </g>
+      
+      <!-- lg (32px) -->
+      <g transform="translate(225, 0)">
+        <circle cx="26" cy="30" r="16" fill="none" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="26" y="38" text-anchor="middle" font-size="18">📷</text>
+        <text x="26" y="64" text-anchor="middle" class="label-bold">lg</text>
+        <text x="26" y="77" text-anchor="middle" class="label-small">32px</text>
+        <text x="26" y="90" text-anchor="middle" class="label-tiny">~8 ikona</text>
+        <text x="26" y="103" text-anchor="middle" class="label-tiny">Empty state</text>
+        <text x="26" y="114" text-anchor="middle" class="label-tiny">PhotoSlot</text>
+      </g>
+      
+      <!-- xl (40px) -->
+      <g transform="translate(315, 0)">
+        <circle cx="30" cy="30" r="20" fill="none" stroke="#FF9800" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="30" y="38" text-anchor="middle" font-size="22">⚠️</text>
+        <text x="30" y="68" text-anchor="middle" class="label-bold">xl</text>
+        <text x="30" y="81" text-anchor="middle" class="label-small">40px</text>
+        <text x="30" y="94" text-anchor="middle" class="label-tiny">~6 ikona</text>
+        <text x="30" y="107" text-anchor="middle" class="label-tiny">Large empty</text>
+        <text x="30" y="118" text-anchor="middle" class="label-tiny">Error states</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 4: TOKEN DEFINITIONS -->
+  <!-- ============================================ -->
+  <g transform="translate(920, 230)">
+    <text x="0" y="0" class="section-title">🔧 POSTOJEĆI TOKENI (skin.neobrut2.ts)</text>
+    
+    <g transform="translate(0, 20)">
+      <rect x="0" y="0" width="420" height="155" fill="#151820" stroke="#4CAF50" stroke-width="2"/>
+      
+      <text x="15" y="20" class="code">components.header.iconBoxSize</text>
+      <text x="320" y="20" fill="#FDC010" font-family="Space Mono" font-size="9">= 44</text>
+      
+      <text x="15" y="38" class="code">components.events.detail.infoTileIconBoxSize</text>
+      <text x="320" y="38" fill="#FDC010" font-family="Space Mono" font-size="9">= 44</text>
+      
+      <text x="15" y="56" class="code">components.transport.overviewHeader.iconBoxSize</text>
+      <text x="320" y="56" fill="#FDC010" font-family="Space Mono" font-size="9">= 48</text>
+      
+      <text x="15" y="74" class="code">components.transport.list.lineCardHeaderIconBoxSize</text>
+      <text x="320" y="74" fill="#FDC010" font-family="Space Mono" font-size="9">= 40</text>
+      
+      <text x="15" y="92" class="code">components.transport.lineDetail.headerIconBoxSize</text>
+      <text x="320" y="92" fill="#FDC010" font-family="Space Mono" font-size="9">= 52</text>
+      
+      <text x="15" y="110" class="code">components.onboarding.roleCard.iconBox.size</text>
+      <text x="320" y="110" fill="#FDC010" font-family="Space Mono" font-size="9">= 48</text>
+      
+      <text x="15" y="128" class="code">components.onboarding.municipalitySelection.iconBox.size</text>
+      <text x="320" y="128" fill="#FDC010" font-family="Space Mono" font-size="9">= 64</text>
+      
+      <text x="15" y="148" fill="#5C606B" font-family="Space Mono" font-size="8">// MicroPrimitives: sm=24, md=32, lg=44</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 5: HARDCODED VALUES TO FIX -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 420)">
+    <text x="0" y="0" class="section-title">⚠️ HARDKODIRANE VRIJEDNOSTI (treba tokenizirati)</text>
+    
+    <g transform="translate(0, 25)">
+      <rect x="0" y="0" width="800" height="130" class="hardcoded"/>
+      
+      <!-- Header -->
+      <rect x="0" y="0" width="250" height="24" fill="#D32F2F"/>
+      <text x="125" y="16" text-anchor="middle" class="label-bold" fill="white">File</text>
+      <rect x="250" y="0" width="80" height="24" fill="#D32F2F"/>
+      <text x="290" y="16" text-anchor="middle" class="label-bold" fill="white">Linija</text>
+      <rect x="330" y="0" width="80" height="24" fill="#D32F2F"/>
+      <text x="370" y="16" text-anchor="middle" class="label-bold" fill="white">Veličina</text>
+      <rect x="410" y="0" width="390" height="24" fill="#D32F2F"/>
+      <text x="605" y="16" text-anchor="middle" class="label-bold" fill="white">Predloženi token</text>
+      
+      <!-- Rows -->
+      <text x="15" y="42" class="label">Banner.tsx</text>
+      <text x="290" y="42" text-anchor="middle" class="label">154-155</text>
+      <text x="370" y="42" text-anchor="middle" class="label-bold">44×44</text>
+      <text x="425" y="42" class="code">→ components.banner.iconBoxSize: 44</text>
+      
+      <text x="15" y="60" class="label">FaunaScreen.tsx</text>
+      <text x="290" y="60" text-anchor="middle" class="label">236-237</text>
+      <text x="370" y="60" text-anchor="middle" class="label-bold">44×44</text>
+      <text x="425" y="60" class="code">→ components.nature.warningIconBoxSize: 44</text>
+      
+      <text x="15" y="78" class="label">FloraScreen.tsx</text>
+      <text x="290" y="78" text-anchor="middle" class="label">236-237</text>
+      <text x="370" y="78" text-anchor="middle" class="label-bold">44×44</text>
+      <text x="425" y="78" class="code">→ (shared with Fauna)</text>
+      
+      <text x="15" y="96" class="label">HomeScreen.tsx</text>
+      <text x="290" y="96" text-anchor="middle" class="label">491-492</text>
+      <text x="370" y="96" text-anchor="middle" class="label-bold">48×48</text>
+      <text x="425" y="96" class="code">→ components.home.ctaIconBoxSize: 48</text>
+      
+      <text x="15" y="114" class="label">LineDetailScreen.tsx</text>
+      <text x="290" y="114" text-anchor="middle" class="label">863-864</text>
+      <text x="370" y="114" text-anchor="middle" class="label-bold">32×32</text>
+      <text x="425" y="114" class="code">→ ❓ PROBLEM: Should this be unboxed?</text>
+      
+      <text x="15" y="132" class="label">ServiceAccordionCard.tsx</text>
+      <text x="290" y="132" text-anchor="middle" class="label">149</text>
+      <text x="370" y="132" text-anchor="middle" class="label-bold">44</text>
+      <text x="425" y="132" class="code">→ components.services.accordionIconBoxSize: 44</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 6: USAGE BY CONTEXT -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 590)">
+    <text x="0" y="0" class="section-title">📋 KORIŠTENJE PO KONTEKSTU</text>
+    
+    <g transform="translate(0, 25)">
+      <!-- Navigation -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="260" height="140" fill="#FDFBF8" stroke="#151820" stroke-width="2"/>
+        <rect x="0" y="0" width="260" height="28" fill="#2788C9"/>
+        <text x="130" y="19" text-anchor="middle" class="label-bold" fill="white">🧭 NAVIGATION (2 ikone)</text>
+        
+        <text x="15" y="50" class="label">GlobalHeader menu:</text>
+        <rect x="160" y="38" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="51" text-anchor="middle" class="label-small">44px</text>
+        <text x="210" y="51" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <text x="15" y="72" class="label">GlobalHeader inbox:</text>
+        <rect x="160" y="60" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="73" text-anchor="middle" class="label-small">44px</text>
+        <text x="210" y="73" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <rect x="10" y="95" width="90" height="18" class="tokenized" rx="2"/>
+        <text x="55" y="108" text-anchor="middle" class="label-small" fill="#4CAF50">✓ Consistent</text>
+        
+        <text x="10" y="130" class="label-tiny" fill="#5C606B">Oba koriste header.iconBoxSize</text>
+      </g>
+      
+      <!-- Hero/Detail Headers -->
+      <g transform="translate(280, 0)">
+        <rect x="0" y="0" width="260" height="140" fill="#FDFBF8" stroke="#151820" stroke-width="2"/>
+        <rect x="0" y="0" width="260" height="28" fill="#FDC010"/>
+        <text x="130" y="19" text-anchor="middle" class="label-bold">🎯 HERO HEADERS (5 ikona)</text>
+        
+        <text x="15" y="50" class="label">Transport overview:</text>
+        <rect x="160" y="38" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="51" text-anchor="middle" class="label-small">48px</text>
+        <text x="210" y="51" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <text x="15" y="72" class="label">LineDetail hero:</text>
+        <rect x="160" y="60" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="73" text-anchor="middle" class="label-small">52px</text>
+        <text x="210" y="73" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <text x="15" y="94" class="label">EventDetail tiles:</text>
+        <rect x="160" y="82" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="95" text-anchor="middle" class="label-small">44px</text>
+        <text x="210" y="95" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <rect x="10" y="110" width="110" height="18" fill="#FFF3E0" stroke="#FF9800" rx="2"/>
+        <text x="65" y="123" text-anchor="middle" class="label-small" fill="#E65100">⚠️ 3 veličine!</text>
+      </g>
+      
+      <!-- List Items -->
+      <g transform="translate(560, 0)">
+        <rect x="0" y="0" width="260" height="140" fill="#FDFBF8" stroke="#151820" stroke-width="2"/>
+        <rect x="0" y="0" width="260" height="28" fill="#15AF50"/>
+        <text x="130" y="19" text-anchor="middle" class="label-bold" fill="white">📋 LIST ITEMS (6 ikona)</text>
+        
+        <text x="15" y="50" class="label">Line card headers:</text>
+        <rect x="160" y="38" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="51" text-anchor="middle" class="label-small">40px</text>
+        <text x="210" y="51" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <text x="15" y="72" class="label">Service accordion:</text>
+        <rect x="160" y="60" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="73" text-anchor="middle" class="label-small">44px</text>
+        <text x="210" y="73" class="label-tiny" fill="#D32F2F">⚠</text>
+        
+        <text x="15" y="94" class="label">Contact links:</text>
+        <rect x="160" y="82" width="40" height="18" class="boxed" rx="2"/>
+        <text x="180" y="95" text-anchor="middle" class="label-small">32px</text>
+        <text x="210" y="95" class="label-tiny" fill="#D32F2F">⚠</text>
+        
+        <rect x="10" y="110" width="180" height="18" class="hardcoded" rx="2"/>
+        <text x="100" y="123" text-anchor="middle" class="label-small" fill="#D32F2F">⚠️ 3 veličine, 2 hardcoded</text>
+      </g>
+      
+      <!-- Alerts -->
+      <g transform="translate(840, 0)">
+        <rect x="0" y="0" width="260" height="140" fill="#FDFBF8" stroke="#151820" stroke-width="2"/>
+        <rect x="0" y="0" width="260" height="28" fill="#D64E2D"/>
+        <text x="130" y="19" text-anchor="middle" class="label-bold" fill="white">⚠️ ALERTS (4 ikone)</text>
+        
+        <text x="15" y="50" class="label">Banner:</text>
+        <rect x="120" y="38" width="40" height="18" class="boxed" rx="2"/>
+        <text x="140" y="51" text-anchor="middle" class="label-small">44px</text>
+        <text x="170" y="51" class="label-tiny" fill="#D32F2F">⚠ hard</text>
+        
+        <text x="15" y="72" class="label">Fauna/Flora warning:</text>
+        <rect x="150" y="60" width="40" height="18" class="boxed" rx="2"/>
+        <text x="170" y="73" text-anchor="middle" class="label-small">44px</text>
+        <text x="200" y="73" class="label-tiny" fill="#D32F2F">⚠ hard</text>
+        
+        <text x="15" y="94" class="label">Confirmation:</text>
+        <rect x="120" y="82" width="40" height="18" class="boxed" rx="2"/>
+        <text x="140" y="95" text-anchor="middle" class="label-small">80px</text>
+        <text x="170" y="95" class="label-tiny" fill="#D32F2F">⚠ hard</text>
+        
+        <rect x="10" y="110" width="130" height="18" class="hardcoded" rx="2"/>
+        <text x="75" y="123" text-anchor="middle" class="label-small" fill="#D32F2F">⚠️ Sve hardcoded!</text>
+      </g>
+      
+      <!-- Onboarding -->
+      <g transform="translate(1120, 0)">
+        <rect x="0" y="0" width="260" height="140" fill="#FDFBF8" stroke="#151820" stroke-width="2"/>
+        <rect x="0" y="0" width="260" height="28" fill="#B796C6"/>
+        <text x="130" y="19" text-anchor="middle" class="label-bold">🎓 ONBOARDING (4 ikone)</text>
+        
+        <text x="15" y="50" class="label">Role cards:</text>
+        <rect x="130" y="38" width="40" height="18" class="boxed" rx="2"/>
+        <text x="150" y="51" text-anchor="middle" class="label-small">48px</text>
+        <text x="180" y="51" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <text x="15" y="72" class="label">Municipality:</text>
+        <rect x="130" y="60" width="40" height="18" class="boxed" rx="2"/>
+        <text x="150" y="73" text-anchor="middle" class="label-small">64px</text>
+        <text x="180" y="73" class="label-tiny" fill="#4CAF50">✓</text>
+        
+        <rect x="10" y="95" width="90" height="18" class="tokenized" rx="2"/>
+        <text x="55" y="108" text-anchor="middle" class="label-small" fill="#4CAF50">✓ OK</text>
+        
+        <text x="10" y="130" class="label-tiny" fill="#5C606B">Različite veličine = hierarchy</text>
+      </g>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 7: PROPOSED UNIFORMITY RULES -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 780)">
+    <rect x="0" y="0" width="1620" height="320" fill="#E8F5E9" stroke="#4CAF50" stroke-width="3"/>
+    <text x="810" y="28" text-anchor="middle" class="section-title" fill="#2E7D32">💡 PRIJEDLOG PRAVILA UNIFORMIRANJA</text>
+    
+    <!-- Rule 1: Consolidate to 4 standard sizes -->
+    <g transform="translate(30, 50)">
+      <rect x="0" y="0" width="370" height="250" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="185" y="25" text-anchor="middle" class="label-bold" fill="#2E7D32">PRAVILO 1: Standardne boxed veličine</text>
+      
+      <text x="15" y="50" class="label-bold" fill="#D32F2F">UKLONITI:</text>
+      <g transform="translate(20, 60)">
+        <rect x="0" y="0" width="32" height="32" class="icon-box" stroke-width="1" opacity="0.5"/>
+        <line x1="0" y1="0" x2="32" y2="32" stroke="#D32F2F" stroke-width="2"/>
+        <line x1="32" y1="0" x2="0" y2="32" stroke="#D32F2F" stroke-width="2"/>
+        <text x="45" y="12" class="label">32px</text>
+        <text x="45" y="26" class="label-small">→ koristiti unboxed md</text>
+      </g>
+      
+      <text x="15" y="115" class="label-bold" fill="#4CAF50">ZADRŽATI:</text>
+      
+      <g transform="translate(20, 125)">
+        <rect x="0" y="4" width="44" height="44" class="icon-box" stroke-width="2"/>
+        <text x="60" y="18" class="label-bold">44px = standard</text>
+        <text x="60" y="32" class="label-small">Nav, List, Alerts, Events</text>
+        <text x="60" y="46" class="label-tiny" fill="#4CAF50">→ touchTargetSize alias</text>
+      </g>
+      
+      <g transform="translate(200, 125)">
+        <rect x="0" y="0" width="48" height="48" class="icon-box" stroke-width="2"/>
+        <text x="60" y="18" class="label-bold">48px = hero</text>
+        <text x="60" y="32" class="label-small">Transport, CTA</text>
+      </g>
+      
+      <g transform="translate(20, 180)">
+        <rect x="0" y="0" width="64" height="64" class="icon-box" stroke-width="2"/>
+        <text x="80" y="22" class="label-bold">64px = emphasis</text>
+        <text x="80" y="36" class="label-small">Onboarding</text>
+      </g>
+      
+      <g transform="translate(200, 180)">
+        <rect x="0" y="0" width="80" height="40" class="icon-box" stroke-width="2"/>
+        <text x="20" y="25" font-size="20">✓</text>
+        <text x="95" y="15" class="label-bold">80px = confirmation</text>
+        <text x="95" y="29" class="label-small">Special case only</text>
+      </g>
+      
+      <text x="15" y="260" class="label-bold" fill="#FF9800">PITANJE: 52px?</text>
+      <text x="100" y="260" class="label-small">Konsolidirati u 48px ili zadržati za LineDetail?</text>
+    </g>
+    
+    <!-- Rule 2: Context rules -->
+    <g transform="translate(430, 50)">
+      <rect x="0" y="0" width="370" height="250" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="185" y="25" text-anchor="middle" class="label-bold" fill="#2E7D32">PRAVILO 2: Kada boxed vs unboxed</text>
+      
+      <rect x="15" y="40" width="340" height="95" class="boxed"/>
+      <text x="185" y="58" text-anchor="middle" class="label-bold" fill="#1976D2">BOXED koristi za:</text>
+      <text x="25" y="78" class="label">• Navigation header ikone (touch target)</text>
+      <text x="25" y="94" class="label">• Hero/Detail header ikone (emphasis)</text>
+      <text x="25" y="110" class="label">• Primary list item ikone</text>
+      <text x="25" y="126" class="label">• Alert/Banner ikone</text>
+      
+      <rect x="15" y="145" width="340" height="95" class="unboxed"/>
+      <text x="185" y="163" text-anchor="middle" class="label-bold" fill="#FF9800">UNBOXED koristi za:</text>
+      <text x="25" y="183" class="label">• Meta ikone (vrijeme, lokacija)</text>
+      <text x="25" y="199" class="label">• Chevrons i affordances</text>
+      <text x="25" y="215" class="label">• Inline ikone u tekstu</text>
+      <text x="25" y="231" class="label">• Empty/Error state hero ikone</text>
+    </g>
+    
+    <!-- Rule 3: Token structure -->
+    <g transform="translate(830, 50)">
+      <rect x="0" y="0" width="370" height="250" fill="#151820" stroke="#4CAF50" stroke-width="2"/>
+      <text x="185" y="25" text-anchor="middle" class="label-bold" fill="#4CAF50">PRAVILO 3: Nova token struktura</text>
+      
+      <text x="15" y="50" fill="#5C606B" font-family="Space Mono" font-size="9">// Dodati u skin.neobrut2.ts</text>
+      <text x="15" y="70" fill="#4CAF50" font-family="Space Mono" font-size="9">iconBox: {</text>
+      <text x="25" y="88" fill="white" font-family="Space Mono" font-size="9">standard: 44,   // nav, list, alerts</text>
+      <text x="25" y="106" fill="white" font-family="Space Mono" font-size="9">hero: 48,       // transport, CTA</text>
+      <text x="25" y="124" fill="white" font-family="Space Mono" font-size="9">emphasis: 64,   // onboarding</text>
+      <text x="25" y="142" fill="white" font-family="Space Mono" font-size="9">confirmation: 80</text>
+      <text x="15" y="160" fill="#4CAF50" font-family="Space Mono" font-size="9">}</text>
+      
+      <text x="15" y="185" fill="#5C606B" font-family="Space Mono" font-size="9">// Aliases za backward compat</text>
+      <text x="15" y="203" fill="white" font-family="Space Mono" font-size="9">touchTargetSize: 44  // = iconBox.standard</text>
+      
+      <text x="15" y="228" fill="#5C606B" font-family="Space Mono" font-size="9">// Component-specific (keep existing)</text>
+      <text x="15" y="246" fill="#FDC010" font-family="Space Mono" font-size="9">components.*.iconBoxSize → use iconBox.*</text>
+    </g>
+    
+    <!-- Rule 4: Migration checklist -->
+    <g transform="translate(1230, 50)">
+      <rect x="0" y="0" width="360" height="250" fill="#FDFBF8" stroke="#4CAF50" stroke-width="2"/>
+      <text x="180" y="25" text-anchor="middle" class="label-bold" fill="#2E7D32">PRAVILO 4: Migration checklist</text>
+      
+      <text x="15" y="50" class="label-bold" fill="#D32F2F">P0 — Kritično</text>
+      <rect x="15" y="58" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="69" class="label-small">Dodati iconBox tokene u skin</text>
+      <rect x="15" y="76" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="87" class="label-small">Tokenizirati Banner.tsx</text>
+      <rect x="15" y="94" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="105" class="label-small">Tokenizirati Confirmation screens</text>
+      
+      <text x="15" y="130" class="label-bold" fill="#FF9800">P1 — Važno</text>
+      <rect x="15" y="138" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="149" class="label-small">Tokenizirati Fauna/Flora warning</text>
+      <rect x="15" y="156" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="167" class="label-small">Tokenizirati HomeScreen CTA</text>
+      <rect x="15" y="174" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="185" class="label-small">Tokenizirati ServiceAccordionCard</text>
+      
+      <text x="15" y="210" class="label-bold" fill="#4CAF50">P2 — Nice to have</text>
+      <rect x="15" y="218" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="229" class="label-small">Odlučiti 52px: zadržati ili → 48px</text>
+      <rect x="15" y="236" width="14" height="14" fill="none" stroke="#151820" stroke-width="1.5"/>
+      <text x="35" y="247" class="label-small">LineDetail contact: 32px → unboxed?</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 8: DECISION FLOWCHART -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 1130)">
+    <text x="0" y="0" class="section-title">🔀 DECISION FLOWCHART: Boxed ili Unboxed?</text>
+    
+    <g transform="translate(0, 30)">
+      <!-- Start -->
+      <rect x="300" y="0" width="160" height="40" fill="#151820" stroke="#151820" stroke-width="2" rx="20"/>
+      <text x="380" y="25" text-anchor="middle" class="label-bold" fill="white">Nova ikona?</text>
+      
+      <!-- Arrow down -->
+      <line x1="380" y1="40" x2="380" y2="70" stroke="#151820" stroke-width="2" marker-end="url(#arrow)"/>
+      
+      <!-- Question 1 -->
+      <rect x="280" y="70" width="200" height="50" fill="#FDC010" stroke="#151820" stroke-width="2"/>
+      <text x="380" y="90" text-anchor="middle" class="label">Treba li touch target</text>
+      <text x="380" y="105" text-anchor="middle" class="label">ili vizualni emphasis?</text>
+      
+      <!-- DA branch -->
+      <line x1="380" y1="120" x2="380" y2="150" stroke="#151820" stroke-width="2"/>
+      <text x="390" y="140" class="label-bold" fill="#4CAF50">DA</text>
+      
+      <!-- Question 2 -->
+      <rect x="280" y="150" width="200" height="50" fill="#FDC010" stroke="#151820" stroke-width="2"/>
+      <text x="380" y="170" text-anchor="middle" class="label">Koji kontekst?</text>
+      
+      <!-- Branches from Q2 -->
+      <line x1="280" y1="175" x2="100" y2="175" stroke="#151820" stroke-width="2"/>
+      <line x1="100" y1="175" x2="100" y2="220" stroke="#151820" stroke-width="2"/>
+      
+      <line x1="380" y1="200" x2="380" y2="220" stroke="#151820" stroke-width="2"/>
+      
+      <line x1="480" y1="175" x2="660" y2="175" stroke="#151820" stroke-width="2"/>
+      <line x1="660" y1="175" x2="660" y2="220" stroke="#151820" stroke-width="2"/>
+      
+      <!-- Nav result -->
+      <rect x="20" y="220" width="160" height="60" class="boxed"/>
+      <text x="100" y="242" text-anchor="middle" class="label-bold" fill="#1976D2">Navigation</text>
+      <text x="100" y="258" text-anchor="middle" class="label">→ 44px boxed</text>
+      <text x="100" y="273" text-anchor="middle" class="label-tiny">iconBox.standard</text>
+      
+      <!-- Hero result -->
+      <rect x="300" y="220" width="160" height="60" class="boxed"/>
+      <text x="380" y="242" text-anchor="middle" class="label-bold" fill="#1976D2">Hero/Detail</text>
+      <text x="380" y="258" text-anchor="middle" class="label">→ 48px boxed</text>
+      <text x="380" y="273" text-anchor="middle" class="label-tiny">iconBox.hero</text>
+      
+      <!-- Onboarding result -->
+      <rect x="580" y="220" width="160" height="60" class="boxed"/>
+      <text x="660" y="242" text-anchor="middle" class="label-bold" fill="#1976D2">Onboarding</text>
+      <text x="660" y="258" text-anchor="middle" class="label">→ 48-64px boxed</text>
+      <text x="660" y="273" text-anchor="middle" class="label-tiny">iconBox.hero/emphasis</text>
+      
+      <!-- NE branch -->
+      <line x1="480" y1="95" x2="850" y2="95" stroke="#151820" stroke-width="2"/>
+      <text x="520" y="88" class="label-bold" fill="#D32F2F">NE</text>
+      <line x1="850" y1="95" x2="850" y2="150" stroke="#151820" stroke-width="2"/>
+      
+      <!-- Question 3 -->
+      <rect x="750" y="150" width="200" height="50" fill="#FDC010" stroke="#151820" stroke-width="2"/>
+      <text x="850" y="170" text-anchor="middle" class="label">Veličina sadržaja?</text>
+      
+      <!-- Branches from Q3 -->
+      <line x1="750" y1="175" x2="900" y2="175" stroke="#151820" stroke-width="2"/>
+      <line x1="900" y1="200" x2="900" y2="220" stroke="#151820" stroke-width="2"/>
+      <line x1="1000" y1="175" x2="1100" y2="175" stroke="#151820" stroke-width="2"/>
+      <line x1="1100" y1="175" x2="1100" y2="220" stroke="#151820" stroke-width="2"/>
+      
+      <!-- Small result -->
+      <rect x="800" y="220" width="140" height="60" class="unboxed"/>
+      <text x="870" y="242" text-anchor="middle" class="label-bold" fill="#FF9800">Mali</text>
+      <text x="870" y="258" text-anchor="middle" class="label">→ xs/sm unboxed</text>
+      <text x="870" y="273" text-anchor="middle" class="label-tiny">14-18px</text>
+      
+      <!-- Medium result -->
+      <rect x="1000" y="220" width="140" height="60" class="unboxed"/>
+      <text x="1070" y="242" text-anchor="middle" class="label-bold" fill="#FF9800">Srednji/Veliki</text>
+      <text x="1070" y="258" text-anchor="middle" class="label">→ md/lg/xl unboxed</text>
+      <text x="1070" y="273" text-anchor="middle" class="label-tiny">24-40px</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 9: BEFORE/AFTER COMPARISON -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 1460)">
+    <text x="0" y="0" class="section-title">📊 BEFORE → AFTER: Pojednostavljenje</text>
+    
+    <g transform="translate(0, 30)">
+      <!-- Before -->
+      <rect x="0" y="0" width="600" height="180" fill="#FFEBEE" stroke="#D32F2F" stroke-width="2"/>
+      <text x="300" y="25" text-anchor="middle" class="label-bold" fill="#D32F2F">PRIJE: 7 različitih veličina</text>
+      
+      <g transform="translate(30, 45)">
+        <rect x="0" y="24" width="32" height="32" class="icon-box" stroke-width="1"/>
+        <text x="16" y="75" text-anchor="middle" class="label-tiny">32px</text>
+        
+        <rect x="60" y="20" width="40" height="40" class="icon-box" stroke-width="1"/>
+        <text x="80" y="78" text-anchor="middle" class="label-tiny">40px</text>
+        
+        <rect x="130" y="16" width="44" height="44" class="icon-box" stroke-width="2"/>
+        <text x="152" y="78" text-anchor="middle" class="label-tiny">44px</text>
+        
+        <rect x="205" y="14" width="48" height="48" class="icon-box" stroke-width="1"/>
+        <text x="229" y="78" text-anchor="middle" class="label-tiny">48px</text>
+        
+        <rect x="280" y="12" width="52" height="52" class="icon-box" stroke-width="1"/>
+        <text x="306" y="80" text-anchor="middle" class="label-tiny">52px</text>
+        
+        <rect x="360" y="8" width="64" height="64" class="icon-box" stroke-width="1"/>
+        <text x="392" y="88" text-anchor="middle" class="label-tiny">64px</text>
+        
+        <rect x="450" y="0" width="80" height="80" class="icon-box" stroke-width="1"/>
+        <text x="490" y="98" text-anchor="middle" class="label-tiny">80px</text>
+      </g>
+      
+      <text x="30" y="160" class="label-small" fill="#D32F2F">• 6 hardkodiranih vrijednosti • Teško za održavanje • Nekonzistentno</text>
+      
+      <!-- Arrow -->
+      <text x="640" y="90" font-size="40" fill="#4CAF50">→</text>
+      
+      <!-- After -->
+      <rect x="700" y="0" width="500" height="180" fill="#E8F5E9" stroke="#4CAF50" stroke-width="2"/>
+      <text x="950" y="25" text-anchor="middle" class="label-bold" fill="#4CAF50">POSLIJE: 4 standardne veličine</text>
+      
+      <g transform="translate(750, 45)">
+        <rect x="0" y="16" width="44" height="44" class="icon-box" stroke-width="2"/>
+        <text x="22" y="40" text-anchor="middle" font-size="18">☰</text>
+        <text x="22" y="78" text-anchor="middle" class="label-bold">44px</text>
+        <text x="22" y="92" text-anchor="middle" class="label-tiny">standard</text>
+        
+        <rect x="90" y="12" width="48" height="48" class="icon-box" stroke-width="2"/>
+        <text x="114" y="42" text-anchor="middle" font-size="22">🚌</text>
+        <text x="114" y="78" text-anchor="middle" class="label-bold">48px</text>
+        <text x="114" y="92" text-anchor="middle" class="label-tiny">hero</text>
+        
+        <rect x="185" y="4" width="64" height="64" class="icon-box" stroke-width="2"/>
+        <text x="217" y="44" text-anchor="middle" font-size="28">🏛️</text>
+        <text x="217" y="86" text-anchor="middle" class="label-bold">64px</text>
+        <text x="217" y="100" text-anchor="middle" class="label-tiny">emphasis</text>
+        
+        <rect x="290" y="0" width="80" height="68" class="icon-box" stroke-width="2"/>
+        <text x="330" y="42" text-anchor="middle" font-size="32">✓</text>
+        <text x="330" y="86" text-anchor="middle" class="label-bold">80px</text>
+        <text x="330" y="100" text-anchor="middle" class="label-tiny">confirm</text>
+      </g>
+      
+      <text x="730" y="160" class="label-small" fill="#4CAF50">• Sve tokenizirano • Jasna pravila • Lako za održavanje</text>
+    </g>
+  </g>
+  
+  <!-- ============================================ -->
+  <!-- SECTION 10: KEY DECISIONS NEEDED -->
+  <!-- ============================================ -->
+  <g transform="translate(40, 1700)">
+    <text x="0" y="0" class="section-title">❓ KLJUČNE ODLUKE POTREBNE</text>
+    
+    <g transform="translate(0, 25)">
+      <!-- Decision 1 -->
+      <rect x="0" y="0" width="400" height="100" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+      <text x="200" y="25" text-anchor="middle" class="label-bold" fill="#E65100">1. Što s 52px (LineDetail hero)?</text>
+      <text x="15" y="50" class="label">Opcija A: Konsolidirati u 48px</text>
+      <text x="15" y="68" class="label">Opcija B: Zadržati kao lineDetail.heroIconBox</text>
+      <text x="15" y="86" class="label-small" fill="#5C606B">Preporuka: Opcija B (specifični emphasis)</text>
+      
+      <!-- Decision 2 -->
+      <rect x="420" y="0" width="400" height="100" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+      <text x="620" y="25" text-anchor="middle" class="label-bold" fill="#E65100">2. Što s 32px contact links?</text>
+      <text x="435" y="50" class="label">Opcija A: Pretvoriti u unboxed md (24px)</text>
+      <text x="435" y="68" class="label">Opcija B: Zadržati boxed ali tokenizirati</text>
+      <text x="435" y="86" class="label-small" fill="#5C606B">Preporuka: Opcija A (per Decision Charter)</text>
+      
+      <!-- Decision 3 -->
+      <rect x="840" y="0" width="400" height="100" fill="#FFF3E0" stroke="#FF9800" stroke-width="2"/>
+      <text x="1040" y="25" text-anchor="middle" class="label-bold" fill="#E65100">3. Konsolidirati 40px i 44px u listama?</text>
+      <text x="855" y="50" class="label">Opcija A: Sve list items = 44px</text>
+      <text x="855" y="68" class="label">Opcija B: Zadržati 40px za line cards</text>
+      <text x="855" y="86" class="label-small" fill="#5C606B">Preporuka: Opcija A (jednostavnije)</text>
+    </g>
+  </g>
+  
+  <!-- Footer -->
+  <text x="850" y="1850" text-anchor="middle" class="subtitle">MOJ VIS Icon Inventory Visualization • Bazirano na stvarnim podacima iz aplikacije • February 2026</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#151820"/>
+    </marker>
+  </defs>
+</svg>

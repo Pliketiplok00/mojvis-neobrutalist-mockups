@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" width="400" height="860">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .header { fill: #e8e8e8; stroke: #333; stroke-width: 2; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .dashed { stroke-dasharray: 4,3; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .tile-green { fill: #c8f7c5; stroke: #666; stroke-width: 1.5; }
+      .tile-blue { fill: #b3d9ff; stroke: #666; stroke-width: 1.5; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">TransportHubScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/transport/TransportHubScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="780" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- GlobalHeader -->
+  <g transform="translate(20, 94)">
+    <rect x="0" y="0" width="360" height="64" class="header"/>
+    <rect x="0" y="60" width="360" height="4" fill="#333"/>
+    
+    <!-- Back button -->
+    <rect x="12" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="34" y="36" text-anchor="middle" class="label-small">←</text>
+    
+    <!-- Title -->
+    <text x="180" y="38" text-anchor="middle" class="label-bold">MOJ VIS</text>
+    
+    <!-- Inbox button -->
+    <rect x="304" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="326" y="36" text-anchor="middle" class="label-small">✉</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">GlobalHeader</text>
+  <text x="390" y="142" text-anchor="end" class="label-small">type: "child"</text>
+  
+  <!-- Banner (optional) -->
+  <g transform="translate(32, 170)">
+    <rect x="0" y="0" width="336" height="48" class="component-alt" stroke-dasharray="4,3"/>
+    <text x="168" y="28" text-anchor="middle" class="label">BannerList (optional)</text>
+  </g>
+  
+  <!-- Title Section -->
+  <g transform="translate(32, 234)">
+    <text x="0" y="0" class="section-label">H1 - Transport</text>
+    <text x="0" y="16" class="label">Meta - Choose transport type</text>
+  </g>
+  
+  <!-- Colored Tiles -->
+  <g transform="translate(32, 270)">
+    <!-- Road Tile (Green) -->
+    <rect x="0" y="0" width="336" height="120" class="tile-green"/>
+    <rect x="0" y="116" width="336" height="4" fill="#333"/>
+    
+    <rect x="16" y="16" width="56" height="56" class="component"/>
+    <text x="44" y="50" text-anchor="middle" class="label-small">🚌</text>
+    
+    <text x="88" y="36" class="label-bold">Road Transport</text>
+    <text x="88" y="52" class="label">Bus lines overview</text>
+    <text x="88" y="68" class="label-small">Label - "View timetables"</text>
+    
+    <rect x="280" y="40" width="40" height="40" class="icon-placeholder"/>
+    <text x="300" y="64" text-anchor="middle" class="label-small">→</text>
+  </g>
+  <text x="390" y="330" text-anchor="end" class="label">Road Tile</text>
+  <text x="390" y="342" text-anchor="end" class="label-small">secondary (green)</text>
+  
+  <g transform="translate(32, 406)">
+    <!-- Sea Tile (Blue) -->
+    <rect x="0" y="0" width="336" height="120" class="tile-blue"/>
+    <rect x="0" y="116" width="336" height="4" fill="#333"/>
+    
+    <rect x="16" y="16" width="56" height="56" class="component"/>
+    <text x="44" y="50" text-anchor="middle" class="label-small">⛴</text>
+    
+    <text x="88" y="36" class="label-bold">Sea Transport</text>
+    <text x="88" y="52" class="label">Ferry &amp; catamaran lines</text>
+    <text x="88" y="68" class="label-small">Label - "View timetables"</text>
+    
+    <rect x="280" y="40" width="40" height="40" class="icon-placeholder"/>
+    <text x="300" y="64" text-anchor="middle" class="label-small">→</text>
+  </g>
+  <text x="390" y="466" text-anchor="end" class="label">Sea Tile</text>
+  <text x="390" y="478" text-anchor="end" class="label-small">primary (blue)</text>
+  
+  <!-- Info Note -->
+  <g transform="translate(32, 550)">
+    <rect x="0" y="0" width="336" height="80" class="component-alt"/>
+    <rect x="12" y="12" width="24" height="24" class="icon-placeholder"/>
+    <text x="24" y="28" text-anchor="middle" class="label-small">ℹ</text>
+    <text x="48" y="24" class="label-bold">Info Note</text>
+    <text x="48" y="40" class="label">Additional transport information</text>
+    <text x="48" y="56" class="label">or seasonal notices</text>
+  </g>
+  <text x="390" y="590" text-anchor="end" class="label">Note component</text>
+  <text x="390" y="602" text-anchor="end" class="label-small">transport.note.*</text>
+  
+  <!-- Empty space indicator -->
+  <g transform="translate(32, 660)">
+    <rect x="0" y="0" width="336" height="100" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="168" y="55" text-anchor="middle" class="label-small" fill="#999">Scrollable content area</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="770" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="805" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="850" class="label-small">Layout: Banner → Title → 2 Colored Tiles (Road/Sea) → Info Note</text>
+</svg>

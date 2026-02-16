@@ -1,0 +1,34 @@
+﻿"LINIJA 602 — VIS ↔ SPLIT  (trajekt, Jadrolinija)",,,,,,,,
+"Trajanje: ~2h 20min  |  Izvansezonska cijena: 7,20€/os, auto ≤5m: 40,60€  |  Sezonska: 9,10€/os, auto ≤5m: 52,00€  |  Otočni: 3,50€/os",,,,,,,,
+,,,,,,,,
+IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.,,,,,,,,
+Smjer,Dani,Polazak I,Dolazak I,Polazak II,Dolazak II,Polazak III,Dolazak III,Napomene
+VIS → SPLIT,"PON, UTO, SRI, ČET, SUB",05:30,07:50,15:30,17:50,,,NED/BLAG ima vlastiti red (redak ispod)
+VIS → SPLIT,PETAK,05:30,07:50,14:00,16:20,,,
+VIS → SPLIT,NED / BLAGDAN,07:30,09:50,15:30,17:50,,,"U periodu 01.01–22.02 & 06.12–31.12:
+polazak II = 16:30 → 18:50"
+SPLIT → VIS,"PON, UTO, SRI, ČET, SUB, NED / BLAG",11:00,13:20,18:30,20:50,,,* Vidi redak 11 za zimski period NED/BLAG
+SPLIT → VIS,PETAK,10:00,12:20,17:00,19:20,,,
+SPLIT → VIS,NED / BLAGDAN,11:00,13:20,18:30,20:50,,,"U periodu 01.01–22.02 & 06.12–31.12:
+polazak II = 19:00 → 21:20"
+,,,,,,,,
+NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.,,,,,,,,
+Smjer,Dani,Polazak I,Dolazak I,Polazak II,Dolazak II,Polazak III,Dolazak III,Napomene
+VIS → SPLIT,PON–ČET,05:30,07:50,15:30,17:50,,,
+VIS → SPLIT,"PET, SUB, NED",05:30,07:50,12:00,14:20,18:00,20:20,3 polaska
+SPLIT → VIS,PON–ČET,11:00,13:20,18:30,20:50,,,
+SPLIT → VIS,"PET, SUB, NED",09:00,11:20,15:00,17:20,21:00,23:20,3 polaska
+,,,,,,,,
+VISOKA SEZONA  03.07.–20.09.,,,,,,,,
+Smjer,Dani,Polazak I,Dolazak I,Polazak II,Dolazak II,Polazak III,Dolazak III,Napomene
+VIS → SPLIT,"PON,SRI,ČET,PET,SUB,NED",05:30,07:50,12:00,14:20,18:00,20:20,3 polaska
+VIS → SPLIT,UTORAK,05:30,07:50,15:30,17:50,,,2 polaska
+SPLIT → VIS,"PON,SRI,ČET,PET,SUB,NED",09:00,11:20,15:00,17:20,21:00,23:20,3 polaska
+SPLIT → VIS,UTORAK,11:00,13:20,18:30,20:50,,,2 polaska
+,,,,,,,,
+NAPOMENE:,,,,,,,,
+• 25.12. ne održava se putovanje iz Splita u 11:00 i iz Visa u 16:30,,,,,,,,
+"• Izvansezonski cjenik: po osobi 7,20€ | auto ≤5m 40,60€ | auto >5m 69,80€ | moto 12,10€ | bicikl 7,20€",,,,,,,,
+"• Sezonski cjenik (29.05–27.09): po osobi 9,10€ | auto ≤5m 52,00€ | auto >5m 88,50€ | moto 15,50€ | bicikl 9,10€",,,,,,,,
+"• Otočni cjenik (cijela god.): po osobi 3,50€ | auto ≤5m 23,30€ | Djeca 3–12: 3,60€ | Djeca <3 besplatno",,,,,,,,
+• Kućni ljubimci besplatno. Cijena karte ista za oba smjera.,,,,,,,,

@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" width="400" height="860">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .header { fill: #e8e8e8; stroke: #333; stroke-width: 2; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .input-field { fill: white; stroke: #666; stroke-width: 2; }
+      .input-field-error { fill: white; stroke: #d32f2f; stroke-width: 2; }
+      .error-alert { fill: #ffebee; stroke: #d32f2f; stroke-width: 2; }
+      .button-primary { fill: #2788c9; stroke: #333; stroke-width: 2; }
+      .button-disabled { fill: #e0e0e0; stroke: #999; stroke-width: 2; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">FeedbackFormScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/feedback/FeedbackFormScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="780" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- GlobalHeader -->
+  <g transform="translate(20, 94)">
+    <rect x="0" y="0" width="360" height="64" class="header"/>
+    <rect x="0" y="60" width="360" height="4" fill="#333"/>
+    <rect x="12" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="34" y="36" text-anchor="middle" class="label-small">←</text>
+    <text x="180" y="38" text-anchor="middle" class="label-bold">MOJ VIS</text>
+    <rect x="304" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="326" y="36" text-anchor="middle" class="label-small">✉</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">GlobalHeader</text>
+  
+  <!-- Title Section -->
+  <g transform="translate(32, 174)">
+    <text x="0" y="0" class="section-label" style="font-size: 14px;">H1 - Send Feedback</text>
+    <text x="0" y="20" class="label">Body - Share your thoughts with us</text>
+  </g>
+  
+  <!-- Error Alert (conditional) -->
+  <g transform="translate(32, 214)">
+    <rect x="0" y="0" width="336" height="48" class="error-alert" stroke-dasharray="4,3"/>
+    <rect x="12" y="12" width="24" height="24" class="icon-placeholder"/>
+    <text x="24" y="28" text-anchor="middle" class="label-small">⚠</text>
+    <text x="48" y="24" class="label-bold" fill="#d32f2f">Error message (conditional)</text>
+    <text x="48" y="40" class="label-small" fill="#d32f2f">Submission failed, please try again</text>
+  </g>
+  <text x="390" y="240" text-anchor="end" class="label">Error Alert</text>
+  <text x="390" y="252" text-anchor="end" class="label-small">conditional render</text>
+  
+  <!-- Subject Field -->
+  <g transform="translate(32, 278)">
+    <text x="0" y="0" class="section-label">Subject *</text>
+    <text x="70" y="0" class="label-small" fill="#666">(max 120 chars)</text>
+    
+    <rect x="0" y="16" width="336" height="48" class="input-field"/>
+    <text x="12" y="46" class="label" fill="#999">Enter subject...</text>
+  </g>
+  <text x="390" y="310" text-anchor="end" class="label">Input</text>
+  <text x="390" y="322" text-anchor="end" class="label-small">components.input.*</text>
+  <text x="390" y="334" text-anchor="end" class="label-small">SUBJECT: 120</text>
+  
+  <!-- Character counter -->
+  <g transform="translate(32, 346)">
+    <text x="280" y="0" class="label-small" fill="#666">0/120</text>
+  </g>
+  
+  <!-- Body Field -->
+  <g transform="translate(32, 366)">
+    <text x="0" y="0" class="section-label">Your Feedback *</text>
+    <text x="100" y="0" class="label-small" fill="#666">(max 4000 chars)</text>
+    
+    <rect x="0" y="16" width="336" height="200" class="input-field"/>
+    <text x="12" y="40" class="label" fill="#999">Write your feedback here...</text>
+    <text x="12" y="60" class="label" fill="#999">multiline: true</text>
+    <text x="12" y="80" class="label" fill="#999">numberOfLines: 8</text>
+  </g>
+  <text x="390" y="440" text-anchor="end" class="label">Input (multiline)</text>
+  <text x="390" y="452" text-anchor="end" class="label-small">height: variable</text>
+  <text x="390" y="464" text-anchor="end" class="label-small">BODY: 4000</text>
+  
+  <!-- Character counter -->
+  <g transform="translate(32, 586)">
+    <text x="264" y="0" class="label-small" fill="#666">0/4000</text>
+  </g>
+  
+  <!-- Submit Button -->
+  <g transform="translate(32, 616)">
+    <rect x="4" y="4" width="336" height="52" fill="#333"/>
+    <rect x="0" y="0" width="336" height="52" class="button-primary"/>
+    <text x="168" y="32" text-anchor="middle" class="label-bold" fill="white">Submit Feedback</text>
+  </g>
+  <text x="390" y="650" text-anchor="end" class="label">Button (primary)</text>
+  <text x="390" y="662" text-anchor="end" class="label-small">disabled until valid</text>
+  
+  <!-- Disabled state example -->
+  <g transform="translate(32, 690)">
+    <rect x="0" y="0" width="336" height="52" class="button-disabled"/>
+    <text x="168" y="32" text-anchor="middle" class="label" fill="#999">Submit Feedback (disabled)</text>
+  </g>
+  <text x="390" y="720" text-anchor="end" class="label-small">when fields empty</text>
+  
+  <!-- KeyboardAvoidingView note -->
+  <g transform="translate(32, 760)">
+    <rect x="0" y="0" width="336" height="32" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="168" y="20" text-anchor="middle" class="label-small" fill="#999">KeyboardAvoidingView wrapper</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="770" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="805" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="850" class="label-small">Layout: Title → Error Alert → Subject Field → Body Field → Submit Button</text>
+</svg>

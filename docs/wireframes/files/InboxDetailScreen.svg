@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 860" width="400" height="860">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .header { fill: #e8e8e8; stroke: #333; stroke-width: 2; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .badge-urgent { fill: #ffebee; stroke: #d32f2f; stroke-width: 1.5; }
+      .badge-tag { fill: #e3f2fd; stroke: #1976d2; stroke-width: 1; }
+      .link-text { fill: #0066cc; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">InboxDetailScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/inbox/InboxDetailScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="780" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- GlobalHeader -->
+  <g transform="translate(20, 94)">
+    <rect x="0" y="0" width="360" height="64" class="header"/>
+    <rect x="0" y="60" width="360" height="4" fill="#333"/>
+    <rect x="12" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="34" y="36" text-anchor="middle" class="label-small">←</text>
+    <text x="180" y="38" text-anchor="middle" class="label-bold">MOJ VIS</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">GlobalHeader</text>
+  <text x="390" y="142" text-anchor="end" class="label-small">type: "child"</text>
+  
+  <!-- Urgent Badge (conditional) -->
+  <g transform="translate(32, 174)">
+    <rect x="0" y="0" width="80" height="28" class="badge-urgent"/>
+    <text x="40" y="18" text-anchor="middle" class="label-bold" fill="#d32f2f">⚠ URGENT</text>
+  </g>
+  <text x="390" y="190" text-anchor="end" class="label">Badge (urgent)</text>
+  <text x="390" y="202" text-anchor="end" class="label-small">conditional render</text>
+  
+  <!-- Tags Row -->
+  <g transform="translate(32, 214)">
+    <rect x="0" y="0" width="70" height="24" class="badge-tag"/>
+    <text x="35" y="16" text-anchor="middle" class="label-small" fill="#1976d2">Transport</text>
+    
+    <rect x="78" y="0" width="60" height="24" class="badge-tag"/>
+    <text x="108" y="16" text-anchor="middle" class="label-small" fill="#1976d2">Ferry</text>
+    
+    <rect x="146" y="0" width="50" height="24" class="badge-tag"/>
+    <text x="171" y="16" text-anchor="middle" class="label-small" fill="#1976d2">Vis</text>
+  </g>
+  <text x="390" y="228" text-anchor="end" class="label">Tags</text>
+  <text x="390" y="240" text-anchor="end" class="label-small">'hitno' filtered out</text>
+  
+  <!-- Title -->
+  <g transform="translate(32, 254)">
+    <text x="0" y="20" class="section-label" style="font-size: 16px;">H1 - Message Title Goes Here</text>
+    <text x="0" y="40" class="section-label" style="font-size: 16px;">Across Multiple Lines If Needed</text>
+  </g>
+  
+  <!-- Date Meta -->
+  <g transform="translate(32, 306)">
+    <text x="0" y="0" class="label-small">Meta - February 12, 2026 at 14:30</text>
+  </g>
+  
+  <!-- Body Content -->
+  <g transform="translate(32, 334)">
+    <rect x="0" y="0" width="336" height="320" class="component"/>
+    
+    <text x="12" y="24" class="label">Body text content starts here. This is the</text>
+    <text x="12" y="40" class="label">main message content that can span</text>
+    <text x="12" y="56" class="label">multiple paragraphs and lines.</text>
+    
+    <text x="12" y="88" class="label">Lorem ipsum dolor sit amet, consectetur</text>
+    <text x="12" y="104" class="label">adipiscing elit. Sed do eiusmod tempor</text>
+    <text x="12" y="120" class="label">incididunt ut labore et dolore magna aliqua.</text>
+    
+    <text x="12" y="152" class="label">For more information visit:</text>
+    <text x="12" y="168" class="label link-text" text-decoration="underline">https://example.com/more-info</text>
+    
+    <text x="12" y="200" class="label">Contact us at:</text>
+    <text x="12" y="216" class="label link-text" text-decoration="underline">info@vis.hr</text>
+    
+    <text x="12" y="264" class="label-small" fill="#999">— End of message —</text>
+  </g>
+  <text x="390" y="400" text-anchor="end" class="label">Body content</text>
+  <text x="390" y="412" text-anchor="end" class="label-small">LinkText component</text>
+  <text x="390" y="424" text-anchor="end" class="label-small">auto URL detection</text>
+  
+  <!-- Loading/Error states -->
+  <g transform="translate(32, 680)">
+    <rect x="0" y="0" width="336" height="60" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="168" y="25" text-anchor="middle" class="label-small" fill="#999">LoadingState / ErrorState</text>
+    <text x="168" y="40" text-anchor="middle" class="label-small" fill="#999">(conditional rendering)</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="770" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="805" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="850" class="label-small">Layout: Urgent Badge → Tags → Title → Date → Body (with clickable links)</text>
+</svg>

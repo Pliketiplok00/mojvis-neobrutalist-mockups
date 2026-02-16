@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 1050" width="400" height="1050">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .header { fill: #e8e8e8; stroke: #333; stroke-width: 2; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .orange-header { fill: #ffe0b2; stroke: #333; stroke-width: 2; }
+      .input-field { fill: white; stroke: #666; stroke-width: 2; }
+      .location-card { fill: #e8f5e9; stroke: #4caf50; stroke-width: 2; }
+      .location-card-empty { fill: white; stroke: #666; stroke-width: 2; stroke-dasharray: 4,3; }
+      .photo-slot { fill: #fafafa; stroke: #999; stroke-width: 2; stroke-dasharray: 4,3; }
+      .photo-slot-filled { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; }
+      .button-primary { fill: #2788c9; stroke: #333; stroke-width: 2; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">ClickFixFormScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/click-fix/ClickFixFormScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="970" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- GlobalHeader -->
+  <g transform="translate(20, 94)">
+    <rect x="0" y="0" width="360" height="64" class="header"/>
+    <rect x="0" y="60" width="360" height="4" fill="#333"/>
+    <rect x="12" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="34" y="36" text-anchor="middle" class="label-small">←</text>
+    <text x="180" y="38" text-anchor="middle" class="label-bold">MOJ VIS</text>
+    <rect x="304" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="326" y="36" text-anchor="middle" class="label-small">✉</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">GlobalHeader</text>
+  
+  <!-- ServicePageHeader (Orange) -->
+  <g transform="translate(20, 162)">
+    <rect x="0" y="0" width="360" height="80" class="orange-header"/>
+    <rect x="0" y="76" width="360" height="4" fill="#333"/>
+    
+    <rect x="16" y="16" width="48" height="48" class="component"/>
+    <text x="40" y="44" text-anchor="middle" class="label-small">📍</text>
+    
+    <text x="80" y="36" class="label-bold" style="font-size: 14px;">Report a Problem</text>
+    <text x="80" y="54" class="label">Help improve our island</text>
+  </g>
+  <text x="390" y="206" text-anchor="end" class="label">ServicePageHeader</text>
+  <text x="390" y="218" text-anchor="end" class="label-small">orange background</text>
+  
+  <!-- Location Section -->
+  <g transform="translate(32, 258)">
+    <!-- FormSectionHeader -->
+    <rect x="0" y="0" width="24" height="24" class="icon-placeholder"/>
+    <text x="12" y="16" text-anchor="middle" class="label-small">📍</text>
+    <text x="32" y="16" class="section-label">Location *</text>
+    
+    <!-- Location Card (with success state) -->
+    <rect x="0" y="32" width="336" height="72" class="location-card"/>
+    <rect x="0" y="100" width="336" height="4" fill="#4caf50"/>
+    
+    <rect x="12" y="44" width="24" height="24" class="icon-placeholder"/>
+    <text x="24" y="60" text-anchor="middle" class="label-small">✓</text>
+    
+    <text x="48" y="54" class="label-bold">Location captured</text>
+    <text x="48" y="70" class="label-small">43.0619° N, 16.1892° E</text>
+    <text x="48" y="86" class="label-small" fill="#666">Vis, Croatia</text>
+  </g>
+  <text x="390" y="310" text-anchor="end" class="label">Location Card</text>
+  <text x="390" y="322" text-anchor="end" class="label-small">success styling</text>
+  <text x="390" y="334" text-anchor="end" class="label-small">Location permissions</text>
+  
+  <!-- Photos Section -->
+  <g transform="translate(32, 380)">
+    <!-- FormSectionHeader -->
+    <rect x="0" y="0" width="24" height="24" class="icon-placeholder"/>
+    <text x="12" y="16" text-anchor="middle" class="label-small">📷</text>
+    <text x="32" y="16" class="section-label">Photos</text>
+    <text x="80" y="16" class="label-small" fill="#666">(optional, max 3)</text>
+    
+    <!-- 3-column photo grid -->
+    <g transform="translate(0, 32)">
+      <!-- Photo slot 1 (filled) -->
+      <rect x="0" y="0" width="104" height="104" class="photo-slot-filled"/>
+      <text x="52" y="48" text-anchor="middle" class="label-small" fill="#1976d2">Photo 1</text>
+      <rect x="80" y="4" width="20" height="20" fill="#ff5252" stroke="#333" stroke-width="1"/>
+      <text x="90" y="17" text-anchor="middle" class="label-small" fill="white">×</text>
+      
+      <!-- Photo slot 2 (empty) -->
+      <rect x="116" y="0" width="104" height="104" class="photo-slot"/>
+      <text x="168" y="48" text-anchor="middle" class="label-small" fill="#999">+ Add</text>
+      <text x="168" y="64" text-anchor="middle" class="label-small" fill="#999">Photo</text>
+      
+      <!-- Photo slot 3 (empty) -->
+      <rect x="232" y="0" width="104" height="104" class="photo-slot"/>
+      <text x="284" y="48" text-anchor="middle" class="label-small" fill="#999">+ Add</text>
+      <text x="284" y="64" text-anchor="middle" class="label-small" fill="#999">Photo</text>
+    </g>
+  </g>
+  <text x="390" y="450" text-anchor="end" class="label">PhotoSlotTile</text>
+  <text x="390" y="462" text-anchor="end" class="label-small">3-column grid</text>
+  <text x="390" y="474" text-anchor="end" class="label-small">ImagePicker</text>
+  
+  <!-- Subject Field -->
+  <g transform="translate(32, 530)">
+    <!-- FormSectionHeader -->
+    <rect x="0" y="0" width="24" height="24" class="icon-placeholder"/>
+    <text x="12" y="16" text-anchor="middle" class="label-small">✏️</text>
+    <text x="32" y="16" class="section-label">Subject *</text>
+    
+    <rect x="0" y="32" width="336" height="48" class="input-field"/>
+    <text x="12" y="62" class="label" fill="#999">What's the problem?</text>
+  </g>
+  <text x="390" y="574" text-anchor="end" class="label">Input</text>
+  <text x="390" y="586" text-anchor="end" class="label-small">components.input.*</text>
+  
+  <!-- Description Field -->
+  <g transform="translate(32, 620)">
+    <!-- FormSectionHeader -->
+    <rect x="0" y="0" width="24" height="24" class="icon-placeholder"/>
+    <text x="12" y="16" text-anchor="middle" class="label-small">📝</text>
+    <text x="32" y="16" class="section-label">Description</text>
+    <text x="100" y="16" class="label-small" fill="#666">(optional)</text>
+    
+    <rect x="0" y="32" width="336" height="120" class="input-field"/>
+    <text x="12" y="56" class="label" fill="#999">Describe the problem in detail...</text>
+    <text x="12" y="76" class="label" fill="#999">multiline: true</text>
+  </g>
+  <text x="390" y="700" text-anchor="end" class="label">Input (multiline)</text>
+  
+  <!-- Submit Button -->
+  <g transform="translate(32, 790)">
+    <rect x="4" y="4" width="336" height="52" fill="#333"/>
+    <rect x="0" y="0" width="336" height="52" class="button-primary"/>
+    <text x="168" y="32" text-anchor="middle" class="label-bold" fill="white">Submit Report</text>
+  </g>
+  <text x="390" y="820" text-anchor="end" class="label">Button (primary)</text>
+  
+  <!-- KeyboardAvoidingView note -->
+  <g transform="translate(32, 860)">
+    <rect x="0" y="0" width="336" height="32" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="168" y="20" text-anchor="middle" class="label-small" fill="#999">KeyboardAvoidingView wrapper</text>
+  </g>
+  
+  <!-- FormSectionHeader note -->
+  <g transform="translate(32, 908)">
+    <rect x="0" y="0" width="336" height="40" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
+    <text x="168" y="16" text-anchor="middle" class="label-bold" fill="#1976d2">FormSectionHeader used throughout</text>
+    <text x="168" y="32" text-anchor="middle" class="label-small" fill="#1976d2">components/common/FormSectionHeader.tsx</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="960" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="995" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="1040" class="label-small">Layout: Orange Header → Location Section → Photos (3 slots) → Subject → Description → Submit</text>
+</svg>

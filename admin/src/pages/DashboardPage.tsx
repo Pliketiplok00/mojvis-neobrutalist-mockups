@@ -44,7 +44,7 @@ export function DashboardPage() {
         <h1 style={styles.title}>Nadzorna ploča</h1>
         <p style={styles.subtitle}>Dobrodošli u MOJ VIS administraciju</p>
 
-        {/* Quick Stats (placeholder) */}
+        {/* Quick Stats */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <span style={styles.statValue}>--</span>

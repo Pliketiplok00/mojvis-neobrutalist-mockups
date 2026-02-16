@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 1000" width="400" height="1000">
+  <defs>
+    <style>
+      .frame { fill: #f5f5f5; stroke: #333; stroke-width: 2; }
+      .component { fill: white; stroke: #666; stroke-width: 1.5; }
+      .component-alt { fill: #f0f0f0; stroke: #666; stroke-width: 1.5; }
+      .header { fill: #e8e8e8; stroke: #333; stroke-width: 2; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; font-weight: 600; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .section-label { font-family: system-ui, sans-serif; font-size: 11px; fill: #1a1a1a; font-weight: 600; }
+      .screen-title { font-family: system-ui, sans-serif; font-size: 14px; fill: #000; font-weight: 700; }
+      .icon-placeholder { fill: #ddd; stroke: #999; stroke-width: 1; }
+      .badge-pending { fill: #fff3e0; stroke: #ff9800; stroke-width: 1.5; }
+      .badge-resolved { fill: #e8f5e9; stroke: #4caf50; stroke-width: 1.5; }
+      .message-card { fill: white; stroke: #666; stroke-width: 2; }
+      .location-info { fill: #f5f5f5; stroke: #999; stroke-width: 1; }
+      .photo-thumb { fill: #e3f2fd; stroke: #1976d2; stroke-width: 1.5; }
+      .reply-card { fill: #e3f2fd; stroke: #1976d2; stroke-width: 1.5; }
+      .debt-marker { fill: #fff3e0; stroke: #ff9800; stroke-width: 1; stroke-dasharray: 4,2; }
+    </style>
+  </defs>
+  
+  <!-- Screen title -->
+  <text x="200" y="20" text-anchor="middle" class="screen-title">ClickFixDetailScreen</text>
+  <text x="200" y="35" text-anchor="middle" class="label-small">mobile/src/screens/click-fix/ClickFixDetailScreen.tsx</text>
+  
+  <!-- Phone frame -->
+  <rect x="20" y="50" width="360" height="920" rx="20" class="frame"/>
+  
+  <!-- Status bar area -->
+  <rect x="20" y="50" width="360" height="44" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="77" text-anchor="middle" class="label-small">SafeAreaView (top inset)</text>
+  
+  <!-- GlobalHeader -->
+  <g transform="translate(20, 94)">
+    <rect x="0" y="0" width="360" height="64" class="header"/>
+    <rect x="0" y="60" width="360" height="4" fill="#333"/>
+    <rect x="12" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="34" y="36" text-anchor="middle" class="label-small">←</text>
+    <text x="180" y="38" text-anchor="middle" class="label-bold">MOJ VIS</text>
+    <rect x="304" y="10" width="44" height="44" class="icon-placeholder"/>
+    <text x="326" y="36" text-anchor="middle" class="label-small">✉</text>
+  </g>
+  <text x="390" y="130" text-anchor="end" class="label">GlobalHeader</text>
+  
+  <!-- Status Badge -->
+  <g transform="translate(32, 174)">
+    <rect x="0" y="0" width="90" height="28" class="badge-pending"/>
+    <text x="45" y="18" text-anchor="middle" class="label-bold" fill="#e65100">⏳ Pending</text>
+    
+    <!-- Alternative: Resolved -->
+    <rect x="100" y="0" width="90" height="28" class="badge-resolved" stroke-dasharray="4,3"/>
+    <text x="145" y="18" text-anchor="middle" class="label-bold" fill="#2e7d32">✓ Resolved</text>
+  </g>
+  <text x="390" y="192" text-anchor="end" class="label">Status Badge</text>
+  <text x="390" y="204" text-anchor="end" class="label-small">pending/resolved</text>
+  
+  <!-- Message Card -->
+  <g transform="translate(32, 218)">
+    <rect x="0" y="0" width="336" height="180" class="message-card"/>
+    <rect x="0" y="176" width="336" height="4" fill="#333"/>
+    
+    <!-- Title -->
+    <text x="12" y="28" class="label-bold" style="font-size: 12px;">H2 - Pothole on main road</text>
+    
+    <!-- Date -->
+    <text x="12" y="48" class="label-small" fill="#666">Submitted: Feb 10, 2026 at 09:30</text>
+    
+    <!-- Description -->
+    <text x="12" y="72" class="label">Body - Large pothole near the harbor</text>
+    <text x="12" y="88" class="label">entrance. Dangerous for cyclists</text>
+    <text x="12" y="104" class="label">and motorcycles.</text>
+    
+    <!-- Location Info -->
+    <g transform="translate(12, 120)">
+      <rect x="0" y="0" width="312" height="48" class="location-info"/>
+      <rect x="8" y="8" width="24" height="24" class="icon-placeholder"/>
+      <text x="20" y="24" text-anchor="middle" class="label-small">📍</text>
+      <text x="40" y="20" class="label-bold">Location</text>
+      <text x="40" y="36" class="label-small" style="font-family: monospace;">43.0619° N, 16.1892° E</text>
+    </g>
+  </g>
+  <text x="390" y="300" text-anchor="end" class="label">Message Card</text>
+  <text x="390" y="312" text-anchor="end" class="label-small">with location</text>
+  <text x="390" y="324" text-anchor="end" class="label-small">⚠️ Platform font:</text>
+  <text x="390" y="336" text-anchor="end" class="label-small">iOS: Menlo</text>
+  <text x="390" y="348" text-anchor="end" class="label-small">Android: monospace</text>
+  
+  <!-- Photos Section -->
+  <g transform="translate(32, 416)">
+    <text x="0" y="0" class="section-label">Photos</text>
+    
+    <!-- Horizontal scroll of photos -->
+    <g transform="translate(0, 16)">
+      <rect x="0" y="0" width="100" height="100" class="photo-thumb"/>
+      <text x="50" y="50" text-anchor="middle" class="label-small" fill="#1976d2">Photo 1</text>
+      <text x="50" y="70" text-anchor="middle" class="label-small" fill="#666">tap to view</text>
+      
+      <rect x="112" y="0" width="100" height="100" class="photo-thumb"/>
+      <text x="162" y="50" text-anchor="middle" class="label-small" fill="#1976d2">Photo 2</text>
+      
+      <rect x="224" y="0" width="100" height="100" class="photo-thumb"/>
+      <text x="274" y="50" text-anchor="middle" class="label-small" fill="#1976d2">Photo 3</text>
+    </g>
+  </g>
+  <text x="390" y="480" text-anchor="end" class="label">Photos Scroll</text>
+  <text x="390" y="492" text-anchor="end" class="label-small">horizontal scroll</text>
+  
+  <!-- Photo Modal Note -->
+  <g transform="translate(32, 548)">
+    <rect x="0" y="0" width="336" height="48" class="debt-marker"/>
+    <text x="168" y="18" text-anchor="middle" class="label-small" fill="#e65100">⚠️ Photo modal close button: hardcoded position</text>
+    <text x="168" y="34" text-anchor="middle" class="label-small" fill="#e65100">top: 60, right: 20, size: 40×40</text>
+  </g>
+  
+  <!-- Replies Section -->
+  <g transform="translate(32, 612)">
+    <text x="0" y="0" class="section-label">Replies</text>
+    
+    <!-- Reply Card 1 -->
+    <g transform="translate(0, 16)">
+      <rect x="0" y="0" width="336" height="100" class="reply-card"/>
+      <rect x="0" y="96" width="336" height="4" fill="#1976d2"/>
+      
+      <text x="12" y="24" class="label-bold">Municipality Response</text>
+      <text x="12" y="40" class="label-small" fill="#666">Feb 11, 2026 at 14:00</text>
+      
+      <text x="12" y="60" class="label">Thank you for your report. Our</text>
+      <text x="12" y="76" class="label">maintenance team has been notified</text>
+      <text x="12" y="92" class="label">and will address this issue shortly.</text>
+    </g>
+  </g>
+  <text x="390" y="680" text-anchor="end" class="label">Reply Card</text>
+  <text x="390" y="692" text-anchor="end" class="label-small">official responses</text>
+  
+  <!-- Reply Card 2 -->
+  <g transform="translate(32, 748)">
+    <rect x="0" y="0" width="336" height="80" class="reply-card"/>
+    <rect x="0" y="76" width="336" height="4" fill="#1976d2"/>
+    
+    <text x="12" y="24" class="label-bold">Update</text>
+    <text x="12" y="40" class="label-small" fill="#666">Feb 12, 2026 at 10:30</text>
+    
+    <text x="12" y="60" class="label">Repair scheduled for tomorrow.</text>
+  </g>
+  
+  <!-- Loading/Error states -->
+  <g transform="translate(32, 850)">
+    <rect x="0" y="0" width="336" height="48" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="168" y="20" text-anchor="middle" class="label-small" fill="#999">LoadingState / ErrorState</text>
+    <text x="168" y="36" text-anchor="middle" class="label-small" fill="#999">(conditional rendering)</text>
+  </g>
+  
+  <!-- Bottom safe area -->
+  <rect x="20" y="910" width="360" height="60" rx="20" fill="#e0e0e0"/>
+  <text x="200" y="945" text-anchor="middle" class="label-small">SafeAreaView (bottom inset)</text>
+  
+  <!-- Notes -->
+  <text x="20" y="990" class="label-small">Layout: Status Badge → Message Card (with location) → Photos Scroll → Replies</text>
+</svg>

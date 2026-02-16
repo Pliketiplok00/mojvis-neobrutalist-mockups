@@ -1,0 +1,824 @@
+{
+  "602 Vis-Split trajekt": [
+    {
+      "_type": "title",
+      "text": "LINIJA 602 — VIS ↔ SPLIT  (trajekt, Jadrolinija)"
+    },
+    {
+      "_type": "info",
+      "text": "Trajanje: ~2h 20min  |  Izvansezonska cijena: 7,20€/os, auto ≤5m: 40,60€  |  Sezonska: 9,10€/os, auto ≤5m: 52,00€  |  Otočni: 3,50€/os"
+    },
+    {
+      "_type": "season",
+      "season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12."
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PON, UTO, SRI, ČET, SUB",
+      "Polazak I": "05:30",
+      "Dolazak I": "07:50",
+      "Polazak II": "15:30",
+      "Dolazak II": "17:50",
+      "Napomene": "NED/BLAG ima vlastiti red (redak ispod)"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PETAK",
+      "Polazak I": "05:30",
+      "Dolazak I": "07:50",
+      "Polazak II": "14:00",
+      "Dolazak II": "16:20"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "NED / BLAGDAN",
+      "Polazak I": "07:30",
+      "Dolazak I": "09:50",
+      "Polazak II": "15:30",
+      "Dolazak II": "17:50",
+      "Napomene": "U periodu 01.01–22.02 & 06.12–31.12:\npolazak II = 16:30 → 18:50"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PON, UTO, SRI, ČET, SUB, NED / BLAG",
+      "Polazak I": "11:00",
+      "Dolazak I": "13:20",
+      "Polazak II": "18:30",
+      "Dolazak II": "20:50",
+      "Napomene": "* Vidi redak 11 za zimski period NED/BLAG"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PETAK",
+      "Polazak I": "10:00",
+      "Dolazak I": "12:20",
+      "Polazak II": "17:00",
+      "Dolazak II": "19:20"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "NED / BLAGDAN",
+      "Polazak I": "11:00",
+      "Dolazak I": "13:20",
+      "Polazak II": "18:30",
+      "Dolazak II": "20:50",
+      "Napomene": "U periodu 01.01–22.02 & 06.12–31.12:\npolazak II = 19:00 → 21:20"
+    },
+    {
+      "_type": "season",
+      "season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09."
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PON–ČET",
+      "Polazak I": "05:30",
+      "Dolazak I": "07:50",
+      "Polazak II": "15:30",
+      "Dolazak II": "17:50"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PET, SUB, NED",
+      "Polazak I": "05:30",
+      "Dolazak I": "07:50",
+      "Polazak II": "12:00",
+      "Dolazak II": "14:20",
+      "Polazak III": "18:00",
+      "Dolazak III": "20:20",
+      "Napomene": "3 polaska"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PON–ČET",
+      "Polazak I": "11:00",
+      "Dolazak I": "13:20",
+      "Polazak II": "18:30",
+      "Dolazak II": "20:50"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PET, SUB, NED",
+      "Polazak I": "09:00",
+      "Dolazak I": "11:20",
+      "Polazak II": "15:00",
+      "Dolazak II": "17:20",
+      "Polazak III": "21:00",
+      "Dolazak III": "23:20",
+      "Napomene": "3 polaska"
+    },
+    {
+      "_type": "season",
+      "season": "VISOKA SEZONA  03.07.–20.09."
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PON,SRI,ČET,PET,SUB,NED",
+      "Polazak I": "05:30",
+      "Dolazak I": "07:50",
+      "Polazak II": "12:00",
+      "Dolazak II": "14:20",
+      "Polazak III": "18:00",
+      "Dolazak III": "20:20",
+      "Napomene": "3 polaska"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "UTORAK",
+      "Polazak I": "05:30",
+      "Dolazak I": "07:50",
+      "Polazak II": "15:30",
+      "Dolazak II": "17:50",
+      "Napomene": "2 polaska"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PON,SRI,ČET,PET,SUB,NED",
+      "Polazak I": "09:00",
+      "Dolazak I": "11:20",
+      "Polazak II": "15:00",
+      "Dolazak II": "17:20",
+      "Polazak III": "21:00",
+      "Dolazak III": "23:20",
+      "Napomene": "3 polaska"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "UTORAK",
+      "Polazak I": "11:00",
+      "Dolazak I": "13:20",
+      "Polazak II": "18:30",
+      "Dolazak II": "20:50",
+      "Napomene": "2 polaska"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "NAPOMENE:"
+    },
+    {
+      "_type": "note",
+      "text": "• 25.12. ne održava se putovanje iz Splita u 11:00 i iz Visa u 16:30"
+    },
+    {
+      "_type": "note",
+      "text": "• Izvansezonski cjenik: po osobi 7,20€ | auto ≤5m 40,60€ | auto >5m 69,80€ | moto 12,10€ | bicikl 7,20€"
+    },
+    {
+      "_type": "note",
+      "text": "• Sezonski cjenik (29.05–27.09): po osobi 9,10€ | auto ≤5m 52,00€ | auto >5m 88,50€ | moto 15,50€ | bicikl 9,10€"
+    },
+    {
+      "_type": "note",
+      "text": "• Otočni cjenik (cijela god.): po osobi 3,50€ | auto ≤5m 23,30€ | Djeca 3–12: 3,60€ | Djeca <3 besplatno"
+    },
+    {
+      "_type": "note",
+      "text": "• Kućni ljubimci besplatno. Cijena karte ista za oba smjera."
+    }
+  ],
+  "9602 Krilo katamaran": [
+    {
+      "_type": "title",
+      "text": "LINIJA 9602 — VIS ↔ HVAR ↔ MILNA(Brač) ↔ SPLIT  (katamaran, Krilo)"
+    },
+    {
+      "_type": "info",
+      "text": "Samo putnici (bez auta)  |  Split–Vis: izvansezonski 7,20€ / sezonski 10,00€  |  Vis–Hvar: 5,00–8,50€  |  Split–Hvar: 6,40–10,00€  |  Otočni Vis–Split: 3,90€"
+    },
+    {
+      "_type": "season",
+      "season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12."
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PON, ČET, PET, SUB",
+      "VIS": "07:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "08:10",
+      "Napomene": "Direktno Vis→Split"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "UTORAK",
+      "VIS": "07:00",
+      "HVAR": "07:45",
+      "MILNA (Brač)": "08:00",
+      "SPLIT": "08:35",
+      "Napomene": "Sve stanice (Hvar + Milna)"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "SRIJEDA",
+      "VIS": "07:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "08:00",
+      "SPLIT": "08:30",
+      "Napomene": "Preskače Hvar! Staje na Milni."
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "NED / BLAGDAN",
+      "VIS": "18:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "19:10",
+      "Napomene": "Direktno Vis→Split"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PON, ČET, SUB",
+      "VIS": "16:10",
+      "HVAR": "15:55",
+      "MILNA (Brač)": "15:35",
+      "SPLIT": "15:00",
+      "Napomene": "Sve stanice"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "UTORAK",
+      "VIS": "16:35",
+      "HVAR": "15:55",
+      "MILNA (Brač)": "—",
+      "SPLIT": "15:00",
+      "Napomene": "Preskače Milnu! Staje na Hvaru."
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "SRIJEDA",
+      "VIS": "16:30",
+      "HVAR": "—",
+      "MILNA (Brač)": "15:35",
+      "SPLIT": "15:00",
+      "Napomene": "Preskače Hvar! Staje na Milni."
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PETAK",
+      "VIS": "21:40",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "20:30",
+      "Napomene": "Direktno Split→Vis (večernji)"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "NED/BLAG (01.01–22.02 & 06.12–31.12)",
+      "VIS": "21:40",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "20:30",
+      "Napomene": "Direktno Split→Vis"
+    },
+    {
+      "_season": "IZVANSEZONA  01.01.–28.05. & 28.09.–31.12.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "NED/BLAG (01.03–28.05 & 28.09–29.11)",
+      "VIS": "20:40",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "19:30",
+      "Napomene": "Direktno Split→Vis"
+    },
+    {
+      "_type": "season",
+      "season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09."
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PON, ČET, PET, SUB",
+      "VIS": "07:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "08:10",
+      "Napomene": "Direktno Vis→Split"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "UTORAK",
+      "VIS": "07:05",
+      "HVAR": "07:55",
+      "MILNA (Brač)": "08:00",
+      "SPLIT": "08:45",
+      "Napomene": "Sve stanice (Hvar + Milna)"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "SRIJEDA",
+      "VIS": "07:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "08:00",
+      "SPLIT": "08:30",
+      "Napomene": "Preskače Hvar! Staje na Milni."
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "NED / BLAGDAN",
+      "VIS": "19:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "20:10",
+      "Napomene": "Direktno Vis→Split"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PON, ČET, SUB",
+      "VIS": "17:10",
+      "HVAR": "16:55",
+      "MILNA (Brač)": "16:35",
+      "SPLIT": "16:00",
+      "Napomene": "Sve stanice"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "UTORAK",
+      "VIS": "17:35",
+      "HVAR": "16:55",
+      "MILNA (Brač)": "—",
+      "SPLIT": "16:00",
+      "Napomene": "Preskače Milnu! Staje na Hvaru."
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "SRIJEDA",
+      "VIS": "17:30",
+      "HVAR": "—",
+      "MILNA (Brač)": "16:35",
+      "SPLIT": "16:00",
+      "Napomene": "Preskače Hvar! Staje na Milni."
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PETAK",
+      "VIS": "21:40",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "20:30",
+      "Napomene": "Direktno Split→Vis (večernji)"
+    },
+    {
+      "_season": "NISKA SEZONA  29.05.–02.07. & 21.09.–27.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "NED / BLAGDAN",
+      "VIS": "21:40",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "20:30",
+      "Napomene": "Direktno Split→Vis"
+    },
+    {
+      "_type": "season",
+      "season": "VISOKA SEZONA  03.07.–20.09."
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "PON, ČET, PET, SUB, NED",
+      "VIS": "07:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "08:10",
+      "Napomene": "Direktno Vis→Split"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "UTORAK",
+      "VIS": "07:05",
+      "HVAR": "07:55",
+      "MILNA (Brač)": "08:00",
+      "SPLIT": "08:45",
+      "Napomene": "Sve stanice (Hvar + Milna)"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "VIS → SPLIT",
+      "Dani": "SRIJEDA",
+      "VIS": "07:00",
+      "HVAR": "—",
+      "MILNA (Brač)": "08:00",
+      "SPLIT": "08:30",
+      "Napomene": "Preskače Hvar! Staje na Milni."
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "PON, ČET, PET, SUB, NED",
+      "VIS": "19:10",
+      "HVAR": "—",
+      "MILNA (Brač)": "—",
+      "SPLIT": "18:00",
+      "Napomene": "Direktno Split→Vis"
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "UTORAK",
+      "VIS": "21:40",
+      "HVAR": "21:00",
+      "MILNA (Brač)": "—",
+      "SPLIT": "20:00",
+      "Napomene": "Preskače Milnu! Staje na Hvaru."
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "SPLIT → VIS",
+      "Dani": "SRIJEDA",
+      "VIS": "19:30",
+      "HVAR": "—",
+      "MILNA (Brač)": "18:35",
+      "SPLIT": "18:00",
+      "Napomene": "Preskače Hvar! Staje na Milni."
+    },
+    {
+      "_season": "VISOKA SEZONA  03.07.–20.09.",
+      "Smjer": "NAPOMENE:"
+    },
+    {
+      "_type": "note",
+      "text": "• Izvansezonski cjenik: Vis–Split 7,20€ | Vis–Hvar 5,00€ | Vis–Milna 6,40€ | Split–Hvar 6,40€ | Split–Milna 5,00€"
+    },
+    {
+      "_type": "note",
+      "text": "• Sezonski cjenik (29.05–27.09): Vis–Split 10,00€ | Vis–Hvar 8,50€ | Vis–Milna 10,00€ | Split–Hvar 10,00€ | Split–Milna 7,70€"
+    },
+    {
+      "_type": "note",
+      "text": "• Otočni (cijela god.): Vis–Split 3,90€ | Vis–Hvar 3,30€ | Djeca 3–12: po 3,20–4,40€ | Kućni ljubimci = 50% cijene karte"
+    },
+    {
+      "_type": "note",
+      "text": "• Kupovina karata: online krilo.hr ili prodajna mjesta (Split, Hvar, Vis, Korčula, Dubrovnik...)"
+    }
+  ],
+  "659 Jadrolinija katamaran": [
+    {
+      "_type": "title",
+      "text": "LINIJA 659 — SPLIT ↔ BOL ↔ HVAR ↔ VIS  (katamaran, Jadrolinija)"
+    },
+    {
+      "_type": "season",
+      "season": "SAMO LJETI: 19.06.–13.09.  |  Svaki dan  |  Samo putnici  |  Split–Vis: 28€ | Split–Hvar: 25€ | Hvar–Vis: 25€ | Split–Bol: 23€ | Dodatna prtljaga: 5€/kom"
+    },
+    {
+      "_type": "season",
+      "season": "SVAKI DAN  19.06.–13.09."
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "SPLIT → VIS",
+      "Polazak": "Jutarnji (I)",
+      "SPLIT": "07:30",
+      "BOL": "—",
+      "HVAR": "08:45",
+      "VIS": "09:25",
+      "Napomene": "Ne staje u Bolu"
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "SPLIT → BOL",
+      "Polazak": "Podnevni (II)",
+      "SPLIT": "13:00",
+      "BOL": "14:00",
+      "HVAR": "—",
+      "VIS": "—",
+      "Napomene": "SAMO do Bola! Ne ide dalje."
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "SPLIT → VIS",
+      "Polazak": "Popodnevni (III)",
+      "SPLIT": "15:30",
+      "BOL": "16:45",
+      "HVAR": "17:45",
+      "VIS": "18:20",
+      "Napomene": "Sve stanice (Bol+Hvar+Vis)"
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "VIS → SPLIT",
+      "Polazak": "Jutarnji (I)",
+      "SPLIT": "13:10",
+      "BOL": "12:10",
+      "HVAR": "11:10",
+      "VIS": "10:10",
+      "Napomene": "Sve stanice"
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "BOL → SPLIT",
+      "Polazak": "Podnevni (II)",
+      "SPLIT": "15:15",
+      "BOL": "14:15",
+      "HVAR": "—",
+      "VIS": "—",
+      "Napomene": "SAMO Bol→Split. Ne polazi s Visa/Hvara."
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "VIS → SPLIT",
+      "Polazak": "Večernji (III)",
+      "SPLIT": "21:35",
+      "BOL": "—",
+      "HVAR": "20:30",
+      "VIS": "19:35",
+      "Napomene": "Ne staje u Bolu"
+    },
+    {
+      "_season": "SVAKI DAN  19.06.–13.09.",
+      "Smjer": "NAPOMENE:"
+    },
+    {
+      "_type": "note",
+      "text": "• Podnevni polazak (II) ide SAMO Split↔Bol — ne nastavlja prema Hvaru ni Visu"
+    },
+    {
+      "_type": "note",
+      "text": "• Jutarnji polazak (I) preskače Bol u oba smjera"
+    },
+    {
+      "_type": "note",
+      "text": "• Večernji povratak (III) preskače Bol"
+    }
+  ],
+  "612 Komiža-Biševo": [
+    {
+      "_type": "title",
+      "text": "LINIJA 612 — KOMIŽA ↔ BIŠEVO  (brod, Nautički centar Komiža)"
+    },
+    {
+      "_type": "info",
+      "text": "Ruta: Komiža → Mezuporat → Salbunara → Porat (Biševo)  |  Trajanje: ~1h 15min  |  Petkom: dodatni direktni polasci Komiža↔Porat"
+    },
+    {
+      "_type": "season",
+      "season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12."
+    },
+    {
+      "_season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "UTO, PET, NED (jutro)",
+      "Polazak": "08:00",
+      "Dolazak": "09:15",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "UTORAK (popodne)",
+      "Polazak": "13:00",
+      "Dolazak": "14:15",
+      "Via stanice": "Salbunara, Mezuporat",
+      "Napomene": "Povratno putovanje utorkom"
+    },
+    {
+      "_season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "NEDJELJA",
+      "Polazak": "14:30",
+      "Dolazak": "15:45",
+      "Via stanice": "Salbunara, Mezuporat",
+      "Napomene": "* 27.12. polazak iz Porta u 13:00"
+    },
+    {
+      "_season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "PETAK (drugi polazak)",
+      "Polazak": "14:30",
+      "Dolazak": "15:45",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (jutro — direktno)",
+      "Polazak": "09:30",
+      "Dolazak": "10:30",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Samo Porat→Komiža"
+    },
+    {
+      "_season": "IZVANSEZONA 1:  01.01.–28.03. & 01.11.–31.12.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (popodne)",
+      "Polazak": "16:00",
+      "Dolazak": "17:00",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Direktno Porat→Komiža (povratak nakon 14:30)"
+    },
+    {
+      "_type": "season",
+      "season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10."
+    },
+    {
+      "_season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "UTO, PET, NED (jutro)",
+      "Polazak": "08:00",
+      "Dolazak": "09:15",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "UTORAK (popodne)",
+      "Polazak": "13:00",
+      "Dolazak": "14:15",
+      "Via stanice": "Salbunara, Mezuporat"
+    },
+    {
+      "_season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "NEDJELJA",
+      "Polazak": "16:00",
+      "Dolazak": "17:15",
+      "Via stanice": "Salbunara, Mezuporat",
+      "Napomene": "Kasniji povratak nego zimi"
+    },
+    {
+      "_season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "PETAK (drugi polazak)",
+      "Polazak": "15:30",
+      "Dolazak": "16:45",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (jutro — direktno)",
+      "Polazak": "09:30",
+      "Dolazak": "10:30",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Samo Porat→Komiža"
+    },
+    {
+      "_season": "IZVANSEZONA 2:  29.03.–28.05. & 28.09.–31.10.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (popodne)",
+      "Polazak": "17:00",
+      "Dolazak": "18:00",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Direktno Porat→Komiža (povratak nakon 15:30)"
+    },
+    {
+      "_type": "season",
+      "season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09."
+    },
+    {
+      "_season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "PON,UTO,SRI,PET,SUB,NED",
+      "Polazak": "08:00",
+      "Dolazak": "09:15",
+      "Via stanice": "Mezuporat, Salbunara",
+      "Napomene": "Svaki dan osim četvrtka"
+    },
+    {
+      "_season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "UTORAK",
+      "Polazak": "13:00",
+      "Dolazak": "14:15",
+      "Via stanice": "Salbunara, Mezuporat"
+    },
+    {
+      "_season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PON, SRI, SUB, NED",
+      "Polazak": "16:00",
+      "Dolazak": "17:15",
+      "Via stanice": "Salbunara, Mezuporat"
+    },
+    {
+      "_season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "PETAK (drugi polazak)",
+      "Polazak": "15:30",
+      "Dolazak": "16:45",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (jutro — direktno)",
+      "Polazak": "09:30",
+      "Dolazak": "10:30",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Samo Porat→Komiža"
+    },
+    {
+      "_season": "NISKA SEZONA:  29.05.–02.07. & 31.08.–27.09.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (popodne)",
+      "Polazak": "17:00",
+      "Dolazak": "18:00",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Direktno Porat→Komiža (povratak nakon 15:30)"
+    },
+    {
+      "_type": "season",
+      "season": "VISOKA SEZONA:  03.07.–30.08."
+    },
+    {
+      "_season": "VISOKA SEZONA:  03.07.–30.08.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "SVAKI DAN (jutro)",
+      "Polazak": "08:00",
+      "Dolazak": "09:15",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "VISOKA SEZONA:  03.07.–30.08.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PON,UTO,SRI,ČET,SUB,NED",
+      "Polazak": "17:00",
+      "Dolazak": "18:15",
+      "Via stanice": "Salbunara, Mezuporat"
+    },
+    {
+      "_season": "VISOKA SEZONA:  03.07.–30.08.",
+      "Smjer": "KOMIŽA → PORAT",
+      "Dani": "PETAK (drugi polazak)",
+      "Polazak": "15:30",
+      "Dolazak": "16:45",
+      "Via stanice": "Mezuporat, Salbunara"
+    },
+    {
+      "_season": "VISOKA SEZONA:  03.07.–30.08.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (jutro — direktno)",
+      "Polazak": "09:30",
+      "Dolazak": "10:30",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Samo Porat→Komiža"
+    },
+    {
+      "_season": "VISOKA SEZONA:  03.07.–30.08.",
+      "Smjer": "PORAT → KOMIŽA",
+      "Dani": "PETAK (popodne)",
+      "Polazak": "17:00",
+      "Dolazak": "18:00",
+      "Via stanice": "DIREKTNO",
+      "Napomene": "Direktno Porat→Komiža (povratak nakon 15:30)"
+    },
+    {
+      "_season": "VISOKA SEZONA:  03.07.–30.08.",
+      "Smjer": "NAPOMENE:"
+    },
+    {
+      "_type": "title",
+      "text": "• 25.12. (Božić) — linija se NE održava"
+    },
+    {
+      "_type": "title",
+      "text": "• 05.04. (Uskrs nedjelja) — linija se NE održava"
+    },
+    {
+      "_type": "note",
+      "text": "• 24.12.: Komiža 08:00→Porat 09:15 | Porat 09:30→Komiža 10:30 | Komiža 14:30→Porat 15:45 | Porat 16:00→Komiža 17:00"
+    },
+    {
+      "_type": "note",
+      "text": "• 31.12.: Komiža 09:00→Porat 10:15 | Porat 14:00→Komiža 15:15"
+    },
+    {
+      "_type": "note",
+      "text": "• 06.04. (Uskrsni ponedjeljak): Komiža 09:00→Porat 10:15 | Porat 13:00→Komiža 14:15"
+    },
+    {
+      "_type": "note",
+      "text": "• U slučaju nevremena — putovanje se održava prvi sljedeći dan kad vrijeme dopusti"
+    }
+  ]
+}

@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="1200" height="700">
+  <defs>
+    <style>
+      .title { font-family: system-ui, sans-serif; font-size: 20px; font-weight: 700; fill: #1a1a1a; }
+      .subtitle { font-family: system-ui, sans-serif; font-size: 12px; fill: #666; }
+      .section-title { font-family: system-ui, sans-serif; font-size: 14px; font-weight: 600; fill: #333; }
+      .label { font-family: system-ui, sans-serif; font-size: 10px; fill: #333; }
+      .label-bold { font-family: system-ui, sans-serif; font-size: 10px; font-weight: 600; fill: #333; }
+      .label-small { font-family: system-ui, sans-serif; font-size: 8px; fill: #666; }
+      .duplicate-box { fill: #ffebee; stroke: #d32f2f; stroke-width: 2; }
+      .target-box { fill: #e8f5e9; stroke: #4caf50; stroke-width: 2; }
+      .current-box { fill: #fff3e0; stroke: #ff9800; stroke-width: 2; }
+      .arrow { stroke: #666; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .arrow-green { stroke: #4caf50; stroke-width: 2; fill: none; marker-end: url(#arrowhead-green); }
+      .priority-p0 { fill: #d32f2f; }
+      .priority-p1 { fill: #ff9800; }
+      .priority-p2 { fill: #ffc107; }
+      .connector { stroke: #ccc; stroke-width: 1; stroke-dasharray: 4,3; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4caf50"/>
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" class="title">Duplicate Patterns → Refactoring Targets</text>
+  <text x="600" y="50" text-anchor="middle" class="subtitle">Identified duplicates and their consolidated component targets</text>
+  
+  <!-- Legend -->
+  <g transform="translate(30, 70)">
+    <rect x="0" y="0" width="16" height="16" class="duplicate-box"/>
+    <text x="24" y="12" class="label">Current: Duplicate code</text>
+    
+    <rect x="180" y="0" width="16" height="16" class="target-box"/>
+    <text x="204" y="12" class="label">Target: Shared component</text>
+    
+    <circle cx="370" cy="8" r="8" class="priority-p0"/>
+    <text x="386" y="12" class="label">P0 (Critical)</text>
+    
+    <circle cx="470" cy="8" r="8" class="priority-p1"/>
+    <text x="486" y="12" class="label">P1 (High)</text>
+    
+    <circle cx="560" cy="8" r="8" class="priority-p2"/>
+    <text x="576" y="12" class="label">P2 (Medium)</text>
+  </g>
+  
+  <!-- PATTERN 1: Confirmation Screens -->
+  <g transform="translate(30, 120)">
+    <text x="0" y="0" class="section-title">Pattern 1: Confirmation Screens (~90% duplicate)</text>
+    <circle cx="280" cy="-4" r="10" class="priority-p0"/>
+    <text x="280" y="0" text-anchor="middle" class="label-bold" fill="white">P0</text>
+    
+    <rect x="0" y="20" width="180" height="100" rx="4" class="duplicate-box"/>
+    <text x="90" y="45" text-anchor="middle" class="label-bold">FeedbackConfirmation</text>
+    <text x="90" y="60" text-anchor="middle" class="label-small">• Success icon (80×80)</text>
+    <text x="90" y="72" text-anchor="middle" class="label-small">• Title text</text>
+    <text x="90" y="84" text-anchor="middle" class="label-small">• Message text</text>
+    <text x="90" y="96" text-anchor="middle" class="label-small">• Primary + Secondary btn</text>
+    
+    <rect x="0" y="130" width="180" height="100" rx="4" class="duplicate-box"/>
+    <text x="90" y="155" text-anchor="middle" class="label-bold">ClickFixConfirmation</text>
+    <text x="90" y="170" text-anchor="middle" class="label-small">• Success icon (80×80)</text>
+    <text x="90" y="182" text-anchor="middle" class="label-small">• Title text</text>
+    <text x="90" y="194" text-anchor="middle" class="label-small">• Message text</text>
+    <text x="90" y="206" text-anchor="middle" class="label-small">• Primary + Secondary btn</text>
+    
+    <line x1="180" y1="70" x2="220" y2="70" class="connector"/>
+    <line x1="180" y1="180" x2="220" y2="180" class="connector"/>
+    <line x1="220" y1="70" x2="220" y2="180" class="connector"/>
+    
+    <path d="M 220 125 L 280 125" class="arrow-green"/>
+    
+    <rect x="280" y="70" width="200" height="110" rx="4" class="target-box"/>
+    <text x="380" y="95" text-anchor="middle" class="label-bold" fill="#2e7d32">ConfirmationScreen</text>
+    <text x="380" y="115" text-anchor="middle" class="label-small">Props:</text>
+    <text x="380" y="130" text-anchor="middle" class="label-small">• icon: ReactNode</text>
+    <text x="380" y="145" text-anchor="middle" class="label-small">• title: string</text>
+    <text x="380" y="160" text-anchor="middle" class="label-small">• message: string</text>
+    <text x="380" y="175" text-anchor="middle" class="label-small">• actions: {primary, secondary}</text>
+    
+    <text x="500" y="120" class="label-bold" fill="#2e7d32">→ -200 LOC</text>
+  </g>
+  
+  <!-- PATTERN 2: Detail Screens -->
+  <g transform="translate(550, 120)">
+    <text x="0" y="0" class="section-title">Pattern 2: Detail Screens (~70% duplicate)</text>
+    <circle cx="250" cy="-4" r="10" class="priority-p1"/>
+    <text x="250" y="0" text-anchor="middle" class="label-bold" fill="white">P1</text>
+    
+    <rect x="0" y="20" width="180" height="100" rx="4" class="duplicate-box"/>
+    <text x="90" y="45" text-anchor="middle" class="label-bold">FeedbackDetailScreen</text>
+    <text x="90" y="60" text-anchor="middle" class="label-small">• Status badge</text>
+    <text x="90" y="72" text-anchor="middle" class="label-small">• Message card</text>
+    <text x="90" y="84" text-anchor="middle" class="label-small">• Reply cards</text>
+    <text x="90" y="96" text-anchor="middle" class="label-small">• (no photos/location)</text>
+    
+    <rect x="0" y="130" width="180" height="100" rx="4" class="duplicate-box"/>
+    <text x="90" y="155" text-anchor="middle" class="label-bold">ClickFixDetailScreen</text>
+    <text x="90" y="170" text-anchor="middle" class="label-small">• Status badge</text>
+    <text x="90" y="182" text-anchor="middle" class="label-small">• Message card</text>
+    <text x="90" y="194" text-anchor="middle" class="label-small">• Reply cards</text>
+    <text x="90" y="206" text-anchor="middle" class="label-small">• + photos + location</text>
+    
+    <line x1="180" y1="70" x2="220" y2="70" class="connector"/>
+    <line x1="180" y1="180" x2="220" y2="180" class="connector"/>
+    <line x1="220" y1="70" x2="220" y2="180" class="connector"/>
+    
+    <path d="M 220 125 L 280 125" class="arrow-green"/>
+    
+    <rect x="280" y="70" width="200" height="110" rx="4" class="target-box"/>
+    <text x="380" y="95" text-anchor="middle" class="label-bold" fill="#2e7d32">SubmissionDetailScreen</text>
+    <text x="380" y="115" text-anchor="middle" class="label-small">Props:</text>
+    <text x="380" y="130" text-anchor="middle" class="label-small">• type: 'feedback' | 'clickfix'</text>
+    <text x="380" y="145" text-anchor="middle" class="label-small">• data: Submission</text>
+    <text x="380" y="160" text-anchor="middle" class="label-small">• showPhotos?: boolean</text>
+    <text x="380" y="175" text-anchor="middle" class="label-small">• showLocation?: boolean</text>
+    
+    <text x="500" y="120" class="label-bold" fill="#2e7d32">→ -150 LOC</text>
+  </g>
+  
+  <!-- PATTERN 3: Transport Header Slabs -->
+  <g transform="translate(30, 380)">
+    <text x="0" y="0" class="section-title">Pattern 3: Transport Header Slabs (~100% duplicate structure)</text>
+    <circle cx="360" cy="-4" r="10" class="priority-p1"/>
+    <text x="360" y="0" text-anchor="middle" class="label-bold" fill="white">P1</text>
+    
+    <rect x="0" y="20" width="140" height="80" rx="4" class="duplicate-box"/>
+    <text x="70" y="45" text-anchor="middle" class="label-bold">RoadTransport</text>
+    <text x="70" y="60" text-anchor="middle" class="label-small">Header Slab</text>
+    <text x="70" y="75" text-anchor="middle" class="label-small" fill="#4caf50">green bg</text>
+    
+    <rect x="150" y="20" width="140" height="80" rx="4" class="duplicate-box"/>
+    <text x="220" y="45" text-anchor="middle" class="label-bold">SeaTransport</text>
+    <text x="220" y="60" text-anchor="middle" class="label-small">Header Slab</text>
+    <text x="220" y="75" text-anchor="middle" class="label-small" fill="#1976d2">blue bg</text>
+    
+    <path d="M 290 60 L 350 60" class="arrow-green"/>
+    
+    <rect x="350" y="20" width="200" height="80" rx="4" class="target-box"/>
+    <text x="450" y="45" text-anchor="middle" class="label-bold" fill="#2e7d32">TransportHeaderSlab</text>
+    <text x="450" y="65" text-anchor="middle" class="label-small">Props: type: 'road' | 'sea'</text>
+    <text x="450" y="80" text-anchor="middle" class="label-small">→ color from token lookup</text>
+  </g>
+  
+  <!-- PATTERN 4: Flora/Fauna Screens -->
+  <g transform="translate(600, 380)">
+    <text x="0" y="0" class="section-title">Pattern 4: Flora/Fauna Screens (~95% identical)</text>
+    <circle cx="320" cy="-4" r="10" class="priority-p2"/>
+    <text x="320" y="0" text-anchor="middle" class="label-bold" fill="#333">P2</text>
+    
+    <rect x="0" y="20" width="140" height="80" rx="4" class="duplicate-box"/>
+    <text x="70" y="45" text-anchor="middle" class="label-bold">FaunaScreen</text>
+    <text x="70" y="60" text-anchor="middle" class="label-small">Hero + Species + Warning</text>
+    <text x="70" y="75" text-anchor="middle" class="label-small">"Do Not Disturb"</text>
+    
+    <rect x="150" y="20" width="140" height="80" rx="4" class="duplicate-box"/>
+    <text x="220" y="45" text-anchor="middle" class="label-bold">FloraScreen</text>
+    <text x="220" y="60" text-anchor="middle" class="label-small">Hero + Species + Warning</text>
+    <text x="220" y="75" text-anchor="middle" class="label-small">"Do Not Touch"</text>
+    
+    <path d="M 290 60 L 350 60" class="arrow-green"/>
+    
+    <rect x="350" y="20" width="200" height="80" rx="4" class="target-box"/>
+    <text x="450" y="45" text-anchor="middle" class="label-bold" fill="#2e7d32">NatureScreen</text>
+    <text x="450" y="65" text-anchor="middle" class="label-small">Props: type: 'flora' | 'fauna'</text>
+    <text x="450" y="80" text-anchor="middle" class="label-small">→ content from config</text>
+  </g>
+  
+  <!-- PATTERN 5: Line Cards -->
+  <g transform="translate(30, 500)">
+    <text x="0" y="0" class="section-title">Pattern 5: Line Cards (hardcoded color logic)</text>
+    <circle cx="300" cy="-4" r="10" class="priority-p2"/>
+    <text x="300" y="0" text-anchor="middle" class="label-bold" fill="#333">P2</text>
+    
+    <rect x="0" y="20" width="250" height="80" rx="4" class="current-box"/>
+    <text x="125" y="40" text-anchor="middle" class="label-bold">Current: getSeaHeaderBackground()</text>
+    <text x="125" y="58" text-anchor="middle" class="label-small">if (line === 659) return yellow</text>
+    <text x="125" y="72" text-anchor="middle" class="label-small">else if (catamaran) return teal</text>
+    <text x="125" y="86" text-anchor="middle" class="label-small">else return blue</text>
+    
+    <path d="M 250 60 L 310 60" class="arrow-green"/>
+    
+    <rect x="310" y="20" width="250" height="80" rx="4" class="target-box"/>
+    <text x="435" y="40" text-anchor="middle" class="label-bold" fill="#2e7d32">Target: Token-driven</text>
+    <text x="435" y="58" text-anchor="middle" class="label-small">transport.line.{type}.background</text>
+    <text x="435" y="72" text-anchor="middle" class="label-small">transport.line.special.659.background</text>
+    <text x="435" y="86" text-anchor="middle" class="label-small">→ Config in skin file</text>
+  </g>
+  
+  <!-- Summary stats -->
+  <g transform="translate(600, 500)">
+    <rect x="0" y="0" width="550" height="100" fill="#f5f5f5" stroke="#333" stroke-width="2" rx="4"/>
+    <text x="275" y="25" text-anchor="middle" class="section-title">Refactoring Impact Summary</text>
+    
+    <text x="30" y="50" class="label-bold">Estimated savings:</text>
+    <text x="30" y="68" class="label">• P0 Confirmations: ~200 lines of code</text>
+    <text x="30" y="82" class="label">• P1 Details + Headers: ~250 lines of code</text>
+    
+    <text x="300" y="50" class="label-bold">Benefits:</text>
+    <text x="300" y="68" class="label">• Single source of truth for each pattern</text>
+    <text x="300" y="82" class="label">• Easier styling/token updates</text>
+  </g>
+</svg>
