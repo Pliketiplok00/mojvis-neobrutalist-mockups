@@ -14,7 +14,7 @@
  * REFACTORED: Now uses UI primitives from src/ui/
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   FlatList,
@@ -85,42 +85,42 @@ export function InboxListScreen(): React.JSX.Element {
     clearTags();
   };
 
-  const handleMessagePress = (message: InboxMessage): void => {
-    markAsRead(message.id);
-    navigation.navigate('InboxDetail', { messageId: message.id });
-  };
+  const handleMessagePress = useCallback((messageId: string): void => {
+    markAsRead(messageId);
+    navigation.navigate('InboxDetail', { messageId });
+  }, [markAsRead, navigation]);
 
-  const handleSentItemPress = (item: CombinedSentItem): void => {
+  const handleSentItemPress = useCallback((item: CombinedSentItem): void => {
     if (item.type === 'click_fix') {
       navigation.navigate('ClickFixDetail', { clickFixId: item.id });
     } else {
       navigation.navigate('FeedbackDetail', { feedbackId: item.id });
     }
-  };
+  }, [navigation]);
 
-  const handleNewFeedback = (): void => {
+  const handleNewFeedback = useCallback((): void => {
     navigation.navigate('FeedbackForm');
-  };
+  }, [navigation]);
 
-  const handleNewClickFix = (): void => {
+  const handleNewClickFix = useCallback((): void => {
     navigation.navigate('ClickFixForm');
-  };
+  }, [navigation]);
 
-  const handleRefresh = (): void => {
+  const handleRefresh = useCallback((): void => {
     if (activeTab === 'received') {
       refreshMessages();
     } else {
       refreshSent();
     }
-  };
+  }, [activeTab, refreshMessages, refreshSent]);
 
-  const renderMessage = ({ item }: { item: InboxMessage }): React.JSX.Element => (
+  const renderMessage = useCallback(({ item }: { item: InboxMessage }): React.JSX.Element => (
     <MessageListItem
       message={item}
       isUnread={isUnread(item.id)}
-      onPress={() => handleMessagePress(item)}
+      onPress={handleMessagePress}
     />
-  );
+  ), [isUnread, handleMessagePress]);
 
   const renderEmptyState = (): React.JSX.Element => (
     <EmptyState
@@ -138,13 +138,13 @@ export function InboxListScreen(): React.JSX.Element {
     />
   );
 
-  const renderSentItem = ({ item }: { item: CombinedSentItem }): React.JSX.Element => (
+  const renderSentItem = useCallback(({ item }: { item: CombinedSentItem }): React.JSX.Element => (
     <SentListItem
       item={item}
-      onPress={() => handleSentItemPress(item)}
+      onPress={handleSentItemPress}
       t={t}
     />
-  );
+  ), [handleSentItemPress, t]);
 
   const renderSentEmptyState = (): React.JSX.Element => (
     <EmptyState

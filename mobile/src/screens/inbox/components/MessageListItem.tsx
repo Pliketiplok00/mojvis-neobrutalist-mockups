@@ -7,7 +7,7 @@
  * Extracted from InboxListScreen for reusability.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Body, Meta, ButtonText, Label } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -95,7 +95,8 @@ function getAllMessageIconConfigs(tags: InboxTag[], isUrgent: boolean): TagIconC
 interface MessageListItemProps {
   message: InboxMessage;
   isUnread: boolean;
-  onPress: () => void;
+  /** Called with message ID when pressed */
+  onPress: (messageId: string) => void;
 }
 
 /**
@@ -108,9 +109,13 @@ export const MessageListItem = memo(function MessageListItem({
 }: MessageListItemProps): React.JSX.Element {
   const iconConfigs = getAllMessageIconConfigs(message.tags, message.is_urgent);
 
+  const handlePress = useCallback(() => {
+    onPress(message.id);
+  }, [onPress, message.id]);
+
   return (
     <View style={styles.wrapper}>
-      <Pressable onPress={onPress}>
+      <Pressable onPress={handlePress}>
         {({ pressed }) => (
           <>
             {/* Dual-layer shadow - hidden when pressed */}

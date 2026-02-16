@@ -7,7 +7,7 @@
  * Extracted from InboxListScreen for reusability.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { ButtonText, Meta } from '../../../ui/Text';
 import { Icon } from '../../../ui/Icon';
@@ -22,7 +22,8 @@ const { inbox: inboxTokens } = skin.components;
 
 interface SentListItemProps {
   item: CombinedSentItem;
-  onPress: () => void;
+  /** Called with item when pressed */
+  onPress: (item: CombinedSentItem) => void;
   /** Translation function */
   t: (key: string) => string;
 }
@@ -42,9 +43,13 @@ export const SentListItem = memo(function SentListItem({
     ? skin.colors.orange
     : skin.colors.lavender;
 
+  const handlePress = useCallback(() => {
+    onPress(item);
+  }, [onPress, item]);
+
   return (
     <View style={styles.wrapper}>
-      <Pressable onPress={onPress}>
+      <Pressable onPress={handlePress}>
         {({ pressed }) => (
           <>
             {/* Dual-layer shadow - hidden when pressed */}
