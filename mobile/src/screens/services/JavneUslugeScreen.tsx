@@ -18,7 +18,7 @@ import { View, ScrollView, StyleSheet, Pressable, Linking, ActivityIndicator } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { ServicePageHeader } from '../../components/services/ServicePageHeader';
-import { ServiceAccordionCard, type ServiceInfoRow } from '../../components/services/ServiceAccordionCard';
+import { ServiceAccordionCard, type ServiceInfoRow, type ScheduledDateItem } from '../../components/services/ServiceAccordionCard';
 import { EmergencyTile } from '../../components/services/EmergencyTile';
 import { javneUslugeContent } from '../../data/javneUslugeContent';
 import { useTranslations } from '../../i18n';
@@ -60,6 +60,7 @@ const transformServiceToCard = (
   iconBackgroundColor: string;
   infoRows: ServiceInfoRow[];
   note?: string;
+  scheduledDates?: ScheduledDateItem[];
 } => {
   const infoRows: ServiceInfoRow[] = [];
   const isEn = language === 'en';
@@ -100,6 +101,16 @@ const transformServiceToCard = (
   // Get note - either from API or warning helper
   const noteText = service.note || getServiceWarning(service, language) || undefined;
 
+  // Transform scheduled dates for periodic services
+  const scheduledDates: ScheduledDateItem[] | undefined =
+    service.type === 'periodic' && service.scheduled_dates.length > 0
+      ? service.scheduled_dates.map((sd) => ({
+          date: sd.date,
+          time_from: sd.time_from,
+          time_to: sd.time_to,
+        }))
+      : undefined;
+
   return {
     id: service.id,
     icon: service.icon as IconName,
@@ -109,6 +120,7 @@ const transformServiceToCard = (
     iconBackgroundColor: mapIconBgColor(service.icon_bg_color),
     infoRows,
     note: noteText,
+    scheduledDates,
   };
 };
 
@@ -192,6 +204,8 @@ export function JavneUslugeScreen(): React.JSX.Element {
                   iconBackgroundColor={cardProps.iconBackgroundColor}
                   infoRows={cardProps.infoRows}
                   note={cardProps.note}
+                  scheduledDates={cardProps.scheduledDates}
+                  language={language}
                 />
               );
             })

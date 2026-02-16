@@ -41,6 +41,13 @@ export interface ServiceInfoRow {
   value: string;
 }
 
+/** Scheduled date structure for periodic services */
+export interface ScheduledDateItem {
+  date: string;
+  time_from: string;
+  time_to: string;
+}
+
 interface ServiceAccordionCardProps {
   /** Icon name for the header */
   icon: IconName;
@@ -56,9 +63,31 @@ interface ServiceAccordionCardProps {
   infoRows: ServiceInfoRow[];
   /** Optional note text at the bottom */
   note?: string;
+  /** Scheduled dates for periodic services */
+  scheduledDates?: ScheduledDateItem[];
+  /** Current language for date formatting */
+  language?: 'hr' | 'en';
 }
 
 const { colors, spacing, borders } = skin;
+
+/** Format a date for display */
+const formatScheduledDate = (dateStr: string, language: 'hr' | 'en'): string => {
+  const date = new Date(dateStr);
+  const locale = language === 'hr' ? 'hr-HR' : 'en-US';
+  return date.toLocaleDateString(locale, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+};
+
+/** Filter to only show current/future dates */
+const filterFutureDates = (dates: ScheduledDateItem[]): ScheduledDateItem[] => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return dates.filter((d) => new Date(d.date) >= today);
+};
 
 export function ServiceAccordionCard({
   icon,
@@ -68,6 +97,8 @@ export function ServiceAccordionCard({
   iconBackgroundColor = colors.backgroundSecondary,
   infoRows,
   note,
+  scheduledDates,
+  language = 'hr',
 }: ServiceAccordionCardProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
 
@@ -131,6 +162,31 @@ export function ServiceAccordionCard({
                 {index < infoRows.length - 1 && <Hairline style={styles.rowDivider} />}
               </React.Fragment>
             ))}
+
+            {/* Scheduled dates for periodic services */}
+            {scheduledDates && scheduledDates.length > 0 && (() => {
+              const futureDates = filterFutureDates(scheduledDates).slice(0, 5);
+              if (futureDates.length === 0) return null;
+              return (
+                <>
+                  <Hairline style={styles.scheduleDivider} />
+                  <Label style={styles.scheduleLabel}>
+                    {language === 'hr' ? 'ZAKAZANI TERMINI' : 'SCHEDULED DATES'}
+                  </Label>
+                  {futureDates.map((sd, index) => (
+                    <View key={`schedule-${index}`} style={styles.scheduleRow}>
+                      <Icon name="calendar" size="sm" colorToken="textMuted" />
+                      <Label style={styles.scheduleDate}>
+                        {formatScheduledDate(sd.date, language)}
+                      </Label>
+                      <Meta style={styles.scheduleTime}>
+                        {sd.time_from} - {sd.time_to}
+                      </Meta>
+                    </View>
+                  ))}
+                </>
+              );
+            })()}
 
             {/* Note (optional) */}
             {note && (
@@ -214,6 +270,29 @@ const styles = StyleSheet.create({
   note: {
     color: colors.textMuted,
     fontStyle: 'italic',
+  },
+  scheduleDivider: {
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  scheduleLabel: {
+    color: colors.textMuted,
+    fontSize: 11,
+    letterSpacing: 1,
+    marginBottom: spacing.sm,
+  },
+  scheduleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  scheduleDate: {
+    flex: 1,
+    color: colors.textPrimary,
+  },
+  scheduleTime: {
+    color: colors.textMuted,
   },
 });
 
