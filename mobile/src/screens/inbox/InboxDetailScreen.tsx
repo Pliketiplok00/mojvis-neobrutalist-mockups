@@ -161,7 +161,7 @@ export function InboxDetailScreen(): React.JSX.Element {
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header type="inbox" />
+        <Header type="child" />
         <View style={styles.loadingState}>
           <ActivityIndicator size="large" color={skin.colors.textPrimary} />
           <Meta style={styles.loadingText}>{t('common.loading')}</Meta>
@@ -173,7 +173,7 @@ export function InboxDetailScreen(): React.JSX.Element {
   if (error || !message) {
     return (
       <SafeAreaView style={styles.container}>
-        <Header type="inbox" />
+        <Header type="child" />
         <View style={styles.errorState}>
           <View style={styles.errorIconContainer}>
             <Icon name="alert-triangle" size="xl" colorToken="errorText" />
@@ -193,28 +193,31 @@ export function InboxDetailScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header type="inbox" />
+      <Header type="child" />
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        {/* Colored category header with icon */}
+        {/* Colored category header with icon and title */}
         <View style={[styles.categoryHeader, { backgroundColor: headerConfig.backgroundColor }]}>
-          <View style={styles.categoryIconBox}>
-            <Icon
-              name={headerConfig.icon}
-              size="lg"
-              colorToken={headerConfig.iconColorToken}
-            />
+          {/* Top row: icon + title */}
+          <View style={styles.headerContent}>
+            <View style={styles.categoryIconBox}>
+              <Icon
+                name={headerConfig.icon}
+                size="lg"
+                colorToken={headerConfig.iconColorToken}
+              />
+            </View>
+            <Label style={styles.headerTitle} numberOfLines={3}>
+              {message.title.toUpperCase()}
+            </Label>
           </View>
-          {/* Urgent badge in header */}
+          {/* Urgent badge below */}
           {message.is_urgent && (
             <View style={styles.urgentBadge}>
               <Label style={styles.urgentBadgeText}>HITNO</Label>
             </View>
           )}
         </View>
-
-        {/* Title - uppercase, bold */}
-        <H1 style={styles.title}>{message.title.toUpperCase()}</H1>
 
         {/* Meta row: date + municipality */}
         <View style={styles.metaRow}>
@@ -299,14 +302,16 @@ const styles = StyleSheet.create({
     marginBottom: skin.spacing.lg,
   },
 
-  // Category header
+  // Category header with title
   categoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     padding: skin.spacing.lg,
     borderBottomWidth: skin.borders.widthCard,
     borderBottomColor: skin.colors.border,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: skin.spacing.md,
   },
   categoryIconBox: {
     width: 56,
@@ -317,7 +322,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  headerTitle: {
+    flex: 1,
+    fontSize: skin.typography.fontSize.xl,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    fontFamily: skin.typography.fontFamily.display.bold,
+  },
   urgentBadge: {
+    alignSelf: 'flex-start',
+    marginTop: skin.spacing.md,
     backgroundColor: skin.colors.urgent,
     paddingHorizontal: skin.spacing.md,
     paddingVertical: skin.spacing.sm,
@@ -331,19 +345,13 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 
-  // Title
-  title: {
-    paddingHorizontal: skin.spacing.lg,
-    paddingTop: skin.spacing.lg,
-    paddingBottom: skin.spacing.sm,
-  },
-
   // Meta row
   metaRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: skin.spacing.lg,
     paddingHorizontal: skin.spacing.lg,
+    paddingTop: skin.spacing.lg,
     paddingBottom: skin.spacing.lg,
   },
   metaItem: {
