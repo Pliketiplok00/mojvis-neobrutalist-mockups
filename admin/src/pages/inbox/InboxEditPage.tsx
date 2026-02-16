@@ -19,7 +19,7 @@
  * - Show locked indicator with push timestamp
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
@@ -117,14 +117,14 @@ export function InboxEditPage() {
   /**
    * Phase 3: Check if admin can select/use a municipal tag
    */
-  const canUseMunicipalTag = (tag: InboxTag): boolean => {
+  const canUseMunicipalTag = useCallback((tag: InboxTag): boolean => {
     if (!isMunicipalTag(tag)) return true; // Non-municipal tags are always allowed
     if (user?.is_breakglass) return true; // Breakglass can use any municipal tag
     if (adminNoticeScope === null) return false; // No scope = can't use municipal tags
     return tag === adminNoticeScope; // Can only use tag matching scope
-  };
+  }, [user?.is_breakglass, adminNoticeScope]);
 
-  const handleTagToggle = (tag: InboxTag) => {
+  const handleTagToggle = useCallback((tag: InboxTag) => {
     setSelectedTags((prev) => {
       // If deselecting, just remove it
       if (prev.includes(tag)) {
@@ -145,7 +145,7 @@ export function InboxEditPage() {
       }
       return [...newTags, tag];
     });
-  };
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -306,7 +306,7 @@ export function InboxEditPage() {
     );
   }
 
-  const needsEnglish = requiresEnglish(selectedTags);
+  const needsEnglish = useMemo(() => requiresEnglish(selectedTags), [selectedTags]);
 
   return (
     <DashboardLayout>
