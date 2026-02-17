@@ -56,10 +56,10 @@ import type {
  * API base URL resolution:
  * 1. EXPO_PUBLIC_API_URL env var (for staging/custom deployments)
  * 2. Development: http://localhost:3000
- * 3. Production: https://api.mojvis.hr
+ * 3. Production: https://api.mojvis.com
  */
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL
-  ?? (__DEV__ ? 'http://localhost:3000' : 'https://api.mojvis.hr');
+  ?? (__DEV__ ? 'http://localhost:3000' : 'https://api.mojvis.com');
 
 /**
  * Get the full URL for a relative API path (e.g., for uploaded images)
