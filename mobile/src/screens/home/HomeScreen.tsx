@@ -58,15 +58,15 @@ const CATEGORIES: CategoryItem[] = [
     route: 'TransportHub',
   },
   {
-    key: 'info',
-    icon: 'info',
+    key: 'publicServices',
+    icon: 'building-2',
     backgroundColor: skin.colors.warningAccent,
     textColor: skin.colors.textPrimary,
-    route: 'StaticPage',
+    route: 'JavneUsluge',
   },
   {
-    key: 'contacts',
-    icon: 'phone',
+    key: 'floraFauna',
+    icon: 'fish',
     backgroundColor: skin.colors.urgent,
     textColor: skin.colors.primaryText,
     route: 'StaticPage',
@@ -86,11 +86,14 @@ export function HomeScreen(): React.JSX.Element {
   const handleCategoryPress = useCallback((category: CategoryItem): void => {
     if (category.route === 'StaticPage') {
       // Navigate to static page with slug
-      navigation.navigate('StaticPage', { slug: category.key });
+      const slug = category.key === 'floraFauna' ? 'flora-fauna' : category.key;
+      navigation.navigate('StaticPage', { slug });
     } else if (category.route === 'Events') {
       navigation.navigate('Events');
     } else if (category.route === 'TransportHub') {
       navigation.navigate('TransportHub');
+    } else if (category.route === 'JavneUsluge') {
+      navigation.navigate('JavneUsluge');
     }
   }, [navigation]);
 

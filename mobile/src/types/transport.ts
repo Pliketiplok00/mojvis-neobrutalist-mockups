@@ -140,6 +140,7 @@ export interface TodayDepartureItem {
   direction_label: string;
   destination: string;
   marker: string | null; // Optional marker symbol (e.g., "*", "†")
+  typical_duration_minutes: number | null; // Route duration in minutes
 }
 
 /**

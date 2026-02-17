@@ -170,6 +170,7 @@ export function RoadTransportScreen(): React.JSX.Element {
         {/* Section B: Today's Departures */}
         <TodayDeparturesSection
           departures={todaysDepartures}
+          lines={lines}
           sectionLabel={t('transport.todaysDepartures')}
           emptyText={t('transport.noDepartures')}
           timeBlockBackground={listTokens.todayTimeBlockBackgroundRoad}

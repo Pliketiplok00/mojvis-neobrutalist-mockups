@@ -56,8 +56,8 @@
     "categoryLabels": {
       "events": "Events",
       "transport": "Transport",
-      "info": "Info",
-      "contacts": "Contacts"
+      "publicServices": "Public Services",
+      "floraFauna": "Protected Species"
     }
   },
   "inbox": {
