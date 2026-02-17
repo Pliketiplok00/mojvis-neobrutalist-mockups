@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   },
   locationName: {
     color: colors.textPrimary,
-    fontWeight: '700',
+    fontFamily: skin.typography.fontFamily.body.bold,
     marginBottom: spacing.sm,
     fontSize: 13,
     textTransform: 'uppercase',
