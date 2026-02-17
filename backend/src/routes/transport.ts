@@ -371,6 +371,7 @@ function createTransportRoutes(transportType: TransportType) {
               destination:
                 language === 'en' ? dep.destination_en : dep.destination_hr,
               marker: dep.marker ?? null,
+              typical_duration_minutes: dep.typical_duration_minutes,
             })),
           };
 

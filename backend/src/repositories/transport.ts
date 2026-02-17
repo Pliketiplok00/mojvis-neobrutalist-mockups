@@ -449,6 +449,7 @@ export async function getTodaysDepartures(
     destination_hr: string;
     destination_en: string;
     marker: string | null;
+    typical_duration_minutes: number | null;
   }>;
   dayType: DayType;
   isHoliday: boolean;
@@ -470,6 +471,7 @@ export async function getTodaysDepartures(
     destination_hr: string;
     destination_en: string;
     marker: string | null;
+    typical_duration_minutes: number | null;
     // Date exception fields for filtering
     date_from: string | null;
     date_to: string | null;
@@ -487,6 +489,7 @@ export async function getTodaysDepartures(
        dest.name_hr as destination_hr,
        dest.name_en as destination_en,
        d.marker,
+       r.typical_duration_minutes,
        d.date_from::TEXT as date_from,
        d.date_to::TEXT as date_to,
        d.include_dates::TEXT as include_dates,
@@ -546,6 +549,7 @@ export async function getTodaysDepartures(
     destination_hr: row.destination_hr,
     destination_en: row.destination_en,
     marker: row.marker,
+    typical_duration_minutes: row.typical_duration_minutes,
   }));
 
   return {
