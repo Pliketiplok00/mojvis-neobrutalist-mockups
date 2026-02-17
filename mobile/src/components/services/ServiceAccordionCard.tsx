@@ -341,9 +341,11 @@ const styles = StyleSheet.create({
   },
   locationName: {
     color: colors.textPrimary,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: spacing.sm,
-    fontSize: 14,
+    fontSize: 13,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });
 
