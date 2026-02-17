@@ -92,7 +92,15 @@ async function apiRequest<T>(
     throw new Error(`API Error: ${response.status} - ${error}`);
   }
 
-  return response.json() as Promise<T>;
+  // Handle empty responses (204 No Content, or empty body)
+  const contentLength = response.headers.get('content-length');
+  if (response.status === 204 || contentLength === '0') {
+    return null as T;
+  }
+
+  // Parse response text to handle edge cases
+  const text = await response.text();
+  return text ? JSON.parse(text) as T : null as T;
 }
 
 /**
