@@ -64,9 +64,13 @@ async function apiRequest<T>(
   const url = `${API_BASE_URL}${endpoint}`;
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...options.headers as Record<string, string>,
   };
+
+  // Only set Content-Type for requests that have a body
+  if (options.body) {
+    headers['Content-Type'] = 'application/json';
+  }
 
   const response = await fetch(url, {
     ...options,
