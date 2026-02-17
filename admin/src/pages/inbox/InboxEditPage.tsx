@@ -147,6 +147,9 @@ export function InboxEditPage() {
     });
   }, []);
 
+  // Compute whether English is required (must be before early return)
+  const needsEnglish = useMemo(() => requiresEnglish(selectedTags), [selectedTags]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -305,8 +308,6 @@ export function InboxEditPage() {
       </DashboardLayout>
     );
   }
-
-  const needsEnglish = useMemo(() => requiresEnglish(selectedTags), [selectedTags]);
 
   return (
     <DashboardLayout>
