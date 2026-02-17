@@ -33,3 +33,7 @@ backend/uploads/
 # Local database backups
 transport-safe-*.sql
 transport-safe-*.sql.sha256
+
+# Docs export artifacts
+docs/content canonical/
+docs/content-export/
