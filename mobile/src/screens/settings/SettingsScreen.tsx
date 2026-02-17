@@ -20,7 +20,6 @@ import {
   Switch,
   Alert,
   Platform,
-  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -32,7 +31,6 @@ import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
 import { H2, Label, Body, Meta } from '../../ui/Text';
-import { Icon } from '../../ui/Icon';
 import type { MainStackParamList } from '../../navigation/types';
 
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
@@ -160,23 +158,18 @@ export function SettingsScreen(): React.JSX.Element {
           </Button>
         </View>
 
-        {/* Dev Tools Section (DEV ONLY) */}
+        {/* DEV Preview - Confirmation Screen (TEMPORARY) */}
         {__DEV__ && (
           <View style={styles.section}>
-            <H2 style={styles.sectionTitle}>Developer Tools</H2>
-            <TouchableOpacity
-              style={styles.devRow}
-              onPress={() => navigation.navigate('UiInventory')}
-              activeOpacity={0.7}
+            <H2 style={styles.sectionTitle}>[DEV] Screen Previews</H2>
+            <Button
+              variant="secondary"
+              onPress={() => navigation.navigate('ClickFixConfirmation', {
+                clickFixId: 'preview-mock-id-12345',
+              })}
             >
-              <View style={styles.devRowContent}>
-                <Label style={styles.devRowLabel}>UI Inventory (DEV)</Label>
-                <Body style={styles.devRowDescription}>
-                  View all UI components and tokens
-                </Body>
-              </View>
-              <Icon name="chevron-right" size="md" colorToken="chevron" />
-            </TouchableOpacity>
+              Preview Click & Fix Confirmation
+            </Button>
           </View>
         )}
 
@@ -253,22 +246,6 @@ const styles = StyleSheet.create({
   },
   versionText: {
     color: skin.colors.textDisabled,
-  },
-  // Dev tools
-  devRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: skin.spacing.md,
-  },
-  devRowContent: {
-    flex: 1,
-  },
-  devRowLabel: {
-    color: skin.colors.textPrimary,
-    marginBottom: skin.spacing.xs,
-  },
-  devRowDescription: {
-    color: skin.colors.textMuted,
   },
 });
 
