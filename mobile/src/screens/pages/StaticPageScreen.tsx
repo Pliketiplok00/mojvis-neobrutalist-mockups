@@ -60,15 +60,6 @@ export function StaticPageScreen(): React.JSX.Element {
   const { t } = useTranslations();
   const { slug } = route.params;
 
-  // DEV LOGGING: Track StaticPageScreen renders
-  // NOTE: This screen uses CONTENT NOTICES (NoticeBlock), NOT system banners from the API
-  if (__DEV__) {
-    console.log('[STATICPAGE_RENDER]', {
-      slug,
-      timestamp: new Date().toISOString(),
-    });
-  }
-
   const [page, setPage] = useState<StaticPageResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -476,16 +467,6 @@ function NoticeBlock({
   onPress: (noticeId: string) => void;
 }): React.JSX.Element {
   const { t } = useTranslations();
-  // DEV LOGGING: NoticeBlock is a CONTENT NOTICE (from CMS), NOT a SYSTEM BANNER (from Inbox API)
-  if (__DEV__) {
-    console.log('[NOTICEBLOCK_RENDER]', {
-      noticeCount: content.notices.length,
-      noticeIds: content.notices.map(n => n.id.slice(0, 8)),
-      source: 'CMS_CONTENT_BLOCK',
-      timestamp: new Date().toISOString(),
-    });
-  }
-
   if (content.notices.length === 0) return <View />;
 
   return (

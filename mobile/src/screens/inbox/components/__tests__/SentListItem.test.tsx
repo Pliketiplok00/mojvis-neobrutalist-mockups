@@ -2,6 +2,7 @@
  * SentListItem Component Tests
  *
  * Tests for sent item (feedback/click-fix) list rendering.
+ * Note: Status badges were removed in the UI redesign.
  */
 
 import React from 'react';
@@ -14,29 +15,9 @@ jest.mock('../../../../utils/dateFormat', () => ({
   formatDateShort: () => '15/02/2026',
 }));
 
-// Mock Badge component
-jest.mock('../../../../ui/Badge', () => ({
-  Badge: ({ children }: { children: React.ReactNode }) => {
-    const React = require('react');
-    const { Text } = require('react-native');
-    return React.createElement(Text, { testID: 'badge' }, children);
-  },
-}));
-
-// Mock STATUS_COLORS
-jest.mock('../../../../ui/utils/statusColors', () => ({
-  STATUS_COLORS: {
-    zaprimljeno: { bg: '#E5E7EB', text: '#374151' },
-    pending: { bg: '#FEF3C7', text: '#92400E' },
-    in_progress: { bg: '#DBEAFE', text: '#1E40AF' },
-    resolved: { bg: '#D1FAE5', text: '#065F46' },
-  },
-}));
-
 describe('SentListItem', () => {
   const mockT = (key: string) => {
     const translations: Record<string, string> = {
-      'inbox.badges.report': 'Prijava',
       'inbox.photoCount': 'fotografija',
     };
     return translations[key] || key;
@@ -78,12 +59,6 @@ describe('SentListItem', () => {
       expect(getByText('Feedback Subject')).toBeTruthy();
     });
 
-    it('should render status label', () => {
-      const { getByText } = render(<SentListItem {...defaultProps} />);
-
-      expect(getByText('Na čekanju')).toBeTruthy();
-    });
-
     it('should render formatted date', () => {
       const { getByText } = render(<SentListItem {...defaultProps} />);
 
@@ -104,12 +79,6 @@ describe('SentListItem', () => {
       expect(getByTestId('icon-send')).toBeTruthy();
     });
 
-    it('should not render report badge for feedback', () => {
-      const { queryByText } = render(<SentListItem {...defaultProps} />);
-
-      expect(queryByText('Prijava')).toBeNull();
-    });
-
     it('should not render photo count for feedback', () => {
       const { queryByText } = render(<SentListItem {...defaultProps} />);
 
@@ -124,14 +93,6 @@ describe('SentListItem', () => {
       );
 
       expect(getByTestId('icon-camera')).toBeTruthy();
-    });
-
-    it('should render report badge for click-fix', () => {
-      const { getByText } = render(
-        <SentListItem {...defaultProps} item={mockClickFixItem} />
-      );
-
-      expect(getByText('Prijava')).toBeTruthy();
     });
 
     it('should render photo count for click-fix with photos', () => {
@@ -174,11 +135,10 @@ describe('SentListItem', () => {
   });
 
   describe('translation', () => {
-    it('should use t function for badges', () => {
+    it('should use t function for photo count', () => {
       const customT = jest.fn((key: string) => `translated_${key}`);
       render(<SentListItem {...defaultProps} item={mockClickFixItem} t={customT} />);
 
-      expect(customT).toHaveBeenCalledWith('inbox.badges.report');
       expect(customT).toHaveBeenCalledWith('inbox.photoCount');
     });
   });

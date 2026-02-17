@@ -61,11 +61,6 @@ import type {
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL
   ?? (__DEV__ ? 'http://localhost:3000' : 'https://api.mojvis.hr');
 
-// Log API base URL in development for verification
-if (__DEV__) {
-  console.log('[API] Base URL:', API_BASE_URL);
-}
-
 /**
  * Get the full URL for a relative API path (e.g., for uploaded images)
  * @param path - Relative path like "/uploads/click-fix/abc.jpg"

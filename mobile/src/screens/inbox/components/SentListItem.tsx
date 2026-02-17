@@ -2,7 +2,7 @@
  * SentListItem Component
  *
  * Single sent item (feedback or click-fix) list item with poster-style card.
- * Displays icon slab, subject, status badge, photo count, and date.
+ * Displays icon slab, subject, photo count, and date.
  *
  * Extracted from InboxListScreen for reusability.
  */
