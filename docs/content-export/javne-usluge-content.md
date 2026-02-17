@@ -47,35 +47,31 @@
 
 ---
 
-### 4. Ljekarna Vis
+### 4. Ljekarne (Multi-lokacija)
 - **Tip:** Stalna usluga
-- **Podnaslov:** Ljekarna u gradu Visu
+- **Podnaslov:** Ljekarne na otoku Visu
+- **Ikona:** pill (zelena pozadina)
+
+**LOKACIJA 1: Ljekarna Vis**
 - **Adresa:** Vukovarska ul. 2, 21480 Vis
 - **Kontakt telefon:** +385 21 711 434
 - **Radno vrijeme:**
-  - Pon - Pet: 07:30-20:00
+  - Pon - Pet: 08:00-13:00, 17:00-19:00
   - Sub: 08:00-13:00
-- **Napomena:** -
-- **Ikona:** pill (zelena pozadina)
+  - Ned: Zatvoreno
 
----
-
-### 5. Ljekarna Komiža
-- **Tip:** Stalna usluga
-- **Podnaslov:** Ljekarna u Komiži
+**LOKACIJA 2: Ljekarna Komiža**
 - **Adresa:** Ul. San Pedra, 21485 Komiža
 - **Kontakt telefon:** +385 21 713 445
 - **Radno vrijeme:**
-  - Pon - Pet: 07:30-14:30
-  - Sub: 08:00-12:00
-- **Napomena:** -
-- **Ikona:** pill (zelena pozadina)
+  - Pon - Pet: 09:00-16:00
+  - Sub - Ned: Zatvoreno
 
 ---
 
 ## POVREMENE USLUGE
 
-### 6. Veterinarska ambulanta
+### 5. Veterinarska ambulanta
 - **Tip:** Povremena usluga
 - **Podnaslov:** Zdravstvena zaštita životinja
 - **Adresa:** Put Mula 12, Vis
@@ -86,7 +82,7 @@
 
 ---
 
-### 7. Javni bilježnik
+### 6. Javni bilježnik
 - **Tip:** Povremena usluga
 - **Podnaslov:** Pravne usluge i ovjera dokumenata
 - **Adresa:** Trg 30. svibnja 5, Vis
@@ -97,7 +93,7 @@
 
 ---
 
-### 8. Tehnički pregled
+### 7. Tehnički pregled
 - **Tip:** Povremena usluga
 - **Podnaslov:** Registracija vozila
 - **Adresa:** Poslovna zona Vis, bb
@@ -108,7 +104,7 @@
 
 ---
 
-### 9. Zubar
+### 8. Zubar
 - **Tip:** Povremena usluga
 - **Podnaslov:** Stomatološke usluge
 - **Adresa:** -
@@ -126,8 +122,9 @@
 | Dom zdravlja | Stalna | +385 21 711 033 | Šetalište stare Isse 3 |
 | Banka | Stalna | - | Obala sv. Jurja 18 |
 | Pošta | Stalna | - | Trg 30. svibnja 1 |
-| Ljekarna Vis | Stalna | +385 21 711 434 | Vukovarska ul. 2 |
-| Ljekarna Komiža | Stalna | +385 21 713 445 | Ul. San Pedra |
+| Ljekarne | Stalna (multi-lokacija) | (vidi dolje) | (vidi dolje) |
+| ↳ Ljekarna Vis | | +385 21 711 434 | Vukovarska ul. 2 |
+| ↳ Ljekarna Komiža | | +385 21 713 445 | Ul. San Pedra |
 | Veterinarska ambulanta | Povremena | +385 21 711 155 | Put Mula 12 |
 | Javni bilježnik | Povremena | +385 21 711 200 | Trg 30. svibnja 5 |
 | Tehnički pregled | Povremena | +385 21 711 300 | Poslovna zona Vis, bb |
