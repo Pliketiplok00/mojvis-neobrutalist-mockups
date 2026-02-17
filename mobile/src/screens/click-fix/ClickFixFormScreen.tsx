@@ -29,6 +29,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import * as Location from 'expo-location';
 
 import { GlobalHeader } from '../../components/GlobalHeader';
@@ -53,6 +54,27 @@ import { Body, Label, Meta } from '../../ui/Text';
 type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 const { colors, spacing, borders } = skin;
+
+/**
+ * Max photo dimensions for upload.
+ * Resizing to 1920px width keeps quality while reducing file size
+ * from 10-20MB to typically under 1MB.
+ */
+const MAX_PHOTO_WIDTH = 1920;
+const PHOTO_COMPRESSION = 0.8;
+
+/**
+ * Resize photo to max width while maintaining aspect ratio.
+ * This prevents "Network request failed" errors from large photos.
+ */
+async function resizePhoto(uri: string): Promise<string> {
+  const result = await ImageManipulator.manipulateAsync(
+    uri,
+    [{ resize: { width: MAX_PHOTO_WIDTH } }],
+    { compress: PHOTO_COMPRESSION, format: ImageManipulator.SaveFormat.JPEG }
+  );
+  return result.uri;
+}
 
 export function ClickFixFormScreen(): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
@@ -111,15 +133,19 @@ export function ClickFixFormScreen(): React.JSX.Element {
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
+      quality: 1, // Full quality - we'll compress in resize
     });
 
     if (!result.canceled && result.assets.length > 0) {
       const asset = result.assets[0];
+
+      // Resize photo to reduce file size (prevents network errors)
+      const resizedUri = await resizePhoto(asset.uri);
+
       const newPhoto: PhotoToUpload = {
-        uri: asset.uri,
-        fileName: asset.fileName || `photo-${Date.now()}.jpg`,
-        mimeType: asset.mimeType || 'image/jpeg',
+        uri: resizedUri,
+        fileName: `photo-${Date.now()}.jpg`,
+        mimeType: 'image/jpeg',
       };
 
       setPhotos((prev) => {
