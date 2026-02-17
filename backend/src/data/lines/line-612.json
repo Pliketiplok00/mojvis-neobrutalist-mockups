@@ -88,7 +88,7 @@
           "direction_label_en": "Komiza → Mezuporat → Salbunara → Porat (Bisevo)",
           "origin_stop_id": "stop-komiza-port",
           "destination_stop_id": "stop-porat-bisevo-port",
-          "typical_duration_minutes": null,
+          "typical_duration_minutes": 75,
           "marker_note_hr": "Državna brodska linija br. 612 (Nautički centar Komiža). Red plovidbe podložan je promjenama.",
           "marker_note_en": "State boat line 612 (Nauticki centar Komiza). Timetable subject to changes.",
           "stops": [
@@ -155,7 +155,7 @@
           "direction_label_en": "Porat (Bisevo) → Salbunara → Mezuporat → Komiza",
           "origin_stop_id": "stop-porat-bisevo-port",
           "destination_stop_id": "stop-komiza-port",
-          "typical_duration_minutes": null,
+          "typical_duration_minutes": 75,
           "marker_note_hr": "Državna brodska linija br. 612 (Nautički centar Komiža).",
           "marker_note_en": "State boat line 612 (Nauticki centar Komiza).",
           "stops": [
