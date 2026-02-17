@@ -50,6 +50,9 @@ import {
   TrafficCone,
   Newspaper,
   Megaphone,
+  Building2,
+  Fish,
+  Pill,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -100,7 +103,10 @@ export type IconName =
   | 'landmark'
   | 'traffic-cone'
   | 'newspaper'
-  | 'megaphone';
+  | 'megaphone'
+  | 'building-2'
+  | 'fish'
+  | 'pill';
 
 /**
  * Icon size tokens from skin.
@@ -160,6 +166,9 @@ const ICON_MAP: Record<IconName, LucideIcon> = {
   'traffic-cone': TrafficCone,
   'newspaper': Newspaper,
   'megaphone': Megaphone,
+  'building-2': Building2,
+  'fish': Fish,
+  'pill': Pill,
 };
 
 interface IconProps {
