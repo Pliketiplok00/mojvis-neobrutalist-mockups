@@ -22,8 +22,6 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
@@ -31,12 +29,8 @@ import { useTranslations } from '../../i18n';
 import { skin } from '../../ui/skin';
 import { Button } from '../../ui/Button';
 import { H2, Label, Body, Meta } from '../../ui/Text';
-import type { MainStackParamList } from '../../navigation/types';
-
-type NavigationProp = NativeStackNavigationProp<MainStackParamList>;
 
 export function SettingsScreen(): React.JSX.Element {
-  const navigation = useNavigation<NavigationProp>();
   const { data, resetOnboarding } = useOnboarding();
   const { isOptIn, isRegistered, isLoading, setOptIn } = usePush();
   const { t } = useTranslations();
@@ -157,21 +151,6 @@ export function SettingsScreen(): React.JSX.Element {
             {t('settings.reset.button')}
           </Button>
         </View>
-
-        {/* DEV Preview - Confirmation Screen (TEMPORARY) */}
-        {__DEV__ && (
-          <View style={styles.section}>
-            <H2 style={styles.sectionTitle}>[DEV] Screen Previews</H2>
-            <Button
-              variant="secondary"
-              onPress={() => navigation.navigate('ClickFixConfirmation', {
-                clickFixId: 'preview-mock-id-12345',
-              })}
-            >
-              Preview Click & Fix Confirmation
-            </Button>
-          </View>
-        )}
 
         {/* Version Info */}
         <View style={styles.versionContainer}>
