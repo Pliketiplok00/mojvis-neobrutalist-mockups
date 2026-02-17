@@ -15,6 +15,7 @@ import type {
   Contact,
   WorkingHours,
   ScheduledDate,
+  ServiceLocation,
 } from '../types/public-service.js';
 
 /**
@@ -40,6 +41,7 @@ function rowToService(row: PublicServiceRow): PublicService {
     contacts: parseJsonField<Contact[]>(row.contacts),
     working_hours: parseJsonField<WorkingHours[]>(row.working_hours),
     scheduled_dates: parseJsonField<ScheduledDate[]>(row.scheduled_dates),
+    locations: parseJsonField<ServiceLocation[]>(row.locations),
   };
 }
 
@@ -60,6 +62,7 @@ function toAdminResponse(service: PublicService): PublicServiceAdminResponse {
     icon_bg_color: service.icon_bg_color,
     working_hours: service.working_hours,
     scheduled_dates: service.scheduled_dates,
+    locations: service.locations,
     note_hr: service.note_hr,
     note_en: service.note_en,
     order_index: service.order_index,

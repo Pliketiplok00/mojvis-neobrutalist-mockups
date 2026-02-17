@@ -41,6 +41,26 @@ export interface ScheduledDate {
 }
 
 /**
+ * Location working hours (within a location)
+ */
+export interface LocationHours {
+  time: string; // "08:00-13:00" or "Zatvoreno"
+  description_hr: string;
+  description_en: string;
+}
+
+/**
+ * Location entry (for services with multiple locations, e.g., pharmacies)
+ */
+export interface ServiceLocation {
+  name_hr: string;
+  name_en: string;
+  address: string;
+  phone: string;
+  hours: LocationHours[];
+}
+
+/**
  * Public Service as stored in database
  */
 export interface PublicService {
@@ -56,6 +76,7 @@ export interface PublicService {
   icon_bg_color: string;
   working_hours: WorkingHours[]; // For permanent services
   scheduled_dates: ScheduledDate[]; // For periodic services
+  locations: ServiceLocation[]; // For services with multiple locations
   note_hr: string | null;
   note_en: string | null;
   order_index: number;
@@ -80,6 +101,7 @@ export interface PublicServiceRow {
   icon_bg_color: string;
   working_hours: WorkingHours[] | string;
   scheduled_dates: ScheduledDate[] | string;
+  locations: ServiceLocation[] | string;
   note_hr: string | null;
   note_en: string | null;
   order_index: number;
@@ -91,6 +113,19 @@ export interface PublicServiceRow {
 /**
  * Public Service for API response (localized)
  */
+/**
+ * Localized location for API response
+ */
+export interface LocalizedServiceLocation {
+  name: string;
+  address: string;
+  phone: string;
+  hours: Array<{
+    time: string;
+    description: string;
+  }>;
+}
+
 export interface PublicServiceResponse {
   id: string;
   type: ServiceType;
@@ -105,6 +140,7 @@ export interface PublicServiceResponse {
     description: string;
   }>;
   scheduled_dates: ScheduledDate[];
+  locations: LocalizedServiceLocation[]; // For services with multiple locations
   note: string | null;
   has_new_dates: boolean; // True if any scheduled_date.created_at < 7 days ago
 }
@@ -125,6 +161,7 @@ export interface PublicServiceAdminResponse {
   icon_bg_color: string;
   working_hours: WorkingHours[];
   scheduled_dates: ScheduledDate[];
+  locations: ServiceLocation[];
   note_hr: string | null;
   note_en: string | null;
   order_index: number;

@@ -822,6 +822,18 @@ export interface PublicServiceScheduledDate {
   created_at: string;
 }
 
+export interface PublicServiceLocationHours {
+  time: string;
+  description: string; // Localized by API
+}
+
+export interface PublicServiceLocation {
+  name: string; // Localized by API
+  address: string;
+  phone: string;
+  hours: PublicServiceLocationHours[];
+}
+
 export interface PublicService {
   id: string;
   type: 'permanent' | 'periodic';
@@ -833,6 +845,7 @@ export interface PublicService {
   icon_bg_color: string;
   working_hours: PublicServiceWorkingHours[];
   scheduled_dates: PublicServiceScheduledDate[];
+  locations: PublicServiceLocation[]; // For services with multiple locations
   note: string | null;
   has_new_dates: boolean;
 }

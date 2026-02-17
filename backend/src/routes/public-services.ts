@@ -13,6 +13,7 @@ import type {
   PublicServiceResponse,
   PublicServiceAdminResponse,
   ScheduledDate,
+  LocalizedServiceLocation,
 } from '../types/public-service.js';
 
 type Language = 'hr' | 'en';
@@ -56,6 +57,17 @@ function toPublicResponse(
     description: language === 'en' ? wh.description_en : wh.description_hr,
   }));
 
+  // Localize locations
+  const locations: LocalizedServiceLocation[] = service.locations.map((loc) => ({
+    name: language === 'en' ? loc.name_en : loc.name_hr,
+    address: loc.address,
+    phone: loc.phone,
+    hours: loc.hours.map((h) => ({
+      time: h.time,
+      description: language === 'en' ? h.description_en : h.description_hr,
+    })),
+  }));
+
   return {
     id: service.id,
     type: service.type,
@@ -67,6 +79,7 @@ function toPublicResponse(
     icon_bg_color: service.icon_bg_color,
     working_hours: workingHours,
     scheduled_dates: service.scheduled_dates,
+    locations,
     note: note ?? null,
     has_new_dates: hasNewDates(service.scheduled_dates),
   };

@@ -18,7 +18,7 @@ import { View, ScrollView, StyleSheet, Pressable, Linking, ActivityIndicator } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { ServicePageHeader } from '../../components/services/ServicePageHeader';
-import { ServiceAccordionCard, type ServiceInfoRow, type ScheduledDateItem } from '../../components/services/ServiceAccordionCard';
+import { ServiceAccordionCard, type ServiceInfoRow, type ScheduledDateItem, type ServiceLocationItem } from '../../components/services/ServiceAccordionCard';
 import { EmergencyTile } from '../../components/services/EmergencyTile';
 import { javneUslugeContent } from '../../data/javneUslugeContent';
 import { useTranslations } from '../../i18n';
@@ -61,6 +61,7 @@ const transformServiceToCard = (
   infoRows: ServiceInfoRow[];
   note?: string;
   scheduledDates?: ScheduledDateItem[];
+  locations?: ServiceLocationItem[];
 } => {
   const infoRows: ServiceInfoRow[] = [];
   const isEn = language === 'en';
@@ -111,6 +112,17 @@ const transformServiceToCard = (
         }))
       : undefined;
 
+  // Transform locations for multi-location services
+  const locations: ServiceLocationItem[] | undefined =
+    service.locations && service.locations.length > 0
+      ? service.locations.map((loc) => ({
+          name: loc.name,
+          address: loc.address,
+          phone: loc.phone,
+          hours: loc.hours,
+        }))
+      : undefined;
+
   return {
     id: service.id,
     icon: service.icon as IconName,
@@ -121,6 +133,7 @@ const transformServiceToCard = (
     infoRows,
     note: noteText,
     scheduledDates,
+    locations,
   };
 };
 
@@ -205,6 +218,7 @@ export function JavneUslugeScreen(): React.JSX.Element {
                   infoRows={cardProps.infoRows}
                   note={cardProps.note}
                   scheduledDates={cardProps.scheduledDates}
+                  locations={cardProps.locations}
                   language={language}
                 />
               );

@@ -48,6 +48,20 @@ export interface ScheduledDateItem {
   time_to: string;
 }
 
+/** Location hours structure */
+export interface LocationHoursItem {
+  time: string;
+  description: string;
+}
+
+/** Location structure for services with multiple locations */
+export interface ServiceLocationItem {
+  name: string;
+  address: string;
+  phone: string;
+  hours: LocationHoursItem[];
+}
+
 interface ServiceAccordionCardProps {
   /** Icon name for the header */
   icon: IconName;
@@ -65,6 +79,8 @@ interface ServiceAccordionCardProps {
   note?: string;
   /** Scheduled dates for periodic services */
   scheduledDates?: ScheduledDateItem[];
+  /** Locations for services with multiple locations (e.g., pharmacies) */
+  locations?: ServiceLocationItem[];
   /** Current language for date formatting */
   language?: 'hr' | 'en';
 }
@@ -98,6 +114,7 @@ export const ServiceAccordionCard = memo(function ServiceAccordionCard({
   infoRows,
   note,
   scheduledDates,
+  locations,
   language = 'hr',
 }: ServiceAccordionCardProps): React.JSX.Element {
   const [expanded, setExpanded] = useState(false);
@@ -155,12 +172,33 @@ export const ServiceAccordionCard = memo(function ServiceAccordionCard({
           <View style={styles.expandedContent}>
             <Hairline style={styles.divider} />
 
-            {/* Info rows */}
-            {infoRows.map((row, index) => (
+            {/* Info rows (only show if no locations) */}
+            {(!locations || locations.length === 0) && infoRows.map((row, index) => (
               <React.Fragment key={`${row.label}-${index}`}>
                 <InfoRow icon={row.icon} label={row.label} value={row.value} />
                 {index < infoRows.length - 1 && <Hairline style={styles.rowDivider} />}
               </React.Fragment>
+            ))}
+
+            {/* Locations for multi-location services (e.g., pharmacies) */}
+            {locations && locations.length > 0 && locations.map((loc, locIndex) => (
+              <View key={`location-${locIndex}`} style={styles.locationBlock}>
+                {locIndex > 0 && <Hairline style={styles.locationDivider} />}
+                <Label style={styles.locationName}>{loc.name}</Label>
+                <InfoRow icon="map-pin" label={language === 'hr' ? 'Adresa' : 'Address'} value={loc.address} />
+                <Hairline style={styles.rowDivider} />
+                <InfoRow icon="phone" label={language === 'hr' ? 'Telefon' : 'Phone'} value={loc.phone} />
+                {loc.hours.length > 0 && (
+                  <>
+                    <Hairline style={styles.rowDivider} />
+                    <InfoRow
+                      icon="clock"
+                      label={language === 'hr' ? 'Radno vrijeme' : 'Hours'}
+                      value={loc.hours.map((h) => `${h.description}: ${h.time}`).join('\n')}
+                    />
+                  </>
+                )}
+              </View>
             ))}
 
             {/* Scheduled dates for periodic services */}
@@ -293,6 +331,19 @@ const styles = StyleSheet.create({
   },
   scheduleTime: {
     color: colors.textMuted,
+  },
+  locationBlock: {
+    marginTop: spacing.sm,
+  },
+  locationDivider: {
+    marginBottom: spacing.md,
+    marginTop: spacing.sm,
+  },
+  locationName: {
+    color: colors.textPrimary,
+    fontWeight: '600',
+    marginBottom: spacing.sm,
+    fontSize: 14,
   },
 });
 
