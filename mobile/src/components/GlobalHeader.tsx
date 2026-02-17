@@ -16,7 +16,7 @@
  * Skin-pure: Uses Icon primitive and skin tokens (no emoji, no hardcoded hex).
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { View, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useMenu } from '../contexts/MenuContext';
@@ -55,7 +55,7 @@ interface GlobalHeaderProps {
   unreadCount?: number;
 }
 
-export function GlobalHeader({
+export const GlobalHeader = memo(function GlobalHeader({
   type,
 }: GlobalHeaderProps): React.JSX.Element {
   const navigation = useNavigation();
@@ -110,7 +110,7 @@ export function GlobalHeader({
       </TouchableOpacity>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

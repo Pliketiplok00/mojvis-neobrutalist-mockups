@@ -20,7 +20,7 @@
  * Skin-pure: Uses skin tokens and Icon primitive (no hardcoded hex, no text glyphs).
  */
 
-import React from 'react';
+import React, { memo } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -45,7 +45,7 @@ interface BannerProps {
  * Edge-to-edge slab with warm yellow fill, red icon box, bottom border only
  * Clicking opens the inbox message detail
  */
-export function Banner({ message }: BannerProps): React.JSX.Element {
+export const Banner = memo(function Banner({ message }: BannerProps): React.JSX.Element {
   const navigation = useNavigation<NavigationProp>();
   const { t } = useTranslations();
 
@@ -91,7 +91,7 @@ export function Banner({ message }: BannerProps): React.JSX.Element {
       </View>
     </TouchableOpacity>
   );
-}
+});
 
 interface BannerListProps {
   /**
@@ -108,7 +108,7 @@ interface BannerListProps {
  * It should ONLY appear on allowed screens (Home, Transport, Events).
  * It should NEVER appear on static content pages (Flora, Fauna, Important Contacts).
  */
-export function BannerList({ banners }: BannerListProps): React.JSX.Element | null {
+export const BannerList = memo(function BannerList({ banners }: BannerListProps): React.JSX.Element | null {
   if (banners.length === 0) {
     return null;
   }
@@ -120,7 +120,7 @@ export function BannerList({ banners }: BannerListProps): React.JSX.Element | nu
       ))}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   // V1 Poster: No gaps between banners, only bottom rule separation

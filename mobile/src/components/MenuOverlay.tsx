@@ -13,7 +13,7 @@
  * Skin-pure: Uses Icon primitive and skin tokens (no emoji, no hardcoded hex).
  */
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { memo, useEffect, useRef, useState, useCallback } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -63,7 +63,7 @@ interface MenuOverlayProps {
   currentRoute?: string;
 }
 
-export function MenuOverlay({
+export const MenuOverlay = memo(function MenuOverlay({
   visible,
   onClose,
   onNavigate,
@@ -206,7 +206,7 @@ export function MenuOverlay({
       </Animated.View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
