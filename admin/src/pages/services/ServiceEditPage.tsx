@@ -239,9 +239,6 @@ export function ServiceEditPage() {
     setLocations(updated);
   };
 
-  // Check if service has multiple locations
-  const hasLocations = locations.length > 0;
-
   if (loading) {
     return (
       <DashboardLayout>
