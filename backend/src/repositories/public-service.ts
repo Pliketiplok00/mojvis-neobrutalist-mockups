@@ -172,6 +172,7 @@ export async function updatePublicService(
     icon_bg_color: input.icon_bg_color ?? current.icon_bg_color,
     working_hours: input.working_hours ?? current.working_hours,
     scheduled_dates: input.scheduled_dates ?? current.scheduled_dates,
+    locations: input.locations ?? current.locations,
     note_hr: input.note_hr !== undefined ? input.note_hr : current.note_hr,
     note_en: input.note_en !== undefined ? input.note_en : current.note_en,
     order_index: input.order_index ?? current.order_index,
@@ -182,9 +183,9 @@ export async function updatePublicService(
     `UPDATE public_services SET
       type = $1, title_hr = $2, title_en = $3, subtitle_hr = $4, subtitle_en = $5,
       address = $6, contacts = $7, icon = $8, icon_bg_color = $9,
-      working_hours = $10, scheduled_dates = $11, note_hr = $12, note_en = $13,
-      order_index = $14, is_active = $15, updated_at = NOW()
-    WHERE id = $16
+      working_hours = $10, scheduled_dates = $11, locations = $12, note_hr = $13, note_en = $14,
+      order_index = $15, is_active = $16, updated_at = NOW()
+    WHERE id = $17
     RETURNING *`,
     [
       updated.type,
@@ -198,6 +199,7 @@ export async function updatePublicService(
       updated.icon_bg_color,
       JSON.stringify(updated.working_hours),
       JSON.stringify(updated.scheduled_dates),
+      JSON.stringify(updated.locations),
       updated.note_hr,
       updated.note_en,
       updated.order_index,

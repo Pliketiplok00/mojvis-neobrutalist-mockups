@@ -20,6 +20,8 @@ import type {
   Contact,
   WorkingHours,
   ScheduledDate,
+  ServiceLocation,
+  LocationHours,
 } from '../../services/api';
 
 export function ServiceEditPage() {
@@ -40,6 +42,7 @@ export function ServiceEditPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [workingHours, setWorkingHours] = useState<WorkingHours[]>([]);
   const [scheduledDates, setScheduledDates] = useState<ScheduledDate[]>([]);
+  const [locations, setLocations] = useState<ServiceLocation[]>([]);
   const [noteHr, setNoteHr] = useState('');
   const [noteEn, setNoteEn] = useState('');
 
@@ -65,6 +68,7 @@ export function ServiceEditPage() {
       setContacts(data.contacts || []);
       setWorkingHours(data.working_hours || []);
       setScheduledDates(data.scheduled_dates || []);
+      setLocations(data.locations || []);
       setNoteHr(data.note_hr || '');
       setNoteEn(data.note_en || '');
     } catch (err) {
@@ -91,6 +95,7 @@ export function ServiceEditPage() {
         contacts,
         working_hours: workingHours,
         scheduled_dates: scheduledDates,
+        locations,
         note_hr: noteHr || null,
         note_en: noteEn || null,
       });
@@ -171,6 +176,71 @@ export function ServiceEditPage() {
   const removeScheduledDate = (index: number) => {
     setScheduledDates(scheduledDates.filter((_, i) => i !== index));
   };
+
+  // Location handlers (for multi-location services like pharmacies)
+  const addLocation = () => {
+    setLocations([
+      ...locations,
+      {
+        name_hr: '',
+        name_en: '',
+        address: '',
+        phone: '',
+        hours: [],
+      },
+    ]);
+  };
+
+  const updateLocation = (
+    index: number,
+    field: keyof ServiceLocation,
+    value: string | LocationHours[]
+  ) => {
+    const updated = [...locations];
+    updated[index] = { ...updated[index], [field]: value };
+    setLocations(updated);
+  };
+
+  const removeLocation = (index: number) => {
+    setLocations(locations.filter((_, i) => i !== index));
+  };
+
+  const addLocationHours = (locIndex: number) => {
+    const updated = [...locations];
+    updated[locIndex] = {
+      ...updated[locIndex],
+      hours: [
+        ...updated[locIndex].hours,
+        { time: '', description_hr: '', description_en: '' },
+      ],
+    };
+    setLocations(updated);
+  };
+
+  const updateLocationHours = (
+    locIndex: number,
+    hourIndex: number,
+    field: keyof LocationHours,
+    value: string
+  ) => {
+    const updated = [...locations];
+    const hours = [...updated[locIndex].hours];
+    hours[hourIndex] = { ...hours[hourIndex], [field]: value };
+    updated[locIndex] = { ...updated[locIndex], hours };
+    setLocations(updated);
+  };
+
+  const removeLocationHours = (locIndex: number, hourIndex: number) => {
+    const updated = [...locations];
+    updated[locIndex] = {
+      ...updated[locIndex],
+      hours: updated[locIndex].hours.filter((_, i) => i !== hourIndex),
+    };
+    setLocations(updated);
+  };
+
+  // Check if service has multiple locations
+  const hasLocations = locations.length > 0;
 
   if (loading) {
     return (
@@ -442,6 +512,146 @@ export function ServiceEditPage() {
             </section>
           )}
 
+          {/* Locations Section (for multi-location services) */}
+          <section style={styles.section}>
+            <h2 style={styles.sectionTitle}>Lokacije</h2>
+            <p style={styles.hint}>
+              Za usluge s vise lokacija (npr. Ljekarne). Ako usluga ima lokacije,
+              pojedinacna adresa/kontakt iznad se ignoriraju.
+            </p>
+
+            {locations.map((loc, locIndex) => (
+              <div key={locIndex} style={styles.locationCard}>
+                <div style={styles.locationHeader}>
+                  <span style={styles.locationTitle}>Lokacija {locIndex + 1}</span>
+                  <button
+                    style={styles.removeButton}
+                    onClick={() => removeLocation(locIndex)}
+                    type="button"
+                  >
+                    Ukloni lokaciju
+                  </button>
+                </div>
+
+                <div style={styles.row}>
+                  <div style={styles.field}>
+                    <label style={styles.label}>Naziv (HR) *</label>
+                    <input
+                      style={styles.input}
+                      value={loc.name_hr}
+                      onChange={(e) =>
+                        updateLocation(locIndex, 'name_hr', e.target.value)
+                      }
+                      placeholder="Ljekarna Vis"
+                    />
+                  </div>
+                  <div style={styles.field}>
+                    <label style={styles.label}>Naziv (EN) *</label>
+                    <input
+                      style={styles.input}
+                      value={loc.name_en}
+                      onChange={(e) =>
+                        updateLocation(locIndex, 'name_en', e.target.value)
+                      }
+                      placeholder="Pharmacy Vis"
+                    />
+                  </div>
+                </div>
+
+                <div style={styles.row}>
+                  <div style={styles.field}>
+                    <label style={styles.label}>Adresa *</label>
+                    <input
+                      style={styles.input}
+                      value={loc.address}
+                      onChange={(e) =>
+                        updateLocation(locIndex, 'address', e.target.value)
+                      }
+                      placeholder="Vukovarska ul. 2, 21480 Vis"
+                    />
+                  </div>
+                  <div style={styles.field}>
+                    <label style={styles.label}>Telefon *</label>
+                    <input
+                      style={styles.input}
+                      value={loc.phone}
+                      onChange={(e) =>
+                        updateLocation(locIndex, 'phone', e.target.value)
+                      }
+                      placeholder="+385 21 711 434"
+                    />
+                  </div>
+                </div>
+
+                {/* Location Hours */}
+                <div style={styles.locationHoursSection}>
+                  <label style={styles.label}>Radno vrijeme</label>
+                  {loc.hours.map((hour, hourIndex) => (
+                    <div key={hourIndex} style={styles.dynamicRow}>
+                      <input
+                        style={{ ...styles.inputFlex, flex: 1 }}
+                        value={hour.time}
+                        onChange={(e) =>
+                          updateLocationHours(
+                            locIndex,
+                            hourIndex,
+                            'time',
+                            e.target.value
+                          )
+                        }
+                        placeholder="08:00-13:00"
+                      />
+                      <input
+                        style={{ ...styles.inputFlex, flex: 1 }}
+                        value={hour.description_hr}
+                        onChange={(e) =>
+                          updateLocationHours(
+                            locIndex,
+                            hourIndex,
+                            'description_hr',
+                            e.target.value
+                          )
+                        }
+                        placeholder="Pon - Pet"
+                      />
+                      <input
+                        style={{ ...styles.inputFlex, flex: 1 }}
+                        value={hour.description_en}
+                        onChange={(e) =>
+                          updateLocationHours(
+                            locIndex,
+                            hourIndex,
+                            'description_en',
+                            e.target.value
+                          )
+                        }
+                        placeholder="Mon - Fri"
+                      />
+                      <button
+                        style={styles.removeButtonSmall}
+                        onClick={() => removeLocationHours(locIndex, hourIndex)}
+                        type="button"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    style={styles.addButtonSmall}
+                    onClick={() => addLocationHours(locIndex)}
+                    type="button"
+                  >
+                    + Dodaj radno vrijeme
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            <button style={styles.addButton} onClick={addLocation} type="button">
+              + Dodaj lokaciju
+            </button>
+          </section>
+
           {/* Notes Section */}
           <section style={styles.section}>
             <h2 style={styles.sectionTitle}>Napomena</h2>
@@ -677,5 +887,47 @@ const styles: { [key: string]: React.CSSProperties } = {
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: '500',
+  },
+  locationCard: {
+    padding: '20px',
+    backgroundColor: '#f0fdf4',
+    borderRadius: '8px',
+    marginBottom: '16px',
+    border: '2px solid #86efac',
+  },
+  locationHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px',
+  },
+  locationTitle: {
+    fontSize: '16px',
+    fontWeight: '600',
+    color: '#166534',
+  },
+  locationHoursSection: {
+    marginTop: '12px',
+  },
+  addButtonSmall: {
+    padding: '6px 12px',
+    backgroundColor: '#f3f4f6',
+    border: '1px dashed #d1d5db',
+    borderRadius: '6px',
+    cursor: 'pointer',
+    fontSize: '12px',
+    color: '#6b7280',
+    marginTop: '8px',
+  },
+  removeButtonSmall: {
+    padding: '4px 10px',
+    backgroundColor: '#fee2e2',
+    color: '#dc2626',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: '600',
+    minWidth: '32px',
   },
 };

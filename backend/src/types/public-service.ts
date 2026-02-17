@@ -185,6 +185,7 @@ export interface CreatePublicServiceInput {
   icon_bg_color: string;
   working_hours?: WorkingHours[];
   scheduled_dates?: ScheduledDate[];
+  locations?: ServiceLocation[];
   note_hr?: string | null;
   note_en?: string | null;
   order_index?: number;
@@ -205,6 +206,7 @@ export interface UpdatePublicServiceInput {
   icon_bg_color?: string;
   working_hours?: WorkingHours[];
   scheduled_dates?: ScheduledDate[];
+  locations?: ServiceLocation[];
   note_hr?: string | null;
   note_en?: string | null;
   order_index?: number;

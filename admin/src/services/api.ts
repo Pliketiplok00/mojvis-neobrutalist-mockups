@@ -663,6 +663,20 @@ export interface ScheduledDate {
   created_at: string;
 }
 
+export interface LocationHours {
+  time: string;
+  description_hr: string;
+  description_en: string;
+}
+
+export interface ServiceLocation {
+  name_hr: string;
+  name_en: string;
+  address: string;
+  phone: string;
+  hours: LocationHours[];
+}
+
 export interface PublicService {
   id: string;
   type: 'permanent' | 'periodic';
@@ -676,6 +690,7 @@ export interface PublicService {
   icon_bg_color: string;
   working_hours: WorkingHours[];
   scheduled_dates: ScheduledDate[];
+  locations: ServiceLocation[];
   note_hr: string | null;
   note_en: string | null;
   order_index: number;
@@ -701,6 +716,7 @@ export interface PublicServiceUpdateInput {
   icon_bg_color?: string;
   working_hours?: WorkingHours[];
   scheduled_dates?: ScheduledDate[];
+  locations?: ServiceLocation[];
   note_hr?: string | null;
   note_en?: string | null;
   order_index?: number;
