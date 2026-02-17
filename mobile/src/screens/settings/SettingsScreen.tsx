@@ -1,7 +1,7 @@
 /**
  * Settings Screen
  *
- * Phase 7: User settings including push notification toggle.
+ * User settings including push notification toggle.
  *
  * Settings:
  * - Push notifications toggle (hitno only)
@@ -22,6 +22,7 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
 import { GlobalHeader } from '../../components/GlobalHeader';
 import { useOnboarding } from '../../contexts/OnboardingContext';
 import { usePush } from '../../contexts/PushContext';
@@ -39,6 +40,7 @@ export function SettingsScreen(): React.JSX.Element {
   const language = data?.language ?? 'hr';
   const userMode = data?.userMode ?? 'visitor';
   const municipality = data?.municipality;
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   // Handle push toggle
   const handlePushToggle = async (value: boolean) => {
@@ -154,8 +156,7 @@ export function SettingsScreen(): React.JSX.Element {
 
         {/* Version Info */}
         <View style={styles.versionContainer}>
-          <Meta style={styles.versionText}>MOJ VIS v1.0.0</Meta>
-          <Meta style={styles.versionText}>Phase 7 - Push Notifications</Meta>
+          <Meta style={styles.versionText}>MOJ VIS v{appVersion}</Meta>
         </View>
       </ScrollView>
     </SafeAreaView>
