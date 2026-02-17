@@ -17,7 +17,10 @@
       "bundleIdentifier": "com.mojvis.app",
       "buildNumber": "1",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "MOJ VIS koristi kameru za fotografiranje komunalnih problema u značajki Klikni i Prijavi.",
+        "NSPhotoLibraryUsageDescription": "MOJ VIS pristupa vašim fotografijama kako biste mogli priložiti slike komunalnih problema.",
+        "NSLocationWhenInUseUsageDescription": "MOJ VIS koristi vašu lokaciju za označavanje mjesta prijavljenog problema i prikaz najbližih polazaka."
       }
     },
     "android": {
@@ -37,7 +40,20 @@
       "en": "./locales/en.json"
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "MOJ VIS koristi vašu lokaciju za označavanje mjesta prijavljenog problema."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "MOJ VIS pristupa vašim fotografijama kako biste mogli priložiti slike komunalnih problema.",
+          "cameraPermission": "MOJ VIS koristi kameru za fotografiranje komunalnih problema."
+        }
+      ]
     ],
     "runtimeVersion": {
       "policy": "appVersion"
