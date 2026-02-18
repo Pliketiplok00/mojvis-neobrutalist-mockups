@@ -18,6 +18,20 @@
 
 ## Kronologija
 
+### 2026-02-19 (Četvrtak)
+
+#### Sto je odradeno danas
+- Fix expo-file-system SDK 54 deprecation (getInfoAsync -> legacy import)
+- Click & Fix photo upload sada radi
+
+#### Odluke donesene
+- Koristimo expo-file-system/legacy dok ne migriramo na novi File/Directory API
+
+#### Problemi/blockeri
+- Nema
+
+---
+
 ### 2026-02-18 (Srijeda)
 
 #### Sto je odradeno danas
