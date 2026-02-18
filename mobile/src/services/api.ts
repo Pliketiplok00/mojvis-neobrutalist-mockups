@@ -588,6 +588,10 @@ export const feedbackApi = {
  *
  * Phase 6: Anonymous issue reporting with location + photos.
  */
+
+// Upload timeout: 60 seconds (photo uploads can take time on slow connections)
+const UPLOAD_TIMEOUT_MS = 60000;
+
 export const clickFixApi = {
   /**
    * Submit new Click & Fix report with optional photos
@@ -599,6 +603,11 @@ export const clickFixApi = {
   ): Promise<ClickFixSubmitResponse> {
     const url = `${API_BASE_URL}/click-fix`;
 
+    console.info('[ClickFix API] Starting submission', {
+      photoCount: photos.length,
+      photos: photos.map((p) => ({ uri: p.uri.substring(0, 50), name: p.fileName })),
+    });
+
     // Use FormData for multipart upload
     const formData = new FormData();
     formData.append('subject', data.subject);
@@ -607,6 +616,7 @@ export const clickFixApi = {
 
     // Add photos
     for (const photo of photos) {
+      console.info('[ClickFix API] Adding photo to FormData:', photo.fileName);
       formData.append('photos', {
         uri: photo.uri,
         name: photo.fileName,
@@ -624,24 +634,47 @@ export const clickFixApi = {
       headers['X-Municipality'] = context.municipality;
     }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers,
-      body: formData,
-    });
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.warn('[ClickFix API] Request timeout after', UPLOAD_TIMEOUT_MS, 'ms');
+      controller.abort();
+    }, UPLOAD_TIMEOUT_MS);
 
-    if (response.status === 429) {
-      // Rate limit exceeded
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Rate limit exceeded');
+    try {
+      console.info('[ClickFix API] Sending request...');
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      console.info('[ClickFix API] Response received:', response.status);
+
+      if (response.status === 429) {
+        // Rate limit exceeded
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Rate limit exceeded');
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `API Error: ${response.status}`);
+      }
+
+      return response.json() as Promise<ClickFixSubmitResponse>;
+    } catch (error) {
+      clearTimeout(timeoutId);
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Upload timeout - please try again with a better connection');
+      }
+
+      console.error('[ClickFix API] Request failed:', error);
+      throw error;
     }
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `API Error: ${response.status}`);
-    }
-
-    return response.json() as Promise<ClickFixSubmitResponse>;
   },
 
   /**

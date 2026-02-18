@@ -18,6 +18,26 @@
 
 ## Kronologija
 
+### 2026-02-18 (Srijeda)
+
+#### Sto je odradeno danas
+- Git hygiene check + cleanup (coverage/ gitignored, ts-jest removed)
+- babel-plugin-transform-remove-console za production builds
+- React.memo za Banner, GlobalHeader, MenuOverlay komponente
+- TodayDeparturesSection duration display feature (WIP -> committed)
+- Click & Fix photo upload bug debug i fix
+  - Root cause: ERR_STREAM_PREMATURE_CLOSE (network abort during upload)
+  - Dodano: try-catch oko resize, file verification, 60s timeout, logging
+
+#### Odluke donesene
+- Console statements ostaju u kodu, ali se stripaju u production buildu
+- react-native-screens ostaje iako depcheck kaze unused (peer dependency)
+
+#### Problemi/blockeri
+- Click & Fix photo upload padao bez jasne greske - sada ima detaljni logging
+
+---
+
 ### 2026-02-17 (Utorak)
 
 #### Sto je odradeno danas

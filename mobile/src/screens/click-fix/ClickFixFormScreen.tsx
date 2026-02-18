@@ -30,6 +30,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import * as FileSystem from 'expo-file-system';
 import * as Location from 'expo-location';
 
 import { GlobalHeader } from '../../components/GlobalHeader';
@@ -66,14 +67,35 @@ const PHOTO_COMPRESSION = 0.8;
 /**
  * Resize photo to max width while maintaining aspect ratio.
  * This prevents "Network request failed" errors from large photos.
+ *
+ * Returns the resized URI or throws an error with details.
  */
-async function resizePhoto(uri: string): Promise<string> {
+async function resizePhoto(uri: string): Promise<{ uri: string; size: number }> {
+  console.info('[ClickFix] Resizing photo:', uri);
+
   const result = await ImageManipulator.manipulateAsync(
     uri,
     [{ resize: { width: MAX_PHOTO_WIDTH } }],
     { compress: PHOTO_COMPRESSION, format: ImageManipulator.SaveFormat.JPEG }
   );
-  return result.uri;
+
+  // Verify the resized file exists and get its size
+  const fileInfo = await FileSystem.getInfoAsync(result.uri);
+
+  if (!fileInfo.exists) {
+    throw new Error('Resized photo file does not exist');
+  }
+
+  // Size is available on the fileInfo when the file exists
+  const size = (fileInfo as { size?: number }).size ?? 0;
+  console.info('[ClickFix] Resized photo:', {
+    uri: result.uri,
+    width: result.width,
+    height: result.height,
+    size: `${(size / 1024).toFixed(1)} KB`,
+  });
+
+  return { uri: result.uri, size };
 }
 
 export function ClickFixFormScreen(): React.JSX.Element {
@@ -139,24 +161,32 @@ export function ClickFixFormScreen(): React.JSX.Element {
     if (!result.canceled && result.assets.length > 0) {
       const asset = result.assets[0];
 
-      // Resize photo to reduce file size (prevents network errors)
-      const resizedUri = await resizePhoto(asset.uri);
+      try {
+        // Resize photo to reduce file size (prevents network errors)
+        const resized = await resizePhoto(asset.uri);
 
-      const newPhoto: PhotoToUpload = {
-        uri: resizedUri,
-        fileName: `photo-${Date.now()}.jpg`,
-        mimeType: 'image/jpeg',
-      };
+        const newPhoto: PhotoToUpload = {
+          uri: resized.uri,
+          fileName: `photo-${Date.now()}.jpg`,
+          mimeType: 'image/jpeg',
+        };
 
-      setPhotos((prev) => {
-        const updated = [...prev];
-        if (slotIndex < updated.length) {
-          updated[slotIndex] = newPhoto;
-        } else {
-          updated.push(newPhoto);
-        }
-        return updated.slice(0, VALIDATION_LIMITS.MAX_PHOTOS);
-      });
+        setPhotos((prev) => {
+          const updated = [...prev];
+          if (slotIndex < updated.length) {
+            updated[slotIndex] = newPhoto;
+          } else {
+            updated.push(newPhoto);
+          }
+          return updated.slice(0, VALIDATION_LIMITS.MAX_PHOTOS);
+        });
+      } catch (error) {
+        console.error('[ClickFix] Error resizing photo:', error);
+        Alert.alert(
+          t('common.error'),
+          t('clickFix.error.photoResize')
+        );
+      }
     }
   }, [t]);
 

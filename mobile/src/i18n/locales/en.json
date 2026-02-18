@@ -263,7 +263,8 @@
       "submit": "Error submitting report. Please try again.",
       "rateLimit": "Too many reports. Please try again tomorrow.",
       "location": "Unable to get current location",
-      "photo": "Error adding photo"
+      "photo": "Error adding photo",
+      "photoResize": "Error processing photo. Please try a different image."
     },
     "validation": {
       "titleRequired": "Title is required",

@@ -263,7 +263,8 @@
       "submit": "Greska pri slanju prijave. Pokusajte ponovo.",
       "rateLimit": "Previse prijava. Pokusajte ponovno sutra.",
       "location": "Nije moguce dobiti trenutnu lokaciju",
-      "photo": "Greska pri dodavanju fotografije"
+      "photo": "Greska pri dodavanju fotografije",
+      "photoResize": "Greska pri obradi fotografije. Pokusajte s drugom slikom."
     },
     "validation": {
       "titleRequired": "Naslov je obavezan",
