@@ -51,6 +51,55 @@ import type {
 import type {
   MenuExtrasResponse,
 } from '../types/menu-extras';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Device ID storage key
+const DEVICE_ID_KEY = '@mojvis/device_id';
+
+// Cached device ID (loaded at startup)
+let cachedDeviceId: string | null = null;
+
+/**
+ * Generate a UUID v4
+ */
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+/**
+ * Initialize device ID - MUST be called at app startup before any API calls
+ * Generates a unique device ID on first launch and stores it persistently.
+ */
+export async function initializeDeviceId(): Promise<string> {
+  try {
+    // Check if we already have a device ID
+    const existingId = await AsyncStorage.getItem(DEVICE_ID_KEY);
+
+    if (existingId) {
+      cachedDeviceId = existingId;
+      console.info('[API] Device ID loaded:', existingId.substring(0, 8) + '...');
+      return existingId;
+    }
+
+    // Generate new device ID on first launch
+    const newId = generateUUID();
+    await AsyncStorage.setItem(DEVICE_ID_KEY, newId);
+    cachedDeviceId = newId;
+    console.info('[API] New device ID generated:', newId.substring(0, 8) + '...');
+    return newId;
+  } catch (error) {
+    console.error('[API] Error initializing device ID:', error);
+    // Fallback to in-memory UUID if storage fails
+    if (!cachedDeviceId) {
+      cachedDeviceId = generateUUID();
+    }
+    return cachedDeviceId;
+  }
+}
 
 /**
  * API base URL resolution:
@@ -78,12 +127,19 @@ export function getFullApiUrl(path: string): string {
 }
 
 /**
- * Get device ID for anonymous identification
- * TODO: Store persistently using AsyncStorage
+ * Get device ID for anonymous identification.
+ * Returns the cached device ID. Must call initializeDeviceId() at app startup first.
+ *
+ * @throws Error if device ID hasn't been initialized
  */
 function getDeviceId(): string {
-  // Placeholder - should be generated and stored on first launch
-  return 'mobile-device-placeholder';
+  if (!cachedDeviceId) {
+    // This should never happen if initializeDeviceId() is called at startup
+    console.error('[API] Device ID not initialized! Call initializeDeviceId() at app startup.');
+    // Generate emergency fallback
+    cachedDeviceId = generateUUID();
+  }
+  return cachedDeviceId;
 }
 
 /**

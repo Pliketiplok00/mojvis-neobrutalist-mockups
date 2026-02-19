@@ -10,7 +10,7 @@
  * Phase 2a: Added font loading with useAppFonts hook.
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -24,6 +24,7 @@ import { LanguageProvider } from './src/i18n';
 import { MenuOverlay } from './src/components/MenuOverlay';
 import { useAppFonts } from './src/ui/fonts';
 import { skin } from './src/ui/skin';
+import { initializeDeviceId } from './src/services/api';
 import type { MainStackParamList } from './src/navigation/types';
 
 // Navigation ref for menu to navigate
@@ -132,9 +133,17 @@ function FontErrorScreen(): React.JSX.Element {
 
 export default function App(): React.JSX.Element {
   const [fontsLoaded, fontError] = useAppFonts();
+  const [deviceIdReady, setDeviceIdReady] = useState(false);
 
-  // Show loading screen while fonts are loading
-  if (!fontsLoaded && !fontError) {
+  // Initialize device ID on app startup (critical for privacy)
+  useEffect(() => {
+    initializeDeviceId().then(() => {
+      setDeviceIdReady(true);
+    });
+  }, []);
+
+  // Show loading screen while fonts or device ID are loading
+  if (!fontsLoaded && !fontError || !deviceIdReady) {
     return (
       <SafeAreaProvider>
         <StatusBar style="dark" />
