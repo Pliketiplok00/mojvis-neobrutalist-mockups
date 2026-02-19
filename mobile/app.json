@@ -35,10 +35,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "locales": {
-      "hr": "./locales/hr.json",
-      "en": "./locales/en.json"
-    },
     "plugins": [
       "@react-native-community/datetimepicker",
       [
