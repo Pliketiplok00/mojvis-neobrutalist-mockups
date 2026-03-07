@@ -18,6 +18,21 @@
 
 ## Kronologija
 
+### 2026-03-08 (Nedjelja)
+
+#### Sto je odradeno danas
+- Import 3 autobusne linije (Vis-Komiza direktna, Podspilje, Rukavac) - 112 polazaka ukupno
+- MOJ VIS header tekst sada klikabilan -> vodi na Home screen
+- Uklonjena "Prava kadulja" iz liste zasticenih biljaka
+
+#### Odluke donesene
+- JSON format za bus linije ispravljen (season_id -> season_type, dodani origin/destination_stop_id)
+
+#### Problemi/blockeri
+- Nema
+
+---
+
 ### 2026-02-19 (Četvrtak)
 
 #### Sto je odradeno danas

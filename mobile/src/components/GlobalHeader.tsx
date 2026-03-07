@@ -86,10 +86,17 @@ export const GlobalHeader = memo(function GlobalHeader({
         </View>
       </TouchableOpacity>
 
-      {/* Center: Always "MOJ VIS" */}
-      <View style={styles.titleContainer}>
+      {/* Center: Always "MOJ VIS" - clickable to go Home */}
+      <TouchableOpacity
+        style={styles.titleContainer}
+        onPress={() => {
+          // @ts-expect-error Navigation typing is complex, this works at runtime
+          navigation.navigate('Home');
+        }}
+        accessibilityLabel="Go to home"
+      >
         <H2 style={styles.title}>MOJ VIS</H2>
-      </View>
+      </TouchableOpacity>
 
       {/* Right: Inbox in blue box (always visible) */}
       <TouchableOpacity

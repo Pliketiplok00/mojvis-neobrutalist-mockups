@@ -405,34 +405,6 @@ export const floraContent: FloraContent = {
     },
 
     {
-      id: "salvia-officinalis",
-      title: { hr: "Prava kadulja", en: "Common sage" },
-      latin: "Salvia officinalis",
-      description: {
-        hr: "Prava kadulja jedna je od najpoznatijih mediteranskih biljaka. Ima čvrste sivozelene listove i ljubičaste cvjetove. Iako je česta, samonikle populacije mogu biti ugrožene prekomjernim branjem. Posebno je osjetljiva ako se čupa s korijenom. Preporučuje se branje samo iz uzgoja.",
-        en: "Common sage is one of the most well-known Mediterranean plants. It has firm grey-green leaves and purple flowers. Although widespread, wild populations can be threatened by excessive harvesting. It is particularly sensitive when uprooted. Harvesting should be limited to cultivated plants."
-      },
-      habitat: {
-        hr: "Sunčane padine i makija.",
-        en: "Sunny slopes and Mediterranean scrub."
-      },
-      images: [
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/b/b6/Kadulja_Krizisce_240508_2.jpg",
-          author: "Roberta F.",
-          license: "CC BY-SA 3.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Kadulja_Krizisce_240508_2.jpg",
-        },
-        {
-          url: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Salbei_auf_der_Causse_Noir.jpg",
-          author: "GerritR",
-          license: "CC BY-SA 4.0",
-          sourcePage: "https://commons.wikimedia.org/wiki/File:Salbei_auf_der_Causse_Noir.jpg",
-        },
-      ]
-    },
-
-    {
       id: "helichrysum-italicum",
       title: { hr: "Smilje", en: "Immortelle" },
       latin: "Helichrysum italicum",
